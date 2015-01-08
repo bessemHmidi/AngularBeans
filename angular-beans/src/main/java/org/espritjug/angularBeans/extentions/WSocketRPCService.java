@@ -3,11 +3,11 @@ package org.espritjug.angularBeans.extentions;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.espritjug.angularBeans.BridgeExtention;
 import org.espritjug.angularBeans.Extention;
+import org.espritjug.angularBeans.NGExtention;
 import org.espritjug.angularBeans.boot.JavaScriptGenerator;
 
-@BridgeExtention
+@NGExtention
 public class WSocketRPCService implements Extention {
 
 	@Inject

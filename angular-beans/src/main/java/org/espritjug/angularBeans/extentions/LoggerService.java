@@ -1,9 +1,9 @@
 package org.espritjug.angularBeans.extentions;
 
-import org.espritjug.angularBeans.BridgeExtention;
 import org.espritjug.angularBeans.Extention;
+import org.espritjug.angularBeans.NGExtention;
 
-@BridgeExtention
+@NGExtention
 public class LoggerService implements Extention {
 
 	public String render() {

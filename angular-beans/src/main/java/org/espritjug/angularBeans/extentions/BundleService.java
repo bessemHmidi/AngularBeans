@@ -1,9 +1,10 @@
 package org.espritjug.angularBeans.extentions;
 
-import org.espritjug.angularBeans.BridgeExtention;
-import org.espritjug.angularBeans.Extention;
 
-@BridgeExtention
+import org.espritjug.angularBeans.Extention;
+import org.espritjug.angularBeans.NGExtention;
+
+@NGExtention
 public class BundleService implements Extention {
 
 	@Override

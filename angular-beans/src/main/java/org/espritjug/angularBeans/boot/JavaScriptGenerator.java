@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
-import org.espritjug.angularBeans.BridgeExtention;
+import org.espritjug.angularBeans.NGExtention;
 import org.espritjug.angularBeans.Util;
 import org.espritjug.angularBeans.api.NGApp;
 import org.espritjug.angularBeans.api.NGController;
@@ -71,7 +71,7 @@ public class JavaScriptGenerator implements Serializable {
 
 	@Inject
 	@Any
-	@BridgeExtention
+	@NGExtention
 	Instance<Object> ext;
 
 	@Inject

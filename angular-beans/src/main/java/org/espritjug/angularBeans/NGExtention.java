@@ -14,6 +14,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ TYPE, METHOD, FIELD, PARAMETER })
-public @interface BridgeExtention {
+public @interface NGExtention {
 
 }
