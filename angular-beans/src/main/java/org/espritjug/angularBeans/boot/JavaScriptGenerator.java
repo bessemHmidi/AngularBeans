@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -25,6 +26,7 @@ import org.espritjug.angularBeans.api.NGRedirect;
 import org.espritjug.angularBeans.api.NGReturn;
 import org.espritjug.angularBeans.api.NGSubmit;
 import org.espritjug.angularBeans.context.BeanLocator;
+import org.espritjug.angularBeans.context.GlobalMapHolder;
 import org.espritjug.angularBeans.log.NGLogger;
 import org.espritjug.angularBeans.util.NGControllerBean;
 import org.espritjug.angularBeans.validation.BeanValidationProcessor;
@@ -40,13 +42,13 @@ public class JavaScriptGenerator implements Serializable {
 
 	}
 
-	public static ThreadLocal<Integer> value = new ThreadLocal<Integer>();
+	//public static ThreadLocal<Integer> value = new ThreadLocal<Integer>();
 
 	@PostConstruct
 	public void init() {
 
 		UID = (Util.generateUID());
-
+        GlobalMapHolder.get(UID);
 	}
 
 	public synchronized String getUID() {
@@ -56,8 +58,8 @@ public class JavaScriptGenerator implements Serializable {
 	@Inject
 	BeanLocator locator;
 
-	@Inject
-	NGLogger logger;
+//	@Inject
+//	 NGLogger logger;
 
 	@Inject
 	@NGController
