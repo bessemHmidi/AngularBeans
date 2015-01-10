@@ -1,0 +1,157 @@
+<!doctype html>
+<html ng-app="angularApplication">
+<head>
+<title>Angular Bridge Demo</title>
+
+<!-- CSS ===================== -->
+<!-- load bootstrap -->
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+<style type="text/css">
+body {
+	padding-top: 30px;
+}
+</style>
+
+<!-- <script src="js/jquery-2.1.0.min.js"></script> -->
+<script src="js/angular.min.js"></script>
+
+<script src="angular-beans.js"></script>
+
+ <script type="text/javascript">
+ 
+ app.controller("languageCtrl",function ($scope,bundleService) {
+	 bundleService.loadBundle("tr_en","tr");
+	 
+	 $scope.changeLang=function(lang){
+		 if(lang==="en"){bundleService.loadBundle("tr_en","tr");
+		 
+		 }
+		 if(lang==="fr"){bundleService.loadBundle("tr_fr","tr");
+	 
+		 }
+	 }; 
+	
+	    }); 
+
+ </script> 
+
+<link type="text/css" rel="stylesheet" href="css/style.css">
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+
+
+</head>
+
+<body>
+
+<div class="container">
+<div class="col-sm-8 col-sm-offset-2">
+
+<div ng-controller="languageCtrl">
+
+<button ng-click="changeLang('fr')" class="btn btn-primary">fr</button>
+<button ng-click="changeLang('en')" class="btn btn-primary">en</button>
+</div>
+
+
+
+	<div ng-controller="myController">
+	
+	
+
+	
+<button ng-click="testSock()">send</button>
+<!-- <button onclick="ws.send('{"service":booksController ,"method":"getTitle" ,"sessionUID":$rootScope.sessionUID }');">ok</button> -->
+<!-- $rootScope.sessionUID -->
+<!-- <button ng-click="wsocket.send('hello');">ok</button>  -->
+ 
+<!--  <center>{{sessionUID}}</center>
+ <h1>{{otherBook|json}}</h1> --> 
+
+<div class="page-header">
+				<h1>{{tr.Welcome}}</h1>
+			</div>
+
+
+<table>
+<tr><td>
+		<h4>new book?</h4>
+
+		<form ng-submit="addBook()" class="form-inline">
+		
+		<div class="form-group">
+			ISBN: <input type="text" ng-model="isbn"><br/><br/>
+		</div>
+		<div class="form-group">
+			title: <input type="text" ng-model="title"><br/><br/>
+			</div>
+			<div class="form-group">
+			pages: <input type="text" ng-model="pages" class="form-control"><br/><br/>
+			</div>
+			<div class="form-group">
+			free: <input type="checkbox" ng-model="free" class="form-control"><br/><br/>
+			</div>
+			<div class="form-group">
+			otherBook title <input type="text" ng-model="otherBook.title" class="form-control">
+			</div>
+			<div class="form-group">
+			
+			category: <select ng-model="selectedCategorie" ng-options="o as o for o in categories" class="form-control">
+			<div class="form-group">
+			
+				 <input type="submit" id="submit" value="Add" class="btn btn-primary" />
+
+		</form>
+
+		<h4>finding book</h4>
+
+		<form ng-submit="findByIsbn()" class="form-inline">
+			ISBN: <input type="text" ng-model="isbn" class="form-control"> <input
+				type="submit" id="submit" value="Search" class="btn btn-success" />
+
+		</form>
+
+        
+
+		<div ng-show="bookFound.isbn"><h4>found :{{bookFound.title}}
+			{{bookFound.isbn}}</h4></div>
+
+<br/>
+		<input type="button" ng-click="about()" value="about" class="btn">
+		<input type="button" ng-click="clear()" value="clear all" class="btn">
+
+
+
+</select>
+
+</td><td>
+		<h4>all books</h4>
+		<table class="table-condensed">
+			<thead>
+				<tr>
+					<th>ISBN</th>
+					<th>Title</th>
+					<th>Pages</th>
+					<th>Categorie</th>
+					<th>free Book?</th>
+					
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="b in allBooks">
+
+					<td>{{b.isbn}}</td>
+					<td>{{b.title}}</td>
+					<td>{{b.pages}}</td>
+					<td>{{b.category}}</td>
+					<td><div ng-show="{{b.free}}">X</div></td>
+				</tr>
+			</tbody>
+		</table>
+		</td>
+</tr>
+</table>
+	</div>
+	</div>
+</div>
+</body>
+</html>

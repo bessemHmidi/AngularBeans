@@ -1,0 +1,206 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html ng-app="angularApplication">
+<head>
+<!-- CSS ===================== -->
+<!-- load bootstrap -->
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+<style type="text/css">
+body {
+	padding-top: 30px;
+}
+</style>
+
+<!-- JS ===================== -->
+<!-- load angular -->
+<script src="js/angular.min.js"></script>
+
+<script src="angular-bridge.js"></script>
+
+
+ <script type="text/javascript">
+ myapp.directive('message', function() {
+     var directive = {};
+
+     directive.restrict = 'E'; /* restrict this directive to elements */
+
+     directive.link = function($scope, element, attributes) {
+             element.html("This is the new content: " + $scope.firstName);
+             element.css("background-color", "#ffff00");
+     }
+
+     return directive;
+ })
+</script>
+</head>
+
+<!-- apply angular app and controller to our body -->
+<body ng-controller="validationController">
+
+
+	<!-- PAGE HEADER -->
+	<div class="page-header">
+		<h1>AngularJS Form Validation</h1>
+	</div>
+
+	<div class="container">
+
+<table><tr>
+	<td>	
+	
+	<div class="col-sm-8 col-sm-offset-2" bean-validate >
+
+  <div name="userForm" ng-form>
+			<!-- FORM -->
+			<!-- ng-submit="submitForm(userForm.$valid)" -->
+			<!-- pass in the variable if our form is valid or invalid -->
+			<!-- <form name="userForm" novalidate> -->
+				<!-- novalidate prevents HTML5 validation since we will be validating ourselves -->
+
+				<!-- NAME -->
+				<div class="form-group"
+					ng-class="{ 'has-error' : userForm.name.$invalid && submitted}">
+					<label>Name</label> <input type="text" name="name"
+						class="form-control" ng-model="name">
+					<p ng-show="userForm.name.$invalid" class="help-block">Your
+						name is required.</p>
+					<p ng-show="userForm.name.$error.minlength" class="help-block">name
+						is too short.</p>
+				</div>
+
+				<!-- USERNAME -->
+				<div class="form-group"
+					ng-class="{ 'has-error' : userForm.userName.$invalid && submitted}">
+					<label>Username</label> <input type="text" name="userName"
+						class="form-control" ng-model="userName">
+					<p ng-show="userForm.username.$error.minlength" class="help-block">Username
+						is too short.</p>
+					<p ng-show="userForm.userName.$error.maxlength" class="help-block">Username
+						is too long.</p>
+					<p ng-show="userForm.userName.$invalid" class="help-block">Your
+						userName is required.</p>
+				</div>
+
+				<!-- EMAIL -->
+				<div class="form-group"
+					ng-class="{ 'has-error' : userForm.email.$invalid && submitted}">
+					<label>Email</label> <input type="email" name="email"
+						class="form-control" ng-model="email">
+					<p ng-show="userForm.email.$invalid" class="help-block">Enter a
+						valid email.</p>
+				</div>
+
+
+				<div class="form-group"
+					ng-class="{ 'has-error' : userForm.expression.$invalid && submitted}">
+					<label>expression</label> <input type="text" name="expression"
+						class="form-control" ng-model="expression">
+					<p ng-show="userForm.expression.$error.pattern" class="help-block">no
+						no no !</p>
+					<p ng-show="userForm.expression.$invalid" class="help-block">no
+						no no !</p>
+				</div>
+
+				<div class="form-group"
+					ng-class="{ 'has-error' : userForm.number.$invalid && submitted}">
+					<label>number</label> <input type="number" name="number" class="form-control" ng-model="number" />
+						
+					<p ng-show="userForm.number.$error.required" class="help-block">Your
+						number is required.</p>
+					<span
+						ng-show="userForm.number.$error.min || userForm.number.$error.max">
+						The value must be in range 0 to 10!</span>
+				</div>
+
+
+		<button type="submit" class="btn btn-primary" ng-disabled="userForm.$invalid">Submit</button>
+				
+		</div>	
+</div>
+
+
+			<!-- SUBMIT BUTTON -->
+			<!-- col-sm-8 -->
+
+</td>
+<td>
+
+ <!-- <div class="col-sm-8 col-sm-offset-2" >
+
+			
+				<div class="form-group"
+					ng-class="{ 'has-error' : validation.name.ivalid}">
+					<label>Name</label> <input type="text" class="form-control" ng-model="name"/>
+					<p message-for="name" class="help-block"/>
+					
+			
+				</div>
+
+				
+				<div class="form-group"
+					ng-class="{ 'has-error' : validation.userName.ivalid}">
+					<label>Username</label> <input type="text"
+						class="form-control" ng-model="userName">
+					<p message-for="userName" class="help-block"/>
+				</div>
+
+				
+				<div class="form-group"
+					ng-class="{ 'has-error' : validation.email.ivalid}">
+					<label>Email</label> <input type="email" 
+						class="form-control" ng-model="email">
+					<p message-for="email" class="help-block"/>
+				</div>
+
+
+				<div class="form-group"
+					ng-class="{ 'has-error' : validation.expression.ivalid}">
+					<label>expression</label> <input type="text" 
+						class="form-control" ng-model="expression">
+					<p message-for="expression" class="help-block"/>
+					
+				</div>
+
+				<div class="form-group"
+					ng-class="{ 'has-error' : userForm.number.$invalid && submitted}">
+					<label>number</label> <input type="text" name="number" min="5"
+						max="100" class="form-control" ng-model="number">
+					<p ng-show="userForm.number.$invalid" class="help-block">Your
+						number is required.</p>
+					<span
+						ng-show="userForm.number.$error.min || userForm.number.$error.max">
+						The value must be in range 0 to 10!</span>
+				</div>
+
+
+				<button type="submit" class="btn btn-primary" ng-click="validate()">Submit</button>
+			
+		</div>
+ -->
+
+
+			
+
+
+</td>
+</tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+	</div>
+	<!-- /container -->
+
+
+
+</body>
+
+</html>

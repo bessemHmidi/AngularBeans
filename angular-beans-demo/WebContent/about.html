@@ -1,0 +1,57 @@
+<!doctype html>
+<html ng-app="angularApplication">
+<head>
+<title>Hello AngularJS</title>
+
+<!-- CSS ===================== -->
+<!-- load bootstrap -->
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+<style type="text/css">
+body {
+	padding-top: 30px;
+}
+</style>
+
+<script src="js/jquery-2.1.0.min.js"></script>
+<script src="js/angular.min.js"></script>
+<!-- <script src="js/ui-utils.min.js"></script> -->
+<script src="angular-beans.js"></script>
+
+<script type="text/javascript">
+ 
+	
+app.controller('ctr', function($scope, $controller,wsocketRPC) {
+	wsocketRPC.subscribe($scope,'chatChannel',false);
+	  $scope.receivedMesssage={};
+
+	});
+	
+	
+app.controller('ctr2', function($scope, $controller,wsocketRPC) {
+	wsocketRPC.subscribe($scope,'chatChannel',false);
+	  $scope.receivedMesssage={};
+	
+	});
+</script>
+
+
+
+
+</head>
+
+<body >
+<div ng-controller="ctr">
+{{receivedMesssage}}
+</div>
+
+<div ng-controller="ctr2">
+{{receivedMesssage}}
+</div>
+
+
+<!-- <input type="checkbox" ng-model="choice"/ > -->
+<h2>Angular Bridge Demo </h2>
+<h3> Project lead : Hmidi Bessem (bessem.hmidi@esprit.tn) </h3>
+<h3>ESPRITJUG Team</h3>
+</body>
+</html>

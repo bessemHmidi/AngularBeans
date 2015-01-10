@@ -1,0 +1,58 @@
+<!doctype html>
+<html ng-app="angularApplication">
+<head>
+<title>Hello AngularJS</title>
+
+<!-- CSS ===================== -->
+<!-- load bootstrap -->
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+<style type="text/css">
+body {
+	padding-top: 30px;
+}
+</style>
+
+<!-- <script src="js/jquery-2.1.0.min.js"></script> -->
+<!-- <script src="js/ui-utils.min.js"></script> -->
+<script src="js/angular.min.js"></script>
+<script src="angular-beans.js"></script>
+
+
+<script type="text/javascript">
+
+app.controller('chatController2', function($scope, $controller) {
+	  $controller('chatController', {$scope: $scope}); 
+	  $scope.receivedMesssage={};
+	  $scope.allMessages=[];
+	   $scope.$watch('receivedMesssage', function() {
+	      
+		   $scope.allMessages.push($scope.receivedMesssage);
+		  // console.log($scope.receivedMesssage);
+		  
+	   });
+	
+	
+	});
+
+</script>
+
+</head>
+
+<body ng-controller="chatController2">
+
+
+<h2>Angular Bridge Chat Demo </h2>
+
+message to send: 
+<input type="text" ng-model="newMessage"/>
+sender: 
+<input type="text" ng-model="sender"/>
+<button ng-click="send()">SEND</button>
+
+ <table>
+<tr ng-repeat="m in allMessages">
+<td>{{m.sender}}::{{m.message}}</td>
+</tr>
+</table> 
+</body>
+</html>
