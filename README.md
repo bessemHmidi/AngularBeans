@@ -1,0 +1,3 @@
+# AngularBeans
+AngularJS Eclipse Plugin
+=================
