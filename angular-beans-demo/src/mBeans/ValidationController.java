@@ -53,7 +53,7 @@ public class ValidationController implements Serializable{
 		this.userName = userName;
 	}
 	
-	@org.hibernate.validator.constraints.Email
+	//@org.hibernate.validator.constraints.Email
 	public String getEmail() {
 		return email;
 	}
