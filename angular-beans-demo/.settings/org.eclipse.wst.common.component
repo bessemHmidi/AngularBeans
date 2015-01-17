@@ -3,7 +3,7 @@
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="angularBeans-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/angular-beans/angular-beans">
+        <dependent-module archiveName="angularBeans-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/angularBeans/angularBeans">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/Angular/build/classes"/>
