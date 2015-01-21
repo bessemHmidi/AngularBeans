@@ -255,7 +255,7 @@ public class RemoteInvoker implements Serializable {
 						Object param = null;
 						if ((params.entrySet().size() > 1) && (type != null)) {
 
-							param = convert(value.getAsString(), type);
+							param = Util.convertFromString(value.getAsString(), type);
 						}
 
 						o.getClass().getMethod(name, type).invoke(o, param);
@@ -271,31 +271,6 @@ public class RemoteInvoker implements Serializable {
 
 	}
 
-	private Object convert(String value, Class type) {
-
-		Object param = null;
-
-		// NPE
-
-		if (type.equals(int.class) || type.equals(Integer.class)) {
-			param = Integer.parseInt(value);
-			return param;
-		}
-
-		if (type.equals(float.class) || type.equals(Float.class)) {
-			param = Float.parseFloat(value);
-			return param;
-		}
-
-		if (type.equals(boolean.class) || type.equals(Boolean.class)) {
-			param = Boolean.parseBoolean(value);
-			return param;
-		} else {
-
-			param = type.cast(value);
-		}
-		return param;
-
-	}
+	
 
 }

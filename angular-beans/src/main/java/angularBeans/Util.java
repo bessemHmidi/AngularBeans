@@ -31,6 +31,7 @@ import javax.json.Json;
 
 
 
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -127,6 +128,67 @@ public class Util {
 
 		JsonObject jObj = element.getAsJsonObject();
 		return jObj;
+	}
+	
+	
+	
+	
+	public static  Object convertFromString(String value, Class type) {
+
+		Object param = null;
+
+		// NPE
+
+		if (type.equals(int.class) || type.equals(Integer.class)) {
+			param = Integer.parseInt(value);
+			return param;
+		}
+
+		if (type.equals(float.class) || type.equals(Float.class)) {
+			param = Float.parseFloat(value);
+			return param;
+		}
+
+		if (type.equals(boolean.class) || type.equals(Boolean.class)) {
+			param = Boolean.parseBoolean(value);
+			return param;
+		} 
+		
+		if (type.equals(double.class) || type.equals(Double.class)) {
+			param = Double.parseDouble(value);
+			return param;
+		} 
+		
+		if (type.equals(float.class) || type.equals(Float.class)) {
+			param = Float.parseFloat(value);
+			return param;
+		} 
+		
+		
+		if (type.equals(byte.class) || type.equals(Byte.class)) {
+			param = Byte.parseByte(value);
+			return param;
+		} 
+		
+		
+		if (type.equals(long.class) || type.equals(Long.class)) {
+			param = Long.parseLong(value);
+			return param;
+		} 
+		
+		
+		if (type.equals(short.class) || type.equals(Short.class)) {
+			param = Short.parseShort(value);
+			return param;
+		} 
+		
+		
+		else {
+
+			param = type.cast(value);
+		}
+		return param;
+
 	}
 	
 }

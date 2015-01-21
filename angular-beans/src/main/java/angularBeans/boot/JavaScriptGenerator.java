@@ -240,7 +240,9 @@ public class JavaScriptGenerator implements Serializable {
 				m = o.getClass().getMethod((getter));
 
 				result = m.invoke(o);
-
+				
+				if ((result == null && (m.getReturnType().equals(String.class))))result="";
+				
 				if (result == null)
 					continue;
 
