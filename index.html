@@ -31,11 +31,33 @@
           <h3>
 <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to AngularBeans! </h3>
 
-<p>this is a test !!!</p>
+<p>Angular Beans is a framework whose intention is to use javaEE7 and more precisely the CDI specification with AngularJS
+ it allows to create "AngularJS aware" JavaEE Applications! .</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<p>considering this bean</p>
+<pre><code>
+
+
+@NGController
+@NGSessionScoped
+public class HelloWorldBean{
+
+private String name;
+
+@NGSubmit
+@NGReturn(model="response")
+@Websocket
+public String sayHello(){
+
+return "Hello "+name+" from AngularBeans!";
+
+
+ //getters &setters
+}
+
+
+}
+
 </code></pre>
 
 <p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
