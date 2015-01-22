@@ -20,13 +20,7 @@ body {
   margin: 0;
 }
 
-code {
-	font-family: monospace;
-	font-weight: bold;
-	background-color: black;
-	
-	color: green;
-}
+
 
 
 
@@ -889,3 +883,10 @@ footer a:hover {
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (max-width: 479px) { }
 
+code {
+	font-family: monospace;
+	font-weight: bold;
+	background-color: #000000;
+	
+	color: green;
+}
