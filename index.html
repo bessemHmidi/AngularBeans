@@ -36,6 +36,7 @@
 
 <p>considering this class</p>
 
+<div class="announce">
 <pre><code>
 
 import angularBeans.api.NGApp;
@@ -50,23 +51,21 @@ public class AngularApplication{
 }
 
 </code></pre> 
-
+</div>
 
 
 <p>and :</p>
 
+<div class="announce">
 <pre><code>
 import angularBeans.api.NGController;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.context.NGSessionScoped;
-
 @NGController
 @NGSessionScoped
 public class HelloWorldController {
-
 	private String name;
-
 	@NGSubmit
 	@NGReturn(model = "message") 
 	public String sayHello() {
@@ -83,10 +82,13 @@ public class HelloWorldController {
 
 }
 </code></pre>
-
+</div>
 
 
 <p>and finally the HTML file:</p>
+
+<div class="announce">
+<pre><code>
 <xmp>
 <!DOCTYPE html>
 <html ng-app="angularApplication">
@@ -113,6 +115,7 @@ public class HelloWorldController {
 </html>
 
 </xmp>
+</code></pre></div>
 <h3>
 <a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
 

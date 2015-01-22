@@ -883,7 +883,12 @@ footer a:hover {
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (max-width: 479px) { }
 
-.announce{color: green;font-weight: bold;font-family: sans-serif;border:2px groove} 
+.announce{border:2px groove}
+.announce pre code {
+	color: green;
+	font-family: monospace;
+	font-weight: bold;
+}
 	/*{ background-color: #000000;
 	font-family: monospace;
 	font-weight: bold;
