@@ -886,10 +886,10 @@ footer a:hover {
 .announce{border:2px groove;}
 .announce pre code {
 	
-	color: green;
+	color:#535353;
 	font-family: monospace;
 	font-weight: bold;
-	font-size: 15;
+	font-size: 16px;
 }
 	/*{ background-color: #000000;
 	font-family: monospace;
