@@ -34,34 +34,84 @@
 <p>Angular Beans is a framework whose intention is to use javaEE7 and more precisely the CDI specification with AngularJS
  it allows to create "AngularJS aware" JavaEE Applications! .</p>
 
-<p>considering this bean</p>
+<p>considering this class</p>
 <pre><code>
 
+import angularBeans.api.NGApp;
 
-@NGController
-@NGSessionScoped
-public class HelloWorldBean{
+//must have the same name as ? ng-app="?"
+//in this case for example <html ng-app="angularApplication">
 
-private String name;
-
-@NGSubmit
-@NGReturn(model="response")
-@Websocket
-public String sayHello(){
-
-return "Hello "+name+" from AngularBeans!";
-
-
- //getters &setters
-}
-
-
+// @Named("angularApplication")
+@NGApp 
+public class AngularApplication{
+ 
 }
 
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
 
+
+<p>and :</p>
+
+<pre><code>
+import angularBeans.api.NGController;
+import angularBeans.api.NGReturn;
+import angularBeans.api.NGSubmit;
+import angularBeans.context.NGSessionScoped;
+
+@NGController
+@NGSessionScoped
+public class HelloWorldController {
+
+	private String name;
+
+	@NGSubmit
+	@NGReturn(model = "message")
+	public String sayHello() {
+		return "hello " + name + " from AngularBeans!";
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+}
+</code></pre>
+
+
+
+<p>and finally the HTML file:</p>
+<xmp>
+<!DOCTYPE html>
+<html ng-app="angularApplication">
+<head>
+<!-- load bootstrap -->
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+
+<script src="js/angular.min.js"></script>
+<script src="angular-beans.js"></script>
+ 
+</head>
+<body>
+	<div class="container">
+			<div ng-controller="helloWorldController">
+
+				<p class="label">Your Name: </p> <input type="text" ng-model="name" class="input-medium">
+
+              <button ng-click="sayHello()" class="btn btn-primary">send</button>
+			
+			<p>{{message}}</p>
+		</div>
+	</div>
+</body>
+</html>
+
+</xmp>
 <h3>
 <a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
 
