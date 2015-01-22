@@ -665,14 +665,14 @@ form {
   color: #9ddcff;
 }
 
-#main-content h4 {
+ #main-content h4 {
   margin-bottom: 8px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 15px;
   font-weight: bold;
   color: #474747;
   text-indent: 3px;
-}
+} 
 
 h4:before {
   padding-right: 0.3em;
@@ -883,10 +883,11 @@ footer a:hover {
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (max-width: 479px) { }
 
-code {
+pre code {
+	background-color: #000000;
 	font-family: monospace;
 	font-weight: bold;
-	background-color: #000000;
-	
 	color: green;
+
 }
+
