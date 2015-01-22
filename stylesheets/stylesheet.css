@@ -20,10 +20,11 @@ body {
   margin: 0;
 }
 
-pre {
+code {
 	font-family: monospace;
 	font-weight: bold;
 	background-color: black;
+	
 	color: green;
 }
 
