@@ -32,7 +32,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import angularBeans.Util;
+import angularBeans.AngularBeansUtil;
 
 
 @ApplicationScoped
@@ -41,6 +41,8 @@ public class BeanLocator implements Serializable {
 	@Inject
 	private BeanManager beanManager;
 
+	@Inject
+	AngularBeansUtil util;
 	
 	public BeanLocator() {
 		// TODO Auto-generated constructor stub
@@ -57,7 +59,7 @@ public class BeanLocator implements Serializable {
 		Set<Bean<?>> beans = beanManager.getBeans(beanName);
 
 		if (beans.size() == 0) {
-			Class beanClass = Util.beanNamesHolder.get(beanName);
+			Class beanClass = util.beanNamesHolder.get(beanName);
 			beans = beanManager.getBeans(beanClass,
 					new AnnotationLiteral<Any>() {
 					});

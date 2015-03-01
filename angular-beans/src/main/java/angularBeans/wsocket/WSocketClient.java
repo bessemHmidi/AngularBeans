@@ -30,7 +30,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.websocket.Session;
 
-import angularBeans.Util;
+import angularBeans.AngularBeansUtil;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.log.NGLogger;
 import angularBeans.wsocket.annotations.WSocketReceiveEvent;
@@ -41,6 +41,12 @@ import angularBeans.wsocket.annotations.WSocketSessionReadyEvent;
 public class WSocketClient implements Serializable {
 
 	private Session session;
+	
+	@Inject
+	AngularBeansUtil util;
+	
+	@Inject
+	NGLogger logger;
 
 	private static  Map<String, Session> channelsSubscribers=new HashMap<>();
 	
@@ -66,9 +72,6 @@ public class WSocketClient implements Serializable {
 
 	}
 
-	@Inject
-	NGLogger logger;
-
 	public Session getSession() {
 		return session;
 	}
@@ -80,7 +83,7 @@ public class WSocketClient implements Serializable {
 		paramsToSend.put("reqId", channel);
 		 paramsToSend.put("log", logger.getLogPool());
 		try {
-			session.getBasicRemote().sendText(Util.getJson(paramsToSend));
+			session.getBasicRemote().sendText(util.getJson(paramsToSend));
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -99,8 +102,11 @@ public class WSocketClient implements Serializable {
 		
 		if (!(session == null)) {
 			
+			
 				for (Session sess : session.getOpenSessions()) {
-					sess.getBasicRemote().sendText(Util.getJson(paramsToSend));
+					String objectMessage=util.getJson(paramsToSend);
+					
+					sess.getBasicRemote().sendText(objectMessage);
 				}
 
 		}

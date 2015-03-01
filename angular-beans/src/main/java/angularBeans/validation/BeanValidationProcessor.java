@@ -31,6 +31,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
@@ -39,18 +40,21 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import angularBeans.Util;
+import angularBeans.AngularBeansUtil;
 
 @ApplicationScoped
 public class BeanValidationProcessor implements Serializable {
 
 	private Set<Class> validationAnnotations;
 
+	@Inject
+	AngularBeansUtil util;
+	
 	private StringBuffer buffer = new StringBuffer();;
 
 	public void processBeanValidationParsing(Method method) {
 
-		String modelName = Util.obtainFieldNameFromAccessor(method.getName());
+		String modelName = AngularBeansUtil.obtainFieldNameFromAccessor(method.getName());
 		Annotation[] scannedAnnotations = method.getAnnotations();
 
 		buffer.append("\nif (modelName === '").append(modelName).append("') {");

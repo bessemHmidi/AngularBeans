@@ -35,7 +35,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.websocket.EncodeException;
 
-import angularBeans.Util;
+import angularBeans.AngularBeansUtil;
 import angularBeans.api.NGReturn;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.log.LogMessage;
@@ -55,11 +55,12 @@ public class RemoteInvoker implements Serializable {
 	@Inject
 	NGLogger logger;
 
+	@Inject
+	AngularBeansUtil util;
+
 	public synchronized void wsInvoke(Object o, String method,
 			JsonObject params, WSocketEvent event, long reqID, String UID) {
 
-		
-		
 		NGSessionScopeContext.setCurrentContext(UID);
 
 		Map<String, Object> returns = new HashMap<String, Object>();
@@ -69,11 +70,12 @@ public class RemoteInvoker implements Serializable {
 		returns.put("reqId", reqID);
 
 		Method methodToInvoke = null;
-		boolean injectEvent=false;
+		boolean injectEvent = false;
 		try {
 			try {
-				methodToInvoke = o.getClass().getMethod(method, WSocketEvent.class);
-				injectEvent=true;
+				methodToInvoke = o.getClass().getMethod(method,
+						WSocketEvent.class);
+				injectEvent = true;
 			} catch (NoSuchMethodException e) {
 				try {
 					methodToInvoke = o.getClass().getMethod(method);
@@ -82,26 +84,24 @@ public class RemoteInvoker implements Serializable {
 					e1.printStackTrace();
 				}
 			}
-			
-			
-			if ((!methodToInvoke.getName().startsWith("get"))&&(!(methodToInvoke.getName().startsWith("is")))) {
+
+			if ((!methodToInvoke.getName().startsWith("get"))
+					&& (!(methodToInvoke.getName().startsWith("is")))) {
 				update(o, params);
 			}
 
-			if(injectEvent){
-			mainReturn = methodToInvoke.invoke(o, event);
-			}
-			else{
+			if (injectEvent) {
+				mainReturn = methodToInvoke.invoke(o, event);
+			} else {
 				mainReturn = methodToInvoke.invoke(o);
 			}
-		} catch (SecurityException
-				| IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e1) {
+		} catch (SecurityException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		//event.setSession(holder.getSession());
+		// event.setSession(holder.getSession());
 		returns.put("log", logger.getLogPool().toArray());
 		logger.getLogPool().clear();
 
@@ -135,7 +135,7 @@ public class RemoteInvoker implements Serializable {
 
 		try {
 			event.getSession().getBasicRemote()
-					.sendObject(Util.getJson(returns));
+					.sendObject(util.getJson(returns));
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -155,13 +155,13 @@ public class RemoteInvoker implements Serializable {
 		List<Object> returns = new ArrayList<Object>();
 		Object mainReturn = null;
 		try {
-			
+
 			Method m = o.getClass().getMethod(method);
 
-			if (!m.getName().startsWith("get")) {
-				
-				
+			if (!util.isGetter(m)) {
+
 				update(o, params);
+
 			}
 
 			mainReturn = m.invoke(o);
@@ -209,20 +209,33 @@ public class RemoteInvoker implements Serializable {
 
 		if (params != null) {
 
+			boolean firstIn = false;
+
 			for (Map.Entry<String, JsonElement> entry : params.entrySet()) {
 
 				JsonElement value = entry.getValue();
 				String name = entry.getKey();
 
-				if (value.isJsonObject()) {
+				if (name.equals("sessionUID")) {
+					continue;
+				}
+
+				
+				
+				
+				if (value.isJsonObject() && (!value.isJsonNull())) {
+
 					String getName;
 					try {
-						getName = Util.obtainGetter(o.getClass()
+						getName = util.obtainGetter(o.getClass()
 								.getDeclaredField(name));
 
 						Object subObj = o.getClass().getMethod(getName)
 								.invoke(o);
+
+						// logger.log(Level.INFO, "#entring sub object "+name);
 						update(subObj, value.getAsJsonObject());
+
 					} catch (NoSuchFieldException | SecurityException
 							| IllegalAccessException | IllegalArgumentException
 							| InvocationTargetException | NoSuchMethodException e) {
@@ -232,30 +245,34 @@ public class RemoteInvoker implements Serializable {
 
 				}
 
-				name = "set" + name.substring(0, 1).toUpperCase()
-						+ name.substring(1);
-
-				Class type = null;
-				for (Method set : o.getClass().getDeclaredMethods()) {
-					if (set.getName().startsWith("set")) {
-						if (set.getName().equals(name)) {
-							Class<?>[] pType = set.getParameterTypes();
-
-							type = pType[0];
-							break;
-
-						}
-					}
-
-				}
-
 				if (value.isJsonPrimitive() && (!name.equals("setSessionUID"))) {
 					try {
-                        
-						Object param = null;
-						if ((params.entrySet().size() > 1) && (type != null)) {
+						if (!util.hasSetter(o.getClass(), name)) {
+							continue;
+						}
+						name = "set" + name.substring(0, 1).toUpperCase()
+								+ name.substring(1);
 
-							param = Util.convertFromString(value.getAsString(), type);
+						Class type = null;
+						for (Method set : o.getClass().getDeclaredMethods()) {
+							if (util.isSetter(set)) {
+								if (set.getName().equals(name)) {
+									Class<?>[] pType = set.getParameterTypes();
+
+									type = pType[0];
+									break;
+
+								}
+							}
+
+						}
+
+						Object param = null;
+						if ((params.entrySet().size() >= 1) && (type != null)) {
+
+							param = util.convertFromString(value.getAsString(),
+									type);
+
 						}
 
 						o.getClass().getMethod(name, type).invoke(o, param);
@@ -266,11 +283,10 @@ public class RemoteInvoker implements Serializable {
 
 					}
 				}
+
 			}
 		}
 
 	}
-
-	
 
 }

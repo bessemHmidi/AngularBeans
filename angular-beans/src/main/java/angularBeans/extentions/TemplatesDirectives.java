@@ -34,22 +34,28 @@ public class TemplatesDirectives implements Extention {
 				+ " return {"
 				+ "compile: function(tElem,attrs) {"
 				+ " return function(scope,elem,attrs) {"
-				+ "localStorage.setItem(\"URL\",document.URL);"
+				+ "sessionStorage.setItem(\"URL\",document.URL);"
 				+ "window.location = attrs.uiTemplate;"
 				+ "};}};});"
 
 				+ "app.directive('uiInsert', function($compile) {"
 				+ "return {compile: function(tElem,attrs) {"
-				+ "return function(scope,elem,attrs,compile) {"
+				+ "return function(scope,elem,attrs) {"
 				+ "elem.html(\"\");"
-				+ "var addon=localStorage.getItem(attrs.uiInsert);"
+				+ "window.history.pushState(\"\", \"\", sessionStorage.getItem(\"URL\"));"
+				+ "sessionStorage.setItem(\"URL\",'');"
+				
+				+ "var addon=sessionStorage.getItem(attrs.uiInsert);"
 				+ "elem.append($compile(addon)(scope));"
-				+ "window.history.pushState(\"\", \"\", localStorage.getItem(\"URL\"));"
-				+ "};}};})" + ".directive('uiDefine', function() {"
+				
+				
+				
+				+ "};}};})"
+				+ ".directive('uiDefine', function() {"
 				+ "	  return {" + "   compile: function(tElem,attrs) {"
 				+ "tElem.attr('hidden', 'true');"
 				+ "   return function(scope,elem,attrs) {"
-				+ "localStorage.setItem(attrs.uiDefine,elem.html());"
+				+ "sessionStorage.setItem(attrs.uiDefine,elem.html());"
 				+ "};}};});");
 	}
 

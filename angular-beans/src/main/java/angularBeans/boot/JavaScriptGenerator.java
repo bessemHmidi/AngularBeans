@@ -29,25 +29,31 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 
+import angularBeans.AngularBeansUtil;
+import angularBeans.LobSource;
+import angularBeans.LobWrapper;
 import angularBeans.NGExtention;
-import angularBeans.Util;
 import angularBeans.api.NGApp;
 import angularBeans.api.NGController;
+import angularBeans.api.NGModules;
 import angularBeans.api.NGRedirect;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.context.BeanLocator;
-import angularBeans.context.GlobalMapHolder;
 import angularBeans.log.NGLogger;
 import angularBeans.util.NGControllerBean;
 import angularBeans.validation.BeanValidationProcessor;
@@ -59,17 +65,18 @@ public class JavaScriptGenerator implements Serializable {
 
 	private String UID;;
 
+	@Inject
+	AngularBeansUtil util;
+
 	public JavaScriptGenerator() {
 
 	}
 
-	//public static ThreadLocal<Integer> value = new ThreadLocal<Integer>();
-
 	@PostConstruct
 	public void init() {
+		UID = String.valueOf(UUID.randomUUID());
 
-		UID = (Util.generateUID());
-      //  GlobalMapHolder.get(UID);
+		// GlobalMapHolder.get(UID);
 	}
 
 	public synchronized String getUID() {
@@ -77,20 +84,23 @@ public class JavaScriptGenerator implements Serializable {
 	}
 
 	@Inject
-	BeanLocator locator;
-
-	@Inject
-	 NGLogger logger;
-
-	@Inject
-	@NGController
-	@Any
-	Instance<Object> controllers;
+	ByteArrayCache cache;
 
 	@Inject
 	@Any
 	@NGApp
 	Instance<Object> app;
+
+	@Inject
+	BeanLocator locator;
+
+	@Inject
+	NGLogger logger;
+
+	@Inject
+	@NGController
+	@Any
+	Instance<Object> controllers;
 
 	@Inject
 	@Any
@@ -106,7 +116,7 @@ public class JavaScriptGenerator implements Serializable {
 
 	public void getScript(StringWriter writer) {
 
-		//NGSessionScopeContext.changeHolder(UID);
+		// NGSessionScopeContext.changeHolder(UID);
 
 		// beanManager.(HttpConversationContext.class).get();
 
@@ -115,22 +125,41 @@ public class JavaScriptGenerator implements Serializable {
 		String appName = null;
 
 		boolean isModule = false;
+		Class appClass = null;
 		for (Object ap : app) {
 			ap.toString();
 			isModule = true;
-			if (ap.getClass().isAnnotationPresent(Named.class)) {
+			appClass = ap.getClass();
+			if (appClass.isAnnotationPresent(Named.class)) {
 				appName = ap.getClass().getAnnotation(Named.class).value();
 			}
 
 			if ((appName == null) || (appName.length() < 1)) {
 
-				appName = Util.getBeanName(ap.getClass());
+				appName = util.getBeanName(ap.getClass());
 			}
 		}
 
 		if (isModule) {
 
-			writer.write("var app=angular.module('" + appName + "', [])");
+			writer.write("var app=angular.module('" + appName + "', [");
+
+			if (appClass.isAnnotationPresent(NGModules.class)) {
+
+				NGModules ngModAnno = (NGModules) appClass
+						.getAnnotation(NGModules.class);
+				String[] modules = ngModAnno.value();
+				String modulesPart = "";
+				for (String module : modules) {
+					modulesPart += ("'" + module + "',");
+				}
+				modulesPart=modulesPart.substring(0, modulesPart.length() - 1);
+				writer.write(modulesPart);
+			}
+
+			// ['angularFileUpload']
+
+			writer.write("])");
 
 			writer.write(".run(function($rootScope) {$rootScope.sessionUID = \""
 					+ UID + "\";})");
@@ -149,7 +178,7 @@ public class JavaScriptGenerator implements Serializable {
 			generateController(mb, isModule);
 
 			if (isModule)
-				writer.write(");\n");
+				writer.write("]);\n");
 		}
 
 		validationAdapter.build(writer);
@@ -161,19 +190,7 @@ public class JavaScriptGenerator implements Serializable {
 				extention.toString();
 				m = extention.getClass().getMethod("render");
 				writer.write(m.invoke(extention) + ";");
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -193,7 +210,7 @@ public class JavaScriptGenerator implements Serializable {
 		Object o = reference;
 
 		if (isModule) {
-			writer.write("function");
+			writer.write("['$rootScope','$scope','$http','$location','logger','wsocketRPC',function");
 
 		} else {
 			writer.write("function " + ngController.getName());
@@ -215,23 +232,30 @@ public class JavaScriptGenerator implements Serializable {
 		List<Method> getters = new ArrayList<Method>();
 
 		for (Method m : methods) {
-			if ((m.getName().startsWith("get"))
-					|| (m.getName().startsWith("is"))) {
+			if (util.isGetter(m)) {
 				getters.add(m);
 			}
 		}
 
 		for (Method get : getters) {
+			Object result = null;
 
 			String getter = get.getName();
 
-			String modelName = Util.obtainFieldNameFromAccessor(getter);
+			String modelName = util.obtainFieldNameFromAccessor(getter);
 
-			// TODO validation parts
+			if (get.getReturnType().equals(LobWrapper.class)) {
+
+				String uid = String.valueOf(UUID.randomUUID());
+				cache.getCache().put(uid, new LobSource(o, get));
+				result = "lob/" + uid;
+
+				writer.write("$scope." + modelName + "='" + result + "';");
+				continue;
+
+			}
 
 			validationAdapter.processBeanValidationParsing(get);
-
-			Object result = null;
 
 			Method m;
 
@@ -240,9 +264,10 @@ public class JavaScriptGenerator implements Serializable {
 				m = o.getClass().getMethod((getter));
 
 				result = m.invoke(o);
-				
-				if ((result == null && (m.getReturnType().equals(String.class))))result="";
-				
+
+				if ((result == null && (m.getReturnType().equals(String.class))))
+					result = "";
+
 				if (result == null)
 					continue;
 
@@ -250,7 +275,7 @@ public class JavaScriptGenerator implements Serializable {
 
 				if (!resultClazz.isPrimitive()) {
 
-					result = Util.getJson(result);
+					result = util.getJson(result);
 
 				}
 
@@ -276,46 +301,56 @@ public class JavaScriptGenerator implements Serializable {
 		}
 
 		for (Method m : methods) {
+			if ((!util.isSetter(m)) && (!util.isGetter(m))) {
+				String csModel = null;
+				String[] csUpdates = null;
+				Set<Method> setters = new HashSet<Method>();
 
-			String csModel = null;
-			String[] csUpdates = null;
-			Set<Method> setters = new HashSet<Method>();
+				String httpMethod = "get";
 
-			if (m.isAnnotationPresent(NGReturn.class)) {
-				NGReturn returns = m.getAnnotation(NGReturn.class);
-				csModel = returns.model();
-				csUpdates = returns.updates();
-			}
+				if (m.isAnnotationPresent(GET.class)) {
+					httpMethod = "get";
+				}
 
-			if (m.isAnnotationPresent(NGSubmit.class)
-					|| m.isAnnotationPresent(NGRedirect.class)) {
+				if (m.isAnnotationPresent(POST.class)) {
+					httpMethod = "post";
+				}
+
+				if (m.isAnnotationPresent(DELETE.class)) {
+					httpMethod = "delete";
+				}
+
+				if (m.isAnnotationPresent(PUT.class)) {
+					httpMethod = "put";
+				}
+
+				if (m.isAnnotationPresent(NGReturn.class)) {
+					NGReturn returns = m.getAnnotation(NGReturn.class);
+					csModel = returns.model();
+					csUpdates = returns.updates();
+				}
+
+				// if (m.isAnnotationPresent(NGSubmit.class)
+				// || m.isAnnotationPresent(NGRedirect.class)) {
 
 				if (m.isAnnotationPresent(NGSubmit.class)) {
-					
-					
-					
+
 					String[] models = m.getAnnotation(NGSubmit.class)
 							.updateModels();
 
-					if (models.length == 0||models==null) {
+					if (models.length == 0 || models == null) {
 
-					
-						for (Method md : methods) {
-							String methodName = md.getName();
-							if (methodName.startsWith("set")) {
-								setters.add(md);
-							}
-						}
+						pushScope(methods, setters);
 
 					} else {
 
 						for (String model : models) {
 
 							for (Method md : methods) {
-								String methodName = md.getName();
-								if (methodName.startsWith("set")) {
 
-									String modelName = Util
+								if (util.isSetter(md)) {
+									String methodName = md.getName();
+									String modelName = util
 											.obtainFieldNameFromAccessor(methodName);
 									if (modelName.equals(model)) {
 										setters.add(md);
@@ -324,14 +359,15 @@ public class JavaScriptGenerator implements Serializable {
 								}
 
 							}
-
 						}
 					}
+				} else {
+					pushScope(methods, setters);
 				}
 
 				writer.write("\n $scope." + m.getName() + "= function() {");
 
-				writer.write("var params={sessionUID:'" + UID + "'};");
+				writer.write("var params={sessionUID:$rootScope.sessionUID};");
 				addParams(setters, m);
 
 				if (m.isAnnotationPresent(WebSocket.class)) {
@@ -341,12 +377,18 @@ public class JavaScriptGenerator implements Serializable {
 							+ "',params);");
 
 				} else {
-					writer.write("\n  $http.get('./rest/invoke/service/"
+
+					writer.write("\n  $http." + httpMethod
+							+ "('./rest/invoke/service/"
 							+ ngController.getName() + "/" + m.getName()
 							+ "/json");
 
-					writer.write("?params='+encodeURI(JSON.stringify(params))");
-
+					if (httpMethod.equals("post")) {
+						writer.write("',params");
+					} else {
+						String paramsQuery = ("?params='+encodeURI(JSON.stringify(params))");
+						writer.write(paramsQuery);
+					}
 					writer.write(").\n success(function(data) {\n");
 
 					if (m.isAnnotationPresent(NGRedirect.class)) {
@@ -375,33 +417,42 @@ public class JavaScriptGenerator implements Serializable {
 
 				writer.write("};");
 
+				// }
+
 			}
-
 		}
-
 		writer.write("\n} \n");
 
 	}
 
-	private void addParams(Set<Method> setters, Method m) {
-		if (m.isAnnotationPresent(NGSubmit.class)) {
+	private void pushScope(Method[] methods, Set<Method> setters) {
+		for (Method md : methods) {
 
-			for (Method setter : setters) {
-
-				String name = setter.getName();
-				name = name.substring(3, 4).toLowerCase() + name.substring(4);
-
-				writer.write("params['" + name + "']=$scope." + name + ";");
-
+			if (util.isSetter(md)) {
+				setters.add(md);
 			}
+		}
+	}
+
+	private void addParams(Set<Method> setters, Method m) {
+		// if (m.isAnnotationPresent(NGSubmit.class)) {
+
+		for (Method setter : setters) {
+
+			String name = setter.getName();
+			name = name.substring(3, 4).toLowerCase() + name.substring(4);
+
+			writer.write("params['" + name + "']=$scope." + name + ";");
 
 		}
+
+		// }
 
 	}
 
 	public void setHTTPRequest(HttpServletRequest request) {
 
-		request.getSession().setAttribute(Util.NG_SESSION_ATTRIBUTE_NAME, UID);
+		request.getSession().setAttribute(util.NG_SESSION_ATTRIBUTE_NAME, UID);
 
 		this.request = request;
 

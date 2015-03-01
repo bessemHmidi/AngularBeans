@@ -19,23 +19,16 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.extentions;
+package angularBeans.api;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 
-import angularBeans.Extention;
-import angularBeans.NGExtention;
-
-@NGExtention
-public class BundleService implements Extention {
-
-	@Override
-	public String render() {
-		String result = "";
-		result += "app.service(\"bundleService\",['$http','$rootScope','$timeout',function($http,$rootScope,$timeout){"
-				+ "this.loadBundle=function(bundleName,aleas){"
-				+ " $http.get('resources/'+bundleName).success(function(data){"
-				+ " $rootScope[aleas]=data;" + "});};;}]);";
-		return result;
-	}
-
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ByteArrayPath {
+	
 }

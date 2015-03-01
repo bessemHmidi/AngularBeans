@@ -31,11 +31,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import angularBeans.Util;
+import angularBeans.AngularBeansUtil;
 
 @WebServlet(urlPatterns = "/resources/*")
 public class ResourceServlet extends HttpServlet {
 
+	
+	AngularBeansUtil util;
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -50,7 +53,7 @@ public class ResourceServlet extends HttpServlet {
 		Properties properties = new Properties();
 		properties.load(is);
 
-		resp.getWriter().write(Util.getJson(properties));
+		resp.getWriter().write(util.getJson(properties));
 
 	}
 

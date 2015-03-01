@@ -22,6 +22,7 @@
 package angularBeans.wsocket;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -34,7 +35,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import angularBeans.Util;
+import angularBeans.AngularBeansUtil;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.wsocket.annotations.WSocketReceiveEvent;
 import angularBeans.wsocket.annotations.WSocketSessionCloseEvent;
@@ -45,6 +46,9 @@ import com.google.gson.JsonObject;
 @ServerEndpoint(value = "/ws-service", configurator = GetHttpSessionConfigurator.class)
 public class WSocketServcieEndPoint implements Serializable {
 
+	
+	
+	
 	@Inject
 	@WSocketReceiveEvent
 	private Event<WSocketEvent> receiveEvents;
@@ -63,55 +67,51 @@ public class WSocketServcieEndPoint implements Serializable {
 
 	@PostConstruct
 	public void init() {
-
+		// Thread.currentThread().setName("Wsocket End Point");
 	}
 
-	 
-	
-	
 	@OnOpen
 	public void onOpen(Session session, EndpointConfig conf) {
-		//NGSessionScopeContext.changeHolder(UID);
-		//sessionOpenEvent.fire(new WSocketEvent(session, null));
+		// NGSessionScopeContext.changeHolder(UID);
+		// sessionOpenEvent.fire(new WSocketEvent(session, null));
 
 	}
 
 	@OnMessage
 	public void onMessage(Session session, String message) {
-		
-		
-		
-		JsonObject jObj =Util.parse(message);
+
+		JsonObject jObj = AngularBeansUtil.parse(message);
 		String UID = jObj.get("session").getAsString();
-		
-		WSocketEvent ev = new WSocketEvent(session, Util.parse(message));
-		
+
+		WSocketEvent ev = new WSocketEvent(session, AngularBeansUtil.parse(message));
+
 		ev.setSession(session);
 		NGSessionScopeContext.setCurrentContext(UID);
-		
-		String service=jObj.get("service").getAsString();
 
-		if(service.equals("ping"))
-		{
-			System.out.println("wensock init ::"+message);
-			sessionOpenEvent.fire(ev);
-		}
-		else{
+		String service = jObj.get("service").getAsString();
+
+		if (service.equals("ping")) {
 			
+			sessionOpenEvent.fire(ev);
+			Logger.getLogger("AngularBeans").info("ws-client: " + UID);
+			
+		} else {
+
 			receiveEvents.fire(ev);
 		}
-
 
 	}
 
 	@OnClose
 	public void onclose(Session session) {
 		sessionCloseEvent.fire(new WSocketEvent(session, null));
+		Logger.getLogger("AngularBeans").info("ws-channel closed");
 	}
 
 	@OnError
 	public void onError(Session session, Throwable error) {
-		//errorEvent.fire(new WSocketEvent(session, Util.parse(Util.getJson(error))));
+		// errorEvent.fire(new WSocketEvent(session,
+		// Util.parse(Util.getJson(error))));
 		error.printStackTrace();
 	}
 

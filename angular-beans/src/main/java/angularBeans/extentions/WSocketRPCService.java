@@ -48,7 +48,7 @@ public class WSocketRPCService implements Extention {
 
 		String result = "";
 		
-		result += "app.service('wsocketRPC', function(logger,$rootScope,$http){\n";
+		result += "app.service('wsocketRPC',['logger','$rootScope','$http',function(logger,$rootScope,$http){\n";
 		result += "\nvar ws = new WebSocket(\"" + webSocketPath + "\");";
 		result += "\nthis.rootScope=$rootScope;";
 		result += "\nvar wsocketRPC=this;";
@@ -86,7 +86,7 @@ public class WSocketRPCService implements Extention {
 		
 		result += "\nfor (var rs in scopes){";
 
-		result += 	"if(scopes[rs].id===msg.reqId){";
+	result += 	"if(scopes[rs].id===msg.reqId){";
 				
 		result+="refScope=scopes[rs].scope;";
 			
@@ -104,12 +104,14 @@ public class WSocketRPCService implements Extention {
 
 		result += "\nfor (var key in msg) {";
 
-		result += "\nif (refScope.hasOwnProperty(key)) {";
+		//result += "\nif (refScope.hasOwnProperty(key)) {";
 
 		result += "\nrefScope[key]=msg[key];";
-		result += "\n  }}";
+		//result += "}";
+		
+		result += "\n  }";
 		result += "\nrefScope.$apply();";
-        result+="}";
+   result+="}";
         //
 		result += "\nif(msg.isRPC){";
 		result += "\nwsocketRPC.unsubscribe(msg.reqId,refScope);";
@@ -156,7 +158,7 @@ public class WSocketRPCService implements Extention {
 		result += "\n'params': params";
 		result += "\n};";
 		result += "\nwsocketRPC.send(message);";
-		result += "\n}});";
+		result += "\n}}]);";
 
 		return result;
 	}

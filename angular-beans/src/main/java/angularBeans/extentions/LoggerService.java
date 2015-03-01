@@ -30,7 +30,7 @@ public class LoggerService implements Extention {
 	public String render() {
 		String result = "";
 
-		result += "	app.service('logger',function(){";
+		result += "	app.service('logger',[function(){";
 		result += "		this.log=function(logMessages){";
 		result += "			for (var i in logMessages) ";
 		result += "			{";
@@ -41,7 +41,7 @@ public class LoggerService implements Extention {
 		result += "				if(level===\"warn\"){console.warn(message);};";
 		result += "				if(level===\"debug\"){console.debug(message);};";
 		result += "				}";
-		result += "			 }});";
+		result += "			 }}]);";
 
 		return result;
 	}

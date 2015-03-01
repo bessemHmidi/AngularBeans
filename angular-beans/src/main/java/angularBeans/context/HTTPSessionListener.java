@@ -21,11 +21,12 @@
  */
 package angularBeans.context;
 
+import javax.rmi.CORBA.Util;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import angularBeans.Util;
+import angularBeans.AngularBeansUtil;
 
 @WebListener
 public class HTTPSessionListener implements HttpSessionListener{
@@ -38,7 +39,7 @@ public class HTTPSessionListener implements HttpSessionListener{
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
-		GlobalMapHolder.destroySession(String.valueOf(se.getSession().getAttribute(Util.NG_SESSION_ATTRIBUTE_NAME)));
+		GlobalMapHolder.destroySession(String.valueOf(se.getSession().getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME)));
 		
 	}
 

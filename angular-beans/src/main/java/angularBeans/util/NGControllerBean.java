@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import angularBeans.Util;
+import angularBeans.AngularBeansUtil;
 
 public class NGControllerBean implements Serializable{
 
@@ -67,7 +67,7 @@ public class NGControllerBean implements Serializable{
 	}
 	
 
-	setName(Util.getBeanName(targetClass));
+	setName(AngularBeansUtil.getBeanName(targetClass));
 	
 	
 	}

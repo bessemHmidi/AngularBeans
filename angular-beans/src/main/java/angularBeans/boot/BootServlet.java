@@ -21,10 +21,7 @@
  */
 package angularBeans.boot;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
 
 import javax.inject.Inject;
@@ -34,7 +31,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+import com.google.javascript.jscomp.CompilationLevel;
+import com.google.javascript.jscomp.Compiler;
+import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.SourceFile;
 
 @WebServlet(urlPatterns = "/angular-beans.js")
 public class BootServlet extends HttpServlet {
@@ -56,36 +56,45 @@ public class BootServlet extends HttpServlet {
 		StringWriter stringWriter = new StringWriter();
 		generator.getScript(stringWriter);
 
-		byte[] barray = stringWriter.toString().getBytes();
+		String jsContent=stringWriter.toString();
 
-		InputStream is = new ByteArrayInputStream(barray);
-		String compressed = getCompressedJavaScript(is);
-
+		
+		
+		String compressed = getCompressedJavaScript(jsContent);
 		resp.getWriter().write(compressed);
+		
+//		resp.getWriter().write(jsContent);
 
 		resp.getWriter().flush();
 	}
 
-	private String getCompressedJavaScript(InputStream inputStream)
-			throws IOException {
-		InputStreamReader isr = new InputStreamReader(inputStream);
-		JavaScriptCompressor compressor = new JavaScriptCompressor(isr,
-				new CompressorErrorReporter());
-		inputStream.close();
-		int lineBreakPos = 80;
-		boolean munge = false;
-		boolean warn = false;
-		boolean preserveAllSemiColons = true;
-		StringWriter out = new StringWriter();
-		compressor.compress(out, lineBreakPos, munge, warn,
-				preserveAllSemiColons, true);
-
+	private String getCompressedJavaScript(String jsContent) {
+		String compiled="";
+		//System.out.println(jsContent);
 		
+		compiled=compile(jsContent, CompilationLevel.WHITESPACE_ONLY);
 		
-		out.flush();
-		StringBuffer buffer = out.getBuffer();
-
-		return buffer.toString();
+		//compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
+		return compiled;
 	}
+
+	
+	 public static String compile(String code,CompilationLevel level) {
+		    Compiler compiler = new Compiler();
+
+		    CompilerOptions options = new CompilerOptions();
+		    
+		    
+		    
+		    level.setOptionsForCompilationLevel(options);
+		    
+		    options.setAngularPass(true);
+		    
+		    SourceFile extern = SourceFile.fromCode("externs.js","function alert(x) {}");
+		    SourceFile input =SourceFile .fromCode("input.js", code);
+		    compiler.compile(extern, input, options);
+		    return compiler.toSource();   
+		  }
+	 
 
 }
