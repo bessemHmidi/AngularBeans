@@ -31,10 +31,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.javascript.jscomp.CheckLevel;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.PropertyRenamingPolicy;
 import com.google.javascript.jscomp.SourceFile;
+import com.google.javascript.jscomp.VariableRenamingPolicy;
+import com.google.javascript.jscomp.CompilerOptions.Reach;
 
 @WebServlet(urlPatterns = "/angular-beans.js")
 public class BootServlet extends HttpServlet {
@@ -84,9 +88,25 @@ public class BootServlet extends HttpServlet {
 
 		    CompilerOptions options = new CompilerOptions();
 		    
-		    
-		    
-		    level.setOptionsForCompilationLevel(options);
+//		    options.closurePass = false;
+//		    options.setRenamingPolicy(
+//		        VariableRenamingPolicy.OFF, PropertyRenamingPolicy.OFF);
+//		   
+//		    options.setInlineVariables(Reach.ALL);
+//		    options.flowSensitiveInlineVariables = true;
+//		    options.setInlineFunctions(Reach.ALL);
+//		    options.setAssumeClosuresOnlyCaptureReferences(false);
+//		    options.checkGlobalThisLevel = CheckLevel.OFF;
+//		    
+//		    options.foldConstants = true;
+//		    options.coalesceVariableNames = true;
+//		    options.deadAssignmentElimination = true;
+//		    options.collapseVariableDeclarations = true;
+//		    options.convertToDottedProperties = true;
+//		    options.labelRenaming = true;
+//		    options.removeDeadCode = true;
+//		    options.optimizeArgumentsArray = true;
+//		    options.setRemoveUnusedVariables(Reach.ALL);
 		    
 		    options.setAngularPass(true);
 		    

@@ -54,6 +54,7 @@ import angularBeans.api.NGRedirect;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.context.BeanLocator;
+import angularBeans.context.GlobalMapHolder;
 import angularBeans.log.NGLogger;
 import angularBeans.util.NGControllerBean;
 import angularBeans.validation.BeanValidationProcessor;
@@ -76,7 +77,7 @@ public class JavaScriptGenerator implements Serializable {
 	public void init() {
 		UID = String.valueOf(UUID.randomUUID());
 
-		// GlobalMapHolder.get(UID);
+		 GlobalMapHolder.get(UID);
 	}
 
 	public synchronized String getUID() {
@@ -220,6 +221,9 @@ public class JavaScriptGenerator implements Serializable {
 
 		writer.write(",wsocketRPC){\n");
 
+	
+	
+		writer.write("\nvar rpath='./rest/invoke/service/';\n");
 		if (clazz.isAnnotationPresent(Subscribe.class)) {
 			String[] channels = ((Subscribe) clazz
 					.getAnnotation(Subscribe.class)).channels();
@@ -379,9 +383,10 @@ public class JavaScriptGenerator implements Serializable {
 				} else {
 
 					writer.write("\n  $http." + httpMethod
-							+ "('./rest/invoke/service/"
+							+ "(rpath+'"
 							+ ngController.getName() + "/" + m.getName()
 							+ "/json");
+				
 
 					if (httpMethod.equals("post")) {
 						writer.write("',params");

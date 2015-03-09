@@ -30,15 +30,15 @@ public class TemplatesDirectives implements Extention {
 	public String render() {
 
 		return ("\n"
-				+ "app.directive('uiTemplate', function() {"
+				+ "app.directive('uiTemplate', [function() {"
 				+ " return {"
 				+ "compile: function(tElem,attrs) {"
 				+ " return function(scope,elem,attrs) {"
 				+ "sessionStorage.setItem(\"URL\",document.URL);"
 				+ "window.location = attrs.uiTemplate;"
-				+ "};}};});"
+				+ "};}};}]);"
 
-				+ "app.directive('uiInsert', function($compile) {"
+				+ "app.directive('uiInsert', [function($compile) {"
 				+ "return {compile: function(tElem,attrs) {"
 				+ "return function(scope,elem,attrs) {"
 				+ "elem.html(\"\");"
@@ -47,16 +47,14 @@ public class TemplatesDirectives implements Extention {
 				
 				+ "var addon=sessionStorage.getItem(attrs.uiInsert);"
 				+ "elem.append($compile(addon)(scope));"
+				+ "};}};}])"
 				
-				
-				
-				+ "};}};})"
-				+ ".directive('uiDefine', function() {"
+				+ ".directive('uiDefine', [function() {"
 				+ "	  return {" + "   compile: function(tElem,attrs) {"
 				+ "tElem.attr('hidden', 'true');"
 				+ "   return function(scope,elem,attrs) {"
 				+ "sessionStorage.setItem(attrs.uiDefine,elem.html());"
-				+ "};}};});");
+				+ "};}};}]);");
 	}
 
 }

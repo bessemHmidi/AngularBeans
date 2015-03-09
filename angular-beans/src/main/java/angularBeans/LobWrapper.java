@@ -1,5 +1,6 @@
 package angularBeans;
 
+
 public class LobWrapper {
 
 	private Object owner;
@@ -8,12 +9,15 @@ public class LobWrapper {
 	public LobWrapper(byte[] data,Object owner) {
 		this.owner=owner;
 		this.data=data;
+	
+		
 	}
 	public Object getOwner() {
 		return owner;
 	}
 	
 	public byte[] getData() {
+		
 		return data;
 	}
 	

@@ -23,8 +23,12 @@ package angularBeans.wsocket;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -40,7 +44,7 @@ import angularBeans.wsocket.annotations.WSocketSessionReadyEvent;
 @NGSessionScoped
 public class WSocketClient implements Serializable {
 
-	private Session session;
+	private Set<Session> sessions=new HashSet<Session>();
 	
 	@Inject
 	AngularBeansUtil util;
@@ -52,13 +56,13 @@ public class WSocketClient implements Serializable {
 	
 	
 	public void onSessionReady(@Observes @WSocketSessionReadyEvent WSocketEvent event) {
-    session = event.getSession();
+    sessions.add(event.getSession());
 	event.setClient(this);
 	
 	}
 
 	public void onClose(@Observes @WSocketSessionCloseEvent WSocketEvent event) {
-
+		sessions.remove(event.getSession());
 	}
 
 	public void onError(@Observes @WSocketErrorEvent WSocketEvent event) {
@@ -67,13 +71,13 @@ public class WSocketClient implements Serializable {
 
 	public void onSession(@Observes @WSocketReceiveEvent WSocketEvent event) {
 
-		session = event.getSession();
+		sessions.add(event.getSession());
 		event.setClient(this);
 
 	}
 
-	public Session getSession() {
-		return session;
+	public Set<Session> getSessions() {
+		return sessions;
 	}
 
 	public void publish(String channel, WSocketMessage message) {
@@ -82,13 +86,19 @@ public class WSocketClient implements Serializable {
 				message.build());
 		paramsToSend.put("reqId", channel);
 		 paramsToSend.put("log", logger.getLogPool());
-		try {
+		
+		 for(Session session:sessions){
+		 try {
+			 if(!session.isOpen()){sessions.remove(session);}
+			 else{
 			session.getBasicRemote().sendText(util.getJson(paramsToSend));
-
+			 }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		
+	}
+	}
 	}
 
 	
@@ -100,10 +110,10 @@ public class WSocketClient implements Serializable {
 		paramsToSend.put("reqId", channel);
        
 		
-		if (!(session == null)) {
+		if (!(sessions.size()>0)) {
 			
-			
-				for (Session sess : session.getOpenSessions()) {
+			Session first=new ArrayList<Session>(sessions).get(0);
+				for (Session sess : first.getOpenSessions()) {
 					String objectMessage=util.getJson(paramsToSend);
 					
 					sess.getBasicRemote().sendText(objectMessage);

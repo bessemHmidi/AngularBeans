@@ -25,26 +25,41 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.AbstractCollection;
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.websocket.EncodeException;
 
 import angularBeans.AngularBeansUtil;
+import angularBeans.LobWrapper;
 import angularBeans.api.NGReturn;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.log.LogMessage;
 import angularBeans.log.NGLogger;
+import angularBeans.log.NGLogger.Level;
 import angularBeans.wsocket.WSocketClient;
 import angularBeans.wsocket.WSocketEvent;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 
 @Dependent
 public class RemoteInvoker implements Serializable {
@@ -159,8 +174,9 @@ public class RemoteInvoker implements Serializable {
 			Method m = o.getClass().getMethod(method);
 
 			if (!util.isGetter(m)) {
-
+				// if(util.isSetter(m)){
 				update(o, params);
+				// }
 
 			}
 
@@ -220,10 +236,7 @@ public class RemoteInvoker implements Serializable {
 					continue;
 				}
 
-				
-				
-				
-				if (value.isJsonObject() && (!value.isJsonNull())) {
+				if ((value.isJsonObject()) && (!value.isJsonNull())) {
 
 					String getName;
 					try {
@@ -239,12 +252,105 @@ public class RemoteInvoker implements Serializable {
 					} catch (NoSuchFieldException | SecurityException
 							| IllegalAccessException | IllegalArgumentException
 							| InvocationTargetException | NoSuchMethodException e) {
-						// TODO Auto-generated catch block
+
 						e.printStackTrace();
 					}
 
 				}
+				// ------------------------------------
+				if (value.isJsonArray()) {
+					// System.out.println("RAW "+value);
+					try {
+						String getter = util.obtainGetter(o.getClass()
+								.getDeclaredField(name));
 
+						Method get = o.getClass().getDeclaredMethod(getter);
+
+						Type type = get.getGenericReturnType();
+						ParameterizedType pt = (ParameterizedType) type;
+						Type actType = pt.getActualTypeArguments()[0];
+
+						Class collectionClazz = get.getReturnType();
+
+						String className = actType.toString();
+
+						className = className.substring(className
+								.indexOf("class") + 6);
+						Class clazz = Class.forName(className);
+
+						JsonArray array = value.getAsJsonArray();
+
+						Collection collection = (Collection) get.invoke(o);
+						Object elem = null;
+						for (JsonElement element : array) {
+							if (element.isJsonPrimitive()) {
+								JsonPrimitive primitive = element
+										.getAsJsonPrimitive();
+								// System.out.println("primitive"+primitive);
+								elem = element;
+								if (primitive.isBoolean())
+									elem = primitive.getAsBoolean();
+								if (primitive.isString()) {
+									elem = primitive.getAsString();
+								}
+								if (primitive.isNumber())
+									elem = primitive.getAsNumber();
+
+							} else {
+								// System.out.println(clazz);
+								GsonBuilder builder = new GsonBuilder();
+
+								builder.registerTypeAdapter(LobWrapper.class,
+										new JsonDeserializer<LobWrapper>() {
+
+											@Override
+											public LobWrapper deserialize(
+													JsonElement json,
+													Type typeOfT,
+													JsonDeserializationContext context)
+													throws JsonParseException {
+												// System.out.println("TADA.......");
+												return null;
+											}
+										});
+
+								Gson gson = builder.create();
+
+								elem = gson.fromJson(element, clazz);
+
+							}
+
+							// if (collection instanceof AbstractCollection) {
+							//
+							// ArrayList list=new ArrayList();
+							// list.addAll(collection);
+							// collection=list;
+							// }
+
+							try {
+
+								if (collection instanceof List) {
+
+									if (collection.contains(elem))
+										collection.remove(elem);
+								}
+
+								collection.add(elem);
+							} catch (UnsupportedOperationException e) {
+								Logger.getLogger("AngularBeans")
+								.log(java.util.logging.Level.WARNING,"trying to modify an immutable collection : "+name);
+							}
+
+						}
+
+					} catch (Exception e) {
+						e.printStackTrace();
+						// System.out.println(value);
+					}
+
+				}
+
+				// ------------------------------------------
 				if (value.isJsonPrimitive() && (!name.equals("setSessionUID"))) {
 					try {
 						if (!util.hasSetter(o.getClass(), name)) {

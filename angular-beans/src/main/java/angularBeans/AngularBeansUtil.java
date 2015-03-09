@@ -21,6 +21,9 @@
  */
 package angularBeans;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -82,12 +85,12 @@ public class AngularBeansUtil implements Serializable {
 		return "get" + name;
 	}
 
-	// public static String obtainSetter(Field field) {
-	// String name = field.getName();
-	// name = name.substring(0, 1).toUpperCase() + name.substring(1);
-	//
-	// return "set" + name;
-	// }
+	 public static String obtainSetter(Field field) {
+	 String name = field.getName();
+	 name = name.substring(0, 1).toUpperCase() + name.substring(1);
+	
+	 return "set" + name;
+	 }
 
 	@PostConstruct
 	public void init() {
@@ -263,6 +266,9 @@ class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
 	public JsonElement serialize(LobWrapper src, Type typeOfSrc,
 			JsonSerializationContext context) {
 
+		
+
+		
 		LobWrapper lobWrapper = (LobWrapper) src;
 
 		container = lobWrapper.getOwner();
@@ -307,5 +313,6 @@ class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
 		}
 		return new JsonPrimitive("lob/" + id);
 	}
+	
 
 }

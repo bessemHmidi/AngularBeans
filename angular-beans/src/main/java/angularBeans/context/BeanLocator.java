@@ -50,9 +50,7 @@ public class BeanLocator implements Serializable {
 
 	public synchronized Object lookup(String beanName, String UID) {
 
-		
-		//AbstractThreadLocalMapContext contextMap=(AbstractThreadLocalMapContext)beanManager;
-		
+	
 		NGSessionScopeContext.setCurrentContext(UID);
 		Object reference = null;
 

@@ -105,12 +105,14 @@ public class WSocketRPCService implements Extention {
 		result += "\nfor (var key in msg) {";
 
 		//result += "\nif (refScope.hasOwnProperty(key)) {";
-
+	//	result+="refScope[key]='';refScope.$digest();\nrefScope.$apply();";
 		result += "\nrefScope[key]=msg[key];";
+		
+		
 		//result += "}";
 		
 		result += "\n  }";
-		result += "\nrefScope.$apply();";
+		result += "\nrefScope.$digest();\nrefScope.$apply();";
    result+="}";
         //
 		result += "\nif(msg.isRPC){";

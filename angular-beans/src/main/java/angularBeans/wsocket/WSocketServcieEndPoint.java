@@ -21,7 +21,9 @@
  */
 package angularBeans.wsocket;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -77,6 +79,18 @@ public class WSocketServcieEndPoint implements Serializable {
 
 	}
 
+	
+	@OnMessage
+	public void onBinary( Session session,ByteBuffer data) throws IOException {
+	    System.out.println("Binary received: " + data);
+//	    for (byte b : data.array()) {
+//	        System.out.print(b);
+//	    }
+	   // session.getRemote().sendBytes(data);
+	}
+	
+	
+	
 	@OnMessage
 	public void onMessage(Session session, String message) {
 

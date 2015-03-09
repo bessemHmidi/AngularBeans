@@ -50,7 +50,11 @@ public class DataServlet extends HttpServlet {
 			Object result=m.invoke(container);
 			
 			byte[] data =((LobWrapper) result).getData();
+			
 			o = response.getOutputStream();
+if(data==null){
+			data="default".getBytes();	
+			}
 			o.write(data);
 			o.flush();
 			o.close();
