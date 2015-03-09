@@ -19,7 +19,7 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans;
+package angularBeans.io;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;

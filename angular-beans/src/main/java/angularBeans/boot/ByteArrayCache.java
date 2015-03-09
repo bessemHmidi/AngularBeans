@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.ws.rs.GET;
 
-import angularBeans.LobSource;
+import angularBeans.io.LobSource;
 
-@SessionScoped
+@ApplicationScoped
 public class ByteArrayCache implements Serializable{
 
 	private Map<String,LobSource> cache = new HashMap<String, LobSource>();

@@ -46,10 +46,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import angularBeans.AngularBeansUtil;
-import angularBeans.UploadNotifier;
 import angularBeans.context.BeanLocator;
+import angularBeans.io.UploadNotifier;
 import angularBeans.remote.RemoteInvoker;
+import angularBeans.util.AngularBeansUtil;
 
 import com.google.gson.JsonObject;
 

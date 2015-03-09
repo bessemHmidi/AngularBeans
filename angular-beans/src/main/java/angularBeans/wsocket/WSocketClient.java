@@ -34,9 +34,9 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.websocket.Session;
 
-import angularBeans.AngularBeansUtil;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.log.NGLogger;
+import angularBeans.util.AngularBeansUtil;
 import angularBeans.wsocket.annotations.WSocketReceiveEvent;
 import angularBeans.wsocket.annotations.WSocketSessionCloseEvent;
 import angularBeans.wsocket.annotations.WSocketSessionReadyEvent;
@@ -87,7 +87,7 @@ public class WSocketClient implements Serializable {
 		paramsToSend.put("reqId", channel);
 		 paramsToSend.put("log", logger.getLogPool());
 		
-		 for(Session session:sessions){
+		 for(Session session:new HashSet<Session>(sessions)){
 		 try {
 			 if(!session.isOpen()){sessions.remove(session);}
 			 else{
@@ -103,6 +103,14 @@ public class WSocketClient implements Serializable {
 
 	
 	
+	public void flushModel(Class controllerClass,String modelName,Object model ){
+		
+		System.out.println(controllerClass.getSimpleName());
+		
+		publish(controllerClass.getSimpleName(), new WSocketMessage().add(modelName, model));
+		
+	}
+	
 	public void publishToAll(String channel, WSocketMessage message) {
 		try {
 		Map<String, Object> paramsToSend = new HashMap<String, Object>(
@@ -110,15 +118,20 @@ public class WSocketClient implements Serializable {
 		paramsToSend.put("reqId", channel);
        
 		
-		if (!(sessions.size()>0)) {
+		if ((sessions.size()>0)) {
 			
-			Session first=new ArrayList<Session>(sessions).get(0);
+			
+			for(Session first:sessions){
+				if(first.isOpen())
 				for (Session sess : first.getOpenSessions()) {
+					if(sess.isOpen()){
 					String objectMessage=util.getJson(paramsToSend);
 					
 					sess.getBasicRemote().sendText(objectMessage);
+					}
 				}
-
+			}
+				
 		}
 		} catch (Exception e) {
 		

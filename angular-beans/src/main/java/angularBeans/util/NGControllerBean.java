@@ -25,8 +25,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import angularBeans.AngularBeansUtil;
-
 public class NGControllerBean implements Serializable{
 
 	Class<? extends Object> proxyClass;

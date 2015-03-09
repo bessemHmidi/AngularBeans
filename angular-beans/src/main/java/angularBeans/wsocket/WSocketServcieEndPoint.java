@@ -37,8 +37,8 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import angularBeans.AngularBeansUtil;
 import angularBeans.context.NGSessionScopeContext;
+import angularBeans.util.AngularBeansUtil;
 import angularBeans.wsocket.annotations.WSocketReceiveEvent;
 import angularBeans.wsocket.annotations.WSocketSessionCloseEvent;
 import angularBeans.wsocket.annotations.WSocketSessionReadyEvent;

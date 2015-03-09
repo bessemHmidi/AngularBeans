@@ -22,8 +22,6 @@
 package angularBeans.extentions;
 
 
-import angularBeans.Extention;
-import angularBeans.NGExtention;
 
 @NGExtention
 public class BundleService implements Extention {

@@ -41,13 +41,13 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.websocket.EncodeException;
 
-import angularBeans.AngularBeansUtil;
-import angularBeans.LobWrapper;
 import angularBeans.api.NGReturn;
 import angularBeans.context.NGSessionScopeContext;
+import angularBeans.io.LobWrapper;
 import angularBeans.log.LogMessage;
 import angularBeans.log.NGLogger;
 import angularBeans.log.NGLogger.Level;
+import angularBeans.util.AngularBeansUtil;
 import angularBeans.wsocket.WSocketClient;
 import angularBeans.wsocket.WSocketEvent;
 

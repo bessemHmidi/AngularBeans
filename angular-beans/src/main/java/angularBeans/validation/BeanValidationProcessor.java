@@ -40,7 +40,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import angularBeans.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtil;
 
 @ApplicationScoped
 public class BeanValidationProcessor implements Serializable {

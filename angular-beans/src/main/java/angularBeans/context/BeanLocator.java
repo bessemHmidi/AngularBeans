@@ -32,7 +32,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import angularBeans.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtil;
 
 
 @ApplicationScoped

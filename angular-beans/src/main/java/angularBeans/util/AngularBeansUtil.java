@@ -19,7 +19,7 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans;
+package angularBeans.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,6 +38,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import angularBeans.boot.ByteArrayCache;
+import angularBeans.io.LobSource;
+import angularBeans.io.LobWrapper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

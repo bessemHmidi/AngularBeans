@@ -24,8 +24,6 @@ package angularBeans.extentions;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import angularBeans.Extention;
-import angularBeans.NGExtention;
 import angularBeans.boot.JavaScriptGenerator;
 
 @NGExtention

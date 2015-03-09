@@ -26,7 +26,7 @@ import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import angularBeans.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtil;
 
 @WebListener
 public class HTTPSessionListener implements HttpSessionListener{

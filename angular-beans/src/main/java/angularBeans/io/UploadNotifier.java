@@ -1,4 +1,4 @@
-package angularBeans;
+package angularBeans.io;
 
 import java.io.Serializable;
 import java.util.Collection;

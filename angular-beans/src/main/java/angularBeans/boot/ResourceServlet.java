@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import angularBeans.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtil;
 
 @WebServlet(urlPatterns = "/resources/*")
 public class ResourceServlet extends HttpServlet {

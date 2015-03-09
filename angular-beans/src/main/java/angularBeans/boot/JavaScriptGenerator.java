@@ -43,10 +43,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
-import angularBeans.AngularBeansUtil;
-import angularBeans.LobSource;
-import angularBeans.LobWrapper;
-import angularBeans.NGExtention;
 import angularBeans.api.NGApp;
 import angularBeans.api.NGController;
 import angularBeans.api.NGModules;
@@ -55,7 +51,11 @@ import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.GlobalMapHolder;
+import angularBeans.extentions.NGExtention;
+import angularBeans.io.LobSource;
+import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
+import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.NGControllerBean;
 import angularBeans.validation.BeanValidationProcessor;
 import angularBeans.wsocket.WebSocket;
@@ -224,9 +224,16 @@ public class JavaScriptGenerator implements Serializable {
 	
 	
 		writer.write("\nvar rpath='./rest/invoke/service/';\n");
+		
+		String defaultChannel=clazz.getSimpleName();
+		
+		writer.write("\nwsocketRPC.subscribe($scope,'" + defaultChannel + "');");
 		if (clazz.isAnnotationPresent(Subscribe.class)) {
 			String[] channels = ((Subscribe) clazz
 					.getAnnotation(Subscribe.class)).channels();
+			
+			
+			
 			for (String channel : channels) {
 
 				writer.write("wsocketRPC.subscribe($scope,'" + channel + "');");

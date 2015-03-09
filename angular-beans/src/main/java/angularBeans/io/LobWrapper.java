@@ -1,4 +1,4 @@
-package angularBeans;
+package angularBeans.io;
 
 
 public class LobWrapper {

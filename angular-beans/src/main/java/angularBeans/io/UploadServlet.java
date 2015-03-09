@@ -1,4 +1,4 @@
-package angularBeans;
+package angularBeans.io;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,6 +17,7 @@ import javax.servlet.http.Part;
 
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.log.NGLogger;
+import angularBeans.util.AngularBeansUtil;
 
 @WebServlet(urlPatterns = { "/uploadEndPoint/*" })
 @MultipartConfig()
