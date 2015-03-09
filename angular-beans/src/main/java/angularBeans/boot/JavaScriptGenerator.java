@@ -52,6 +52,9 @@ import angularBeans.api.NGSubmit;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.GlobalMapHolder;
 import angularBeans.extentions.NGExtention;
+import angularBeans.io.Call;
+import angularBeans.io.FileUpload;
+import angularBeans.io.FileUploadHandler;
 import angularBeans.io.LobSource;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
@@ -108,6 +111,11 @@ public class JavaScriptGenerator implements Serializable {
 	@NGExtention
 	Instance<Object> ext;
 
+	
+	@Inject
+	FileUploadHandler uploadHandler;
+	
+	
 	@Inject
 	BeanValidationProcessor validationAdapter;
 
@@ -319,6 +327,20 @@ public class JavaScriptGenerator implements Serializable {
 
 				String httpMethod = "get";
 
+				
+				
+				if(m.isAnnotationPresent(FileUpload.class)){
+					
+					String uploadPath=((FileUpload)m.getAnnotation(FileUpload.class)).path();
+					
+					
+					Call call=new Call();
+					call.setMethod(m);
+					call.setObject(o);
+					
+					uploadHandler.getUploadsActions().put(uploadPath, call);
+				}
+				
 				if (m.isAnnotationPresent(GET.class)) {
 					httpMethod = "get";
 				}

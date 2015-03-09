@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.management.Query;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -24,7 +25,10 @@ import angularBeans.util.AngularBeansUtil;
 public class UploadServlet extends HttpServlet {
 
 	@Inject
-	UploadNotifier uploadNotifier;
+	FileUploadHandler uploadHandler;
+	
+	
+	//UploadNotifier uploadNotifier;
 
 	@Inject
 	NGLogger logger;
@@ -34,15 +38,21 @@ public class UploadServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 
 		request.getSession(true);
+		
+		
 		NGSessionScopeContext.setCurrentContext((request.getSession()
 				.getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME)
 				.toString()));
 
 		String contextName = request.getContextPath();
 
-		String param = request.getQueryString();
+		String fullURI=request.getRequestURI();
+		String urlPrefix=contextName+"/uploadEndPoint/";
+		
+		String param=fullURI.substring(fullURI.indexOf(urlPrefix)+urlPrefix.length()-1);//
+		
+		//String param = request.getQueryString();
 
-		System.out.println(param);
 
 		response.setContentType("text/html;charset=UTF-8");
 		try (PrintWriter out = response.getWriter()) {
@@ -67,16 +77,16 @@ public class UploadServlet extends HttpServlet {
 			//
 			// }
 
-			if (request.getParts().size() == 1) {
-				for (Part part : request.getParts()) {
-					uploadNotifier.fireMultipart(part, param);
-					// fileName = part.getSubmittedFileName();
-					// part.write(fileName);
+//			if (request.getParts().size() == 1) {
+//				for (Part part : request.getParts()) {
+//					uploadNotifier.fireMultipart(part, param);
+//					// fileName = part.getSubmittedFileName();
+//					// part.write(fileName);
+//
+//				}
+//			}
 
-				}
-			}
-
-			if (request.getParts().size() > 1) {
+//			if (request.getParts().size() > 1) {
 				List<Upload> uploads = new ArrayList<Upload>();
 				for (Part part : request.getParts()) {
 					Upload event = new Upload(part, param);
@@ -84,9 +94,11 @@ public class UploadServlet extends HttpServlet {
 					// fileName = part.getSubmittedFileName();
 					// part.write(fileName);
 
-				}
+			//	}
 
-				uploadNotifier.fireMultipart(uploads);
+					
+					uploadHandler.handleUploads(uploads,param);
+			//	uploadNotifier.fireMultipart(uploads);
 
 			}
 

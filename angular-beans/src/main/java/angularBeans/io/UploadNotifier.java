@@ -13,17 +13,17 @@ import javax.servlet.http.Part;
 
 import angularBeans.context.NGSessionScoped;
 
-@NGSessionScoped
+//@NGSessionScoped
 public class UploadNotifier implements Serializable  {
 
-	@Inject
-	@Named
-	@FileUpload
+//	@Inject
+//	@Named
+	//@FileUpload
 	Event<Upload> singleUploadEvent;
 
-	@Inject
-	@Named
-	@FileUpload
+//	@Inject
+//	@Named
+	//@FileUpload
 	Event<List<Upload>> multipleUploadEvent;
 
 	public void fireMultipart(Part part,String id) {

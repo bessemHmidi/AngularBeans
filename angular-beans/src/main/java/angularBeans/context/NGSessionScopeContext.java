@@ -38,9 +38,9 @@ public class NGSessionScopeContext implements Context, Serializable {
 
 	public static void setCurrentContext(String holderId) {
 
+		NGSessionContextHolder selectedHolder=GlobalMapHolder.get(holderId);
 		
-		
-		holder.set(GlobalMapHolder.get(holderId));
+		holder.set(selectedHolder);
 
 	}
 
