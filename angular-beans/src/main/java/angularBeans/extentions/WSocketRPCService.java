@@ -68,6 +68,7 @@ public class WSocketRPCService implements Extention {
 		result += "\nws.onmessage = function (evt)";
 		result += "\n{";
 		result += "\nvar msg=JSON.parse(evt.data);";
+	//	result += "\nalert(JSON.stringify(msg));";
 		//-----------------
 		//
 		
@@ -114,7 +115,11 @@ public class WSocketRPCService implements Extention {
    result+="}";
         //
 		result += "\nif(msg.isRPC){";
-		result += "\nwsocketRPC.unsubscribe(msg.reqId,refScope);";
+		
+		//result += "\nrefScope.$digest();\nrefScope.$apply();";
+		
+	//	result += "\nwsocketRPC.unsubscribe(msg.reqId,refScope);";
+		
 		result += "\n}";
 
 		result += "\n }};";
@@ -139,6 +144,7 @@ public class WSocketRPCService implements Extention {
 		result += "\nthis.unsubscribe=function(id,rfc){";
 
 		result += "\nfor(var i = scopes.length - 1; i >= 0; i--) {";
+		
 		result += "\nif((scopes[i].id === id) && (scopes[i].scope === rfc)) {";
 		result += "\nscopes.splice(i, 1);";
 		result += "\n}}";
@@ -148,7 +154,8 @@ public class WSocketRPCService implements Extention {
 
 		result += "\nthis.call=function(rfc,invockation,params){";
 		result += "\nreqId++;";
-		result += "\nwsocketRPC.subscribe(rfc,reqId,true);";
+		
+		//result += "\nwsocketRPC.subscribe(rfc,reqId,true);";
 
 		result += "\nvar message = {";
 		result += "\n'reqId':reqId,";

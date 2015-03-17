@@ -105,8 +105,6 @@ public class WSocketClient implements Serializable {
 	
 	public void flushModel(Class controllerClass,String modelName,Object model ){
 		
-		System.out.println(controllerClass.getSimpleName());
-		
 		publish(controllerClass.getSimpleName(), new WSocketMessage().add(modelName, model));
 		
 	}

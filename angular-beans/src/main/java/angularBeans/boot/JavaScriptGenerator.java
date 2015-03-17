@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -398,10 +399,34 @@ public class JavaScriptGenerator implements Serializable {
 					pushScope(methods, setters);
 				}
 
-				writer.write("\n $scope." + m.getName() + "= function() {");
+				writer.write("\n $scope." + m.getName() + "= function(");
+//---------------------------------------------
+				
+// Handle args				
+//---------------------------------------------
+				Type[] args=m.getParameterTypes();
+			
+				if(!m.isAnnotationPresent(FileUpload.class)){
+				
+				if (args.length>0){
+					String argsString="";
+					for(int i=0;i<args.length;i++){
+						
+					argsString+=("arg"+i+",");
+						
+					}
+					
+					writer.write(argsString.substring(0,argsString.length()-1));
+					
+				}
+				}
+//------------------------------------------------
+//-------------------------------
+				
+				writer.write(") {");
 
 				writer.write("var params={sessionUID:$rootScope.sessionUID};");
-				addParams(setters, m);
+				addParams(setters, m,args);
 
 				if (m.isAnnotationPresent(WebSocket.class)) {
 
@@ -468,7 +493,7 @@ public class JavaScriptGenerator implements Serializable {
 		}
 	}
 
-	private void addParams(Set<Method> setters, Method m) {
+	private void addParams(Set<Method> setters, Method m,Type[] args) {
 		// if (m.isAnnotationPresent(NGSubmit.class)) {
 
 		for (Method setter : setters) {
@@ -480,6 +505,23 @@ public class JavaScriptGenerator implements Serializable {
 
 		}
 
+		//---------------------------------
+		// handle args
+		
+		if(args.length>0){
+		String argsString="";
+		for(int i=0;i<args.length;i++){
+			
+			argsString+="arg"+i+",";
+			
+		}
+		
+		argsString=argsString.substring(0,argsString.length()-1);
+		
+		writer.write("params['args']=["+argsString+"];\n");
+		
+		
+		}
 		// }
 
 	}

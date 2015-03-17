@@ -27,8 +27,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.AbstractCollection;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,7 +44,6 @@ import angularBeans.context.NGSessionScopeContext;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.LogMessage;
 import angularBeans.log.NGLogger;
-import angularBeans.log.NGLogger.Level;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.wsocket.WSocketClient;
 import angularBeans.wsocket.WSocketEvent;
@@ -73,7 +70,7 @@ public class RemoteInvoker implements Serializable {
 	@Inject
 	AngularBeansUtil util;
 
-	public synchronized void wsInvoke(Object o, String method,
+	public synchronized void wsInvoke(Object controller, String methodName,
 			JsonObject params, WSocketEvent event, long reqID, String UID) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
@@ -82,34 +79,140 @@ public class RemoteInvoker implements Serializable {
 		Object mainReturn = null;
 
 		returns.put("isRPC", true);
-		returns.put("reqId", reqID);
+		//returns.put("reqId", reqID);
+
+		returns.put("reqId", controller.getClass().getSimpleName());
 
 		Method methodToInvoke = null;
-		boolean injectEvent = false;
+		
 		try {
 			try {
-				methodToInvoke = o.getClass().getMethod(method,
+				methodToInvoke = controller.getClass().getMethod(methodName,
 						WSocketEvent.class);
-				injectEvent = true;
+				
+				if (!util.isGetter(methodToInvoke)) {
+					// if(util.isSetter(m)){
+					update(controller, params);
+					// }
+
+				}
+					mainReturn = methodToInvoke.invoke(controller, event);
+				
 			} catch (NoSuchMethodException e) {
 				try {
-					methodToInvoke = o.getClass().getMethod(method);
+
+					
+					
+					JsonElement argsElem = params.get("args");
+
+					
+					
+					if (argsElem != null) {
+
+						JsonArray args = params.get("args").getAsJsonArray();
+
+						Map<String, Class> builtInMap = new HashMap<String, Class>();
+						builtInMap.put("int", Integer.TYPE);
+						builtInMap.put("long", Long.TYPE);
+						builtInMap.put("double", Double.TYPE);
+						builtInMap.put("float", Float.TYPE);
+						builtInMap.put("bool", Boolean.TYPE);
+						builtInMap.put("char", Character.TYPE);
+						builtInMap.put("byte", Byte.TYPE);
+						// builtInMap("void", Void.TYPE );
+						builtInMap.put("short", Short.TYPE);
+
+						for (Method mt : controller.getClass().getMethods()) {
+
+							if (mt.getName().equals(methodName)) {
+
+								Type[] parameters = mt.getParameterTypes();
+
+							if (parameters.length == args.size()) {
+
+									List<Object> argsValues = new ArrayList<Object>();
+
+									for (int i = 0; i < parameters.length; i++) {
+
+										// System.out.println(parameters[i].toString());
+										//
+
+										Class typeClass = null;
+										String typeString = ((parameters[i]).toString());
+
+										if (typeString.startsWith("class")) {
+											typeString = typeString.substring(6);
+											try {
+												
+												typeClass = Class.forName(typeString);
+											} catch (Exception e2) {
+												e2.printStackTrace();
+											}
+										}
+
+										else {
+
+											typeClass = builtInMap.get(typeString);
+										}
+
+										JsonElement element = args.get(i);
+
+										if (element.isJsonPrimitive()) {
+											String val = element.getAsString();
+											argsValues.add(util.convertFromString(val,
+													typeClass));
+
+										} else {
+											argsValues.add(deserialise(typeClass, element));
+										}
+
+									}
+
+									methodToInvoke = mt;
+									
+									if (!util.isGetter(methodToInvoke)) {
+										// if(util.isSetter(m)){
+										update(controller, params);
+										// }
+
+									}
+									mainReturn = methodToInvoke.invoke(controller, argsValues.toArray());
+									
+									
+                                   
+								}
+
+							}
+
+						}
+
+					}else{
+						
+					
+						methodToInvoke = controller.getClass().getMethod(methodName);
+						
+						if (!util.isGetter(methodToInvoke)) {
+							// if(util.isSetter(m)){
+							update(controller, params);
+							// }
+
+						}
+						
+						mainReturn = methodToInvoke.invoke(controller);
+					}
+					
+
+					
+					
 				} catch (NoSuchMethodException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 
-			if ((!methodToInvoke.getName().startsWith("get"))
-					&& (!(methodToInvoke.getName().startsWith("is")))) {
-				update(o, params);
-			}
+			
 
-			if (injectEvent) {
-				mainReturn = methodToInvoke.invoke(o, event);
-			} else {
-				mainReturn = methodToInvoke.invoke(o);
-			}
+			
 		} catch (SecurityException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException e1) {
 			// TODO Auto-generated catch block
@@ -126,7 +229,10 @@ public class RemoteInvoker implements Serializable {
 				NGReturn ngReturn = methodToInvoke
 						.getAnnotation(NGReturn.class);
 
+			//	System.out.println("* "+ngReturn.model());
 				returns.put(ngReturn.model(), mainReturn);
+			//	System.out.println("--> "+mainReturn);
+				
 				for (String up : ngReturn.updates()) {
 
 					String getterName = "get"
@@ -134,9 +240,13 @@ public class RemoteInvoker implements Serializable {
 							+ up.substring(1);
 					Method getter = null;
 
-					getter = o.getClass().getMethod(getterName);
+					getter = controller.getClass().getMethod(getterName);
 
-					result = getter.invoke(o);
+					
+					
+					result = getter.invoke(controller);
+				
+					
 					returns.put(up, result);
 				}
 			} catch (IllegalAccessException | IllegalArgumentException
@@ -149,6 +259,10 @@ public class RemoteInvoker implements Serializable {
 		}
 
 		try {
+			
+			
+			
+//			System.out.println(returns);
 			event.getSession().getBasicRemote()
 					.sendObject(util.getJson(returns));
 
@@ -159,6 +273,9 @@ public class RemoteInvoker implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+		
 
 	}
 
@@ -168,51 +285,14 @@ public class RemoteInvoker implements Serializable {
 		NGSessionScopeContext.setCurrentContext(UID);
 
 		List<Object> returns = new ArrayList<Object>();
-		Object mainReturn = null;
+
 		try {
 
-			Method m = o.getClass().getMethod(method);
+			genericInvoke(o, method, params, returns);
 
-			if (!util.isGetter(m)) {
-				// if(util.isSetter(m)){
-				update(o, params);
-				// }
-
-			}
-
-			mainReturn = m.invoke(o);
-			LinkedList<LogMessage> logs = new LinkedList<LogMessage>();
-			returns.add(logs);
-
-			logs.addAll(logger.getLogPool());
-			logger.getLogPool().clear();
-
-			returns.add(mainReturn);
-
-			if (m.isAnnotationPresent(NGReturn.class)) {
-
-				NGReturn ngReturn = m.getAnnotation(NGReturn.class);
-
-				for (String up : ngReturn.updates()) {
-
-					String getterName = "get"
-							+ up.substring(0, 1).toUpperCase()
-							+ up.substring(1);
-					Method getter = null;
-					try {
-						getter = o.getClass().getMethod(getterName);
-					} catch (NoSuchMethodException e) {
-						getter = o.getClass().getMethod(
-								(getterName.replace("get", "is")));
-					}
-
-					Object result = getter.invoke(o);
-					returns.add(result);
-
-				}
-
-			}
-
+			
+		
+			
 		} catch (Exception e) {
 			// fire(e);
 			e.printStackTrace();
@@ -221,18 +301,154 @@ public class RemoteInvoker implements Serializable {
 		return returns;
 	}
 
+	private void genericInvoke(Object controller, String methodName,
+			JsonObject params, List<Object> returns) throws SecurityException,
+			ClassNotFoundException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException {
+
+		Object mainReturn = null;
+
+		Method m = null;
+
+		JsonElement argsElem = params.get("args");
+
+		if (argsElem != null) {
+
+			JsonArray args = params.get("args").getAsJsonArray();
+
+			Map<String, Class> builtInMap = new HashMap<String, Class>();
+			builtInMap.put("int", Integer.TYPE);
+			builtInMap.put("long", Long.TYPE);
+			builtInMap.put("double", Double.TYPE);
+			builtInMap.put("float", Float.TYPE);
+			builtInMap.put("bool", Boolean.TYPE);
+			builtInMap.put("char", Character.TYPE);
+			builtInMap.put("byte", Byte.TYPE);
+			// builtInMap("void", Void.TYPE );
+			builtInMap.put("short", Short.TYPE);
+
+			for (Method mt : controller.getClass().getMethods()) {
+
+				if (mt.getName().equals(methodName)) {
+
+					Type[] parameters = mt.getParameterTypes();
+
+					if (parameters.length == args.size()) {
+
+						List<Object> argsValues = new ArrayList<Object>();
+
+						for (int i = 0; i < parameters.length; i++) {
+
+							// System.out.println(parameters[i].toString());
+							//
+
+							Class typeClass = null;
+							String typeString = ((parameters[i]).toString());
+
+							if (typeString.startsWith("class")) {
+								typeString = typeString.substring(6);
+								typeClass = Class.forName(typeString);
+							}
+
+							else {
+
+								typeClass = builtInMap.get(typeString);
+							}
+
+							JsonElement element = args.get(i);
+
+							if (element.isJsonPrimitive()) {
+								String val = element.getAsString();
+								argsValues.add(util.convertFromString(val,
+										typeClass));
+
+							} else {
+								argsValues.add(deserialise(typeClass, element));
+							}
+
+						}
+
+						m = mt;
+						
+						if (!util.isGetter(m)) {
+							// if(util.isSetter(m)){
+							update(controller, params);
+							// }
+
+						}
+						mainReturn = m.invoke(controller, argsValues.toArray());
+
+					}
+
+				}
+
+			}
+
+		}
+		// --------------------------------------------------
+
+		else {
+
+			m = controller.getClass().getMethod(methodName);
+
+			if (!util.isGetter(m)) {
+				// if(util.isSetter(m)){
+				update(controller, params);
+				// }
+
+			}
+
+			mainReturn = m.invoke(controller);
+
+		}
+
+		LinkedList<LogMessage> logs = new LinkedList<LogMessage>();
+		returns.add(logs);
+
+		logs.addAll(logger.getLogPool());
+		logger.getLogPool().clear();
+
+		returns.add(mainReturn);
+
+		if (m.isAnnotationPresent(NGReturn.class)) {
+
+			NGReturn ngReturn = m.getAnnotation(NGReturn.class);
+
+			for (String up : ngReturn.updates()) {
+
+				String getterName = "get" + up.substring(0, 1).toUpperCase()
+						+ up.substring(1);
+				Method getter = null;
+				try {
+					getter = controller.getClass().getMethod(getterName);
+				} catch (NoSuchMethodException e) {
+					getter = controller.getClass().getMethod(
+							(getterName.replace("get", "is")));
+				}
+
+				Object result = getter.invoke(controller);
+				returns.add(result);
+
+			}
+
+		}
+	
+	
+	}
+
 	private void update(Object o, JsonObject params) {
 
 		if (params != null) {
 
-			boolean firstIn = false;
+			// boolean firstIn = false;
 
 			for (Map.Entry<String, JsonElement> entry : params.entrySet()) {
 
 				JsonElement value = entry.getValue();
 				String name = entry.getKey();
 
-				if (name.equals("sessionUID")) {
+				if ((name.equals("sessionUID"))||(name.equals("args"))) {
 					continue;
 				}
 
@@ -298,25 +514,7 @@ public class RemoteInvoker implements Serializable {
 
 							} else {
 								// System.out.println(clazz);
-								GsonBuilder builder = new GsonBuilder();
-
-								builder.registerTypeAdapter(LobWrapper.class,
-										new JsonDeserializer<LobWrapper>() {
-
-											@Override
-											public LobWrapper deserialize(
-													JsonElement json,
-													Type typeOfT,
-													JsonDeserializationContext context)
-													throws JsonParseException {
-												// System.out.println("TADA.......");
-												return null;
-											}
-										});
-
-								Gson gson = builder.create();
-
-								elem = gson.fromJson(element, clazz);
+								elem = deserialise(clazz, element);
 
 							}
 
@@ -337,8 +535,10 @@ public class RemoteInvoker implements Serializable {
 
 								collection.add(elem);
 							} catch (UnsupportedOperationException e) {
-								Logger.getLogger("AngularBeans")
-								.log(java.util.logging.Level.WARNING,"trying to modify an immutable collection : "+name);
+								Logger.getLogger("AngularBeans").log(
+										java.util.logging.Level.WARNING,
+										"trying to modify an immutable collection : "
+												+ name);
 							}
 
 						}
@@ -393,6 +593,28 @@ public class RemoteInvoker implements Serializable {
 			}
 		}
 
+	}
+
+	private Object deserialise(Class clazz, JsonElement element) {
+		Object elem;
+		GsonBuilder builder = new GsonBuilder();
+
+		builder.registerTypeAdapter(LobWrapper.class,
+				new JsonDeserializer<LobWrapper>() {
+
+					@Override
+					public LobWrapper deserialize(JsonElement json,
+							Type typeOfT, JsonDeserializationContext context)
+							throws JsonParseException {
+						// System.out.println("TADA.......");
+						return null;
+					}
+				});
+
+		Gson gson = builder.create();
+
+		elem = gson.fromJson(element, clazz);
+		return elem;
 	}
 
 }
