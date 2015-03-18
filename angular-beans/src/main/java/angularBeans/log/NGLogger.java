@@ -51,9 +51,9 @@ public class NGLogger implements Serializable {
 	// UID = uID;
 	// }
 
-	public void log(Level level, String message) {
+	public void log(Level level, String message,Object... args) {
 		// LinkedList<LogMessage> logPool=locator.getLogPool(UID);
-		logPool.addLast(new LogMessage(level.getLevel(), message));
+		logPool.addLast(new LogMessage(level.getLevel(),String.format(message, args) ));
 
 	}
 

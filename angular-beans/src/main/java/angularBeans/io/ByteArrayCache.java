@@ -1,4 +1,4 @@
-package angularBeans.boot;
+package angularBeans.io;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,12 +11,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.ws.rs.GET;
 
-import angularBeans.io.LobSource;
-
 @ApplicationScoped
 public class ByteArrayCache implements Serializable{
 
-	private Map<String,LobSource> cache = new HashMap<String, LobSource>();
+	private Map<String,Call> cache = new HashMap<String, Call>();
 	
 	
 	@PostConstruct
@@ -25,7 +23,7 @@ public class ByteArrayCache implements Serializable{
 	}
 
 
-public Map<String, LobSource> getCache() {
+public Map<String, Call> getCache() {
 	return cache;
 }
 }

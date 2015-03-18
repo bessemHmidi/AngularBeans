@@ -106,8 +106,6 @@ public class WSocketRPCService implements Extention {
 		//result += "\nif (refScope.hasOwnProperty(key)) {";
 	//	result+="refScope[key]='';refScope.$digest();\nrefScope.$apply();";
 		result += "\nrefScope[key]=msg[key];";
-		
-		
 		//result += "}";
 		
 		result += "\n  }";

@@ -33,10 +33,13 @@ public class Upload {
 		        for (int len; (len = in.read(buffer)) != -1;)
 		            os.write(buffer, 0, len);
 
+		        
 		        os.flush();
 
-		        os.close();
-		        return os.toByteArray();
+		       
+		       byte[] result= os.toByteArray();
+		       os.close();
+		        return result;
 		    }
 		    catch (IOException e)
 		    {

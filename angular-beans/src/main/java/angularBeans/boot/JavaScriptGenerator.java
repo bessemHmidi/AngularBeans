@@ -53,10 +53,10 @@ import angularBeans.api.NGSubmit;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.GlobalMapHolder;
 import angularBeans.extentions.NGExtention;
+import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
 import angularBeans.io.FileUploadHandler;
-import angularBeans.io.LobSource;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
 import angularBeans.util.AngularBeansUtil;
@@ -81,7 +81,7 @@ public class JavaScriptGenerator implements Serializable {
 	public void init() {
 		UID = String.valueOf(UUID.randomUUID());
 
-		 GlobalMapHolder.get(UID);
+		GlobalMapHolder.get(UID);
 	}
 
 	public synchronized String getUID() {
@@ -112,11 +112,9 @@ public class JavaScriptGenerator implements Serializable {
 	@NGExtention
 	Instance<Object> ext;
 
-	
 	@Inject
 	FileUploadHandler uploadHandler;
-	
-	
+
 	@Inject
 	BeanValidationProcessor validationAdapter;
 
@@ -163,7 +161,8 @@ public class JavaScriptGenerator implements Serializable {
 				for (String module : modules) {
 					modulesPart += ("'" + module + "',");
 				}
-				modulesPart=modulesPart.substring(0, modulesPart.length() - 1);
+				modulesPart = modulesPart
+						.substring(0, modulesPart.length() - 1);
 				writer.write(modulesPart);
 			}
 
@@ -230,19 +229,15 @@ public class JavaScriptGenerator implements Serializable {
 
 		writer.write(",wsocketRPC){\n");
 
-	
-	
 		writer.write("\nvar rpath='./rest/invoke/service/';\n");
-		
-		String defaultChannel=clazz.getSimpleName();
-		
+
+		String defaultChannel = clazz.getSimpleName();
+
 		writer.write("\nwsocketRPC.subscribe($scope,'" + defaultChannel + "');");
 		if (clazz.isAnnotationPresent(Subscribe.class)) {
 			String[] channels = ((Subscribe) clazz
 					.getAnnotation(Subscribe.class)).channels();
-			
-			
-			
+
 			for (String channel : channels) {
 
 				writer.write("wsocketRPC.subscribe($scope,'" + channel + "');");
@@ -267,7 +262,7 @@ public class JavaScriptGenerator implements Serializable {
 			if (get.getReturnType().equals(LobWrapper.class)) {
 
 				String uid = String.valueOf(UUID.randomUUID());
-				cache.getCache().put(uid, new LobSource(o, get));
+				cache.getCache().put(uid, new Call(o, get));
 				result = "lob/" + uid;
 
 				writer.write("$scope." + modelName + "='" + result + "';");
@@ -328,20 +323,16 @@ public class JavaScriptGenerator implements Serializable {
 
 				String httpMethod = "get";
 
-				
-				
-				if(m.isAnnotationPresent(FileUpload.class)){
-					
-					String uploadPath=((FileUpload)m.getAnnotation(FileUpload.class)).path();
-					
-					
-					Call call=new Call();
-					call.setMethod(m);
-					call.setObject(o);
-					
+				if (m.isAnnotationPresent(FileUpload.class)) {
+
+					String uploadPath = ((FileUpload) m
+							.getAnnotation(FileUpload.class)).path();
+
+					Call call = new Call(o, m);
+
 					uploadHandler.getUploadsActions().put(uploadPath, call);
 				}
-				
+
 				if (m.isAnnotationPresent(GET.class)) {
 					httpMethod = "get";
 				}
@@ -400,33 +391,34 @@ public class JavaScriptGenerator implements Serializable {
 				}
 
 				writer.write("\n $scope." + m.getName() + "= function(");
-//---------------------------------------------
-				
-// Handle args				
-//---------------------------------------------
-				Type[] args=m.getParameterTypes();
-			
-				if(!m.isAnnotationPresent(FileUpload.class)){
-				
-				if (args.length>0){
-					String argsString="";
-					for(int i=0;i<args.length;i++){
-						
-					argsString+=("arg"+i+",");
-						
+				// ---------------------------------------------
+
+				// Handle args
+				// ---------------------------------------------
+				Type[] args = m.getParameterTypes();
+
+				if (!m.isAnnotationPresent(FileUpload.class)) {
+
+					if (args.length > 0) {
+						String argsString = "";
+						for (int i = 0; i < args.length; i++) {
+
+							argsString += ("arg" + i + ",");
+
+						}
+
+						writer.write(argsString.substring(0,
+								argsString.length() - 1));
+
 					}
-					
-					writer.write(argsString.substring(0,argsString.length()-1));
-					
 				}
-				}
-//------------------------------------------------
-//-------------------------------
-				
+				// ------------------------------------------------
+				// -------------------------------
+
 				writer.write(") {");
 
 				writer.write("var params={sessionUID:$rootScope.sessionUID};");
-				addParams(setters, m,args);
+				addParams(setters, m, args);
 
 				if (m.isAnnotationPresent(WebSocket.class)) {
 
@@ -436,11 +428,9 @@ public class JavaScriptGenerator implements Serializable {
 
 				} else {
 
-					writer.write("\n  $http." + httpMethod
-							+ "(rpath+'"
+					writer.write("\n  $http." + httpMethod + "(rpath+'"
 							+ ngController.getName() + "/" + m.getName()
 							+ "/json");
-				
 
 					if (httpMethod.equals("post")) {
 						writer.write("',params");
@@ -493,7 +483,7 @@ public class JavaScriptGenerator implements Serializable {
 		}
 	}
 
-	private void addParams(Set<Method> setters, Method m,Type[] args) {
+	private void addParams(Set<Method> setters, Method m, Type[] args) {
 		// if (m.isAnnotationPresent(NGSubmit.class)) {
 
 		for (Method setter : setters) {
@@ -505,22 +495,21 @@ public class JavaScriptGenerator implements Serializable {
 
 		}
 
-		//---------------------------------
+		// ---------------------------------
 		// handle args
-		
-		if(args.length>0){
-		String argsString="";
-		for(int i=0;i<args.length;i++){
-			
-			argsString+="arg"+i+",";
-			
-		}
-		
-		argsString=argsString.substring(0,argsString.length()-1);
-		
-		writer.write("params['args']=["+argsString+"];\n");
-		
-		
+
+		if (args.length > 0) {
+			String argsString = "";
+			for (int i = 0; i < args.length; i++) {
+
+				argsString += "arg" + i + ",";
+
+			}
+
+			argsString = argsString.substring(0, argsString.length() - 1);
+
+			writer.write("params['args']=[" + argsString + "];\n");
+
 		}
 		// }
 

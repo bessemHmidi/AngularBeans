@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.websocket.EncodeException;
@@ -69,6 +70,25 @@ public class RemoteInvoker implements Serializable {
 
 	@Inject
 	AngularBeansUtil util;
+	
+	
+	Map<String, Class> builtInMap = new HashMap<String, Class>();
+	
+	
+	
+	@PostConstruct
+	public void init(){
+		builtInMap.put("int", Integer.TYPE);
+		builtInMap.put("long", Long.TYPE);
+		builtInMap.put("double", Double.TYPE);
+		builtInMap.put("float", Float.TYPE);
+		builtInMap.put("bool", Boolean.TYPE);
+		builtInMap.put("char", Character.TYPE);
+		builtInMap.put("byte", Byte.TYPE);
+		// builtInMap("void", Void.TYPE );
+		builtInMap.put("short", Short.TYPE);
+	}
+	
 
 	public synchronized void wsInvoke(Object controller, String methodName,
 			JsonObject params, WSocketEvent event, long reqID, String UID) {
@@ -91,9 +111,9 @@ public class RemoteInvoker implements Serializable {
 						WSocketEvent.class);
 				
 				if (!util.isGetter(methodToInvoke)) {
-					// if(util.isSetter(m)){
+				
 					update(controller, params);
-					// }
+				
 
 				}
 					mainReturn = methodToInvoke.invoke(controller, event);
@@ -111,16 +131,7 @@ public class RemoteInvoker implements Serializable {
 
 						JsonArray args = params.get("args").getAsJsonArray();
 
-						Map<String, Class> builtInMap = new HashMap<String, Class>();
-						builtInMap.put("int", Integer.TYPE);
-						builtInMap.put("long", Long.TYPE);
-						builtInMap.put("double", Double.TYPE);
-						builtInMap.put("float", Float.TYPE);
-						builtInMap.put("bool", Boolean.TYPE);
-						builtInMap.put("char", Character.TYPE);
-						builtInMap.put("byte", Byte.TYPE);
-						// builtInMap("void", Void.TYPE );
-						builtInMap.put("short", Short.TYPE);
+						
 
 						for (Method mt : controller.getClass().getMethods()) {
 
@@ -317,16 +328,7 @@ public class RemoteInvoker implements Serializable {
 
 			JsonArray args = params.get("args").getAsJsonArray();
 
-			Map<String, Class> builtInMap = new HashMap<String, Class>();
-			builtInMap.put("int", Integer.TYPE);
-			builtInMap.put("long", Long.TYPE);
-			builtInMap.put("double", Double.TYPE);
-			builtInMap.put("float", Float.TYPE);
-			builtInMap.put("bool", Boolean.TYPE);
-			builtInMap.put("char", Character.TYPE);
-			builtInMap.put("byte", Byte.TYPE);
-			// builtInMap("void", Void.TYPE );
-			builtInMap.put("short", Short.TYPE);
+
 
 			for (Method mt : controller.getClass().getMethods()) {
 

@@ -21,9 +21,6 @@
  */
 package angularBeans.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -37,8 +34,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import angularBeans.boot.ByteArrayCache;
-import angularBeans.io.LobSource;
+import angularBeans.io.ByteArrayCache;
+import angularBeans.io.Call;
 import angularBeans.io.LobWrapper;
 
 import com.google.gson.Gson;
@@ -87,12 +84,12 @@ public class AngularBeansUtil implements Serializable {
 		return "get" + name;
 	}
 
-	 public static String obtainSetter(Field field) {
-	 String name = field.getName();
-	 name = name.substring(0, 1).toUpperCase() + name.substring(1);
-	
-	 return "set" + name;
-	 }
+	public static String obtainSetter(Field field) {
+		String name = field.getName();
+		name = name.substring(0, 1).toUpperCase() + name.substring(1);
+
+		return "set" + name;
+	}
 
 	@PostConstruct
 	public void init() {
@@ -268,9 +265,6 @@ class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
 	public JsonElement serialize(LobWrapper src, Type typeOfSrc,
 			JsonSerializationContext context) {
 
-		
-
-		
 		LobWrapper lobWrapper = (LobWrapper) src;
 
 		container = lobWrapper.getOwner();
@@ -286,17 +280,22 @@ class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
 
 					try {
 
-						LobSource lobSource = new LobSource(container, m);
+						Call lobSource = new Call(container, m);
 
 						if (!cache.getCache().containsValue(lobSource)) {
 							id = String.valueOf(UUID.randomUUID());
 							cache.getCache().put(id, lobSource);
 						} else {
 							for (String idf : (cache.getCache().keySet())) {
-								LobSource ls = cache.getCache().get(idf);
-								if (ls.equals(lobSource))
-									id = idf;
-								break;
+								Call ls = cache.getCache().get(idf);
+								if (ls.equals(lobSource)){
+									
+									cache.getCache().remove(idf);
+									id = String.valueOf(UUID.randomUUID());
+									cache.getCache().put(id, lobSource);
+								
+									break;
+								}
 							}
 							continue;
 						}
@@ -315,6 +314,5 @@ class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
 		}
 		return new JsonPrimitive("lob/" + id);
 	}
-	
 
 }
