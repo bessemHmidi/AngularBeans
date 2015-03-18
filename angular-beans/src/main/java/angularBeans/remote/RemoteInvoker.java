@@ -45,9 +45,9 @@ import angularBeans.context.NGSessionScopeContext;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.LogMessage;
 import angularBeans.log.NGLogger;
+import angularBeans.realtime.WSocketClient;
+import angularBeans.realtime.WSocketEvent;
 import angularBeans.util.AngularBeansUtil;
-import angularBeans.wsocket.WSocketClient;
-import angularBeans.wsocket.WSocketEvent;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -269,23 +269,11 @@ public class RemoteInvoker implements Serializable {
 
 		}
 
-		try {
-			
-			
+
 			
 //			System.out.println(returns);
-			event.getSession().getBasicRemote()
-					.sendObject(util.getJson(returns));
+			event.getConnection().write(util.getJson(returns));
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (EncodeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
 		
 
 	}
@@ -461,8 +449,11 @@ public class RemoteInvoker implements Serializable {
 						getName = util.obtainGetter(o.getClass()
 								.getDeclaredField(name));
 
-						Object subObj = o.getClass().getMethod(getName)
-								.invoke(o);
+						
+						Method getter=o.getClass().getMethod(getName);
+						
+						
+						Object subObj = getter.invoke(o);
 
 						// logger.log(Level.INFO, "#entring sub object "+name);
 						update(subObj, value.getAsJsonObject());
@@ -555,6 +546,9 @@ public class RemoteInvoker implements Serializable {
 				// ------------------------------------------
 				if (value.isJsonPrimitive() && (!name.equals("setSessionUID"))) {
 					try {
+						
+						
+						
 						if (!util.hasSetter(o.getClass(), name)) {
 							continue;
 						}
@@ -575,6 +569,8 @@ public class RemoteInvoker implements Serializable {
 
 						}
 
+						if (type.equals(LobWrapper.class))continue;
+						
 						Object param = null;
 						if ((params.entrySet().size() >= 1) && (type != null)) {
 

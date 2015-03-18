@@ -49,7 +49,7 @@ public class BootServlet extends HttpServlet {
 	// }
 
 	@Inject
-	JavaScriptGenerator generator;
+	ModuleGenerator generator;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)

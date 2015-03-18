@@ -19,7 +19,7 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.wsocket;
+package angularBeans.realtime;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.HandshakeResponse;

@@ -19,22 +19,24 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.wsocket;
+package angularBeans.realtime;
 
-import java.util.HashMap;
-import java.util.Map;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class WSocketMessage {
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	private Map<String, Object> data = new HashMap<String, Object>();
+import javax.inject.Qualifier;
 
-	public WSocketMessage add(String propertyName, Object value) {
-		data.put(propertyName, value);
-		return this;
-	}
 
-	public Map<String, Object> build() {
-		return data;
-	}
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+@Retention(RUNTIME)
+
+@Qualifier
+public @interface WSocketErrorEvent {
 
 }

@@ -31,6 +31,11 @@
 			<version>v20141215</version>
 		</dependency>
 
+  <dependency>
+      <groupId>org.projectodd.sockjs</groupId>
+      <artifactId>sockjs-servlet</artifactId>
+      <version>[0.1.0,)</version>
+    </dependency>
 
 	</dependencies>
 	<url>https://github.com/bessemHmidi/angular-bridge</url>

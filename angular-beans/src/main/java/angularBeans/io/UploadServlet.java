@@ -18,7 +18,7 @@ import angularBeans.context.NGSessionScopeContext;
 import angularBeans.log.NGLogger;
 import angularBeans.util.AngularBeansUtil;
 
-@WebServlet(urlPatterns = { "/uploadEndPoint/*" })
+@WebServlet(urlPatterns = { "/uploadEndPoint/*" },asyncSupported=true)
 @MultipartConfig()
 public class UploadServlet extends HttpServlet {
 
@@ -58,7 +58,15 @@ public class UploadServlet extends HttpServlet {
 			out.println("<h1>Angular Beans Uplaud Service"
 					+ request.getContextPath() + ": param</h1>");
 
+			
+			
+
+			out.println("</body>");
+			out.println("</html>");
+			//out.flush();
+			//out.close();
 			List<Upload> uploads = new ArrayList<Upload>();
+			
 			for (Part part : request.getParts()) {
 				Upload event = new Upload(part, param);
 				uploads.add(event);
@@ -68,11 +76,6 @@ public class UploadServlet extends HttpServlet {
 				uploadHandler.handleUploads(uploads, param);
 
 			}
-
-			out.println("</body>");
-			out.println("</html>");
-			out.flush();
-			out.close();
 		}
 
 	}

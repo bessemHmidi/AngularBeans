@@ -59,21 +59,21 @@ import angularBeans.io.FileUpload;
 import angularBeans.io.FileUploadHandler;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
+import angularBeans.realtime.WebSocket;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.NGControllerBean;
 import angularBeans.validation.BeanValidationProcessor;
-import angularBeans.wsocket.WebSocket;
 import angularBeans.wsocket.annotations.Subscribe;
 
 @SessionScoped
-public class JavaScriptGenerator implements Serializable {
+public class ModuleGenerator implements Serializable {
 
 	private String UID;;
 
 	@Inject
 	AngularBeansUtil util;
 
-	public JavaScriptGenerator() {
+	public ModuleGenerator() {
 
 	}
 

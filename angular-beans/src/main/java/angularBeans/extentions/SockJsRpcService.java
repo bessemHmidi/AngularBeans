@@ -24,13 +24,13 @@ package angularBeans.extentions;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import angularBeans.boot.JavaScriptGenerator;
+import angularBeans.boot.ModuleGenerator;
 
 @NGExtention
-public class WSocketRPCService implements Extention {
+public class SockJsRpcService implements Extention {
 
 	@Inject
-	JavaScriptGenerator generator;
+	ModuleGenerator generator;
 
 	@Override
 	public String render() {
@@ -41,13 +41,19 @@ public class WSocketRPCService implements Extention {
 		String portNumber = (String.valueOf(request.getServerPort()));
 		String contextPath = (request.getServletContext().getContextPath());
 
-		String webSocketPath = ("ws://" + serverName + ":" + portNumber
-				+ contextPath + "/ws-service");
+		String webSocketPath = ("http://" + serverName + ":" + portNumber
+				+ contextPath + "/ws-service/");
 
 		String result = "";
 		
 		result += "app.service('wsocketRPC',['logger','$rootScope','$http',function(logger,$rootScope,$http){\n";
-		result += "\nvar ws = new WebSocket(\"" + webSocketPath + "\");";
+//		result += "\nvar ws = new WebSocket(\"" + webSocketPath + "\");";
+		
+		
+
+		result+="var sockjs_url =\"" + webSocketPath + "\";";
+		result+="var ws = new SockJS(sockjs_url, undefined, {debug: true});";
+		
 		result += "\nthis.rootScope=$rootScope;";
 		result += "\nvar wsocketRPC=this;";
 		result += "\nvar reqId=0;";
@@ -99,16 +105,23 @@ public class WSocketRPCService implements Extention {
 		
 		result += "\nrefScope.received=msg;";
 		
+//		result += "\nfor (var key in msg) {";
+//		result += "\nrefScope[key]=\"\";}";
+
+	//	result += "\nrefScope.$apply();\nrefScope.$digest();";
+		
+		result += "\nfor (var key in msg) {";
+	
+		
+		//result += "\nif (refScope.hasOwnProperty(key)) {";
+		//result+="refScope[key]='#';refScope.$digest();\nrefScope.$apply();";
 		
 
-		result += "\nfor (var key in msg) {";
-
-		//result += "\nif (refScope.hasOwnProperty(key)) {";
-	//	result+="refScope[key]='';refScope.$digest();\nrefScope.$apply();";
-		result += "\nrefScope[key]=msg[key];";
-		//result += "}";
+		
+		result += "\nrefScope[key]=msg[key]";
 		
 		result += "\n  }";
+		
 		result += "\nrefScope.$digest();\nrefScope.$apply();";
    result+="}";
         //

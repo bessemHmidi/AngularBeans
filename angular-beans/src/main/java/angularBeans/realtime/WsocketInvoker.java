@@ -19,7 +19,7 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.wsocket;
+package angularBeans.realtime;
 
 import java.io.Serializable;
 

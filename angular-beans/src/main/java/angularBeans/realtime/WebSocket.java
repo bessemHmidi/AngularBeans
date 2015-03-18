@@ -19,47 +19,19 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.wsocket;
+package angularBeans.realtime;
 
-import java.io.Serializable;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import javax.websocket.Session;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import com.google.gson.JsonObject;
+@Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+public @interface WebSocket {
 
-public class WSocketEvent implements Serializable {
-
-	
-	private Session session;
-	private JsonObject data;
-	private WSocketClient client;
-
-	public WSocketEvent(Session session, JsonObject data) {
-		this.session = session;
-		this.data = data;
-
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
-
-	public Session getSession() {
-		return session;
-	}
-
-	
-	public JsonObject getData() {
-		return data;
-	}
-
-	public void setClient(WSocketClient wSocketClient) {
-		this.client=wSocketClient;
-		
-	}
-
-	
-	public WSocketClient getClient() {
-		return client;
-	}
 }

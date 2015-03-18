@@ -19,7 +19,7 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.wsocket;
+package angularBeans.realtime;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -34,6 +34,9 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.websocket.Session;
 
+import org.projectodd.sockjs.SockJsConnection;
+import org.projectodd.sockjs.Transport.READY_STATE;
+
 import angularBeans.context.NGSessionScoped;
 import angularBeans.log.NGLogger;
 import angularBeans.util.AngularBeansUtil;
@@ -44,7 +47,7 @@ import angularBeans.wsocket.annotations.WSocketSessionReadyEvent;
 @NGSessionScoped
 public class WSocketClient implements Serializable {
 
-	private Set<Session> sessions=new HashSet<Session>();
+	private Set<SockJsConnection> sessions=new HashSet<SockJsConnection>();
 	
 	@Inject
 	AngularBeansUtil util;
@@ -56,13 +59,13 @@ public class WSocketClient implements Serializable {
 	
 	
 	public void onSessionReady(@Observes @WSocketSessionReadyEvent WSocketEvent event) {
-    sessions.add(event.getSession());
+    sessions.add(event.getConnection());
 	event.setClient(this);
 	
 	}
 
 	public void onClose(@Observes @WSocketSessionCloseEvent WSocketEvent event) {
-		sessions.remove(event.getSession());
+		sessions.remove(event.getConnection());
 	}
 
 	public void onError(@Observes @WSocketErrorEvent WSocketEvent event) {
@@ -71,12 +74,12 @@ public class WSocketClient implements Serializable {
 
 	public void onSession(@Observes @WSocketReceiveEvent WSocketEvent event) {
 
-		sessions.add(event.getSession());
+		sessions.add(event.getConnection());
 		event.setClient(this);
 
 	}
 
-	public Set<Session> getSessions() {
+	public Set<SockJsConnection> getSessions() {
 		return sessions;
 	}
 
@@ -87,17 +90,14 @@ public class WSocketClient implements Serializable {
 		paramsToSend.put("reqId", channel);
 		 paramsToSend.put("log", logger.getLogPool());
 		
-		 for(Session session:new HashSet<Session>(sessions)){
-		 try {
-			 if(!session.isOpen()){sessions.remove(session);}
+		 for(SockJsConnection session:new HashSet<SockJsConnection>(sessions)){
+			
+	
+			 if(!session.getReadyState().equals(READY_STATE.OPEN)){sessions.remove(session);}
 			 else{
-			session.getBasicRemote().sendText(util.getJson(paramsToSend));
+			session.write(util.getJson(paramsToSend));
 			 }
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		
-	}
+	
 	}
 	}
 
@@ -110,33 +110,33 @@ public class WSocketClient implements Serializable {
 	}
 	
 	public void publishToAll(String channel, WSocketMessage message) {
-		try {
+	
 		Map<String, Object> paramsToSend = new HashMap<String, Object>(
 				message.build());
 		paramsToSend.put("reqId", channel);
        
 		
-		if ((sessions.size()>0)) {
+	
 			
 			
-			for(Session first:sessions){
-				if(first.isOpen())
-				for (Session sess : first.getOpenSessions()) {
-					if(sess.isOpen()){
+			for(SockJsConnection sess:connectionHolder.getAllConnections()){
+				if(sess.getReadyState().equals(READY_STATE.OPEN)){
+				
 					String objectMessage=util.getJson(paramsToSend);
 					
-					sess.getBasicRemote().sendText(objectMessage);
-					}
-				}
+					sess.write(objectMessage);
+					
+				
+			}
 			}
 				
-		}
-		} catch (Exception e) {
 		
-			e.printStackTrace();
-		}
+		
 	}
 
+	@Inject
+	GlobalConnectionHolder connectionHolder;
+	
 	public static synchronized Map<String, Session> getChannelsSubscribers() {
 		return channelsSubscribers;
 	}

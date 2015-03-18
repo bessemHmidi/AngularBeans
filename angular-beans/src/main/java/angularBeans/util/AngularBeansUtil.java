@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -154,6 +155,8 @@ public class AngularBeansUtil implements Serializable {
 
 		// NPE
 
+		
+		
 		if (type.equals(int.class) || type.equals(Integer.class)) {
 			param = Integer.parseInt(value);
 			return param;
@@ -289,10 +292,10 @@ class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
 							for (String idf : (cache.getCache().keySet())) {
 								Call ls = cache.getCache().get(idf);
 								if (ls.equals(lobSource)){
-									
-									cache.getCache().remove(idf);
-									id = String.valueOf(UUID.randomUUID());
-									cache.getCache().put(id, lobSource);
+									id=idf;
+//									cache.getCache().remove(idf);
+//									id = String.valueOf(UUID.randomUUID());
+//									cache.getCache().put(id, lobSource);
 								
 									break;
 								}
@@ -312,7 +315,10 @@ class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
 			}
 
 		}
-		return new JsonPrimitive("lob/" + id);
+		
+		
+		
+		return new JsonPrimitive("lob/" + id+"?"+new Date());
 	}
 
 }

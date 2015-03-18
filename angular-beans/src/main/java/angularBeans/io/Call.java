@@ -50,7 +50,7 @@ public class Call {
 		if (object == null) {
 			if (other.object != null)
 				return false;
-		} else if (!object.equals(other.object))
+		} else if (!(object==(other.object)))
 			return false;
 		return true;
 	}
