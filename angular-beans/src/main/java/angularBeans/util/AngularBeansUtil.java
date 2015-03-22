@@ -116,8 +116,14 @@ public class AngularBeansUtil implements Serializable {
 
 	public String getJson(Object object) {
 
-		GsonBuilder builder = new GsonBuilder();
+		GsonBuilder builder = new GsonBuilder().serializeNulls();
 
+		if(object==null){
+			return new GsonBuilder().serializeNulls().create().toJson(null);
+			
+		}
+			
+		
 		Class clazz = object.getClass();
 
 		builder.registerTypeAdapter(LobWrapper.class, new ByteArrayJsonAdapter(

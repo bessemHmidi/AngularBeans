@@ -31,6 +31,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface NGRedirect {
 
-
+	String[] updates() default {};
 
 }

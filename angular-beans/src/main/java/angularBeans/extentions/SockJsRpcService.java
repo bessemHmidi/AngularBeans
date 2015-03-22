@@ -46,7 +46,7 @@ public class SockJsRpcService implements Extention {
 
 		String result = "";
 		
-		result += "app.service('wsocketRPC',['logger','$rootScope','$http',function(logger,$rootScope,$http){\n";
+		result += "app.service('wsocketRPC',['logger','$rootScope','$http','responseHandler',function(logger,$rootScope,$http,responseHandler){\n";
 //		result += "\nvar ws = new WebSocket(\"" + webSocketPath + "\");";
 		
 		
@@ -103,7 +103,7 @@ public class SockJsRpcService implements Extention {
 //		
 //		result += "\nrefScope = scopes[elementPos].scope;";
 		
-		result += "\nrefScope.received=msg;";
+		//result += "\nrefScope.received=msg;";
 		
 //		result += "\nfor (var key in msg) {";
 //		result += "\nrefScope[key]=\"\";}";
@@ -118,11 +118,26 @@ public class SockJsRpcService implements Extention {
 		
 
 		
-		result += "\nrefScope[key]=msg[key]";
+		result += "\nif(key==='rootScope'){";
+			
+		result += "\nfor(var model in msg[key]){";
 		
+//		result +="console.log(JSON.stringify(msg['rootScope'][model]));";
+		
+		result += "\n$rootScope[model]=msg['rootScope'][model];";
+				
+		result +="console.log(JSON.stringify($rootScope[model]));";
+		result += "\n}";
+			
+		result += "}";
+		
+		result+="else{";
+		result += "\nrefScope[key]=msg[key]";
+		result += "\n  }";
 		result += "\n  }";
 		
-		result += "\nrefScope.$digest();\nrefScope.$apply();";
+		result += "\nrefScope.$apply();"; 
+		result +="\nrefScope.$digest();";
    result+="}";
         //
 		result += "\nif(msg.isRPC){";

@@ -62,6 +62,7 @@ import angularBeans.log.NGLogger;
 import angularBeans.realtime.WebSocket;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.NGControllerBean;
+import angularBeans.util.RootScope;
 import angularBeans.validation.BeanValidationProcessor;
 import angularBeans.wsocket.annotations.Subscribe;
 
@@ -118,11 +119,18 @@ public class ModuleGenerator implements Serializable {
 	@Inject
 	BeanValidationProcessor validationAdapter;
 
+	@Inject
+	RootScope rootScope;
+
 	private StringWriter writer;
 
 	private HttpServletRequest request;
 
+	private String contextPath;
+
 	public void getScript(StringWriter writer) {
+
+		contextPath = (request.getServletContext().getContextPath());
 
 		// NGSessionScopeContext.changeHolder(UID);
 
@@ -171,11 +179,19 @@ public class ModuleGenerator implements Serializable {
 			writer.write("])");
 
 			writer.write(".run(function($rootScope) {$rootScope.sessionUID = \""
-					+ UID + "\";})");
+					+ UID + "\";");
+
+			for (String model : rootScope.getProperties()) {
+
+				writer.write("$rootScope." + model + " = "
+						+ util.getJson(rootScope.getProperty(model)) + ";");
+
+			}
+
+			writer.write("})");
 
 		}
 
-		// writer.write(TemplatesDirectives.getTemplatesDirectives());
 		for (Object controller : controllers) {
 
 			NGControllerBean mb = new NGControllerBean(controller);
@@ -184,7 +200,7 @@ public class ModuleGenerator implements Serializable {
 				writer.write(";app.controller('" + mb.getName() + "',");
 			}
 
-			generateController(mb, isModule);
+			generateController(mb, isModule, contextPath);
 
 			if (isModule)
 				writer.write("]);\n");
@@ -209,7 +225,7 @@ public class ModuleGenerator implements Serializable {
 	}
 
 	public void generateController(NGControllerBean ngController,
-			boolean isModule) {
+			boolean isModule, String contextPath) {
 
 		Object reference = locator.lookup(ngController.getName(), UID);
 
@@ -219,17 +235,18 @@ public class ModuleGenerator implements Serializable {
 		Object o = reference;
 
 		if (isModule) {
-			writer.write("['$rootScope','$scope','$http','$location','logger','wsocketRPC',function");
+			writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','wsocketRPC',function");
 
 		} else {
 			writer.write("function " + ngController.getName());
 		}
 
-		writer.write("($rootScope,$scope, $http, $location,logger");
+		writer.write("($rootScope,$scope, $http, $location,logger,responseHandler");
 
 		writer.write(",wsocketRPC){\n");
 
-		writer.write("\nvar rpath='./rest/invoke/service/';\n");
+		writer.write("\nvar rpath='" + contextPath
+				+ "/rest/invoke/service/';\n");
 
 		String defaultChannel = clazz.getSimpleName();
 
@@ -354,6 +371,11 @@ public class ModuleGenerator implements Serializable {
 					csModel = returns.model();
 					csUpdates = returns.updates();
 				}
+				
+				if (m.isAnnotationPresent(NGRedirect.class)) {
+					NGRedirect returns = m.getAnnotation(NGRedirect.class);
+					csUpdates = returns.updates();
+				}
 
 				// if (m.isAnnotationPresent(NGSubmit.class)
 				// || m.isAnnotationPresent(NGRedirect.class)) {
@@ -419,7 +441,7 @@ public class ModuleGenerator implements Serializable {
 
 				writer.write("var params={sessionUID:$rootScope.sessionUID};");
 				addParams(setters, m, args);
-
+			
 				if (m.isAnnotationPresent(WebSocket.class)) {
 
 					writer.write("wsocketRPC.call($scope,'"
@@ -438,30 +460,28 @@ public class ModuleGenerator implements Serializable {
 						String paramsQuery = ("?params='+encodeURI(JSON.stringify(params))");
 						writer.write(paramsQuery);
 					}
-					writer.write(").\n success(function(data) {\n");
+
+					
+					
+					writer.write(").\n success(function(msg) {\n");
+					
+////					writer.write("handleResponsemsg(msg,$scope);");
+//					
+					writer.write("var isRedirect=");
+					
 
 					if (m.isAnnotationPresent(NGRedirect.class)) {
-						writer.write("window.location = data[1];\n });");
+					writer.write("true;");
+					
+					}else{
+						writer.write("false;");
 					}
+					
+					
+					writer.write("responseHandler.handleResponse(msg,$scope,isRedirect);");	
+					
+					writer.write("\n });");
 
-					else {
-						if (csModel != null) {
-
-							writer.write("$scope." + csModel + " = data[1];");
-
-						}
-
-						if (csUpdates != null) {
-							for (int i = 0; i < csUpdates.length; i++)
-								writer.write("$scope." + csUpdates[i]
-										+ " = data[" + (i + 2) + "];\n");
-
-						}
-
-						writer.write("logger.log(data[0]);");
-
-						writer.write("\n });");
-					}
 				}
 
 				writer.write("};");

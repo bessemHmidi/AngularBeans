@@ -83,6 +83,13 @@ public class WSocketClient implements Serializable {
 		return sessions;
 	}
 
+	
+	public void invalidateSession(){
+		for(SockJsConnection connection:sessions){
+			connection.close(javax.websocket.CloseReason.CloseCodes.CANNOT_ACCEPT.getCode(), "CLOSED BY BACKEND");
+		}
+	}
+	
 	public void publish(String channel, WSocketMessage message) {
 
 		Map<String, Object> paramsToSend = new HashMap<String, Object>(

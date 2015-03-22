@@ -21,7 +21,6 @@
  */
 package angularBeans.remote;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,7 +29,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -38,16 +36,16 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-import javax.websocket.EncodeException;
 
+import angularBeans.api.NGRedirect;
 import angularBeans.api.NGReturn;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.io.LobWrapper;
-import angularBeans.log.LogMessage;
 import angularBeans.log.NGLogger;
 import angularBeans.realtime.WSocketClient;
 import angularBeans.realtime.WSocketEvent;
 import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.RootScope;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -70,14 +68,14 @@ public class RemoteInvoker implements Serializable {
 
 	@Inject
 	AngularBeansUtil util;
-	
-	
+
+	@Inject
+	RootScope rootScope;
+
 	Map<String, Class> builtInMap = new HashMap<String, Class>();
-	
-	
-	
+
 	@PostConstruct
-	public void init(){
+	public void init() {
 		builtInMap.put("int", Integer.TYPE);
 		builtInMap.put("long", Long.TYPE);
 		builtInMap.put("double", Double.TYPE);
@@ -88,7 +86,6 @@ public class RemoteInvoker implements Serializable {
 		// builtInMap("void", Void.TYPE );
 		builtInMap.put("short", Short.TYPE);
 	}
-	
 
 	public synchronized void wsInvoke(Object controller, String methodName,
 			JsonObject params, WSocketEvent event, long reqID, String UID) {
@@ -99,39 +96,32 @@ public class RemoteInvoker implements Serializable {
 		Object mainReturn = null;
 
 		returns.put("isRPC", true);
-		//returns.put("reqId", reqID);
+		// returns.put("reqId", reqID);
 
 		returns.put("reqId", controller.getClass().getSimpleName());
 
 		Method methodToInvoke = null;
-		
+
 		try {
 			try {
 				methodToInvoke = controller.getClass().getMethod(methodName,
 						WSocketEvent.class);
-				
+
 				if (!util.isGetter(methodToInvoke)) {
-				
+
 					update(controller, params);
-				
 
 				}
-					mainReturn = methodToInvoke.invoke(controller, event);
-				
+				mainReturn = methodToInvoke.invoke(controller, event);
+
 			} catch (NoSuchMethodException e) {
 				try {
 
-					
-					
 					JsonElement argsElem = params.get("args");
 
-					
-					
 					if (argsElem != null) {
 
 						JsonArray args = params.get("args").getAsJsonArray();
-
-						
 
 						for (Method mt : controller.getClass().getMethods()) {
 
@@ -139,23 +129,23 @@ public class RemoteInvoker implements Serializable {
 
 								Type[] parameters = mt.getParameterTypes();
 
-							if (parameters.length == args.size()) {
+								if (parameters.length == args.size()) {
 
 									List<Object> argsValues = new ArrayList<Object>();
 
 									for (int i = 0; i < parameters.length; i++) {
 
-										// System.out.println(parameters[i].toString());
-										//
-
 										Class typeClass = null;
-										String typeString = ((parameters[i]).toString());
+										String typeString = ((parameters[i])
+												.toString());
 
 										if (typeString.startsWith("class")) {
-											typeString = typeString.substring(6);
+											typeString = typeString
+													.substring(6);
 											try {
-												
-												typeClass = Class.forName(typeString);
+
+												typeClass = Class
+														.forName(typeString);
 											} catch (Exception e2) {
 												e2.printStackTrace();
 											}
@@ -163,67 +153,63 @@ public class RemoteInvoker implements Serializable {
 
 										else {
 
-											typeClass = builtInMap.get(typeString);
+											typeClass = builtInMap
+													.get(typeString);
 										}
 
 										JsonElement element = args.get(i);
 
 										if (element.isJsonPrimitive()) {
 											String val = element.getAsString();
-											argsValues.add(util.convertFromString(val,
-													typeClass));
+											argsValues.add(util
+													.convertFromString(val,
+															typeClass));
 
 										} else {
-											argsValues.add(deserialise(typeClass, element));
+											argsValues.add(deserialise(
+													typeClass, element));
 										}
 
 									}
 
 									methodToInvoke = mt;
-									
+
 									if (!util.isGetter(methodToInvoke)) {
 										// if(util.isSetter(m)){
 										update(controller, params);
 										// }
 
 									}
-									mainReturn = methodToInvoke.invoke(controller, argsValues.toArray());
-									
-									
-                                   
+									mainReturn = methodToInvoke.invoke(
+											controller, argsValues.toArray());
+
 								}
 
 							}
 
 						}
 
-					}else{
-						
-					
-						methodToInvoke = controller.getClass().getMethod(methodName);
-						
+					} else {
+
+						methodToInvoke = controller.getClass().getMethod(
+								methodName);
+
 						if (!util.isGetter(methodToInvoke)) {
 							// if(util.isSetter(m)){
 							update(controller, params);
 							// }
 
 						}
-						
+
 						mainReturn = methodToInvoke.invoke(controller);
 					}
-					
 
-					
-					
 				} catch (NoSuchMethodException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 
-			
-
-			
 		} catch (SecurityException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException e1) {
 			// TODO Auto-generated catch block
@@ -234,17 +220,29 @@ public class RemoteInvoker implements Serializable {
 		returns.put("log", logger.getLogPool().toArray());
 		logger.getLogPool().clear();
 
-		if (methodToInvoke.isAnnotationPresent(NGReturn.class)) {
+		if (methodToInvoke.isAnnotationPresent(NGReturn.class)
+				|| (methodToInvoke.isAnnotationPresent(NGRedirect.class))) {
 			Object result = null;
-			try {
-				NGReturn ngReturn = methodToInvoke
-						.getAnnotation(NGReturn.class);
 
-			//	System.out.println("* "+ngReturn.model());
-				returns.put(ngReturn.model(), mainReturn);
-			//	System.out.println("--> "+mainReturn);
-				
-				for (String up : ngReturn.updates()) {
+			String[] updates = null;
+			try {
+
+				if (methodToInvoke.isAnnotationPresent(NGReturn.class)) {
+					NGReturn ngReturn = methodToInvoke
+							.getAnnotation(NGReturn.class);
+					updates = ngReturn.updates();
+
+					returns.put(ngReturn.model(), mainReturn);
+				}
+
+				if (methodToInvoke.isAnnotationPresent(NGRedirect.class)) {
+					NGRedirect ngRedirect = methodToInvoke
+							.getAnnotation(NGRedirect.class);
+					updates = ngRedirect.updates();
+
+				}
+
+				for (String up : updates) {
 
 					String getterName = "get"
 							+ up.substring(0, 1).toUpperCase()
@@ -253,13 +251,13 @@ public class RemoteInvoker implements Serializable {
 
 					getter = controller.getClass().getMethod(getterName);
 
-					
-					
 					result = getter.invoke(controller);
-				
-					
+
 					returns.put(up, result);
 				}
+
+				returns.put("rootScope", rootScope.getRootScopeMap());
+
 			} catch (IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException
 					| SecurityException e) {
@@ -269,12 +267,7 @@ public class RemoteInvoker implements Serializable {
 
 		}
 
-
-			
-//			System.out.println(returns);
-			event.getConnection().write(util.getJson(returns));
-
-		
+		event.getConnection().write(util.getJson(returns));
 
 	}
 
@@ -283,15 +276,12 @@ public class RemoteInvoker implements Serializable {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
-		List<Object> returns = new ArrayList<Object>();
+		Map<String, Object> returns = new HashMap<String, Object>();
 
 		try {
 
 			genericInvoke(o, method, params, returns);
 
-			
-		
-			
 		} catch (Exception e) {
 			// fire(e);
 			e.printStackTrace();
@@ -301,10 +291,10 @@ public class RemoteInvoker implements Serializable {
 	}
 
 	private void genericInvoke(Object controller, String methodName,
-			JsonObject params, List<Object> returns) throws SecurityException,
-			ClassNotFoundException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException {
+			JsonObject params, Map<String, Object> returns)
+			throws SecurityException, ClassNotFoundException,
+			IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException {
 
 		Object mainReturn = null;
 
@@ -315,8 +305,6 @@ public class RemoteInvoker implements Serializable {
 		if (argsElem != null) {
 
 			JsonArray args = params.get("args").getAsJsonArray();
-
-
 
 			for (Method mt : controller.getClass().getMethods()) {
 
@@ -329,9 +317,6 @@ public class RemoteInvoker implements Serializable {
 						List<Object> argsValues = new ArrayList<Object>();
 
 						for (int i = 0; i < parameters.length; i++) {
-
-							// System.out.println(parameters[i].toString());
-							//
 
 							Class typeClass = null;
 							String typeString = ((parameters[i]).toString());
@@ -360,7 +345,7 @@ public class RemoteInvoker implements Serializable {
 						}
 
 						m = mt;
-						
+
 						if (!util.isGetter(m)) {
 							// if(util.isSetter(m)){
 							update(controller, params);
@@ -393,19 +378,28 @@ public class RemoteInvoker implements Serializable {
 
 		}
 
-		LinkedList<LogMessage> logs = new LinkedList<LogMessage>();
-		returns.add(logs);
-
-		logs.addAll(logger.getLogPool());
+		returns.put("log", logger.getLogPool().toArray());
 		logger.getLogPool().clear();
 
-		returns.add(mainReturn);
+		if (m.isAnnotationPresent(NGReturn.class)
+				|| (m.isAnnotationPresent(NGRedirect.class))) {
 
-		if (m.isAnnotationPresent(NGReturn.class)) {
+			String[] updates = null;
 
-			NGReturn ngReturn = m.getAnnotation(NGReturn.class);
+			if (m.isAnnotationPresent(NGReturn.class)) {
+				NGReturn ngReturn = m.getAnnotation(NGReturn.class);
+				updates = ngReturn.updates();
 
-			for (String up : ngReturn.updates()) {
+				returns.put(ngReturn.model(), mainReturn);
+			}
+
+			if (m.isAnnotationPresent(NGRedirect.class)) {
+				NGRedirect ngRedirect = m.getAnnotation(NGRedirect.class);
+				updates = ngRedirect.updates();
+
+			}
+
+			for (String up : updates) {
 
 				String getterName = "get" + up.substring(0, 1).toUpperCase()
 						+ up.substring(1);
@@ -418,13 +412,19 @@ public class RemoteInvoker implements Serializable {
 				}
 
 				Object result = getter.invoke(controller);
-				returns.add(result);
+				returns.put(up, result);
 
 			}
 
+			returns.put("rootScope", rootScope.getRootScopeMap());
+
 		}
-	
-	
+
+		if (m.isAnnotationPresent(NGRedirect.class)) {
+
+			returns.put("location", mainReturn);
+		}
+
 	}
 
 	private void update(Object o, JsonObject params) {
@@ -438,7 +438,7 @@ public class RemoteInvoker implements Serializable {
 				JsonElement value = entry.getValue();
 				String name = entry.getKey();
 
-				if ((name.equals("sessionUID"))||(name.equals("args"))) {
+				if ((name.equals("sessionUID")) || (name.equals("args"))) {
 					continue;
 				}
 
@@ -449,10 +449,8 @@ public class RemoteInvoker implements Serializable {
 						getName = util.obtainGetter(o.getClass()
 								.getDeclaredField(name));
 
-						
-						Method getter=o.getClass().getMethod(getName);
-						
-						
+						Method getter = o.getClass().getMethod(getName);
+
 						Object subObj = getter.invoke(o);
 
 						// logger.log(Level.INFO, "#entring sub object "+name);
@@ -468,7 +466,7 @@ public class RemoteInvoker implements Serializable {
 				}
 				// ------------------------------------
 				if (value.isJsonArray()) {
-					// System.out.println("RAW "+value);
+
 					try {
 						String getter = util.obtainGetter(o.getClass()
 								.getDeclaredField(name));
@@ -495,7 +493,7 @@ public class RemoteInvoker implements Serializable {
 							if (element.isJsonPrimitive()) {
 								JsonPrimitive primitive = element
 										.getAsJsonPrimitive();
-								// System.out.println("primitive"+primitive);
+
 								elem = element;
 								if (primitive.isBoolean())
 									elem = primitive.getAsBoolean();
@@ -506,7 +504,7 @@ public class RemoteInvoker implements Serializable {
 									elem = primitive.getAsNumber();
 
 							} else {
-								// System.out.println(clazz);
+
 								elem = deserialise(clazz, element);
 
 							}
@@ -538,7 +536,7 @@ public class RemoteInvoker implements Serializable {
 
 					} catch (Exception e) {
 						e.printStackTrace();
-						// System.out.println(value);
+
 					}
 
 				}
@@ -546,9 +544,7 @@ public class RemoteInvoker implements Serializable {
 				// ------------------------------------------
 				if (value.isJsonPrimitive() && (!name.equals("setSessionUID"))) {
 					try {
-						
-						
-						
+
 						if (!util.hasSetter(o.getClass(), name)) {
 							continue;
 						}
@@ -569,8 +565,9 @@ public class RemoteInvoker implements Serializable {
 
 						}
 
-						if (type.equals(LobWrapper.class))continue;
-						
+						if (type.equals(LobWrapper.class))
+							continue;
+
 						Object param = null;
 						if ((params.entrySet().size() >= 1) && (type != null)) {
 
@@ -604,7 +601,7 @@ public class RemoteInvoker implements Serializable {
 					public LobWrapper deserialize(JsonElement json,
 							Type typeOfT, JsonDeserializationContext context)
 							throws JsonParseException {
-						// System.out.println("TADA.......");
+
 						return null;
 					}
 				});

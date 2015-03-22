@@ -22,7 +22,7 @@
 package angularBeans.extentions;
 
 
-@NGExtention
+//@NGExtention
 public class TemplatesDirectives implements Extention {
 
 	public String render() {

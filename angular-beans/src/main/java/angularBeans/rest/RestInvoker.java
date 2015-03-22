@@ -108,6 +108,8 @@ public class RestInvoker implements Serializable {
 
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID), method,
 				paramsObj, UID);
+		
+		
 		return result;
 	}
 

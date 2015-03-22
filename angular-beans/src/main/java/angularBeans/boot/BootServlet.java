@@ -21,7 +21,10 @@
  */
 package angularBeans.boot;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.inject.Inject;
@@ -74,6 +77,21 @@ public class BootServlet extends HttpServlet {
 
 	private String getCompressedJavaScript(String jsContent) {
 		String compiled="";
+		
+		
+		
+//		try {
+//			
+//			PrintWriter pw=new PrintWriter(new File("d:\\toto.js"));
+//			
+//			pw.write(jsContent);
+//			pw.flush();
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		
 		//System.out.println(jsContent);
 		
 		compiled=compile(jsContent, CompilationLevel.WHITESPACE_ONLY);
