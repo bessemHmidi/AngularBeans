@@ -22,6 +22,9 @@
 package angularBeans.context;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -48,6 +51,37 @@ public class BeanLocator implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
+	
+	
+//	public synchronized Object lookupHybrid(Class beanClass,String UID){
+//		
+//		if(!hybrideBeans.containsKey(UID)){
+//			hybrideBeans.put(UID, new HashMap<Class, Object>());
+//		}
+//		
+//		
+//		if(!hybrideBeans.get(UID).containsKey(beanClass)){
+//			
+//			try {
+//				registerHybridBean(beanClass.newInstance(), UID);
+//			
+//			
+//			
+//			} catch (InstantiationException | IllegalAccessException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		return hybrideBeans.get(UID).get(beanClass);
+//		
+//	}
+//	
+//	private Map<String,Map<Class, Object>> hybrideBeans=new HashMap<String, Map<Class,Object>>();
+//	
+//	public void registerHybridBean(Object Bean,String UID){
+//		
+//	}
+	
 	public synchronized Object lookup(String beanName, String UID) {
 
 	

@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -322,9 +323,7 @@ class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
 
 		}
 		
-		
-		
-		return new JsonPrimitive("lob/" + id+"?"+new Date());
+		return new JsonPrimitive("lob/" + id+"?"+Calendar.getInstance().getTimeInMillis());
 	}
 
 }

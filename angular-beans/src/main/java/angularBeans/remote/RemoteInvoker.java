@@ -34,18 +34,23 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import angularBeans.api.NGRedirect;
 import angularBeans.api.NGReturn;
 import angularBeans.context.NGSessionScopeContext;
+import angularBeans.context.NGSessionScoped;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
 import angularBeans.realtime.WSocketClient;
 import angularBeans.realtime.WSocketEvent;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.RootScope;
+
+
+import angularBeans.util.Scopes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -57,7 +62,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 
-@Dependent
+@ApplicationScoped
 public class RemoteInvoker implements Serializable {
 
 	@Inject
@@ -72,6 +77,10 @@ public class RemoteInvoker implements Serializable {
 	@Inject
 	RootScope rootScope;
 
+	@Inject
+	Scopes scope;
+	
+	
 	Map<String, Class> builtInMap = new HashMap<String, Class>();
 
 	@PostConstruct
@@ -232,7 +241,7 @@ public class RemoteInvoker implements Serializable {
 							.getAnnotation(NGReturn.class);
 					updates = ngReturn.updates();
 
-					returns.put(ngReturn.model(), mainReturn);
+//					returns.put(ngReturn.model(), mainReturn);
 				}
 
 				if (methodToInvoke.isAnnotationPresent(NGRedirect.class)) {
@@ -255,9 +264,30 @@ public class RemoteInvoker implements Serializable {
 
 					returns.put(up, result);
 				}
+				
+				returns.putAll(scope.get(controller.getClass()).getScopeMap());
+				
 
 				returns.put("rootScope", rootScope.getRootScopeMap());
 
+				
+				
+				
+				
+				if (methodToInvoke.isAnnotationPresent(NGRedirect.class)) {
+
+					
+					returns.put("location", mainReturn);
+					
+					System.out.println(returns);
+				}
+				
+				if (methodToInvoke.isAnnotationPresent(NGReturn.class)) {
+
+					returns.put(methodToInvoke.getAnnotation(NGReturn.class).model(), mainReturn);
+				}
+				
+				
 			} catch (IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException
 					| SecurityException e) {
@@ -390,7 +420,7 @@ public class RemoteInvoker implements Serializable {
 				NGReturn ngReturn = m.getAnnotation(NGReturn.class);
 				updates = ngReturn.updates();
 
-				returns.put(ngReturn.model(), mainReturn);
+				//returns.put(ngReturn.model(), mainReturn);
 			}
 
 			if (m.isAnnotationPresent(NGRedirect.class)) {
@@ -416,6 +446,9 @@ public class RemoteInvoker implements Serializable {
 
 			}
 
+	//1
+			returns.putAll(scope.get(controller.getClass()).getScopeMap());
+			
 			returns.put("rootScope", rootScope.getRootScopeMap());
 
 		}
@@ -424,6 +457,13 @@ public class RemoteInvoker implements Serializable {
 
 			returns.put("location", mainReturn);
 		}
+		
+		if (m.isAnnotationPresent(NGReturn.class)) {
+
+			returns.put(m.getAnnotation(NGReturn.class).model(), mainReturn);
+		}
+		
+		
 
 	}
 

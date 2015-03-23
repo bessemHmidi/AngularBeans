@@ -52,17 +52,18 @@ import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.GlobalMapHolder;
+import angularBeans.context.NGSessionScopeContext;
 import angularBeans.extentions.NGExtention;
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
 import angularBeans.io.FileUploadHandler;
 import angularBeans.io.LobWrapper;
-import angularBeans.log.NGLogger;
 import angularBeans.realtime.WebSocket;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.NGControllerBean;
 import angularBeans.util.RootScope;
+import angularBeans.util.Scopes;
 import angularBeans.validation.BeanValidationProcessor;
 import angularBeans.wsocket.annotations.Subscribe;
 
@@ -71,18 +72,29 @@ public class ModuleGenerator implements Serializable {
 
 	private String UID;;
 
+	
+	
+	
+	
 	@Inject
 	AngularBeansUtil util;
 
 	public ModuleGenerator() {
-
+		
+		
+		if(this.getClass().equals(ModuleGenerator.class)){
+		
+		UID = String.valueOf(UUID.randomUUID());
+		}
+		
+		NGSessionScopeContext.setCurrentContext(UID);
+		
 	}
 
 	@PostConstruct
 	public void init() {
-		UID = String.valueOf(UUID.randomUUID());
-
-		GlobalMapHolder.get(UID);
+	
+		
 	}
 
 	public synchronized String getUID() {
@@ -100,8 +112,7 @@ public class ModuleGenerator implements Serializable {
 	@Inject
 	BeanLocator locator;
 
-	@Inject
-	NGLogger logger;
+
 
 	@Inject
 	@NGController
@@ -119,22 +130,28 @@ public class ModuleGenerator implements Serializable {
 	@Inject
 	BeanValidationProcessor validationAdapter;
 
-	@Inject
+@Inject
 	RootScope rootScope;
 
+@Inject
+	Scopes scopes;
+	
+	
 	private StringWriter writer;
 
 	private HttpServletRequest request;
 
 	private String contextPath;
 
+
+	
 	public void getScript(StringWriter writer) {
 
+		NGSessionScopeContext.setCurrentContext(UID);
+	
+		
 		contextPath = (request.getServletContext().getContextPath());
 
-		// NGSessionScopeContext.changeHolder(UID);
-
-		// beanManager.(HttpConversationContext.class).get();
 
 		this.writer = writer;
 
@@ -234,6 +251,10 @@ public class ModuleGenerator implements Serializable {
 		Method[] methods = clazz.getDeclaredMethods();
 		Object o = reference;
 
+		scopes.addScope(clazz);
+		
+	
+		
 		if (isModule) {
 			writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','wsocketRPC',function");
 

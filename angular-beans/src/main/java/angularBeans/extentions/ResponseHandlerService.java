@@ -61,7 +61,7 @@ public class ResponseHandlerService implements Extention {
 		result+=("\nlogger.log(msg.log);");
 		
 		result+=("\nif (redirect){");
-			result+=("\nlogger.log(msg.location);");
+			//result+=("\nlogger.log(msg.location);");
 			result+=("window.location = msg.location;");
 			
 			result+=("}");

@@ -46,11 +46,7 @@ import com.google.javascript.jscomp.CompilerOptions.Reach;
 @WebServlet(urlPatterns = "/angular-beans.js")
 public class BootServlet extends HttpServlet {
 
-	// public void init(ServletConfig config) {
-	// String path = config.getServletContext().getRealPath("/");
-	// System.out.println(path);
-	// }
-
+	
 	@Inject
 	ModuleGenerator generator;
 
@@ -79,21 +75,6 @@ public class BootServlet extends HttpServlet {
 		String compiled="";
 		
 		
-		
-//		try {
-//			
-//			PrintWriter pw=new PrintWriter(new File("d:\\toto.js"));
-//			
-//			pw.write(jsContent);
-//			pw.flush();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		
-		//System.out.println(jsContent);
-		
 		compiled=compile(jsContent, CompilationLevel.WHITESPACE_ONLY);
 		
 		//compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
@@ -105,27 +86,7 @@ public class BootServlet extends HttpServlet {
 		    Compiler compiler = new Compiler();
 
 		    CompilerOptions options = new CompilerOptions();
-		    
-//		    options.closurePass = false;
-//		    options.setRenamingPolicy(
-//		        VariableRenamingPolicy.OFF, PropertyRenamingPolicy.OFF);
-//		   
-//		    options.setInlineVariables(Reach.ALL);
-//		    options.flowSensitiveInlineVariables = true;
-//		    options.setInlineFunctions(Reach.ALL);
-//		    options.setAssumeClosuresOnlyCaptureReferences(false);
-//		    options.checkGlobalThisLevel = CheckLevel.OFF;
-//		    
-//		    options.foldConstants = true;
-//		    options.coalesceVariableNames = true;
-//		    options.deadAssignmentElimination = true;
-//		    options.collapseVariableDeclarations = true;
-//		    options.convertToDottedProperties = true;
-//		    options.labelRenaming = true;
-//		    options.removeDeadCode = true;
-//		    options.optimizeArgumentsArray = true;
-//		    options.setRemoveUnusedVariables(Reach.ALL);
-		    
+		    		    
 		    options.setAngularPass(true);
 		    
 		    SourceFile extern = SourceFile.fromCode("externs.js","function alert(x) {}");

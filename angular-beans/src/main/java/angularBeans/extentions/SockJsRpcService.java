@@ -140,6 +140,9 @@ public class SockJsRpcService implements Extention {
 		result +="\nrefScope.$digest();";
    result+="}";
         //
+   
+   
+   
 		result += "\nif(msg.isRPC){";
 		
 		//result += "\nrefScope.$digest();\nrefScope.$apply();";
@@ -147,8 +150,10 @@ public class SockJsRpcService implements Extention {
 	//	result += "\nwsocketRPC.unsubscribe(msg.reqId,refScope);";
 		
 		result += "\n}";
-
-		result += "\n }};";
+		
+		result+="if(msg.hasOwnProperty('location')){window.location = msg.location;}";
+		
+		result += "\n }};"; 
 
 		result += "\nthis.send = function(message) {";
 		result += "\nws.send(JSON.stringify(message));";
