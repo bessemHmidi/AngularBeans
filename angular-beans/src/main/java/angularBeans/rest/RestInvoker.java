@@ -35,6 +35,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import angularBeans.context.BeanLocator;
+import angularBeans.context.NGSessionScopeContext;
 import angularBeans.remote.RemoteInvoker;
 import angularBeans.util.AngularBeansUtil;
 
@@ -54,7 +55,7 @@ public class RestInvoker implements Serializable {
 
 	@GET
 	@Path("/service/{bean}/{method}/json")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Object doServiceGet(@PathParam("bean") String beanName,
 			@PathParam("method") String method,
 			@QueryParam("params") String params) {
@@ -66,7 +67,7 @@ public class RestInvoker implements Serializable {
 	
 	@POST
 	@Path("/service/{bean}/{method}/json")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	
 	public Object doServicePost(@PathParam("bean") String beanName,
 			@PathParam("method") String method,
@@ -79,7 +80,7 @@ public class RestInvoker implements Serializable {
 	
 	@PUT
 	@Path("/service/{bean}/{method}/json")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Object doServicePut(@PathParam("bean") String beanName,
 			@PathParam("method") String method,
 			@QueryParam("params") String params) {
@@ -90,7 +91,7 @@ public class RestInvoker implements Serializable {
 	
 	@DELETE
 	@Path("/service/{bean}/{method}/json")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Object doServiceDelete(@PathParam("bean") String beanName,
 			@PathParam("method") String method,
 			@QueryParam("params") String params) {
@@ -102,15 +103,25 @@ public class RestInvoker implements Serializable {
 
 	
 	private Object process(String beanName, String method, String params) {
+		
+		
 		JsonObject paramsObj =util.parse(params); 
 
 		String UID = paramsObj.get("sessionUID").getAsString();
-
+		NGSessionScopeContext.setCurrentContext(UID);
+		
+	
+		
+		
+		
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID), method,
 				paramsObj, UID);
 		
+		String jsonResponse=util.getJson(result);
 		
-		return result;
+		//System.out.println(jsonResponse);
+		
+		return jsonResponse;
 	}
 
 }

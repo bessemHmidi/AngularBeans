@@ -52,12 +52,12 @@ public class ResponseHandlerService implements Extention {
 		result+=("\n}");
 		result+=("}");
 		result+=("else{");
-		result+=("\nscope[key]=msg[key]");
+		result+=("\nscope[key]=msg[key];");
 		result+=("\n  }");
 		result+=("\n  }");
 
-		// result+=("\n$scope.$apply();");
-
+		// result+=("\nscope.$apply();");
+		// result+=("\n$rootScope.$apply();");
 		result+=("\nlogger.log(msg.log);");
 		
 		result+=("\nif (redirect){");

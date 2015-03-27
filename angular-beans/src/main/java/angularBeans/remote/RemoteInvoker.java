@@ -279,7 +279,7 @@ public class RemoteInvoker implements Serializable {
 					
 					returns.put("location", mainReturn);
 					
-					System.out.println(returns);
+					
 				}
 				
 				if (methodToInvoke.isAnnotationPresent(NGReturn.class)) {
@@ -317,6 +317,9 @@ public class RemoteInvoker implements Serializable {
 			e.printStackTrace();
 		}
 
+		
+		
+		
 		return returns;
 	}
 
@@ -332,6 +335,8 @@ public class RemoteInvoker implements Serializable {
 
 		JsonElement argsElem = params.get("args");
 
+		returns.put("reqId", controller.getClass().getSimpleName());
+		
 		if (argsElem != null) {
 
 			JsonArray args = params.get("args").getAsJsonArray();

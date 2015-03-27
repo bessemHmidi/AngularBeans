@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
@@ -115,8 +116,17 @@ public class AngularBeansUtil implements Serializable {
 
 	}
 
-	public String getJson(Object object) {
+	
+	
+	
+	
+	public  String getJson(Object object) {
 
+		
+		if(object instanceof Properties){
+			return new Gson().toJson(object);
+		}
+		
 		GsonBuilder builder = new GsonBuilder().serializeNulls();
 
 		if(object==null){
@@ -238,9 +248,9 @@ public class AngularBeansUtil implements Serializable {
 	public boolean isGetter(Method m) {
 		return (
 
-		(m.getName().startsWith("get")) || (((m.getReturnType()
+		(m.getParameterTypes().length==0) && ((m.getName().startsWith("get")) || (((m.getReturnType()
 				.equals(boolean.class)) || (m.getReturnType()
-				.equals(Boolean.class))) && (m.getName().startsWith("is"))));
+				.equals(Boolean.class))) && (m.getName().startsWith("is")))));
 
 	}
 

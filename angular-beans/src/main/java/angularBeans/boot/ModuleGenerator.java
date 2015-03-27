@@ -478,7 +478,9 @@ public class ModuleGenerator implements Serializable {
 					if (httpMethod.equals("post")) {
 						writer.write("',params");
 					} else {
-						String paramsQuery = ("?params='+encodeURI(JSON.stringify(params))");
+						//encodeURI
+						String paramsQuery = ("?params='+encodeURIComponent(JSON.stringify(params))");
+						
 						writer.write(paramsQuery);
 					}
 
@@ -499,7 +501,21 @@ public class ModuleGenerator implements Serializable {
 					}
 					
 					
-					writer.write("responseHandler.handleResponse(msg,$scope,isRedirect);");	
+					writer.write("var scopes=wsocketRPC.getScopes();");
+					writer.write("\nfor (var rs in scopes){");
+
+					//writer.write("console.log('-->'+scopes[rs].id);");
+					
+					writer.write("if(scopes[rs].id===msg.reqId){");
+								
+					writer.write("refScope=scopes[rs].scope;");
+					
+					writer.write("responseHandler.handleResponse(msg,refScope,isRedirect);");	
+					
+					writer.write("}}");
+					
+					
+					//writer.write("alert(JSON.stringify(msg));");
 					
 					writer.write("\n });");
 

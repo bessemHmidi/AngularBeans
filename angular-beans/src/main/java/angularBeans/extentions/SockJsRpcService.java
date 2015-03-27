@@ -71,6 +71,10 @@ public class SockJsRpcService implements Extention {
 		result += "\n};";
 		result += "\nwsocketRPC.send(message);};";
 
+		
+		
+		
+		
 		result += "\nws.onmessage = function (evt)";
 		result += "\n{";
 		result += "\nvar msg=JSON.parse(evt.data);";
@@ -153,8 +157,11 @@ public class SockJsRpcService implements Extention {
 		
 		result+="if(msg.hasOwnProperty('location')){window.location = msg.location;}";
 		
-		result += "\n }};"; 
+		result += "\n }};";
 
+		
+		result += "\nthis.getScopes = function (){return scopes;};";
+		
 		result += "\nthis.send = function(message) {";
 		result += "\nws.send(JSON.stringify(message));";
 		result += "\n};";

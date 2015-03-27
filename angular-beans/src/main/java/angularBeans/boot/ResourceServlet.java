@@ -21,10 +21,12 @@
  */
 package angularBeans.boot;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -36,7 +38,7 @@ import angularBeans.util.AngularBeansUtil;
 @WebServlet(urlPatterns = "/resources/*")
 public class ResourceServlet extends HttpServlet {
 
-	
+	@Inject
 	AngularBeansUtil util;
 	
 	@Override
@@ -47,12 +49,29 @@ public class ResourceServlet extends HttpServlet {
 
 		int index = (requestURI.indexOf("/resources/")) + 10;
 
-		InputStream is = getServletContext().getResourceAsStream(
-				"META-INF" + (requestURI.substring(index)) + ".properties");
+		InputStream is =null;
+		try {
+			 is = getServletConfig().getServletContext().getResourceAsStream(
+					"/META-INF" + (requestURI.substring(index)) + ".properties");
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
 
+	//	ServletContext application = getServletConfig().getServletContext();
+//		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+//		InputStream input = classLoader.getResourceAsStream("WEB-INF/"+ (requestURI.substring(index)) + ".properties");
+		
+		
+		
 		Properties properties = new Properties();
+		
+		
 		properties.load(is);
 
+		
+		
 		resp.getWriter().write(util.getJson(properties));
 
 	}
