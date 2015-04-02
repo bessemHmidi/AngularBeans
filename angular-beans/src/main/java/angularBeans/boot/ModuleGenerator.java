@@ -47,9 +47,11 @@ import javax.ws.rs.PUT;
 import angularBeans.api.NGApp;
 import angularBeans.api.NGController;
 import angularBeans.api.NGModules;
+import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGRedirect;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
+import angularBeans.api.Subscribe;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.GlobalMapHolder;
 import angularBeans.context.NGSessionScopeContext;
@@ -59,13 +61,12 @@ import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
 import angularBeans.io.FileUploadHandler;
 import angularBeans.io.LobWrapper;
-import angularBeans.realtime.WebSocket;
+import angularBeans.realtime.RealTime;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.NGControllerBean;
 import angularBeans.util.RootScope;
-import angularBeans.util.Scopes;
+import angularBeans.util.ScopeUtils;
 import angularBeans.validation.BeanValidationProcessor;
-import angularBeans.wsocket.annotations.Subscribe;
 
 @SessionScoped
 public class ModuleGenerator implements Serializable {
@@ -73,8 +74,8 @@ public class ModuleGenerator implements Serializable {
 	private String UID;;
 
 	
-	
-	
+	@Inject
+	ScopeUtils scopeUtil;
 	
 	@Inject
 	AngularBeansUtil util;
@@ -134,7 +135,7 @@ public class ModuleGenerator implements Serializable {
 	RootScope rootScope;
 
 @Inject
-	Scopes scopes;
+	ScopeUtils scopes;
 	
 	
 	private StringWriter writer;
@@ -157,11 +158,11 @@ public class ModuleGenerator implements Serializable {
 
 		String appName = null;
 
-		boolean isModule = false;
+		
 		Class appClass = null;
 		for (Object ap : app) {
 			ap.toString();
-			isModule = true;
+		
 			appClass = ap.getClass();
 			if (appClass.isAnnotationPresent(Named.class)) {
 				appName = ap.getClass().getAnnotation(Named.class).value();
@@ -173,7 +174,7 @@ public class ModuleGenerator implements Serializable {
 			}
 		}
 
-		if (isModule) {
+		
 
 			writer.write("var app=angular.module('" + appName + "', [");
 
@@ -198,28 +199,28 @@ public class ModuleGenerator implements Serializable {
 			writer.write(".run(function($rootScope) {$rootScope.sessionUID = \""
 					+ UID + "\";");
 
-			for (String model : rootScope.getProperties()) {
+			for (String model : scopeUtil.getRootScope().getProperties()) {
 
 				writer.write("$rootScope." + model + " = "
-						+ util.getJson(rootScope.getProperty(model)) + ";");
+						+ util.getJson(scopeUtil.getRootScope().getProperty(model)) + ";");
 
 			}
 
 			writer.write("})");
 
-		}
+		
 
 		for (Object controller : controllers) {
 
 			NGControllerBean mb = new NGControllerBean(controller);
 
-			if (isModule) {
+			
 				writer.write(";app.controller('" + mb.getName() + "',");
-			}
+			
 
-			generateController(mb, isModule, contextPath);
+			generateController(mb, contextPath);
 
-			if (isModule)
+			
 				writer.write("]);\n");
 		}
 
@@ -242,7 +243,7 @@ public class ModuleGenerator implements Serializable {
 	}
 
 	public void generateController(NGControllerBean ngController,
-			boolean isModule, String contextPath) {
+			 String contextPath) {
 
 		Object reference = locator.lookup(ngController.getName(), UID);
 
@@ -254,20 +255,13 @@ public class ModuleGenerator implements Serializable {
 		scopes.addScope(clazz);
 		
 	
-		
-		if (isModule) {
 			writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','wsocketRPC',function");
-
-		} else {
-			writer.write("function " + ngController.getName());
-		}
-
 		writer.write("($rootScope,$scope, $http, $location,logger,responseHandler");
 
 		writer.write(",wsocketRPC){\n");
 
 		writer.write("\nvar rpath='" + contextPath
-				+ "/rest/invoke/service/';\n");
+				+ "/http/invoke/service/';\n");
 
 		String defaultChannel = clazz.getSimpleName();
 
@@ -355,6 +349,10 @@ public class ModuleGenerator implements Serializable {
 
 		for (Method m : methods) {
 			if ((!util.isSetter(m)) && (!util.isGetter(m))) {
+				
+				
+				
+				
 				String csModel = null;
 				String[] csUpdates = null;
 				Set<Method> setters = new HashSet<Method>();
@@ -463,7 +461,7 @@ public class ModuleGenerator implements Serializable {
 				writer.write("var params={sessionUID:$rootScope.sessionUID};");
 				addParams(setters, m, args);
 			
-				if (m.isAnnotationPresent(WebSocket.class)) {
+				if (m.isAnnotationPresent(RealTime.class)) {
 
 					writer.write("wsocketRPC.call($scope,'"
 							+ ngController.getName() + "." + m.getName()
@@ -490,41 +488,46 @@ public class ModuleGenerator implements Serializable {
 					
 ////					writer.write("handleResponsemsg(msg,$scope);");
 //					
-					writer.write("var isRedirect=");
+//					writer.write("var isRedirect=");
+//					
+//
+//					if (m.isAnnotationPresent(NGRedirect.class)) {
+//					writer.write("true;");
+//					
+//					}else{
+//						writer.write("false;");
+//					}
 					
-
-					if (m.isAnnotationPresent(NGRedirect.class)) {
-					writer.write("true;");
 					
-					}else{
-						writer.write("false;");
-					}
-					
-					
-					writer.write("var scopes=wsocketRPC.getScopes();");
-					writer.write("\nfor (var rs in scopes){");
+				writer.write("var scopes=wsocketRPC.getScopes();");
+		//			writer.write("\nfor (var rs in scopes){");
 
 					//writer.write("console.log('-->'+scopes[rs].id);");
 					
-					writer.write("if(scopes[rs].id===msg.reqId){");
-								
-					writer.write("refScope=scopes[rs].scope;");
+//					writer.write("if(scopes[rs].id===msg.reqId){");
+//								
+//					writer.write("refScope=scopes[rs].scope;");
 					
-					writer.write("responseHandler.handleResponse(msg,refScope,isRedirect);");	
-					
-					writer.write("}}");
-					
+					writer.write("responseHandler.handleResponse(msg,scopes);");	
 					
 					//writer.write("alert(JSON.stringify(msg));");
 					
-					writer.write("\n });");
+					writer.write("} );"); //}");
+					
+					
+				
+					
+				//	writer.write("\n });");
 
 				}
 
 				writer.write("};");
 
 				// }
-
+if(m.isAnnotationPresent(NGPostConstruct.class)){
+					
+					writer.write("\n$scope."+m.getName()+"();\n");
+				}
 			}
 		}
 		writer.write("\n} \n");

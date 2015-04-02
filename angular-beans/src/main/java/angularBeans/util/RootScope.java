@@ -1,35 +1,27 @@
 package angularBeans.util;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import angularBeans.context.BeanLocator;
-import angularBeans.context.GlobalMapHolder;
-import angularBeans.context.NGSessionScoped;
-
-
-@NGSessionScoped
 public class RootScope implements Serializable {
 
-
 	
-	private Map<String, Object> rootScopeMap = new HashMap<String, Object>();
+	private Map<String, Object> rootScopeMap = Collections
+			.synchronizedMap(new HashMap<String, Object>());
 
 	public void setProperty(String model, Object value) {
 		rootScopeMap.put(model, value);
 
 	}
 
-	public Object getProperty(String model) {
+	public synchronized Object getProperty(String model) {
 
-		return rootScopeMap.get(model);
+		Object value=rootScopeMap.get(model);
+		rootScopeMap.remove(value);
+		return value;
 
 	}
 
@@ -38,8 +30,7 @@ public class RootScope implements Serializable {
 		return rootScopeMap.keySet();
 	}
 
-	public Map<String, Object> getRootScopeMap() {
+	public synchronized Map<String, Object> getRootScopeMap() {
 		return rootScopeMap;
 	}
-
 }

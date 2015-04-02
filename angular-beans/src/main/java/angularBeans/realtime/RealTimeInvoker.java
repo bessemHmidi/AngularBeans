@@ -28,15 +28,15 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import angularBeans.api.DataReceivedEvent;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.remote.RemoteInvoker;
-import angularBeans.wsocket.annotations.WSocketReceiveEvent;
 
 import com.google.gson.JsonObject;
 
 @Dependent
-public class WsocketInvoker implements Serializable {
+public class RealTimeInvoker implements Serializable {
 
 	@PostConstruct
 	public void init() {
@@ -49,7 +49,7 @@ public class WsocketInvoker implements Serializable {
 	@Inject
 	BeanLocator locator;
 
-	public void process(@Observes @WSocketReceiveEvent WSocketEvent event) {
+	public void process(@Observes @DataReceivedEvent RealTimeEvent event) {
 
 		JsonObject jObj = event.getData();
 		String UID = jObj.get("session").getAsString();
@@ -66,7 +66,7 @@ public class WsocketInvoker implements Serializable {
 
 		Object bean = locator.lookup(beanName, UID);
 
-		remoteInvoker.wsInvoke(bean, method, paramsObj, event, reqId, UID);
+		remoteInvoker.realTimeInvoke(bean, method, paramsObj, event, reqId, UID);
 
 	}
 

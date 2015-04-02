@@ -19,24 +19,22 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.wsocket.annotations;
+package angularBeans.realtime;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public class RealTimeMessage {
 
-import javax.inject.Qualifier;
+	private Map<String, Object> data = new HashMap<String, Object>();
 
+	public RealTimeMessage add(String propertyName, Object value) {
+		data.put(propertyName, value);
+		return this;
+	}
 
-@Target({TYPE, METHOD, FIELD, PARAMETER})
-@Retention(RUNTIME)
-
-@Qualifier
-public @interface WSocketSessionCloseEvent {
+	public Map<String, Object> build() {
+		return data;
+	}
 
 }

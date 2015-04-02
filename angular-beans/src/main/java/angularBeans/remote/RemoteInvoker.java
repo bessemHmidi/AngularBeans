@@ -35,22 +35,18 @@ import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGRedirect;
 import angularBeans.api.NGReturn;
 import angularBeans.context.NGSessionScopeContext;
-import angularBeans.context.NGSessionScoped;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
-import angularBeans.realtime.WSocketClient;
-import angularBeans.realtime.WSocketEvent;
+import angularBeans.realtime.RealTimeClient;
+import angularBeans.realtime.RealTimeEvent;
 import angularBeans.util.AngularBeansUtil;
-import angularBeans.util.RootScope;
-
-
-import angularBeans.util.Scopes;
+import angularBeans.util.ScopeUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -66,7 +62,7 @@ import com.google.gson.JsonPrimitive;
 public class RemoteInvoker implements Serializable {
 
 	@Inject
-	WSocketClient holder;
+	RealTimeClient holder;
 
 	@Inject
 	NGLogger logger;
@@ -75,12 +71,8 @@ public class RemoteInvoker implements Serializable {
 	AngularBeansUtil util;
 
 	@Inject
-	RootScope rootScope;
+	ScopeUtils scopeUtil;
 
-	@Inject
-	Scopes scope;
-	
-	
 	Map<String, Class> builtInMap = new HashMap<String, Class>();
 
 	@PostConstruct
@@ -96,208 +88,26 @@ public class RemoteInvoker implements Serializable {
 		builtInMap.put("short", Short.TYPE);
 	}
 
-	public synchronized void wsInvoke(Object controller, String methodName,
-			JsonObject params, WSocketEvent event, long reqID, String UID) {
+	public synchronized void realTimeInvoke(Object controller, String methodName,
+			JsonObject params, RealTimeEvent event, long reqID, String UID) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
 		Map<String, Object> returns = new HashMap<String, Object>();
-		Object mainReturn = null;
+		// Object mainReturn = null;
 
-		returns.put("isRPC", true);
-		// returns.put("reqId", reqID);
-
-		returns.put("reqId", controller.getClass().getSimpleName());
-
-		Method methodToInvoke = null;
+		returns.put("isRT", true);
 
 		try {
-			try {
-				methodToInvoke = controller.getClass().getMethod(methodName,
-						WSocketEvent.class);
-
-				if (!util.isGetter(methodToInvoke)) {
-
-					update(controller, params);
-
-				}
-				mainReturn = methodToInvoke.invoke(controller, event);
-
-			} catch (NoSuchMethodException e) {
-				try {
-
-					JsonElement argsElem = params.get("args");
-
-					if (argsElem != null) {
-
-						JsonArray args = params.get("args").getAsJsonArray();
-
-						for (Method mt : controller.getClass().getMethods()) {
-
-							if (mt.getName().equals(methodName)) {
-
-								Type[] parameters = mt.getParameterTypes();
-
-								if (parameters.length == args.size()) {
-
-									List<Object> argsValues = new ArrayList<Object>();
-
-									for (int i = 0; i < parameters.length; i++) {
-
-										Class typeClass = null;
-										String typeString = ((parameters[i])
-												.toString());
-
-										if (typeString.startsWith("class")) {
-											typeString = typeString
-													.substring(6);
-											try {
-
-												typeClass = Class
-														.forName(typeString);
-											} catch (Exception e2) {
-												e2.printStackTrace();
-											}
-										}
-
-										else {
-
-											typeClass = builtInMap
-													.get(typeString);
-										}
-
-										JsonElement element = args.get(i);
-
-										if (element.isJsonPrimitive()) {
-											String val = element.getAsString();
-											argsValues.add(util
-													.convertFromString(val,
-															typeClass));
-
-										} else {
-											argsValues.add(deserialise(
-													typeClass, element));
-										}
-
-									}
-
-									methodToInvoke = mt;
-
-									if (!util.isGetter(methodToInvoke)) {
-										// if(util.isSetter(m)){
-										update(controller, params);
-										// }
-
-									}
-									mainReturn = methodToInvoke.invoke(
-											controller, argsValues.toArray());
-
-								}
-
-							}
-
-						}
-
-					} else {
-
-						methodToInvoke = controller.getClass().getMethod(
-								methodName);
-
-						if (!util.isGetter(methodToInvoke)) {
-							// if(util.isSetter(m)){
-							update(controller, params);
-							// }
-
-						}
-
-						mainReturn = methodToInvoke.invoke(controller);
-					}
-
-				} catch (NoSuchMethodException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-
-		} catch (SecurityException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e1) {
+			genericInvoke(controller, methodName, params, returns);
+			event.getConnection().write(util.getJson(returns));
+			
+		} catch (SecurityException | ClassNotFoundException
+				| IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
-
-		// event.setSession(holder.getSession());
-		returns.put("log", logger.getLogPool().toArray());
-		logger.getLogPool().clear();
-
-		if (methodToInvoke.isAnnotationPresent(NGReturn.class)
-				|| (methodToInvoke.isAnnotationPresent(NGRedirect.class))) {
-			Object result = null;
-
-			String[] updates = null;
-			try {
-
-				if (methodToInvoke.isAnnotationPresent(NGReturn.class)) {
-					NGReturn ngReturn = methodToInvoke
-							.getAnnotation(NGReturn.class);
-					updates = ngReturn.updates();
-
-//					returns.put(ngReturn.model(), mainReturn);
-				}
-
-				if (methodToInvoke.isAnnotationPresent(NGRedirect.class)) {
-					NGRedirect ngRedirect = methodToInvoke
-							.getAnnotation(NGRedirect.class);
-					updates = ngRedirect.updates();
-
-				}
-
-				for (String up : updates) {
-
-					String getterName = "get"
-							+ up.substring(0, 1).toUpperCase()
-							+ up.substring(1);
-					Method getter = null;
-
-					getter = controller.getClass().getMethod(getterName);
-
-					result = getter.invoke(controller);
-
-					returns.put(up, result);
-				}
-				
-				returns.putAll(scope.get(controller.getClass()).getScopeMap());
-				
-
-				returns.put("rootScope", rootScope.getRootScopeMap());
-
-				
-				
-				
-				
-				if (methodToInvoke.isAnnotationPresent(NGRedirect.class)) {
-
-					
-					returns.put("location", mainReturn);
-					
-					
-				}
-				
-				if (methodToInvoke.isAnnotationPresent(NGReturn.class)) {
-
-					returns.put(methodToInvoke.getAnnotation(NGReturn.class).model(), mainReturn);
-				}
-				
-				
-			} catch (IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException
-					| SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-
-		event.getConnection().write(util.getJson(returns));
 
 	}
 
@@ -310,6 +120,7 @@ public class RemoteInvoker implements Serializable {
 
 		try {
 
+			returns.put("isRT", false);
 			genericInvoke(o, method, params, returns);
 
 		} catch (Exception e) {
@@ -317,9 +128,6 @@ public class RemoteInvoker implements Serializable {
 			e.printStackTrace();
 		}
 
-		
-		
-		
 		return returns;
 	}
 
@@ -335,8 +143,9 @@ public class RemoteInvoker implements Serializable {
 
 		JsonElement argsElem = params.get("args");
 
+		// returns.put("isRT", false);
 		returns.put("reqId", controller.getClass().getSimpleName());
-		
+
 		if (argsElem != null) {
 
 			JsonArray args = params.get("args").getAsJsonArray();
@@ -413,19 +222,22 @@ public class RemoteInvoker implements Serializable {
 
 		}
 
-		returns.put("log", logger.getLogPool().toArray());
-		logger.getLogPool().clear();
+		if (!logger.getLogPool().isEmpty()) {
+			returns.put("log", logger.getLogPool().toArray());
+			logger.getLogPool().clear();
+		}
 
-		if (m.isAnnotationPresent(NGReturn.class)
+		String[] updates = null;
+
+		if ((m.isAnnotationPresent(NGReturn.class))
+				|| (m.isAnnotationPresent(NGPostConstruct.class))
 				|| (m.isAnnotationPresent(NGRedirect.class))) {
-
-			String[] updates = null;
 
 			if (m.isAnnotationPresent(NGReturn.class)) {
 				NGReturn ngReturn = m.getAnnotation(NGReturn.class);
 				updates = ngReturn.updates();
 
-				//returns.put(ngReturn.model(), mainReturn);
+				// returns.put(ngReturn.model(), mainReturn);
 			}
 
 			if (m.isAnnotationPresent(NGRedirect.class)) {
@@ -434,6 +246,38 @@ public class RemoteInvoker implements Serializable {
 
 			}
 
+			if (m.isAnnotationPresent(NGPostConstruct.class)) {
+				NGPostConstruct ngPostConstruct = m
+						.getAnnotation(NGPostConstruct.class);
+				updates = ngPostConstruct.updates();
+
+			}
+
+			if (updates != null) {
+				if ((updates.length == 1) && (updates[0].equals("*"))) {
+
+					List<String> upd = new ArrayList<String>();
+					for (Method met : controller.getClass()
+							.getDeclaredMethods()) {
+
+						if (util.isGetter(met)) {
+
+							String fieldName = (met.getName()).substring(3);
+							String firstCar = fieldName.substring(0, 1);
+							upd.add((firstCar.toLowerCase() + fieldName
+									.substring(1)));
+
+						}
+					}
+
+					updates = new String[upd.size()];
+
+					for (int i = 0; i < upd.size(); i++) {
+						updates[i] = upd.get(i);
+					}
+
+				}
+			}
 			for (String up : updates) {
 
 				String getterName = "get" + up.substring(0, 1).toUpperCase()
@@ -451,24 +295,31 @@ public class RemoteInvoker implements Serializable {
 
 			}
 
-	//1
-			returns.putAll(scope.get(controller.getClass()).getScopeMap());
-			
-			returns.put("rootScope", rootScope.getRootScopeMap());
+			// 1
 
+			Map<String, Object> scMap=new HashMap<String,Object>((scopeUtil.get(controller.getClass())
+					.getScopeMap()));
+
+			returns.putAll(scMap);
+
+			scopeUtil.get(controller.getClass()).getScopeMap().clear();
+
+			if (!scopeUtil.getRootScope().getRootScopeMap().isEmpty()) {
+				returns.put("rootScope", new HashMap<String, Object>(scopeUtil
+						.getRootScope().getRootScopeMap()));
+				scopeUtil.getRootScope().getRootScopeMap().clear();
+			}
 		}
 
 		if (m.isAnnotationPresent(NGRedirect.class)) {
 
 			returns.put("location", mainReturn);
 		}
-		
+
 		if (m.isAnnotationPresent(NGReturn.class)) {
 
 			returns.put(m.getAnnotation(NGReturn.class).model(), mainReturn);
 		}
-		
-		
 
 	}
 

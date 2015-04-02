@@ -32,11 +32,9 @@ import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.SockJsServer;
 import org.projectodd.sockjs.servlet.SockJsServlet;
 
+import angularBeans.api.DataReceivedEvent;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.util.AngularBeansUtil;
-import angularBeans.wsocket.annotations.WSocketReceiveEvent;
-import angularBeans.wsocket.annotations.WSocketSessionCloseEvent;
-import angularBeans.wsocket.annotations.WSocketSessionReadyEvent;
 
 import com.google.gson.JsonObject;
 
@@ -44,20 +42,20 @@ import com.google.gson.JsonObject;
 public class RealTimeEndPoint extends SockJsServlet {
 
 	@Inject
-	@WSocketReceiveEvent
-	private Event<WSocketEvent> receiveEvents;
+	@DataReceivedEvent
+	private Event<RealTimeEvent> receiveEvents;
 
 	@Inject
-	@WSocketSessionReadyEvent
-	private Event<WSocketEvent> sessionOpenEvent;
+	@RealTimeSessionReadyEvent
+	private Event<RealTimeEvent> sessionOpenEvent;
 
 	@Inject
-	@WSocketSessionCloseEvent
-	private Event<WSocketEvent> sessionCloseEvent;
+	@RealTimeSessionCloseEvent
+	private Event<RealTimeEvent> sessionCloseEvent;
 
 	@Inject
-	@WSocketErrorEvent
-	private Event<WSocketEvent> errorEvent;
+	@RealTimeErrorEvent
+	private Event<RealTimeEvent> errorEvent;
 
 	@Inject
 	GlobalConnectionHolder globalConnectionHolder;
@@ -97,7 +95,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 						JsonObject jObj = AngularBeansUtil.parse(message);
 						String UID = jObj.get("session").getAsString();
 
-						WSocketEvent ev = new WSocketEvent(connection,
+						RealTimeEvent ev = new RealTimeEvent(connection,
 								AngularBeansUtil.parse(message));
 
 						ev.setConnection(connection);

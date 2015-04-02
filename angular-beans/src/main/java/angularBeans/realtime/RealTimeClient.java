@@ -37,15 +37,13 @@ import javax.websocket.Session;
 import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.Transport.READY_STATE;
 
+import angularBeans.api.DataReceivedEvent;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.log.NGLogger;
 import angularBeans.util.AngularBeansUtil;
-import angularBeans.wsocket.annotations.WSocketReceiveEvent;
-import angularBeans.wsocket.annotations.WSocketSessionCloseEvent;
-import angularBeans.wsocket.annotations.WSocketSessionReadyEvent;
 
 @NGSessionScoped
-public class WSocketClient implements Serializable {
+public class RealTimeClient implements Serializable {
 
 	private Set<SockJsConnection> sessions=new HashSet<SockJsConnection>();
 	
@@ -58,21 +56,21 @@ public class WSocketClient implements Serializable {
 	private static  Map<String, Session> channelsSubscribers=new HashMap<>();
 	
 	
-	public void onSessionReady(@Observes @WSocketSessionReadyEvent WSocketEvent event) {
+	public void onSessionReady(@Observes @RealTimeSessionReadyEvent RealTimeEvent event) {
     sessions.add(event.getConnection());
 	event.setClient(this);
 	
 	}
 
-	public void onClose(@Observes @WSocketSessionCloseEvent WSocketEvent event) {
+	public void onClose(@Observes @RealTimeSessionCloseEvent RealTimeEvent event) {
 		sessions.remove(event.getConnection());
 	}
 
-	public void onError(@Observes @WSocketErrorEvent WSocketEvent event) {
+	public void onError(@Observes @RealTimeErrorEvent RealTimeEvent event) {
 		throw new RuntimeException(event.getData().toString());
 	}
 
-	public void onSession(@Observes @WSocketReceiveEvent WSocketEvent event) {
+	public void onSession(@Observes @DataReceivedEvent RealTimeEvent event) {
 
 		sessions.add(event.getConnection());
 		event.setClient(this);
@@ -90,13 +88,14 @@ public class WSocketClient implements Serializable {
 		}
 	}
 	
-	public void publish(String channel, WSocketMessage message) {
+	public void publish(String channel, RealTimeMessage message) {
 
 		Map<String, Object> paramsToSend = new HashMap<String, Object>(
 				message.build());
 		paramsToSend.put("reqId", channel);
 		 paramsToSend.put("log", logger.getLogPool());
-		
+		 paramsToSend.put("isRT", true);
+		 
 		 for(SockJsConnection session:new HashSet<SockJsConnection>(sessions)){
 			
 	
@@ -112,17 +111,17 @@ public class WSocketClient implements Serializable {
 	
 	public void flushModel(Class controllerClass,String modelName,Object model ){
 		
-		publish(controllerClass.getSimpleName(), new WSocketMessage().add(modelName, model));
+		publish(controllerClass.getSimpleName(), new RealTimeMessage().add(modelName, model));
 		
 	}
 	
-	public void publishToAll(String channel, WSocketMessage message) {
+	public void broadcast(String channel, RealTimeMessage message) {
 	
 		Map<String, Object> paramsToSend = new HashMap<String, Object>(
 				message.build());
 		paramsToSend.put("reqId", channel);
        
-		
+		paramsToSend.put("isRT", true);
 	
 			
 			

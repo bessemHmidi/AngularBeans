@@ -19,11 +19,19 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.rest;
+package angularBeans.remote;
 
+import java.io.IOException;
 import java.io.Serializable;
 
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.security.auth.message.callback.PrivateKeyCallback.Request;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -41,8 +49,9 @@ import angularBeans.util.AngularBeansUtil;
 
 import com.google.gson.JsonObject;
 
-@Path("/invoke")
-public class RestInvoker implements Serializable {
+@WebServlet(asyncSupported=false,urlPatterns="/http/invoke/*") 
+
+public class HTTPInvoker extends HttpServlet  implements Serializable{
 
 	@Inject
 	RemoteInvoker remoteInvoker;
@@ -53,73 +62,46 @@ public class RestInvoker implements Serializable {
 	@Inject
 	AngularBeansUtil util;
 
-	@GET
-	@Path("/service/{bean}/{method}/json")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Object doServiceGet(@PathParam("bean") String beanName,
-			@PathParam("method") String method,
-			@QueryParam("params") String params) {
-
-		return process(beanName, method, params);
-
-	}
-
 	
-	@POST
-	@Path("/service/{bean}/{method}/json")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+
+		
+		
+		String fullPath=req.getRequestURI();
+		fullPath=(fullPath.substring(fullPath.indexOf("/service/")+9));
+		
+		String parts[]=fullPath.split("/");
+		
+		String bean=parts[0];
+		String method=parts[1];
+		
+		String params=req.getParameter("params");
+		
 	
-	public Object doServicePost(@PathParam("bean") String beanName,
-			@PathParam("method") String method,
-			 String params) {
-
-		return process(beanName, method, params);
-
-	}
-	
-	
-	@PUT
-	@Path("/service/{bean}/{method}/json")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Object doServicePut(@PathParam("bean") String beanName,
-			@PathParam("method") String method,
-			@QueryParam("params") String params) {
-
-		return process(beanName, method, params);
-
-	}
-	
-	@DELETE
-	@Path("/service/{bean}/{method}/json")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Object doServiceDelete(@PathParam("bean") String beanName,
-			@PathParam("method") String method,
-			@QueryParam("params") String params) {
-
-		return process(beanName, method, params);
-
+		resp.getWriter().write(process(bean, method, params).toString());
+		
+		
 	}
 	
 
+
 	
-	private Object process(String beanName, String method, String params) {
+		private Object process(String beanName, String method, String params) {
 		
 		
 		JsonObject paramsObj =util.parse(params); 
 
 		String UID = paramsObj.get("sessionUID").getAsString();
 		NGSessionScopeContext.setCurrentContext(UID);
-		
-	
-		
-		
-		
+
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID), method,
 				paramsObj, UID);
 		
 		String jsonResponse=util.getJson(result);
 		
-		//System.out.println(jsonResponse);
+		System.out.println(jsonResponse);
 		
 		return jsonResponse;
 	}

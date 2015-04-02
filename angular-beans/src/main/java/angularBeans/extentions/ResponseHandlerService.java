@@ -38,10 +38,40 @@ public class ResponseHandlerService implements Extention {
 		
 		String result = "";
 		
-		result += "app.service('responseHandler',['logger','$rootScope',function(logger,$rootScope){\n";
+		result += "app.service('responseHandler',['logger','$rootScope','$location',function(logger,$rootScope,$location){\n";
 
 		
-		result +=("\nthis.handleResponse=function(msg,scope,redirect){");
+		result +=("\nthis.handleResponse=function(msg,scopes){");
+		
+		
+		result+="var isRedirect=false;";
+		result+="if(msg.hasOwnProperty('location')){isRedirect=true;}";
+		
+		//result += "\nfor (var rs in scopes){";
+		
+		//result +="console.log(scopes[rs].id);";
+		
+		result+=("\nif (isRedirect){");
+		//result+=("\nlogger.log(msg.location);");
+		result+=("$location.path(msg.location);");
+		
+		result+=("}");
+		
+		
+		result +=("\nfor (var rs in scopes){");
+		
+	
+		
+	result += 	"if(scopes[rs].id===msg.reqId){";
+				
+	
+	
+		result+="scope=scopes[rs].scope;";
+			
+
+		
+		
+		
 		result +=("\nfor (var key in msg) {");
 		result+=("\nif(key==='rootScope'){");
 
@@ -55,16 +85,23 @@ public class ResponseHandlerService implements Extention {
 		result+=("\nscope[key]=msg[key];");
 		result+=("\n  }");
 		result+=("\n  }");
+				
+		result += "\nif(msg.isRT){";
+		result += "\nscope.$apply();"; 
+		result +="\nscope.$digest();";
+		result+=("}");		
+				
+		result+=("}}");
 
 		// result+=("\nscope.$apply();");
 		// result+=("\n$rootScope.$apply();");
 		result+=("\nlogger.log(msg.log);");
 		
-		result+=("\nif (redirect){");
-			//result+=("\nlogger.log(msg.location);");
-			result+=("window.location = msg.location;");
-			
-			result+=("}");
+		
+		
+		
+		
+	//-->
 			
 		result+=("};");
 

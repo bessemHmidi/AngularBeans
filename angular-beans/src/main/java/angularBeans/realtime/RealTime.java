@@ -19,15 +19,19 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.rest;
+package angularBeans.realtime;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-
-@ApplicationPath("/rest")
-public class JaxRs extends Application{
+@Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+public @interface RealTime {
 
 }
-

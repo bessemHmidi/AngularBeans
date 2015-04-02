@@ -21,22 +21,46 @@
  */
 package angularBeans.realtime;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.io.Serializable;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import javax.websocket.Session;
 
-import javax.inject.Qualifier;
+import org.projectodd.sockjs.SockJsConnection;
 
+import com.google.gson.JsonObject;
 
-@Target({TYPE, METHOD, FIELD, PARAMETER})
-@Retention(RUNTIME)
+public class RealTimeEvent implements Serializable {
 
-@Qualifier
-public @interface WSocketErrorEvent {
+	
+	private SockJsConnection connection;
+	private JsonObject data;
+	private RealTimeClient client;
 
+	public RealTimeEvent(SockJsConnection connection, JsonObject data) {
+		this.connection=connection;
+		this.data = data;
+
+	}
+
+	public void setConnection(SockJsConnection connection) {
+		this.connection = connection;
+	}
+	
+	public SockJsConnection getConnection() {
+		return connection;
+	}
+	
+	public JsonObject getData() {
+		return data;
+	}
+
+	public void setClient(RealTimeClient wSocketClient) {
+		this.client=wSocketClient;
+		
+	}
+
+	
+	public RealTimeClient getClient() {
+		return client;
+	}
 }

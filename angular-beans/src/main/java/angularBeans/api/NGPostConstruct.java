@@ -19,22 +19,19 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.realtime;
+package angularBeans.api;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class WSocketMessage {
 
-	private Map<String, Object> data = new HashMap<String, Object>();
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface NGPostConstruct {
 
-	public WSocketMessage add(String propertyName, Object value) {
-		data.put(propertyName, value);
-		return this;
-	}
+	String[] updates() default {}; 
 
-	public Map<String, Object> build() {
-		return data;
-	}
-
+	
 }

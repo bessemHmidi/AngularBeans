@@ -47,10 +47,6 @@ public class SockJsRpcService implements Extention {
 		String result = "";
 		
 		result += "app.service('wsocketRPC',['logger','$rootScope','$http','responseHandler',function(logger,$rootScope,$http,responseHandler){\n";
-//		result += "\nvar ws = new WebSocket(\"" + webSocketPath + "\");";
-		
-		
-
 		result+="var sockjs_url =\"" + webSocketPath + "\";";
 		result+="var ws = new SockJS(sockjs_url, undefined, {debug: true});";
 		
@@ -78,86 +74,29 @@ public class SockJsRpcService implements Extention {
 		result += "\nws.onmessage = function (evt)";
 		result += "\n{";
 		result += "\nvar msg=JSON.parse(evt.data);";
-	//	result += "\nalert(JSON.stringify(msg));";
-		//-----------------
-		//
-		
+	
 		//-----------------------
-		//result +="scopes=sessionStorage.getItem(\"scopes\");";
-		
-		
-	    //----------------	
-		
-		result += "\nlogger.log(msg.log);";
-		
-	//	result += "\nvar elementPos = scopes.map(function(x) {return x.id; }).indexOf(msg.reqId);";
-		
-		
-		result += "\nfor (var rs in scopes){";
-
-	result += 	"if(scopes[rs].id===msg.reqId){";
-				
-		result+="refScope=scopes[rs].scope;";
-			
-		
-		
 	
-//		result += "if (!(typeof (scopes[elementPos]) === \"undefined\")){";
-//		
-//		
-//		result += "\nrefScope = scopes[elementPos].scope;";
-		
-		//result += "\nrefScope.received=msg;";
-		
-//		result += "\nfor (var key in msg) {";
-//		result += "\nrefScope[key]=\"\";}";
 
-	//	result += "\nrefScope.$apply();\nrefScope.$digest();";
+		result+=("responseHandler.handleResponse(msg,wsocketRPC.getScopes());");	
 		
-		result += "\nfor (var key in msg) {";
-	
 		
-		//result += "\nif (refScope.hasOwnProperty(key)) {";
-		//result+="refScope[key]='#';refScope.$digest();\nrefScope.$apply();";
-		
-
-		
-		result += "\nif(key==='rootScope'){";
-			
-		result += "\nfor(var model in msg[key]){";
-		
-//		result +="console.log(JSON.stringify(msg['rootScope'][model]));";
-		
-		result += "\n$rootScope[model]=msg['rootScope'][model];";
-				
-		result +="console.log(JSON.stringify($rootScope[model]));";
-		result += "\n}";
-			
-		result += "}";
-		
-		result+="else{";
-		result += "\nrefScope[key]=msg[key]";
-		result += "\n  }";
-		result += "\n  }";
-		
-		result += "\nrefScope.$apply();"; 
-		result +="\nrefScope.$digest();";
-   result+="}";
+ //  result+="}";
         //
    
    
    
-		result += "\nif(msg.isRPC){";
+		
 		
 		//result += "\nrefScope.$digest();\nrefScope.$apply();";
 		
 	//	result += "\nwsocketRPC.unsubscribe(msg.reqId,refScope);";
 		
-		result += "\n}";
+	//	result += "\n}";
 		
-		result+="if(msg.hasOwnProperty('location')){window.location = msg.location;}";
+//		result+="if(msg.hasOwnProperty('location')){window.location = msg.location;}";
 		
-		result += "\n }};";
+		result += "\n }; "; //};";
 
 		
 		result += "\nthis.getScopes = function (){return scopes;};";

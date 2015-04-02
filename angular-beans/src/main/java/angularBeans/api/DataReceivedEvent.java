@@ -19,16 +19,24 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.wsocket.annotations;
+package angularBeans.api;
 
-import java.lang.annotation.ElementType;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Subscribe {
+import javax.inject.Qualifier;
 
-	String[] channels(); //default {};
+
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+@Retention(RUNTIME)
+
+@Qualifier
+public @interface DataReceivedEvent {
+
 }
