@@ -21,12 +21,9 @@
  */
 package angularBeans.realtime;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,15 +34,19 @@ import javax.websocket.Session;
 import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.Transport.READY_STATE;
 
-import angularBeans.api.DataReceivedEvent;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.log.NGLogger;
+import angularBeans.remote.DataReceivedEvent;
+import angularBeans.remote.RealTimeDataReceiveEvent;
 import angularBeans.util.AngularBeansUtil;
 
 @NGSessionScoped
 public class RealTimeClient implements Serializable {
 
 	private Set<SockJsConnection> sessions=new HashSet<SockJsConnection>();
+	
+	@Inject
+	GlobalConnectionHolder connectionHolder;
 	
 	@Inject
 	AngularBeansUtil util;
@@ -56,30 +57,34 @@ public class RealTimeClient implements Serializable {
 	private static  Map<String, Session> channelsSubscribers=new HashMap<>();
 	
 	
-	public void onSessionReady(@Observes @RealTimeSessionReadyEvent RealTimeEvent event) {
-    sessions.add(event.getConnection());
+	public void onSessionReady(@Observes @RealTimeSessionReadyEvent RealTimeDataReceiveEvent event) {
+  
+		connectionHolder.getAllConnections().add(event.getConnection());
+		sessions.add(event.getConnection());
+		
+		
 	event.setClient(this);
 	
 	}
 
-	public void onClose(@Observes @RealTimeSessionCloseEvent RealTimeEvent event) {
-		sessions.remove(event.getConnection());
+	public void onClose(@Observes @RealTimeSessionCloseEvent RealTimeDataReceiveEvent event) {
+		connectionHolder.getAllConnections().remove(event.getConnection());
 	}
 
-	public void onError(@Observes @RealTimeErrorEvent RealTimeEvent event) {
+	public void onError(@Observes @RealTimeErrorEvent RealTimeDataReceiveEvent event) {
 		throw new RuntimeException(event.getData().toString());
 	}
 
-	public void onSession(@Observes @DataReceivedEvent RealTimeEvent event) {
+	public void onData(@Observes @DataReceivedEvent RealTimeDataReceiveEvent event) {
 
-		sessions.add(event.getConnection());
+		//sessions.add(event.getConnection());
 		event.setClient(this);
 
 	}
 
-	public Set<SockJsConnection> getSessions() {
-		return sessions;
-	}
+//	public Set<SockJsConnection> getSessions() {
+//		return sessions;
+//	}
 
 	
 	public void invalidateSession(){
@@ -96,7 +101,7 @@ public class RealTimeClient implements Serializable {
 		 paramsToSend.put("log", logger.getLogPool());
 		 paramsToSend.put("isRT", true);
 		 
-		 for(SockJsConnection session:new HashSet<SockJsConnection>(sessions)){
+   for(SockJsConnection session:new HashSet<SockJsConnection>(sessions)){
 			
 	
 			 if(!session.getReadyState().equals(READY_STATE.OPEN)){sessions.remove(session);}
@@ -105,17 +110,19 @@ public class RealTimeClient implements Serializable {
 			 }
 	
 	}
+		 
+		 
 	}
 
 	
 	
 	public void flushModel(Class controllerClass,String modelName,Object model ){
 		
-		publish(controllerClass.getSimpleName(), new RealTimeMessage().add(modelName, model));
+		publish(controllerClass.getSimpleName(), new RealTimeMessage().setModel(modelName, model));
 		
 	}
 	
-	public void broadcast(String channel, RealTimeMessage message) {
+	public void broadcast(String channel, RealTimeMessage message,boolean withoutMe) {
 	
 		Map<String, Object> paramsToSend = new HashMap<String, Object>(
 				message.build());
@@ -125,12 +132,15 @@ public class RealTimeClient implements Serializable {
 	
 			
 			
-			for(SockJsConnection sess:connectionHolder.getAllConnections()){
-				if(sess.getReadyState().equals(READY_STATE.OPEN)){
+			for(SockJsConnection connection:connectionHolder.getAllConnections()){
+				
+				if (withoutMe){if(sessions.contains(connection)){continue;}}
+
+				if(connection.getReadyState().equals(READY_STATE.OPEN)){
 				
 					String objectMessage=util.getJson(paramsToSend);
 					
-					sess.write(objectMessage);
+					connection.write(objectMessage);
 					
 				
 			}
@@ -140,8 +150,6 @@ public class RealTimeClient implements Serializable {
 		
 	}
 
-	@Inject
-	GlobalConnectionHolder connectionHolder;
 	
 	public static synchronized Map<String, Session> getChannelsSubscribers() {
 		return channelsSubscribers;

@@ -29,9 +29,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NGSubmit {
+public @interface NGModel {
 	
-	String[] backEndModels() default {};
-	
-
 }

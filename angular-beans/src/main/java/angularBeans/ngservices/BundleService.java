@@ -19,12 +19,12 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.extentions;
+package angularBeans.ngservices;
 
 
 
 @NGExtention
-public class BundleService implements Extention {
+public class BundleService implements NGService {
 
 	@Override
 	public String render() {

@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -44,7 +45,6 @@ import angularBeans.context.NGSessionScopeContext;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
 import angularBeans.realtime.RealTimeClient;
-import angularBeans.realtime.RealTimeEvent;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ScopeUtils;
 
@@ -59,7 +59,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 
 @ApplicationScoped
-public class RemoteInvoker implements Serializable {
+public class InvocationHandler implements Serializable {
 
 	@Inject
 	RealTimeClient holder;
@@ -71,7 +71,7 @@ public class RemoteInvoker implements Serializable {
 	AngularBeansUtil util;
 
 	@Inject
-	ScopeUtils scopeUtil;
+	ScopeUtils scopeUtils;
 
 	Map<String, Class> builtInMap = new HashMap<String, Class>();
 
@@ -88,8 +88,9 @@ public class RemoteInvoker implements Serializable {
 		builtInMap.put("short", Short.TYPE);
 	}
 
-	public synchronized void realTimeInvoke(Object controller, String methodName,
-			JsonObject params, RealTimeEvent event, long reqID, String UID) {
+	public synchronized void realTimeInvoke(Object controller,
+			String methodName, JsonObject params, RealTimeDataReceiveEvent event,
+			long reqID, String UID) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
@@ -101,7 +102,7 @@ public class RemoteInvoker implements Serializable {
 		try {
 			genericInvoke(controller, methodName, params, returns);
 			event.getConnection().write(util.getJson(returns));
-			
+
 		} catch (SecurityException | ClassNotFoundException
 				| IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException e) {
@@ -297,18 +298,25 @@ public class RemoteInvoker implements Serializable {
 
 			// 1
 
-			Map<String, Object> scMap=new HashMap<String,Object>((scopeUtil.get(controller.getClass())
-					.getScopeMap()));
+			Map<String, Object> scMap = new HashMap<String, Object>(
+					(scopeUtils.get(controller.getClass()).getScopeMap()));
 
 			returns.putAll(scMap);
 
-			scopeUtil.get(controller.getClass()).getScopeMap().clear();
+			scopeUtils.get(controller.getClass()).getScopeMap().clear();
 
-			if (!scopeUtil.getRootScope().getRootScopeMap().isEmpty()) {
-				returns.put("rootScope", new HashMap<String, Object>(scopeUtil
+			if (!scopeUtils.getRootScope().getRootScopeMap().isEmpty()) {
+				returns.put("rootScope", new HashMap<String, Object>(scopeUtils
 						.getRootScope().getRootScopeMap()));
-				scopeUtil.getRootScope().getRootScopeMap().clear();
+				scopeUtils.getRootScope().getRootScopeMap().clear();
 			}
+
+			if (!scopeUtils.get(controller.getClass()).getArraysMap().isEmpty()) {
+				returns.put("arrays", new HashMap<String, Set<Object>>(
+						scopeUtils.get(controller.getClass()).getArraysMap()));
+				scopeUtils.get(controller.getClass()).getArraysMap().clear();
+			}
+
 		}
 
 		if (m.isAnnotationPresent(NGRedirect.class)) {

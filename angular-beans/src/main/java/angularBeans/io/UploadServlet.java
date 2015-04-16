@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import javax.ws.rs.core.MediaType;
 
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.log.NGLogger;
@@ -47,22 +48,26 @@ public class UploadServlet extends HttpServlet {
 
 		// String param = request.getQueryString();
 
-		response.setContentType("text/html;charset=UTF-8");
+		response.setContentType(MediaType.APPLICATION_JSON);
 		try (PrintWriter out = response.getWriter()) {
-			out.println("<!DOCTYPE html>");
-			out.println("<html>");
-			out.println("<head>");
-			out.println("<title>Servlet TestServlet</title>");
-			out.println("</head>");
-			out.println("<body>");
-			out.println("<h1>Angular Beans Uplaud Service"
-					+ request.getContextPath() + ": param</h1>");
-
 			
 			
-
-			out.println("</body>");
-			out.println("</html>");
+			out.println("{answer:\"File transfer completed\"}");
+			
+//			out.println("<!DOCTYPE html>");
+//			out.println("<html>");
+//			out.println("<head>");
+//			out.println("<title>Servlet TestServlet</title>");
+//			out.println("</head>");
+//			out.println("<body>");
+//			out.println("<h1>Angular Beans Uplaud Service"
+//					+ request.getContextPath() + ": param</h1>");
+//
+//			
+//			
+//
+//			out.println("</body>");
+//			out.println("</html>");
 			//out.flush();
 			//out.close();
 			List<Upload> uploads = new ArrayList<Upload>();

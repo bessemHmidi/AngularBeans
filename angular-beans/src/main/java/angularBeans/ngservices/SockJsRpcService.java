@@ -19,7 +19,7 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.extentions;
+package angularBeans.ngservices;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import angularBeans.boot.ModuleGenerator;
 
 @NGExtention
-public class SockJsRpcService implements Extention {
+public class SockJsRpcService implements NGService {
 
 	@Inject
 	ModuleGenerator generator;
@@ -46,12 +46,12 @@ public class SockJsRpcService implements Extention {
 
 		String result = "";
 		
-		result += "app.service('wsocketRPC',['logger','$rootScope','$http','responseHandler',function(logger,$rootScope,$http,responseHandler){\n";
+		result += "app.service('RTSrvc',['logger','$rootScope','$http','responseHandler',function(logger,$rootScope,$http,responseHandler){\n";
 		result+="var sockjs_url =\"" + webSocketPath + "\";";
-		result+="var ws = new SockJS(sockjs_url, undefined, {debug: true});";
+		result+="var ws = new SockJS(sockjs_url, undefined, {debug: false});";
 		
 		result += "\nthis.rootScope=$rootScope;";
-		result += "\nvar wsocketRPC=this;";
+		result += "\nvar RTSrvc=this;";
 		result += "\nvar reqId=0;";
 		result += "\nvar scopes=[];";
 		result += "\nvar refScope='';";
@@ -60,17 +60,13 @@ public class SockJsRpcService implements Extention {
 
 		result += "\nvar message = {";
 		result += "\n'reqId':0,";
-		result += "\n'session': wsocketRPC.rootScope.sessionUID,";
+		result += "\n'session': RTSrvc.rootScope.sessionUID,";
 		result += "\n'service': 'ping',";
 		result += "\n'method': 'ping',";
 		result += "\n'params': {'nada':'nada'}";
 		result += "\n};";
-		result += "\nwsocketRPC.send(message);};";
+		result += "\nRTSrvc.send(message);};";
 
-		
-		
-		
-		
 		result += "\nws.onmessage = function (evt)";
 		result += "\n{";
 		result += "\nvar msg=JSON.parse(evt.data);";
@@ -78,7 +74,7 @@ public class SockJsRpcService implements Extention {
 		//-----------------------
 	
 
-		result+=("responseHandler.handleResponse(msg,wsocketRPC.getScopes());");	
+		result+=("responseHandler.handleResponse(msg,RTSrvc.getScopes());");	
 		
 		
  //  result+="}";
@@ -90,7 +86,7 @@ public class SockJsRpcService implements Extention {
 		
 		//result += "\nrefScope.$digest();\nrefScope.$apply();";
 		
-	//	result += "\nwsocketRPC.unsubscribe(msg.reqId,refScope);";
+	//	result += "\nRTSrvc.unsubscribe(msg.reqId,refScope);";
 		
 	//	result += "\n}";
 		
@@ -132,16 +128,16 @@ public class SockJsRpcService implements Extention {
 		result += "\nthis.call=function(rfc,invockation,params){";
 		result += "\nreqId++;";
 		
-		//result += "\nwsocketRPC.subscribe(rfc,reqId,true);";
+		//result += "\nRTSrvc.subscribe(rfc,reqId,true);";
 
 		result += "\nvar message = {";
 		result += "\n'reqId':reqId,";
-		result += "\n'session': wsocketRPC.rootScope.sessionUID,";
+		result += "\n'session': RTSrvc.rootScope.sessionUID,";
 		result += "\n'service': invockation.split(\".\")[0],";
 		result += "\n'method': invockation.split(\".\")[1],";
 		result += "\n'params': params";
 		result += "\n};";
-		result += "\nwsocketRPC.send(message);";
+		result += "\nRTSrvc.send(message);";
 		result += "\n}}]);";
 
 		return result;

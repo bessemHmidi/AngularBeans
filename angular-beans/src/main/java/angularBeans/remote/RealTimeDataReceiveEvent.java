@@ -19,7 +19,7 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.realtime;
+package angularBeans.remote;
 
 import java.io.Serializable;
 
@@ -27,16 +27,19 @@ import javax.websocket.Session;
 
 import org.projectodd.sockjs.SockJsConnection;
 
+import angularBeans.realtime.RealTimeClient;
+
 import com.google.gson.JsonObject;
 
-public class RealTimeEvent implements Serializable {
+public class RealTimeDataReceiveEvent implements DataReceived,Serializable {
 
 	
 	private SockJsConnection connection;
 	private JsonObject data;
 	private RealTimeClient client;
-
-	public RealTimeEvent(SockJsConnection connection, JsonObject data) {
+	private String sessionId;
+	
+	public RealTimeDataReceiveEvent(SockJsConnection connection, JsonObject data) {
 		this.connection=connection;
 		this.data = data;
 
@@ -50,6 +53,9 @@ public class RealTimeEvent implements Serializable {
 		return connection;
 	}
 	
+	
+	
+	@Override
 	public JsonObject getData() {
 		return data;
 	}
@@ -62,5 +68,13 @@ public class RealTimeEvent implements Serializable {
 	
 	public RealTimeClient getClient() {
 		return client;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 }

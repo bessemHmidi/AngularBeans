@@ -56,6 +56,15 @@ public class AngularBeansUtil implements Serializable {
 	public static final String NG_SESSION_ATTRIBUTE_NAME = "NG_SESSION_ID";
 
 	@Inject
+	private CurrentNGSession currentSession;
+	
+	
+	
+	public String getCurrentSessionId() {
+		return currentSession.getSessionId();
+	}
+	
+	@Inject
 	ByteArrayCache cache;
 
 	public static String getBeanName(Class targetClass) {
@@ -159,6 +168,10 @@ public class AngularBeansUtil implements Serializable {
 	}
 
 	public static JsonObject parse(String message) {
+		
+		
+		
+		
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(message);
 

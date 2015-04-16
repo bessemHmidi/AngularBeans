@@ -19,7 +19,7 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.realtime;
+package angularBeans.remote;
 
 import java.util.logging.Logger;
 
@@ -32,8 +32,11 @@ import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.SockJsServer;
 import org.projectodd.sockjs.servlet.SockJsServlet;
 
-import angularBeans.api.DataReceivedEvent;
 import angularBeans.context.NGSessionScopeContext;
+import angularBeans.realtime.GlobalConnectionHolder;
+import angularBeans.realtime.RealTimeErrorEvent;
+import angularBeans.realtime.RealTimeSessionCloseEvent;
+import angularBeans.realtime.RealTimeSessionReadyEvent;
 import angularBeans.util.AngularBeansUtil;
 
 import com.google.gson.JsonObject;
@@ -43,19 +46,19 @@ public class RealTimeEndPoint extends SockJsServlet {
 
 	@Inject
 	@DataReceivedEvent
-	private Event<RealTimeEvent> receiveEvents;
+	private Event<DataReceived> receiveEvents;
 
 	@Inject
 	@RealTimeSessionReadyEvent
-	private Event<RealTimeEvent> sessionOpenEvent;
+	private Event<RealTimeDataReceiveEvent> sessionOpenEvent;
 
 	@Inject
 	@RealTimeSessionCloseEvent
-	private Event<RealTimeEvent> sessionCloseEvent;
+	private Event<RealTimeDataReceiveEvent> sessionCloseEvent;
 
 	@Inject
 	@RealTimeErrorEvent
-	private Event<RealTimeEvent> errorEvent;
+	private Event<RealTimeDataReceiveEvent> errorEvent;
 
 	@Inject
 	GlobalConnectionHolder globalConnectionHolder;
@@ -85,7 +88,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 			@Override
 			public void handle(final SockJsConnection connection) {
 				getServletContext().log("SockJS client connected");
-				globalConnectionHolder.getAllConnections().add(connection);
+				
 
 				// onData gets called when a client sends data to the server
 				connection.onData(new SockJsConnection.OnDataHandler() {
@@ -95,10 +98,14 @@ public class RealTimeEndPoint extends SockJsServlet {
 						JsonObject jObj = AngularBeansUtil.parse(message);
 						String UID = jObj.get("session").getAsString();
 
-						RealTimeEvent ev = new RealTimeEvent(connection,
-								AngularBeansUtil.parse(message));
+						
+						
+						
+						RealTimeDataReceiveEvent ev = new RealTimeDataReceiveEvent(connection,
+								jObj);
 
 						ev.setConnection(connection);
+						ev.setSessionId(UID);
 						NGSessionScopeContext.setCurrentContext(UID);
 
 						String service = jObj.get("service").getAsString();

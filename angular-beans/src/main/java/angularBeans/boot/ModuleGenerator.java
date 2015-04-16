@@ -46,6 +46,7 @@ import javax.ws.rs.PUT;
 
 import angularBeans.api.NGApp;
 import angularBeans.api.NGController;
+import angularBeans.api.NGModel;
 import angularBeans.api.NGModules;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGRedirect;
@@ -53,18 +54,17 @@ import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.api.Subscribe;
 import angularBeans.context.BeanLocator;
-import angularBeans.context.GlobalMapHolder;
 import angularBeans.context.NGSessionScopeContext;
-import angularBeans.extentions.NGExtention;
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
 import angularBeans.io.FileUploadHandler;
 import angularBeans.io.LobWrapper;
+import angularBeans.ngservices.NGExtention;
 import angularBeans.realtime.RealTime;
 import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.CurrentNGSession;
 import angularBeans.util.NGControllerBean;
-import angularBeans.util.RootScope;
 import angularBeans.util.ScopeUtils;
 import angularBeans.validation.BeanValidationProcessor;
 
@@ -73,29 +73,26 @@ public class ModuleGenerator implements Serializable {
 
 	private String UID;;
 
-	
 	@Inject
 	ScopeUtils scopeUtil;
-	
+
 	@Inject
 	AngularBeansUtil util;
 
 	public ModuleGenerator() {
-		
-		
-		if(this.getClass().equals(ModuleGenerator.class)){
-		
-		UID = String.valueOf(UUID.randomUUID());
+
+		if (this.getClass().equals(ModuleGenerator.class)) {
+
+			UID = String.valueOf(UUID.randomUUID());
 		}
-		
+
 		NGSessionScopeContext.setCurrentContext(UID);
-		
+
 	}
 
 	@PostConstruct
 	public void init() {
-	
-		
+
 	}
 
 	public synchronized String getUID() {
@@ -113,8 +110,6 @@ public class ModuleGenerator implements Serializable {
 	@Inject
 	BeanLocator locator;
 
-
-
 	@Inject
 	@NGController
 	@Any
@@ -131,38 +126,35 @@ public class ModuleGenerator implements Serializable {
 	@Inject
 	BeanValidationProcessor validationAdapter;
 
-@Inject
-	RootScope rootScope;
+	@Inject
+	ScopeUtils scopeUtils;
+	
+	@Inject
+	CurrentNGSession ngSession;
 
-@Inject
-	ScopeUtils scopes;
-	
-	
 	private StringWriter writer;
 
 	private HttpServletRequest request;
 
 	private String contextPath;
 
-
-	
 	public void getScript(StringWriter writer) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
-	
+
+		ngSession.setSessionId(UID);
+		
 		
 		contextPath = (request.getServletContext().getContextPath());
-
 
 		this.writer = writer;
 
 		String appName = null;
 
-		
 		Class appClass = null;
 		for (Object ap : app) {
 			ap.toString();
-		
+
 			appClass = ap.getClass();
 			if (appClass.isAnnotationPresent(Named.class)) {
 				appName = ap.getClass().getAnnotation(Named.class).value();
@@ -174,54 +166,48 @@ public class ModuleGenerator implements Serializable {
 			}
 		}
 
-		
+		writer.write("var angularBeans={ test:function(){console.log('it work !!');} };");
+		writer.write("var app=angular.module('" + appName + "', [");
 
-			writer.write("var app=angular.module('" + appName + "', [");
+		if (appClass.isAnnotationPresent(NGModules.class)) {
 
-			if (appClass.isAnnotationPresent(NGModules.class)) {
-
-				NGModules ngModAnno = (NGModules) appClass
-						.getAnnotation(NGModules.class);
-				String[] modules = ngModAnno.value();
-				String modulesPart = "";
-				for (String module : modules) {
-					modulesPart += ("'" + module + "',");
-				}
-				modulesPart = modulesPart
-						.substring(0, modulesPart.length() - 1);
-				writer.write(modulesPart);
+			NGModules ngModAnno = (NGModules) appClass
+					.getAnnotation(NGModules.class);
+			String[] modules = ngModAnno.value();
+			String modulesPart = "";
+			for (String module : modules) {
+				modulesPart += ("'" + module + "',");
 			}
+			modulesPart = modulesPart.substring(0, modulesPart.length() - 1);
+			writer.write(modulesPart);
+		}
 
-			// ['angularFileUpload']
+		// ['angularFileUpload']
 
-			writer.write("])");
+		writer.write("])");
 
-			writer.write(".run(function($rootScope) {$rootScope.sessionUID = \""
-					+ UID + "\";");
+		writer.write(".run(function($rootScope) {$rootScope.sessionUID = \""
+				+ UID + "\";");
 
-			for (String model : scopeUtil.getRootScope().getProperties()) {
+		for (String model : scopeUtil.getRootScope().getProperties()) {
 
-				writer.write("$rootScope." + model + " = "
-						+ util.getJson(scopeUtil.getRootScope().getProperty(model)) + ";");
+			writer.write("$rootScope." + model + " = "
+					+ util.getJson(scopeUtil.getRootScope().getProperty(model))
+					+ ";");
 
-			}
+		}
 
-			writer.write("})");
-
-		
+		writer.write("})");
 
 		for (Object controller : controllers) {
 
 			NGControllerBean mb = new NGControllerBean(controller);
 
-			
-				writer.write(";app.controller('" + mb.getName() + "',");
-			
+			writer.write(";app.controller('" + mb.getName() + "',");
 
 			generateController(mb, contextPath);
 
-			
-				writer.write("]);\n");
+			writer.write("]);\n");
 		}
 
 		validationAdapter.build(writer);
@@ -243,7 +229,7 @@ public class ModuleGenerator implements Serializable {
 	}
 
 	public void generateController(NGControllerBean ngController,
-			 String contextPath) {
+			String contextPath) {
 
 		Object reference = locator.lookup(ngController.getName(), UID);
 
@@ -252,27 +238,26 @@ public class ModuleGenerator implements Serializable {
 		Method[] methods = clazz.getDeclaredMethods();
 		Object o = reference;
 
-		scopes.addScope(clazz);
-		
-	
-			writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','wsocketRPC',function");
+		scopeUtils.addScope(clazz);
+
+		writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','RTSrvc',function");
 		writer.write("($rootScope,$scope, $http, $location,logger,responseHandler");
 
-		writer.write(",wsocketRPC){\n");
+		writer.write(",RTSrvc){\n");
 
 		writer.write("\nvar rpath='" + contextPath
 				+ "/http/invoke/service/';\n");
 
 		String defaultChannel = clazz.getSimpleName();
 
-		writer.write("\nwsocketRPC.subscribe($scope,'" + defaultChannel + "');");
+		writer.write("\nRTSrvc.subscribe($scope,'" + defaultChannel + "');");
 		if (clazz.isAnnotationPresent(Subscribe.class)) {
 			String[] channels = ((Subscribe) clazz
 					.getAnnotation(Subscribe.class)).channels();
 
 			for (String channel : channels) {
 
-				writer.write("wsocketRPC.subscribe($scope,'" + channel + "');");
+				writer.write("RTSrvc.subscribe($scope,'" + channel + "');");
 			}
 		}
 
@@ -280,8 +265,10 @@ public class ModuleGenerator implements Serializable {
 
 		for (Method m : methods) {
 			if (util.isGetter(m)) {
+				if(m.isAnnotationPresent(NGModel.class)){
 				getters.add(m);
 			}
+				}
 		}
 
 		for (Method get : getters) {
@@ -349,10 +336,7 @@ public class ModuleGenerator implements Serializable {
 
 		for (Method m : methods) {
 			if ((!util.isSetter(m)) && (!util.isGetter(m))) {
-				
-				
-				
-				
+
 				String csModel = null;
 				String[] csUpdates = null;
 				Set<Method> setters = new HashSet<Method>();
@@ -390,7 +374,7 @@ public class ModuleGenerator implements Serializable {
 					csModel = returns.model();
 					csUpdates = returns.updates();
 				}
-				
+
 				if (m.isAnnotationPresent(NGRedirect.class)) {
 					NGRedirect returns = m.getAnnotation(NGRedirect.class);
 					csUpdates = returns.updates();
@@ -402,9 +386,9 @@ public class ModuleGenerator implements Serializable {
 				if (m.isAnnotationPresent(NGSubmit.class)) {
 
 					String[] models = m.getAnnotation(NGSubmit.class)
-							.updateModels();
+							.backEndModels();
 
-					if (models.length == 0 || models == null) {
+					if (models.length == 1 && models[0].equals("*")) {
 
 						pushScope(methods, setters);
 
@@ -427,9 +411,10 @@ public class ModuleGenerator implements Serializable {
 							}
 						}
 					}
-				} else {
-					pushScope(methods, setters);
 				}
+				// else {
+				// pushScope(methods, setters);
+				// }
 
 				writer.write("\n $scope." + m.getName() + "= function(");
 				// ---------------------------------------------
@@ -460,10 +445,10 @@ public class ModuleGenerator implements Serializable {
 
 				writer.write("var params={sessionUID:$rootScope.sessionUID};");
 				addParams(setters, m, args);
-			
+
 				if (m.isAnnotationPresent(RealTime.class)) {
 
-					writer.write("wsocketRPC.call($scope,'"
+					writer.write("RTSrvc.call($scope,'"
 							+ ngController.getName() + "." + m.getName()
 							+ "',params);");
 
@@ -476,57 +461,27 @@ public class ModuleGenerator implements Serializable {
 					if (httpMethod.equals("post")) {
 						writer.write("',params");
 					} else {
-						//encodeURI
-						String paramsQuery = ("?params='+encodeURIComponent(JSON.stringify(params))");
-						
+						// encodeURI
+						String paramsQuery = ("?params='+encodeURIComponent(angular.toJson(params))");
+
 						writer.write(paramsQuery);
 					}
 
-					
-					
 					writer.write(").\n success(function(msg) {\n");
-					
-////					writer.write("handleResponsemsg(msg,$scope);");
-//					
-//					writer.write("var isRedirect=");
-//					
-//
-//					if (m.isAnnotationPresent(NGRedirect.class)) {
-//					writer.write("true;");
-//					
-//					}else{
-//						writer.write("false;");
-//					}
-					
-					
-				writer.write("var scopes=wsocketRPC.getScopes();");
-		//			writer.write("\nfor (var rs in scopes){");
 
-					//writer.write("console.log('-->'+scopes[rs].id);");
-					
-//					writer.write("if(scopes[rs].id===msg.reqId){");
-//								
-//					writer.write("refScope=scopes[rs].scope;");
-					
-					writer.write("responseHandler.handleResponse(msg,scopes);");	
-					
-					//writer.write("alert(JSON.stringify(msg));");
-					
-					writer.write("} );"); //}");
-					
-					
-				
-					
-				//	writer.write("\n });");
+					writer.write("var scopes=RTSrvc.getScopes();");
+
+					writer.write("responseHandler.handleResponse(msg,scopes);");
+
+					writer.write("} );"); // }");
 
 				}
 
 				writer.write("};");
 
-				// }
-if(m.isAnnotationPresent(NGPostConstruct.class)){
-					
-					writer.write("\n$scope."+m.getName()+"();\n");
+				if (m.isAnnotationPresent(NGPostConstruct.class)) {
+
+					writer.write("\n$scope." + m.getName() + "();\n");
 				}
 			}
 		}
@@ -544,13 +499,10 @@ if(m.isAnnotationPresent(NGPostConstruct.class)){
 	}
 
 	private void addParams(Set<Method> setters, Method m, Type[] args) {
-		// if (m.isAnnotationPresent(NGSubmit.class)) {
 
 		for (Method setter : setters) {
 
-			String name = setter.getName();
-			name = name.substring(3, 4).toLowerCase() + name.substring(4);
-
+			String name = util.obtainFieldNameFromAccessor(setter.getName());
 			writer.write("params['" + name + "']=$scope." + name + ";");
 
 		}

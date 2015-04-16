@@ -11,8 +11,9 @@ import org.projectodd.sockjs.SockJsConnection;
 public class GlobalConnectionHolder {
 	
 	
-	private Set<SockJsConnection> allConnections=new HashSet<SockJsConnection>();
-
+	Set <SockJsConnection> allConnections =new HashSet<SockJsConnection>();
+	
+	
 	public Set<SockJsConnection> getAllConnections() {
 		return allConnections;
 	}

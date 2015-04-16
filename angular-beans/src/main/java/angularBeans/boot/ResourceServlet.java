@@ -66,12 +66,9 @@ public class ResourceServlet extends HttpServlet {
 		
 		
 		Properties properties = new Properties();
-		
-		
+
 		properties.load(is);
 
-		
-		
 		resp.getWriter().write(util.getJson(properties));
 
 	}

@@ -5,4 +5,4 @@
  * @author bessem
  *
  */
-package angularBeans.extentions;
+package angularBeans.ngservices;

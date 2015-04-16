@@ -19,22 +19,29 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.extentions;
+package angularBeans.ngservices;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+@NGExtention
+public class LoggerService implements NGService {
 
-import javax.inject.Qualifier;
+	public String render() {
+		String result = "";
 
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ TYPE, METHOD, FIELD, PARAMETER })
-public @interface NGExtention {
+		result += "	app.service('logger',[function(){";
+		result += "		this.log=function(logMessages){";
+		result += "			for (var i in logMessages) ";
+		result += "			{";
+		result += "			var message=logMessages[i].message;";
+		result += "			var level=logMessages[i].level;";
+		result += "				if(level===\"info\"){console.info(message);};";
+		result += "				if(level===\"error\"){console.error(message);};";
+		result += "				if(level===\"warn\"){console.warn(message);};";
+		result += "				if(level===\"debug\"){console.debug(message);};";
+		result += "				}";
+		result += "			 }}]);";
+
+		return result;
+	}
 
 }
