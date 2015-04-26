@@ -90,7 +90,11 @@ public class OneWayEndPoint extends HttpServlet  implements Serializable{
 		resp.getWriter().write(process(req).toString());
 	}
 	
-	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.getWriter().write(process(req).toString());
+	}
 
 	
 		private Object process(HttpServletRequest request) {

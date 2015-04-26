@@ -39,6 +39,6 @@ import javax.inject.Qualifier;
 @Qualifier
 //@Stereotype
 @Named
-public @interface NGController {
+public @interface AngularBean {
 
 }

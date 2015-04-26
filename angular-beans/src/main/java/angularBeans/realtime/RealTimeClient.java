@@ -95,11 +95,19 @@ public class RealTimeClient implements Serializable {
 	
 	public void publish(String channel, RealTimeMessage message) {
 
-		Map<String, Object> paramsToSend = new HashMap<String, Object>(
-				message.build());
-		paramsToSend.put("reqId", channel);
-		 paramsToSend.put("log", logger.getLogPool());
-		 paramsToSend.put("isRT", true);
+		Map<String, Object> paramsToSend = new HashMap<String, Object>();
+		
+		
+		NGEvent ngEvent=new NGEvent();
+		
+		ngEvent.setName(channel);
+		ngEvent.setData(message.build());
+		
+		
+		paramsToSend.put("ngEvent", ngEvent);
+		
+		paramsToSend.put("log", logger.getLogPool());
+		paramsToSend.put("isRT", true);
 		 
    for(SockJsConnection session:new HashSet<SockJsConnection>(sessions)){
 			
@@ -116,28 +124,38 @@ public class RealTimeClient implements Serializable {
 
 	
 	
-	public void flushModel(Class controllerClass,String modelName,Object model ){
-		
-		publish(controllerClass.getSimpleName(), new RealTimeMessage().setModel(modelName, model));
-		
-	}
+//	public void flushModel(Class controllerClass,String modelName,Object model ){
+//		
+//		publish(controllerClass.getSimpleName(), new RealTimeMessage().set(modelName, model));
+//		
+//	}
 	
 	public void broadcast(String channel, RealTimeMessage message,boolean withoutMe) {
 	
 		Map<String, Object> paramsToSend = new HashMap<String, Object>(
 				message.build());
-		paramsToSend.put("reqId", channel);
-       
+		
+		
+		
+		NGEvent ngEvent=new NGEvent();
+		
+		ngEvent.setName(channel);
+		ngEvent.setData(message.build());
+		
+		
+		paramsToSend.put("ngEvent", ngEvent);
+		
+		paramsToSend.put("log", logger.getLogPool());
 		paramsToSend.put("isRT", true);
 	
-			
-			
+		
 			for(SockJsConnection connection:connectionHolder.getAllConnections()){
+				
 				
 				if (withoutMe){if(sessions.contains(connection)){continue;}}
 
 				if(connection.getReadyState().equals(READY_STATE.OPEN)){
-				
+					
 					String objectMessage=util.getJson(paramsToSend);
 					
 					connection.write(objectMessage);

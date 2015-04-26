@@ -25,17 +25,17 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class NGControllerBean implements Serializable{
+public class NGBean implements Serializable{
 
 	Class<? extends Object> proxyClass;
 	private Class<?> targetClass = null;
 	private String name=null;
 	
-	private Object controller;
-	public NGControllerBean(Object controller) {
+	private Object bean;
+	public NGBean(Object bean) {
 		
-	this.controller=controller;
-	proxyClass=controller.getClass();
+	this.bean=bean;
+	proxyClass=bean.getClass();
 	
 	Method m;
 	//Method m2;
@@ -43,7 +43,7 @@ public class NGControllerBean implements Serializable{
 	try {
 		m = proxyClass.getMethod("getTargetClass");
 		
-		targetClass=(Class) m.invoke(controller);
+		targetClass=(Class) m.invoke(bean);
 
 //		m2 = proxyClass.getMethod("getTargetInstance");
 //		targetInstance=m.invoke(controller);

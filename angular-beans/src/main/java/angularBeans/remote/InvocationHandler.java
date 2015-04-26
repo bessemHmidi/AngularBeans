@@ -42,11 +42,13 @@ import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGRedirect;
 import angularBeans.api.NGReturn;
 import angularBeans.context.NGSessionScopeContext;
+import angularBeans.context.NGSessionScoped;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
 import angularBeans.realtime.RealTimeClient;
 import angularBeans.util.AngularBeansUtil;
-import angularBeans.util.ScopeUtils;
+import angularBeans.util.ModelQueryFactory;
+import angularBeans.util.ModelQueryImpl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -58,11 +60,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 
-@ApplicationScoped
+@NGSessionScoped
 public class InvocationHandler implements Serializable {
 
-	@Inject
-	RealTimeClient holder;
+//	@Inject
+//	RealTimeClient holder;
 
 	@Inject
 	NGLogger logger;
@@ -71,7 +73,7 @@ public class InvocationHandler implements Serializable {
 	AngularBeansUtil util;
 
 	@Inject
-	ScopeUtils scopeUtils;
+	ModelQueryFactory modelQueryFactory;
 
 	Map<String, Class> builtInMap = new HashMap<String, Class>();
 
@@ -88,7 +90,7 @@ public class InvocationHandler implements Serializable {
 		builtInMap.put("short", Short.TYPE);
 	}
 
-	public synchronized void realTimeInvoke(Object controller,
+	public synchronized void realTimeInvoke(Object ServiceToInvoque,
 			String methodName, JsonObject params, RealTimeDataReceiveEvent event,
 			long reqID, String UID) {
 
@@ -100,9 +102,12 @@ public class InvocationHandler implements Serializable {
 		returns.put("isRT", true);
 
 		try {
-			genericInvoke(controller, methodName, params, returns);
+			genericInvoke(ServiceToInvoque, methodName, params, returns,reqID);
+			
+			if(returns.get("mainReturn")!=null)
+			{
 			event.getConnection().write(util.getJson(returns));
-
+		    }
 		} catch (SecurityException | ClassNotFoundException
 				| IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException e) {
@@ -122,7 +127,7 @@ public class InvocationHandler implements Serializable {
 		try {
 
 			returns.put("isRT", false);
-			genericInvoke(o, method, params, returns);
+			genericInvoke(o, method, params, returns,0);
 
 		} catch (Exception e) {
 			// fire(e);
@@ -132,8 +137,9 @@ public class InvocationHandler implements Serializable {
 		return returns;
 	}
 
-	private void genericInvoke(Object controller, String methodName,
-			JsonObject params, Map<String, Object> returns)
+	private void genericInvoke(Object service, String methodName,
+			JsonObject params, Map<String, Object> returns,long reqID)
+			
 			throws SecurityException, ClassNotFoundException,
 			IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchMethodException {
@@ -145,13 +151,15 @@ public class InvocationHandler implements Serializable {
 		JsonElement argsElem = params.get("args");
 
 		// returns.put("isRT", false);
-		returns.put("reqId", controller.getClass().getSimpleName());
-
+		
+		if(reqID>0){
+		returns.put("reqId", reqID);
+		}
 		if (argsElem != null) {
 
 			JsonArray args = params.get("args").getAsJsonArray();
 
-			for (Method mt : controller.getClass().getMethods()) {
+			for (Method mt : service.getClass().getMethods()) {
 
 				if (mt.getName().equals(methodName)) {
 
@@ -193,11 +201,11 @@ public class InvocationHandler implements Serializable {
 
 						if (!util.isGetter(m)) {
 							// if(util.isSetter(m)){
-							update(controller, params);
+							update(service, params);
 							// }
 
 						}
-						mainReturn = m.invoke(controller, argsValues.toArray());
+						mainReturn = m.invoke(service, argsValues.toArray());
 
 					}
 
@@ -210,16 +218,16 @@ public class InvocationHandler implements Serializable {
 
 		else {
 
-			m = controller.getClass().getMethod(methodName);
+			m = service.getClass().getMethod(methodName);
 
 			if (!util.isGetter(m)) {
 				// if(util.isSetter(m)){
-				update(controller, params);
+				update(service, params);
 				// }
 
 			}
 
-			mainReturn = m.invoke(controller);
+			mainReturn = m.invoke(service);
 
 		}
 
@@ -238,7 +246,14 @@ public class InvocationHandler implements Serializable {
 				NGReturn ngReturn = m.getAnnotation(NGReturn.class);
 				updates = ngReturn.updates();
 
-				// returns.put(ngReturn.model(), mainReturn);
+				if(ngReturn.model().length()>0){
+				 returns.put(ngReturn.model(), mainReturn);
+				 Map<String, String> binding=new HashMap<String, String>();
+				 
+				 binding.put("boundTo", ngReturn.model());
+				 
+				 mainReturn=binding;
+				}
 			}
 
 			if (m.isAnnotationPresent(NGRedirect.class)) {
@@ -258,7 +273,7 @@ public class InvocationHandler implements Serializable {
 				if ((updates.length == 1) && (updates[0].equals("*"))) {
 
 					List<String> upd = new ArrayList<String>();
-					for (Method met : controller.getClass()
+					for (Method met : service.getClass()
 							.getDeclaredMethods()) {
 
 						if (util.isGetter(met)) {
@@ -285,37 +300,34 @@ public class InvocationHandler implements Serializable {
 						+ up.substring(1);
 				Method getter = null;
 				try {
-					getter = controller.getClass().getMethod(getterName);
+					getter = service.getClass().getMethod(getterName);
 				} catch (NoSuchMethodException e) {
-					getter = controller.getClass().getMethod(
+					getter = service.getClass().getMethod(
 							(getterName.replace("get", "is")));
 				}
 
-				Object result = getter.invoke(controller);
+				Object result = getter.invoke(service);
 				returns.put(up, result);
 
 			}
 
 			// 1
 
+			ModelQueryImpl qImpl= (ModelQueryImpl)modelQueryFactory.get(service.getClass());
+			
 			Map<String, Object> scMap = new HashMap<String, Object>(
-					(scopeUtils.get(controller.getClass()).getScopeMap()));
+					(qImpl).getData());
 
 			returns.putAll(scMap);
 
-			scopeUtils.get(controller.getClass()).getScopeMap().clear();
+			(qImpl).getData().clear();
 
-			if (!scopeUtils.getRootScope().getRootScopeMap().isEmpty()) {
-				returns.put("rootScope", new HashMap<String, Object>(scopeUtils
+			if (!modelQueryFactory.getRootScope().getRootScopeMap().isEmpty()) {
+				returns.put("rootScope", new HashMap<String, Object>(modelQueryFactory
 						.getRootScope().getRootScopeMap()));
-				scopeUtils.getRootScope().getRootScopeMap().clear();
+				modelQueryFactory.getRootScope().getRootScopeMap().clear();
 			}
 
-			if (!scopeUtils.get(controller.getClass()).getArraysMap().isEmpty()) {
-				returns.put("arrays", new HashMap<String, Set<Object>>(
-						scopeUtils.get(controller.getClass()).getArraysMap()));
-				scopeUtils.get(controller.getClass()).getArraysMap().clear();
-			}
 
 		}
 
@@ -326,9 +338,13 @@ public class InvocationHandler implements Serializable {
 
 		if (m.isAnnotationPresent(NGReturn.class)) {
 
-			returns.put(m.getAnnotation(NGReturn.class).model(), mainReturn);
+			returns.put("mainReturn", mainReturn);
 		}
 
+		
+		System.out.println(util.getJson(returns));
+		
+		
 	}
 
 	private void update(Object o, JsonObject params) {

@@ -31,7 +31,7 @@ public class RealTimeMessage {
 
 	private Map<String, Object> data = new HashMap<String, Object>();
 
-	public RealTimeMessage setModel(String modelName, Object value) {
+	public RealTimeMessage set(String modelName, Object value) {
 		data.put(modelName, value);
 		return this;
 	}
@@ -40,67 +40,29 @@ public class RealTimeMessage {
 		return data;
 	}
 
-	public RealTimeMessage pushToArray(String arrayName, Object value) {
-		
-		Map<String, Set<Object>> params=null;
-		if(!data.containsKey("arrays")){
-			data.put("arrays", new HashMap<String, Set<Object>>());
-		}
-		
-		 params=(Map<String, Set<Object>>) data.get("arrays");
-		 
-		if(!params.containsKey(arrayName))
-		{
-			params.put(arrayName, new HashSet<Object>());
-		}
-		
-		params.get(arrayName).add(value);
+//	public RealTimeMessage pushToArray(String arrayName, Object value) {
+//		
+//		Map<String, Set<Object>> params=null;
+//		if(!data.containsKey("arrays")){
+//			data.put("arrays", new HashMap<String, Set<Object>>());
+//		}
+//		
+//		 params=(Map<String, Set<Object>>) data.get("arrays");
+//		 
+//		if(!params.containsKey(arrayName))
+//		{
+//			params.put(arrayName, new HashSet<Object>());
+//		}
+//		
+//		params.get(arrayName).add(value);
+//
+//		return this;
+//	}
+	
 
-		return this;
+	@Override
+	public String toString() {
+		return data.toString();
 	}
-	
-	
-public RealTimeMessage pushToSet(String objectName, Object value,String key) {
-		
-		Map<String, Set<Object>> params=null;
-		if(!data.containsKey("sets")){
-			data.put("sets", new HashMap<String, Set<Object>>());
-		}
-		
-		 params=(Map<String,Set<Object>>) data.get("sets");
-		 
-		if(!params.containsKey(objectName))
-		{
-			params.put(objectName, new HashSet<Object>());
-			params.get(objectName).add("equalsKey:"+key);
-		}
-		
-		params.get(objectName).add(value);
-		
-		return this;
-	}
-
-public RealTimeMessage removeFromObject(String objectName, Object value,String key) {
-		
-		Map<String, Set<Object>> params=null;
-		if(!data.containsKey("rm")){
-			data.put("rm", new HashMap<String, Set<Object>>());
-		}
-		
-		 params=(Map<String,Set<Object>>) data.get("rm");
-		 
-		if(!params.containsKey(objectName))
-		{
-			params.put(objectName, new HashSet<Object>());
-			params.get(objectName).add("equalsKey:"+key);
-		}
-		
-		params.get(objectName).add(value);
-		
-		return this;
-}
-	
-
-	
 	
 }

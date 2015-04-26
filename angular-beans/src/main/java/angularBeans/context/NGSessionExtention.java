@@ -29,7 +29,7 @@ import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
-import angularBeans.api.NGController;
+import angularBeans.api.AngularBean;
 
 public class NGSessionExtention implements Extension {
 
@@ -39,7 +39,7 @@ public class NGSessionExtention implements Extension {
 		AnnotatedType<T> annotatedType = processAnnotatedType
 				.getAnnotatedType();
 
-		if (annotatedType.isAnnotationPresent(NGController.class)) {
+		if (annotatedType.isAnnotationPresent(AngularBean.class)) {
 			// System.out.println("---------"+annotatedType.getJavaClass());
 		}
 		;

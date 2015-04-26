@@ -30,6 +30,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface NGReturn {
 
-	String model();
+	String model() default "";
 	String[] updates() default {};
 }

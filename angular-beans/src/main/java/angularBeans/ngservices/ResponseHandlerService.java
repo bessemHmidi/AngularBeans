@@ -39,10 +39,10 @@ public class ResponseHandlerService implements NGService {
 
 		result += "app.service('responseHandler',['logger','$rootScope','$location','$filter',function(logger,$rootScope,$location,$filter){\n";
 
-		result += ("\nthis.handleResponse=function(msg,scopes){");
+		result += ("\nthis.handleResponse=function(msg,caller){");
 
-		//result += "console.log(JSON.stringify(msg));";
-
+		
+		result+="var mainReturn={};";
 		result += "var isRedirect=false;";
 		result += "if(msg.hasOwnProperty('location')){isRedirect=true;}";
 
@@ -54,13 +54,8 @@ public class ResponseHandlerService implements NGService {
 
 		result += ("}");
 
-		result += ("\nfor (var rs in scopes){");
+		
 
-		result += "if(scopes[rs].id===msg.reqId){";
-
-		result += "scope=scopes[rs].scope;";
-
-		// result+="alert(JSON.stringify(msg));";
 
 		result += ("\nfor (var key in msg) {");
 		result += ("\nif(key==='rootScope'){");
@@ -76,142 +71,164 @@ public class ResponseHandlerService implements NGService {
 
 		// result+=("else{");
 
-		result += ("\nif(key==='arrays'){");
-
-		result += ("\nfor(var modelkey in msg[key]){");
-
-		// result+="alert(modelkey);";
-		//
-		// result+="alert(JSON.stringify(msg[key][modelkey]));";
-
-		result += "if (!scope.hasOwnProperty(modelkey)){"
-				+ "scope[modelkey]=[]; }";
-
-		result += "var tab=msg[key][modelkey];";
-		result += "for (var value in tab){";
-		result += "scope[modelkey].push(tab[value]);";
-		// result+="alert(tab[value]);";
-		result += ("\n}");
-
-		// result+="alert(JSON.stringify(scope[modelkey]));";
-		result += ("}");
-
-		result += ("\n  }");
+//		result += ("\nif(key==='arrays'){");
+//
+//		result += ("\nfor(var modelkey in msg[key]){");
+//
+//		// result+="alert(modelkey);";
+//		//
+//		// result+="alert(JSON.stringify(msg[key][modelkey]));";
+//
+//		result += "if (!caller.hasOwnProperty(modelkey)){"
+//				+ "caller[modelkey]=[]; }";
+//
+//		result += "var tab=msg[key][modelkey];";
+//		result += "for (var value in tab){";
+//		result += "caller[modelkey].push(tab[value]);";
+//		// result+="alert(tab[value]);";
+//		result += ("\n}");
+//
+//		// result+="alert(JSON.stringify(scope[modelkey]));";
+//		result += ("}");
+//
+//		result += ("\n  }");
 
 		// --------------------------------------------------------------------
 
-		result += ("\nif(key==='rm'){");
-
-		result += ("\nfor(var modelkey in msg[key]){");
-
-		//
-		// result+="alert(JSON.stringify(msg[key][modelkey]));";
-
-		result += "if (!scope.hasOwnProperty(modelkey)){}";
-			//	+ "scope[modelkey]={}; }";
-
-		result += "var tab=msg[key][modelkey];";
-
-		result += "var equalsKey='';";
-
-		result += "for (var value in tab){";
-		result += "if (typeof tab[value] == 'string' || tab[value] instanceof String){";
-		result += "if(tab[value].indexOf('equalsKey:') > -1){tab[value]=tab[value].replace('equalsKey:','');equalsKey=tab[value];break;}";
-		result += "};}";
-
-		result += "for (var value in tab){";
-		result += "if(tab[value]==equalsKey){continue;}";
-
-		
-//		result += "scope[modelkey] = scope[modelkey].filter(function(it) {";
-//		//result += "alert(angular.toJson(it[equalsKey]) );";
-//		result += "    return !(it[equalsKey] === tab[value][equalsKey]);";
-//		result += "});";
-	
-		result += "var criteria={};";
-		result += "criteria[equalsKey]='!'+tab[value][equalsKey];";
-		result += "scope[modelkey] = $filter('filter')(scope[modelkey], criteria);";
-
-		
-		result += ("\n}");
-
-		// result+="alert(JSON.stringify(scope[modelkey]));";
-		result += ("}");
-
-		result += ("\n  }");
-		
-		
+//		result += ("\nif(key==='rm'){");
+//
+//		result += ("\nfor(var modelkey in msg[key]){");
+//
+//		//
+//		// result+="alert(JSON.stringify(msg[key][modelkey]));";
+//
+//		result += "if (!caller.hasOwnProperty(modelkey)){}";
+//			//	+ "scope[modelkey]={}; }";
+//
+//		result += "var tab=msg[key][modelkey];";
+//
+//		result += "var equalsKey='';";
+//
+//		result += "for (var value in tab){";
+//		result += "if (typeof tab[value] == 'string' || tab[value] instanceof String){";
+//		result += "if(tab[value].indexOf('equalsKey:') > -1){tab[value]=tab[value].replace('equalsKey:','');equalsKey=tab[value];continue;}";
+//		result += "};}";
+//
+//		result += "for (var value in tab){";
+//		result += "if(tab[value]==equalsKey){continue;}";
+//
+//		
+////		result += "scope[modelkey] = scope[modelkey].filter(function(it) {";
+////		//result += "alert(angular.toJson(it[equalsKey]) );";
+////		result += "    return !(it[equalsKey] === tab[value][equalsKey]);";
+////		result += "});";
+//	
+//		result += "var criteria={};";
+//		result += "criteria[equalsKey]='!'+tab[value][equalsKey];";
+//		result += "caller[modelkey] = $filter('filter')(caller[modelkey], criteria);";
+//
+//		
+//		result += ("\n}");
+//
+//		// result+="alert(JSON.stringify(scope[modelkey]));";
+//		result += ("}");
+//
+//		result += ("\n  }");
 		
 		
+		
+		// result+="alert(JSON.stringify(msg));";
 		
 		
 		//-------------------------------------------------------------
 		
-		result += ("\nif(key==='sets'){");
+		result += ("\nif((key==='add')||(key==='rm')){");
+		
+		
+		result += "var equalsKey='--';";
+		
 		result += ("\nfor(var modelkey in msg[key]){");
 		//
-		// result+="alert(JSON.stringify(msg[key][modelkey]));";
-
-		result += "if (!scope.hasOwnProperty(modelkey)){"
-				+ "scope[modelkey]={}; }";
+		
+	
+		
+		result += "if (!(angular.isDefined(caller[modelkey]))){"
+				+ "caller[modelkey]=[]; }";
 
 		result += "var tab=msg[key][modelkey];";
 
-		result += "var equalsKey='';";
+		
 
 		result += "for (var value in tab){";
+	
 		result += "if (typeof tab[value] == 'string' || tab[value] instanceof String){";
-		result += "if(tab[value].indexOf('equalsKey:') > -1){tab[value]=tab[value].replace('equalsKey:','');equalsKey=tab[value];break;}";
-		result += "};}";
-
+		
+		result += "if(tab[value].indexOf('equalsKey:') > -1){equalsKey=tab[value].replace('equalsKey:','');break;}}}";
+		
+		//
 		result += "for (var value in tab){";
-		result += "if(tab[value]==equalsKey){continue;}";
+		
+		result+="if(key==='rm'){";
+		
+		result+="if(equalsKey=='NAN'){";
 
-		result += "var found=false;";
+		result += "for (var item in caller[modelkey]) {";
+		result+="if(angular.toJson(caller[modelkey][item])==angular.toJson(tab[value])){caller[modelkey].splice(item, 1);}";
+		result+="}";
+				
+		result+= "}else{";
+		result += "var criteria={};";
+		result += "criteria[equalsKey]='!'+tab[value][equalsKey];";
+		result += "caller[modelkey] = $filter('filter')(caller[modelkey], criteria);";
+		result += "}}";
+		//
+		
+		
+		result+="if(key==='add'){";
+		result+="\n var found=false;";
+		result += "for (var item in caller[modelkey]) {";
+		result+="if(angular.toJson(caller[modelkey][item])==angular.toJson(tab[value])){ found=true;}";
+		result+="}";
+        result+="if(!(found)){";
+		result += "caller[modelkey].push(tab[value]);";
+		result += "}};"
+	
+				
+				+ "}";
 
-		result += "  for (item in scope[modelkey]) {";
-
-		result += "    if (scope[modelkey][item][equalsKey] === tab[value][equalsKey]) {";
-
-		result += "found=true;";
-		result += "    }";
-		result += "	  }";
-
-		result += " if(!found){ ";
-		result += "scope[modelkey].push(tab[value]);";
-		result += " }";
-
-		// result+="alert(tab[value]);";
-		result += ("\n}");
-
-		// result+="alert(JSON.stringify(scope[modelkey]));";
 		result += ("}");
 
 		result += ("\n  }");
 
 		// --------------------------------------------------------------------
 
-		result += ("if(!(key in ['rootScope','arrays','sets'])){");
-		result += ("\nscope[key]=msg[key];");
+		result += ("if(!(key in ['rootScope','add','mainReturn','rm'])){");
+		result += ("\ncaller[key]=msg[key];");
 		result += ("\n  }");
 
+
+		result+="if (key==='mainReturn'){"
+				+"if(msg[key].hasOwnProperty('boundTo')){"
+				+ "mainReturn=msg[msg[key].boundTo];"
+				
+				+"console.log(''+mainReturn);"
+				+ "}else{"
+				
+				+ "mainReturn=msg[key];}}";
+		
 		// result+=("\n  }");
 
 		result += ("\n  }");
 
-		result += "\nif(msg.isRT){";
-		result += "\nscope.$apply();";
-		// result +="\nscope.$digest();";
-		result += ("}");
-
-		result += ("}}");
-
-		// result+=("\nscope.$apply();");
-		// result+=("\n$rootScope.$apply();");
+		
 		result += ("\nlogger.log(msg.log);");
 
 		// -->
 
+		
+		result += ("return mainReturn;");
+		
+		
 		result += ("};");
 
 		result += ("}]);\n");

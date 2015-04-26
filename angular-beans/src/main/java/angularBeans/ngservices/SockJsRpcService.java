@@ -45,100 +45,118 @@ public class SockJsRpcService implements NGService {
 				+ contextPath + "/ws-service/");
 
 		String result = "";
-		
-		result += "app.service('RTSrvc',['logger','$rootScope','$http','responseHandler',function(logger,$rootScope,$http,responseHandler){\n";
-		result+="var sockjs_url =\"" + webSocketPath + "\";";
-		result+="var ws = new SockJS(sockjs_url, undefined, {debug: false});";
-		
-		result += "\nthis.rootScope=$rootScope;";
-		result += "\nvar RTSrvc=this;";
+
+		result += "app.factory('RTSrvc',function RTSrvc(logger,$rootScope,$http,responseHandler,$q){\n";
+
+		// result +=
+		// "app.service('RTSrvc',['logger','$rootScope','$http','responseHandler','$q',function(logger,$rootScope,$http,responseHandler,$q){\n";
+		result += "var sockjs_url =\"" + webSocketPath + "\";";
+		result += "var ws = new SockJS(sockjs_url, undefined, {debug: false});";
+		result += "var rt={};";
+
+		result += "\nrt.rootScope=$rootScope;";
+		// result += "\nvar RTSrvc=this;";
 		result += "\nvar reqId=0;";
-		result += "\nvar scopes=[];";
-		result += "\nvar refScope='';";
+		result += "\nvar callbacks={};";
+		result += "\nvar caller='';";
 		result += "\nws.onopen = function (evt)";
 		result += "\n{ console.log('session opened!!');";
 
 		result += "\nvar message = {";
 		result += "\n'reqId':0,";
-		result += "\n'session': RTSrvc.rootScope.sessionUID,";
+		result += "\n'session': rt.rootScope.sessionUID,";
 		result += "\n'service': 'ping',";
 		result += "\n'method': 'ping',";
 		result += "\n'params': {'nada':'nada'}";
 		result += "\n};";
-		result += "\nRTSrvc.send(message);};";
+		result += "\nrt.send(message);};";
 
 		result += "\nws.onmessage = function (evt)";
 		result += "\n{";
-		result += "\nvar msg=JSON.parse(evt.data);";
-	
-		//-----------------------
-	
+		result += "\nvar msg=angular.fromJson(evt.data);";
 
-		result+=("responseHandler.handleResponse(msg,RTSrvc.getScopes());");	
+		// -----------------------
+
+		result+="var REQ_ID=parseInt(msg.reqId);";
 		
 		
- //  result+="}";
-        //
-   
-   
-   
 		
-		
-		//result += "\nrefScope.$digest();\nrefScope.$apply();";
-		
-	//	result += "\nRTSrvc.unsubscribe(msg.reqId,refScope);";
-		
-	//	result += "\n}";
-		
-//		result+="if(msg.hasOwnProperty('location')){window.location = msg.location;}";
-		
-		result += "\n }; "; //};";
+		result += " if (angular.isDefined(callbacks[REQ_ID])) {";
+		result += "    var callback = callbacks[REQ_ID];";
+		result += "delete callbacks[REQ_ID];";
+		result += "callback.resolve(msg);";
+		result += "  }";
 
 		
-		result += "\nthis.getScopes = function (){return scopes;};";
+		result += " if (angular.isDefined(msg.ngEvent)) {";
 		
-		result += "\nthis.send = function(message) {";
-		result += "\nws.send(JSON.stringify(message));";
+		result += "$rootScope.$broadcast(msg.ngEvent.name,msg.ngEvent.data);";
+		
+		
+		result += "  }";
+
+		// result+="}";
+		//
+
+		// result += "\nrefScope.$digest();\nrefScope.$apply();";
+
+		// result += "\nRTSrvc.unsubscribe(msg.reqId,refScope);";
+
+		// result += "\n}";
+
+		// result+="if(msg.hasOwnProperty('location')){window.location = msg.location;}";
+
+		result += "\n }; "; // };";
+
+		// result += "\nthis.getCallers = function (){return callers;};";
+
+		result += "\nrt.sendAsync = function(message) {";
+		result += "\nws.send(angular.toJson(message));";
+
+		result += "var deferred = $q.defer();";
+		result += "callbacks[message.reqId] = deferred;";
+		result += "return deferred.promise;";
 		result += "\n};";
 
-		result += "\nthis.subscribe=function(rfc,id,isRPC){";
-		result += "\nrefScope=rfc;";
-		
-		
-		
-		result += "\nscopes.push({'id':id,'scope':rfc,'isRPC':isRPC});";
-		//----------------
-		//result += "\nsessionStorage.setItem(\"scopes\",scopes);";
-		
-		//--------------
-		
-		result += "\n}";
+		result += "\nrt.send = function(message) {";
+		result += "\nws.send(angular.toJson(message));";
+		result += "\n};";
 
-		result += "\nthis.unsubscribe=function(id,rfc){";
+		// result += "\nthis.subscribe=function(rfc,id,isRPC){";
+		// result += "\ncaller=rfc;";
+		// result += "\ncallers.push({'id':id,'caller':rfc,'isRPC':isRPC});";
 
-		result += "\nfor(var i = scopes.length - 1; i >= 0; i--) {";
-		
-		result += "\nif((scopes[i].id === id) && (scopes[i].scope === rfc)) {";
-		result += "\nscopes.splice(i, 1);";
-		result += "\n}}";
-		//---------------
-		result += "\nsessionStorage.setItem(\"scopes\",scopes);";
-		result += "\n}";
+		// ----------------
+		// result += "\nsessionStorage.setItem(\"scopes\",scopes);";
 
-		result += "\nthis.call=function(rfc,invockation,params){";
+		// --------------
+
+		// result += "\n}";
+
+		// result += "\nthis.unsubscribe=function(id,rfc){";
+		//
+		// result += "\nfor(var i = callers.length - 1; i >= 0; i--) {";
+		//
+		// result +=
+		// "\nif((callers[i].id === id) && (callers[i].caller === rfc)) {";
+		// result += "\ncallers.splice(i, 1);";
+		// result += "\n}}";
+		// //---------------
+		// //result += "\nsessionStorage.setItem(\"callers\",callers);";
+		// result += "\n}";
+
+		result += "\nrt.call=function(caller,invockation,params){";
+		// result += "\nRTSrvc.subscribe(rfc,reqId,true);";
 		result += "\nreqId++;";
-		
-		//result += "\nRTSrvc.subscribe(rfc,reqId,true);";
-
 		result += "\nvar message = {";
 		result += "\n'reqId':reqId,";
-		result += "\n'session': RTSrvc.rootScope.sessionUID,";
+		result += "\n'session': rt.rootScope.sessionUID,";
 		result += "\n'service': invockation.split(\".\")[0],";
 		result += "\n'method': invockation.split(\".\")[1],";
 		result += "\n'params': params";
 		result += "\n};";
-		result += "\nRTSrvc.send(message);";
-		result += "\n}}]);";
+		result += "\nreturn rt.sendAsync(message);";
+		result += "\n}; return rt; });";
 
 		return result;
 	}
