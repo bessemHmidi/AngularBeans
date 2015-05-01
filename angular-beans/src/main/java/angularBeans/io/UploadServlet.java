@@ -32,7 +32,7 @@ public class UploadServlet extends HttpServlet {
 	protected void processRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
-		request.getSession(true);
+		//request.getSession(true);
 
 		NGSessionScopeContext.setCurrentContext((request.getSession()
 				.getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME)

@@ -1,0 +1,73 @@
+
+
+<div id="myModal" class="modal fade" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+
+ <script type="text/javascript">
+	$(document).ready(function(){
+		$("#myModal").modal('hide');
+	});
+
+
+</script> 
+                <h4 class="modal-title">New Account</h4>
+            </div>
+            <div class="modal-body">
+            
+   <div class="row">
+    <div class="col-xs-5">
+            <div class="form-group">
+                <p >  
+					<label class="item item-input">
+						<span class="input-label">pseudo:</span>
+						<input placeholder="pseudo" ng-model="user.pseudo" class="form-control" name="pseudo"/>
+					</label>
+                </p>
+                
+                <p >
+                
+                <label class="item item-input">
+						<span class="input-label">email:</span>
+						<input type="email" placeholder="email" ng-model="user.email"  class="form-control" name="email"/>
+					</label>
+                
+                </p>
+               
+               
+               
+                <p>
+                 
+                 <label class="item item-input">
+						<span class="input-label">password:</span>
+						<input type="password" ng-model="user.password" class="form-control" name="password"/>
+				</label>
+                
+                </p>
+
+              
+                </div>
+            </div>
+      
+            <div class="col"><img ng-src="{{authenticationService.avatar}}" height="100" width="80"></div>   
+             </div>
+               <div ng-include="'views/avatarUpload.html'"></div>
+           
+                
+                
+                <p class="text-warning"><small>If you don't save, your changes will be lost.</small></p>
+            
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                
+             
+                <button type="button" ng-click="authenticationService.newAccount(user)"  class="btn btn-primary"  data-dismiss="modal">Save changes</button>
+            </div>
+        </div>
+    </div>
+  </div>
+  

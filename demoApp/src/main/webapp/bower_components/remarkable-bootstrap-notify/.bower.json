@@ -1,0 +1,37 @@
+{
+  "name": "remarkable-bootstrap-notify",
+  "main": "bootstrap-notify.js",
+  "version": "3.0.0",
+  "homepage": "http://bootstrap-notify.remabledesigns.com/",
+  "authors": [
+    "mouse0270 <rmcintosh@remabledesigns.com>"
+  ],
+  "description": "This is a simple plugin that turns standard Bootstrap alerts into \"Growl-like\" notifications.",
+  "keywords": [
+    "remarkable",
+    "bootstrap",
+    "jquery",
+    "notify",
+    "notification",
+    "notifications",
+    "growl",
+    "message",
+    "notice"
+  ],
+  "dependencies": {
+    "jquery": ">=1.10.2",
+    "bootstrap": ">=2.0.0"
+  },
+  "license": "MIT",
+  "ignore": [],
+  "_release": "3.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "3.0.0",
+    "commit": "0301fc9b6a6ec8f5fa2b61feefe53ec6046d5a5c"
+  },
+  "_source": "git://github.com/mouse0270/bootstrap-notify.git",
+  "_target": "~3.0.0",
+  "_originalSource": "remarkable-bootstrap-notify",
+  "_direct": true
+}

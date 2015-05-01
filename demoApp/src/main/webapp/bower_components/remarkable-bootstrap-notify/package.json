@@ -1,0 +1,38 @@
+{
+  "name": "bootstrap-notify",
+  "version": "3.0.0",
+  "description": "This is a simple plugin that turns standard Bootstrap alerts into \"Growl-like\" notifications.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mouse0270/bootstrap-notify.git"
+  },
+  "keywords": [
+    "bootstrap",
+    "jquery",
+    "notify",
+    "notification",
+    "notifications",
+    "growl",
+    "message",
+    "notice"
+  ],
+  "author": "mouse0270 <rmcintosh@remabledesigns.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mouse0270/bootstrap-notify/issues"
+  },
+  "homepage": "http://bootstrap-notify.remabledesigns.com/",
+  "main": "bootstrap-notify.js",
+  "directories": {
+    "dist": "dist"
+  },
+  "dependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-uglify": "~0.4.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-contrib-jshint": "^0.10.0"
+  }
+}

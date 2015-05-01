@@ -44,15 +44,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
-import angularBeans.api.NGApp;
 import angularBeans.api.AngularBean;
+import angularBeans.api.NGApp;
 import angularBeans.api.NGModel;
 import angularBeans.api.NGModules;
 import angularBeans.api.NGPostConstruct;
-import angularBeans.api.NGRedirect;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
-import angularBeans.api.Subscribe;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.io.ByteArrayCache;
@@ -64,8 +62,8 @@ import angularBeans.ngservices.NGExtention;
 import angularBeans.realtime.RealTime;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.CurrentNGSession;
-import angularBeans.util.NGBean;
 import angularBeans.util.ModelQueryFactory;
+import angularBeans.util.NGBean;
 import angularBeans.validation.BeanValidationProcessor;
 
 @SessionScoped
@@ -234,7 +232,7 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 
 		}
 
-		writer.write("})");
+		writer.write("});");
 
 		for (Object bean : beans) {
 
@@ -415,14 +413,10 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 
 				if (m.isAnnotationPresent(NGReturn.class)) {
 					NGReturn returns = m.getAnnotation(NGReturn.class);
-					//csModel = returns.model();
 					csUpdates = returns.updates();
 				}
 
-				if (m.isAnnotationPresent(NGRedirect.class)) {
-					NGRedirect returns = m.getAnnotation(NGRedirect.class);
-					csUpdates = returns.updates();
-				}
+				
 
 				// if (m.isAnnotationPresent(NGSubmit.class)
 				// || m.isAnnotationPresent(NGRedirect.class)) {
@@ -507,7 +501,7 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 					
 				//	writer.write("var callers=RTSrvc.getCallers();");
 
-					writer.write("mainReturn.data= responseHandler.handleResponse(msg,"+bean.getName()+");");
+					writer.write("mainReturn.data= responseHandler.handleResponse(msg,"+bean.getName()+",true);");
 
 					//writer.write("deffered.resolve();");
 
@@ -537,7 +531,7 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 					writer.write("var msg=response.data;");
 				//	writer.write("var callers=RTSrvc.getCallers();");
 
-					writer.write("mainReturn.data= responseHandler.handleResponse(msg,"+bean.getName()+");");
+					writer.write("mainReturn.data= responseHandler.handleResponse(msg,"+bean.getName()+",true);");
 
 					//writer.write("deffered.resolve();");
 

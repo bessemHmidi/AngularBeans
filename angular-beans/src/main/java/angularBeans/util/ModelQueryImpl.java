@@ -10,6 +10,9 @@ public class ModelQueryImpl implements ModelQuery {
 	private Map<String, Object> data = new HashMap<String, Object>();
 
 	
+	private Class owner;
+	
+	
 	public Map<String, Object> getData() {
 		return data;
 	}
@@ -66,6 +69,14 @@ public class ModelQueryImpl implements ModelQuery {
 		params.get(objectName).add("equalsKey:" + key);
 
 		return this;
+	}
+
+	public Class getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Class owner) {
+		this.owner = owner;
 	}
 
 }

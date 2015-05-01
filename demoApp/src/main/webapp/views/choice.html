@@ -1,0 +1,48 @@
+
+
+<div class="jumbotron">
+ 
+  <p class="lead">
+ <!--    <img src="images/yeoman.png" alt="I'm Yeoman"><br> -->
+   You Want To 
+  </p>
+  <p><a class="btn btn-lg btn-success" ng-href="#/listClassRooms">Join a class Room <span class="glyphicon glyphicon-ok"></span></a>
+   
+   <a class="btn btn-lg btn-success" onclick="$('#myModal').modal('show');">create a new class Room <span class="glyphicon glyphicon-ok"></span></a>
+  
+  </p>
+</div>
+
+<div class="row marketing">
+
+
+<div id="myModal" class="modal fade" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+
+ <script type="text/javascript">
+	$(document).ready(function(){
+		$("#myModal").modal('hide');
+	});
+
+
+</script> 
+                <h4 class="modal-title">New ClassRoom</h4>
+            </div>
+            <div class="modal-body">
+                <p>enter the classRoomName? <input type="text" ng-model="classRoomName"></p>
+                <p class="text-warning"><small>If you don't save, your changes will be lost.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                
+             
+                <button type="button" data-dismiss="modal"  ng-click="classRoomsService.addClassRoom(classRoomName)" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>

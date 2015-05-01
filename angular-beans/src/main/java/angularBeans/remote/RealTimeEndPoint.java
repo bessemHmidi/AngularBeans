@@ -41,7 +41,7 @@ import angularBeans.util.AngularBeansUtil;
 
 import com.google.gson.JsonObject;
 
-@WebServlet(loadOnStartup = 1, asyncSupported = true, urlPatterns = "/ws-service/*")
+@WebServlet(loadOnStartup = 1, asyncSupported = true, urlPatterns = "/rt-service/*")
 public class RealTimeEndPoint extends SockJsServlet {
 
 	@Inject
@@ -79,12 +79,12 @@ public class RealTimeEndPoint extends SockJsServlet {
 
 	@Override
 	public void init() throws ServletException {
-		SockJsServer echoServer = new SockJsServer();
+		SockJsServer server = new SockJsServer();
 		// Various options can be set on the server, such as:
 		// echoServer.options.responseLimit = 4 * 1024;
 
 		// onConnection is the main entry point for handling SockJS connections
-		echoServer.onConnection(new SockJsServer.OnConnectionHandler() {
+		server.onConnection(new SockJsServer.OnConnectionHandler() {
 			@Override
 			public void handle(final SockJsConnection connection) {
 				getServletContext().log("SockJS client connected");
@@ -136,7 +136,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 			}
 		});
 
-		setServer(echoServer);
+		setServer(server);
 		// Don't forget to call super.init() to wire everything up
 		super.init();
 

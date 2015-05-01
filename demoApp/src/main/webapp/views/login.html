@@ -1,0 +1,67 @@
+
+
+
+<center><h2>{{tr.msg_welcome}}!!</h2></center>
+<div ng-include="'views/language.html'"></div>
+
+		<div class="row"  dir="{{tr.direction}}">
+
+
+			<!-- <div class="col-md-4 col-md-offset-4"> -->
+				<div class="login-panel panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">{{tr.msg_sign_in}}</h3>
+					</div>
+					<div class="panel-body" bean-validate>
+						<div name="loginForm" ng-form>
+							<fieldset>
+								<div class="form-group"
+									ng-class="{ 'has-error' : loginForm.login.$invalid && submitted}">
+
+									<input ng-model="login" class="form-control"
+										placeholder="{{tr.lbl_email}}" name="login" type="text" autofocus>
+									<p ng-show="loginForm.login.$error.required" class="help-block">
+									{{tr.err_msg_prefix}} email {{tr.err_msg_required_field_suffix}}
+									</p>
+									<p ng-show="loginForm.login.$error.pattern" class="help-block">
+									{{tr.err_msg_invalid_email}}</p>
+
+
+								</div>
+								<div class="form-group"
+									ng-class="{ 'has-error' : loginForm.password.$invalid && submitted}">
+									<input ng-model="password" class="form-control"
+										placeholder="{{tr.lbl_password}}" name="password" type="password"
+										value="">
+									<p ng-show="loginForm.password.$error.minlength"
+										class="help-block">{{tr.err_msg_prefix}} password {{tr.err_msg_tooShort_suffix}}</p>
+									<p ng-show="loginForm.password.$error.maxlength"
+										class="help-block">{{tr.err_msg_prefix}} password {{tr.err_msg_tooLong_suffix}}</p>
+									<p ng-show="loginForm.password.$error.required" class="help-block">
+									{{tr.err_msg_prefix}} password  {{tr.err_msg_required_field_suffix}}
+										</p>
+
+								</div>
+
+								<div class="alert-danger">{{message}}</div>
+
+								<!-- <div class="checkbox">
+									<label> <input name="remember" type="checkbox"
+										value="Remember Me">Remember Me
+									</label>
+								</div> -->
+								<!-- Change this to a button or input when using this as a form -->
+								<a ng-click="authenticate(login,password)"
+									class="btn btn-lg btn-success btn-block" ng-disabled="loginForm.$invalid">{{tr.btn_login}}</a>
+									
+									 <a onclick="$('#myModal').modal('show');"
+									class="btn btn-lg btn-danger btn-block" >{{tr.btn_register}}</a>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+			
+		</div>
+
+ <div ng-include="'views/register.html'"></div> 
+

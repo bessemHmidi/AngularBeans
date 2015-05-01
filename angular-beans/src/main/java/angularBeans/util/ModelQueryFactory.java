@@ -26,9 +26,13 @@ public class ModelQueryFactory implements Serializable {
 	RootScope rootScope=new RootScope();
 	
 	
-	public ModelQuery get(Class query) {
+	public ModelQuery get(Class clazz) {
 
-		return allQueries.get(query);
+		ModelQueryImpl query=(ModelQueryImpl) allQueries.get(clazz);
+		
+		query.setOwner(clazz);
+						
+		return query;
 
 	}
 

@@ -31,21 +31,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.swing.text.rtf.RTFEditorKit;
 
 import angularBeans.api.NGPostConstruct;
-import angularBeans.api.NGRedirect;
 import angularBeans.api.NGReturn;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
-import angularBeans.realtime.RealTimeClient;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ModelQueryFactory;
 import angularBeans.util.ModelQueryImpl;
@@ -114,6 +111,8 @@ public class InvocationHandler implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		//if(returns.get("mainReturn")==null){returns =null;}
 
 	}
 
@@ -134,6 +133,8 @@ public class InvocationHandler implements Serializable {
 			e.printStackTrace();
 		}
 
+		
+		
 		return returns;
 	}
 
@@ -238,9 +239,9 @@ public class InvocationHandler implements Serializable {
 
 		String[] updates = null;
 
-		if ((m.isAnnotationPresent(NGReturn.class))
-				|| (m.isAnnotationPresent(NGPostConstruct.class))
-				|| (m.isAnnotationPresent(NGRedirect.class))) {
+//		if ((m.isAnnotationPresent(NGReturn.class))
+//				|| (m.isAnnotationPresent(NGPostConstruct.class))
+//		) {
 
 			if (m.isAnnotationPresent(NGReturn.class)) {
 				NGReturn ngReturn = m.getAnnotation(NGReturn.class);
@@ -256,11 +257,7 @@ public class InvocationHandler implements Serializable {
 				}
 			}
 
-			if (m.isAnnotationPresent(NGRedirect.class)) {
-				NGRedirect ngRedirect = m.getAnnotation(NGRedirect.class);
-				updates = ngRedirect.updates();
-
-			}
+		
 
 			if (m.isAnnotationPresent(NGPostConstruct.class)) {
 				NGPostConstruct ngPostConstruct = m
@@ -294,6 +291,8 @@ public class InvocationHandler implements Serializable {
 
 				}
 			}
+			
+			if(updates!=null){
 			for (String up : updates) {
 
 				String getterName = "get" + up.substring(0, 1).toUpperCase()
@@ -309,7 +308,7 @@ public class InvocationHandler implements Serializable {
 				Object result = getter.invoke(service);
 				returns.put(up, result);
 
-			}
+			}}
 
 			// 1
 
@@ -329,22 +328,17 @@ public class InvocationHandler implements Serializable {
 			}
 
 
-		}
+	//	}
 
-		if (m.isAnnotationPresent(NGRedirect.class)) {
-
-			returns.put("location", mainReturn);
-		}
-
-		if (m.isAnnotationPresent(NGReturn.class)) {
+		
+		//if (m.isAnnotationPresent(NGReturn.class)) {
 
 			returns.put("mainReturn", mainReturn);
-		}
+		//}
+	
+		
 
-		
-		System.out.println(util.getJson(returns));
-		
-		
+			
 	}
 
 	private void update(Object o, JsonObject params) {

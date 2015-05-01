@@ -41,17 +41,25 @@ public class SockJsRpcService implements NGService {
 		String portNumber = (String.valueOf(request.getServerPort()));
 		String contextPath = (request.getServletContext().getContextPath());
 
-		String webSocketPath = ("http://" + serverName + ":" + portNumber
-				+ contextPath + "/ws-service/");
+		String webSocketPath = (serverName + ":" + portNumber
+				+ contextPath + "/rt-service/");
 
 		String result = "";
 
-		result += "app.factory('RTSrvc',function RTSrvc(logger,$rootScope,$http,responseHandler,$q){\n";
+		result += "app.factory('RTSrvc',function RTSrvc(logger,$rootScope,$http,responseHandler,$q,$injector){\n";
 
 		// result +=
 		// "app.service('RTSrvc',['logger','$rootScope','$http','responseHandler','$q',function(logger,$rootScope,$http,responseHandler,$q){\n";
-		result += "var sockjs_url =\"" + webSocketPath + "\";";
-		result += "var ws = new SockJS(sockjs_url, undefined, {debug: false});";
+		result += "var uri =\"" + webSocketPath + "\";";
+		result+="var ws={};";
+		result+="if (!((typeof SockJS !=='undefined')&&(angular.isDefined(SockJS.constructor)))){"
+				
+				+ "ws = new WebSocket('ws://'+uri);}";
+		
+		result+="else{ws = new SockJS('http://'+uri, undefined, {debug: false});}";
+	//	result += "ws = new SockJS(http://'+uri, undefined, {debug: false});";
+		
+		
 		result += "var rt={};";
 
 		result += "\nrt.rootScope=$rootScope;";
@@ -60,7 +68,7 @@ public class SockJsRpcService implements NGService {
 		result += "\nvar callbacks={};";
 		result += "\nvar caller='';";
 		result += "\nws.onopen = function (evt)";
-		result += "\n{ console.log('session opened!!');";
+		result += "\n{ console.log('>> ANGULAR-BEANS SESSION READY...');";
 
 		result += "\nvar message = {";
 		result += "\n'reqId':0,";
@@ -80,7 +88,6 @@ public class SockJsRpcService implements NGService {
 		result+="var REQ_ID=parseInt(msg.reqId);";
 		
 		
-		
 		result += " if (angular.isDefined(callbacks[REQ_ID])) {";
 		result += "    var callback = callbacks[REQ_ID];";
 		result += "delete callbacks[REQ_ID];";
@@ -90,10 +97,14 @@ public class SockJsRpcService implements NGService {
 		
 		result += " if (angular.isDefined(msg.ngEvent)) {";
 		
+		result+="if(msg.ngEvent.name=='modelQuery'){"
+				+"var caller={};"
+				+ "$injector.invoke([msg.ngEvent.data, function(icaller){caller=icaller;}]);"
+				+ "responseHandler.handleResponse(msg,caller,false);}"
+				
+				+ "else{";
 		result += "$rootScope.$broadcast(msg.ngEvent.name,msg.ngEvent.data);";
-		
-		
-		result += "  }";
+		result += " } }";
 
 		// result+="}";
 		//

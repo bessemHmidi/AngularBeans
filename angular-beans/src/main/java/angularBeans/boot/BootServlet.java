@@ -63,10 +63,10 @@ public class BootServlet extends HttpServlet {
 
 		
 		
-//		String compressed = getCompressedJavaScript(jsContent);
-//		resp.getWriter().write(compressed);
+		String compressed = getCompressedJavaScript(jsContent);
+		resp.getWriter().write(compressed);
 		
-		resp.getWriter().write(jsContent);
+		//resp.getWriter().write(jsContent);
 
 		resp.getWriter().flush();
 	}
@@ -75,7 +75,7 @@ public class BootServlet extends HttpServlet {
 		String compiled="";
 		
 		
-		compiled=compile(jsContent, CompilationLevel.WHITESPACE_ONLY);
+		compiled=compile(jsContent, CompilationLevel.SIMPLE_OPTIMIZATIONS);
 		
 		//compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
 		return compiled;
