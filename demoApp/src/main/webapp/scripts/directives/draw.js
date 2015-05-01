@@ -9,6 +9,7 @@ angular.module('VirtualClassRoomModule')
 		var mousedown="mousedown";
 		var mouseup="mouseup";
     	
+		var color=getRandomColor();
 		
 		 var offsetX =0;
 		 var offsetY = 0;
@@ -44,7 +45,7 @@ angular.module('VirtualClassRoomModule')
       
       $rootScope.$on("drawEvent",function(event,data){
     	  
-    	  draw(data.lastX, data.lastY, data.currentX, data.currentY);
+    	  draw(data.lastX, data.lastY, data.currentX, data.currentY,data.color);
       });
       
       
@@ -97,9 +98,9 @@ angular.module('VirtualClassRoomModule')
          
           
         //  sharedService.changeXY(currentX,currentY);
-          canvasService.notifyAllCanvas(lastX, lastY, currentX, currentY);
+          canvasService.notifyAllCanvas(lastX, lastY, currentX, currentY,color);
           
-          draw(lastX, lastY, currentX, currentY);
+          draw(lastX, lastY, currentX, currentY,color);
           
           // set current coordinates to last one
           lastX = currentX;
@@ -117,16 +118,27 @@ angular.module('VirtualClassRoomModule')
        element[0].width = element[0].width; 
       }
       
-      function draw(lX, lY, cX, cY){
+      function draw(lX, lY, cX, cY,color){
         // line from
         ctx.moveTo(lX,lY);
         // to
         ctx.lineTo(cX,cY);
         // color
-        ctx.strokeStyle = "#4bf";
+        ctx.strokeStyle = color;
         // draw it
         ctx.stroke();
       }
+      
+      
+      function getRandomColor() {
+    	    var letters = '0123456789ABCDEF'.split('');
+    	    var color = '#';
+    	    for (var i = 0; i < 6; i++ ) {
+    	        color += letters[Math.floor(Math.random() * 16)];
+    	    }
+    	    return color;
+    	}
+      
     }
   };
 });

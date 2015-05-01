@@ -18,10 +18,11 @@ public class CanvasService {
 	
 	@RealTime
 	public void notifyAllCanvas(double lastX, double lastY, double currentX
-			, double currentY){
+			, double currentY,String color){
 		
 		RealTimeMessage message=
 				new RealTimeMessage()
+		.set("color", color)
 		.set("lastX", lastX)
 		.set("lastY", lastY)
 		.set("currentX", currentX)
