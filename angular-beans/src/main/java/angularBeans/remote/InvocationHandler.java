@@ -333,6 +333,9 @@ public class InvocationHandler implements Serializable {
 		
 		//if (m.isAnnotationPresent(NGReturn.class)) {
 
+			
+			
+			
 			returns.put("mainReturn", mainReturn);
 		//}
 	

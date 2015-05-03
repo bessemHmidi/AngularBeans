@@ -41,29 +41,34 @@ public class SockJsRpcService implements NGService {
 		String portNumber = (String.valueOf(request.getServerPort()));
 		String contextPath = (request.getServletContext().getContextPath());
 
-		String webSocketPath = (serverName + ":" + portNumber
+		String sockJsPath = ("http://"+serverName + ":" + portNumber
 				+ contextPath + "/rt-service/");
 
+		String webSocketPath=("ws://"+serverName+":" + portNumber
+				+ contextPath + "/rt-service");
+		
 		String result = "";
 
 		result += "app.factory('RTSrvc',function RTSrvc(logger,$rootScope,$http,responseHandler,$q,$injector){\n";
 
 		// result +=
 		// "app.service('RTSrvc',['logger','$rootScope','$http','responseHandler','$q',function(logger,$rootScope,$http,responseHandler,$q){\n";
-		result += "var uri =\"" + webSocketPath + "\";";
+		
+		result += "var wsuri =\"" + webSocketPath + "\";";
+		result += "var sjsuri =\"" + sockJsPath + "\";";
+		
 		result+="var ws={};";
 		result+="if (!((typeof SockJS !=='undefined')&&(angular.isDefined(SockJS.constructor)))){"
 				
-				+ "ws = new WebSocket('ws://'+uri);}";
+				+ "ws = new WebSocket(wsuri);}";
 		
-		result+="else{ws = new SockJS('http://'+uri, undefined, {debug: false});}";
-	//	result += "ws = new SockJS(http://'+uri, undefined, {debug: false});";
+		result+="else{ws = new SockJS(sjsuri, undefined, {debug: false});}";
+	
 		
 		
 		result += "var rt={};";
 
 		result += "\nrt.rootScope=$rootScope;";
-		// result += "\nvar RTSrvc=this;";
 		result += "\nvar reqId=0;";
 		result += "\nvar callbacks={};";
 		result += "\nvar caller='';";
@@ -106,20 +111,11 @@ public class SockJsRpcService implements NGService {
 		result += "$rootScope.$broadcast(msg.ngEvent.name,msg.ngEvent.data);";
 		result += " } }";
 
-		// result+="}";
-		//
+		
 
-		// result += "\nrefScope.$digest();\nrefScope.$apply();";
+		result += "\n }; ";
 
-		// result += "\nRTSrvc.unsubscribe(msg.reqId,refScope);";
-
-		// result += "\n}";
-
-		// result+="if(msg.hasOwnProperty('location')){window.location = msg.location;}";
-
-		result += "\n }; "; // };";
-
-		// result += "\nthis.getCallers = function (){return callers;};";
+	
 
 		result += "\nrt.sendAsync = function(message) {";
 		result += "\nws.send(angular.toJson(message));";

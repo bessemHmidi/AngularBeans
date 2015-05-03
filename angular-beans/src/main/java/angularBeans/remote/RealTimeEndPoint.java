@@ -46,7 +46,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 
 	@Inject
 	@DataReceivedEvent
-	private Event<DataReceived> receiveEvents;
+	private Event<RealTimeDataReceiveEvent> receiveEvents;
 
 	@Inject
 	@RealTimeSessionReadyEvent
@@ -83,6 +83,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 		// Various options can be set on the server, such as:
 		// echoServer.options.responseLimit = 4 * 1024;
 
+		//server.options.
 		// onConnection is the main entry point for handling SockJS connections
 		server.onConnection(new SockJsServer.OnConnectionHandler() {
 			@Override

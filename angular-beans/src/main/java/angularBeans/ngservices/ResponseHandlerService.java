@@ -80,7 +80,9 @@ public class ResponseHandlerService implements NGService {
 		result += "if(equalsKey=='NAN'){";
 
 		result += "for (var item in caller[modelkey]) {";
-		result += "if(angular.toJson(caller[modelkey][item])==angular.toJson(tab[value])){caller[modelkey].splice(item, 1);}";
+		
+		result+="";
+		result +="if(angularBeans.isIn(caller[modelkey],tab[value])){caller[modelkey].splice(item, 1);}";
 		result += "}";
 
 		result += "}else{";
@@ -93,7 +95,7 @@ public class ResponseHandlerService implements NGService {
 		result += "if(key==='add'){";
 		result += "\n var found=false;";
 		result += "for (var item in caller[modelkey]) {";
-		result += "if(angular.toJson(caller[modelkey][item])==angular.toJson(tab[value])){ found=true;}";
+		result += "if(angularBeans.isIn(caller[modelkey],tab[value])){ found=true;}";
 		result += "}";
 		result += "if(!(found)){";
 		result += "caller[modelkey].push(tab[value]);";

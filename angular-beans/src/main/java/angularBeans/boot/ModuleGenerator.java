@@ -126,7 +126,7 @@ public class ModuleGenerator implements Serializable {
 
 	@Inject
 	ModelQueryFactory modelQueryFactory;
-	
+
 	@Inject
 	CurrentNGSession ngSession;
 
@@ -141,8 +141,7 @@ public class ModuleGenerator implements Serializable {
 		NGSessionScopeContext.setCurrentContext(UID);
 
 		ngSession.setSessionId(UID);
-		
-		
+
 		contextPath = (request.getServletContext().getContextPath());
 
 		this.writer = writer;
@@ -164,45 +163,45 @@ public class ModuleGenerator implements Serializable {
 			}
 		}
 
-		
-		
-		
-writer.write("var angularBeans={ bind:function(scope,service,modelName){"
-				
-    +"var members={};"
-			
-	+"scope[service.serviceID]=service;"			
-	+"for (var member in service){ "
-	+"if((typeof service[member] != 'function') && (member!='serviceID')){"
+		writer.write("var angularBeans={ "
 
-+"members[member]=service[member];"	
-+"}"
+				+ "bind:function(scope,service,modelName){"
+				+ "var members={};"
 
-+"scope[modelName]=members;"
+				+ "scope[service.serviceID]=service;"
 
-+"}"
+				+ " scope.$watch((service.serviceID+'.'+modelName), function (newVal, oldVal, scope) {"
+				+ "		    if(newVal) { "
 
+				+ "		      scope[modelName] = newVal;"
+				+ "	    }"
+				+ "		  });"
 
-+"for (m in members){"
-+" scope.$watch((service.serviceID+'.'+m), function (newVal, oldVal, scope) {"
-+"		    if(newVal) { "
+				+ "}"
+				+ ",isIn:function(array,elem){var found=false;"
+				+ "for(item in array){"
+				+ "if(this.isSame(array[item],elem)){found =true;break;}"
+				+ "}"
 
+				+ "return found;}"
 
-+"		      scope[modelName][m] = newVal;"
-+"	    }"
-	+"		  });"
-	
+				+ ",isSame:function(item1,item2){"
 
-+"console.log('-->'+m);"
-+ "}"
-	
-	
-					
-		+ "}"
-				
-+ " };");
-		
-		
+				+ "var same=true;"
+
+				+ "for(prop in item1){"
+
+				+ "if(prop=='$$hashKey'){continue;}"
+				+ "if (typeof item1[prop] == 'string' || item1[prop] instanceof String){if(item1[prop].startsWith('lob/')){continue;}}"
+
+				+ "if(!(angular.toJson(item1[prop])==angular.toJson(item2[prop]))){same=false;}"
+
+				+ "}"
+
+				+ "return same;}"
+
+				+ " };");
+
 		writer.write("var app=angular.module('" + appName + "', [");
 
 		if (appClass.isAnnotationPresent(NGModules.class)) {
@@ -218,7 +217,6 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 			writer.write(modulesPart);
 		}
 
-		
 		writer.write("])");
 
 		writer.write(".run(function($rootScope) {$rootScope.sessionUID = \""
@@ -238,9 +236,10 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 
 			NGBean mb = new NGBean(bean);
 
-			//writer.write(";angular.module('"+appName+"')");
-			writer.write(";app.factory('"+ mb.getName()+"',function "+mb.getName()+"(");
-			
+			// writer.write(";angular.module('"+appName+"')");
+			writer.write(";app.factory('" + mb.getName() + "',function "
+					+ mb.getName() + "(");
+
 			generateBean(mb, contextPath);
 
 			writer.write(");\n");
@@ -264,8 +263,7 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 
 	}
 
-	public void generateBean(NGBean bean,
-			String contextPath) {
+	public void generateBean(NGBean bean, String contextPath) {
 
 		Object reference = locator.lookup(bean.getName(), UID);
 
@@ -276,41 +274,42 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 
 		modelQueryFactory.addQuery(clazz);
 
-	//	writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','RTSrvc',function");
-		
+		// writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','RTSrvc',function");
+
 		writer.write("$rootScope, $http, $location,logger,responseHandler,$q");
-	
-		
+
 		writer.write(",RTSrvc");
 		writer.write("){\n");
 
-		//writer.write("var deffered = $q.defer();");
-		writer.write("var "+bean.getName()+"={serviceID:'"+bean.getName()+"'};");//,scopes:[]};");
-		
+		// writer.write("var deffered = $q.defer();");
+		writer.write("var " + bean.getName() + "={serviceID:'" + bean.getName()
+				+ "'};");// ,scopes:[]};");
+
 		writer.write("\nvar rpath='" + contextPath
 				+ "/http/invoke/service/';\n");
 
-//		String defaultChannel = clazz.getSimpleName();
+		// String defaultChannel = clazz.getSimpleName();
 
-//		writer.write("\nRTSrvc.subscribe("+bean.getName()+",'" + defaultChannel + "');");
-//		if (clazz.isAnnotationPresent(Subscribe.class)) {
-//			String[] channels = ((Subscribe) clazz
-//					.getAnnotation(Subscribe.class)).channels();
-//
-//			for (String channel : channels) {
-//
-//				writer.write("RTSrvc.subscribe($scope,'" + channel + "');");
-//			}
-//		}
+		// writer.write("\nRTSrvc.subscribe("+bean.getName()+",'" +
+		// defaultChannel + "');");
+		// if (clazz.isAnnotationPresent(Subscribe.class)) {
+		// String[] channels = ((Subscribe) clazz
+		// .getAnnotation(Subscribe.class)).channels();
+		//
+		// for (String channel : channels) {
+		//
+		// writer.write("RTSrvc.subscribe($scope,'" + channel + "');");
+		// }
+		// }
 
 		List<Method> getters = new ArrayList<Method>();
 
 		for (Method m : methods) {
 			if (util.isGetter(m)) {
-				if(m.isAnnotationPresent(NGModel.class)){
-				getters.add(m);
-			}
+				if (m.isAnnotationPresent(NGModel.class)) {
+					getters.add(m);
 				}
+			}
 		}
 
 		for (Method get : getters) {
@@ -326,7 +325,8 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 				cache.getCache().put(uid, new Call(o, get));
 				result = "lob/" + uid;
 
-				writer.write(bean.getName()+"." + modelName + "='" + result + "';");
+				writer.write(bean.getName() + "." + modelName + "='" + result
+						+ "';");
 				continue;
 
 			}
@@ -372,14 +372,14 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 				e.printStackTrace();
 			}
 
-			writer.write(bean.getName()+"." + modelName + "=" + result + ";");
+			writer.write(bean.getName() + "." + modelName + "=" + result + ";");
 
 		}
 
 		for (Method m : methods) {
 			if ((!util.isSetter(m)) && (!util.isGetter(m))) {
 
-				//String csModel = null;
+				// String csModel = null;
 				String[] csUpdates = null;
 				Set<Method> setters = new HashSet<Method>();
 
@@ -415,8 +415,6 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 					NGReturn returns = m.getAnnotation(NGReturn.class);
 					csUpdates = returns.updates();
 				}
-
-				
 
 				// if (m.isAnnotationPresent(NGSubmit.class)
 				// || m.isAnnotationPresent(NGRedirect.class)) {
@@ -454,7 +452,7 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 				// pushScope(methods, setters);
 				// }
 
-				writer.write(bean.getName()+"." + m.getName() + "= function(");
+				writer.write(bean.getName() + "." + m.getName() + "= function(");
 				// ---------------------------------------------
 
 				// Handle args
@@ -480,42 +478,37 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 				// -------------------------------
 
 				writer.write(") {");
-				
+
 				writer.write("var mainReturn={data:{}};");
 				writer.write("var params={sessionUID:$rootScope.sessionUID};");
-				addParams(bean,setters, m, args);
+				addParams(bean, setters, m, args);
 
 				if (m.isAnnotationPresent(RealTime.class)) {
 
-					writer.write("return RTSrvc.call("+bean.getName()+",'"
-							+ bean.getName() + "." + m.getName()
-							+ "',params");
-					
+					writer.write("return RTSrvc.call(" + bean.getName() + ",'"
+							+ bean.getName() + "." + m.getName() + "',params");
+
 					writer.write(").then(function(response) {\n");
 
 					writer.write("var msg=(response);");
-					
-					
-					//writer.write("console.log((response));");
-					
-					
-				//	writer.write("var callers=RTSrvc.getCallers();");
 
-					writer.write("mainReturn.data= responseHandler.handleResponse(msg,"+bean.getName()+",true);");
+					// writer.write("console.log((response));");
 
-					//writer.write("deffered.resolve();");
+					// writer.write("var callers=RTSrvc.getCallers();");
 
-					
-					
+					writer.write("mainReturn.data= responseHandler.handleResponse(msg,"
+							+ bean.getName() + ",true);");
+
+					// writer.write("deffered.resolve();");
+
 					writer.write("return mainReturn.data;"); // }");
-					
+
 					writer.write("} ,function(response){return $q.reject(response.data);});");
 
 				} else {
 
 					writer.write("\n  return $http." + httpMethod + "(rpath+'"
-							+ bean.getName() + "/" + m.getName()
-							+ "/json");
+							+ bean.getName() + "/" + m.getName() + "/json");
 
 					if (httpMethod.equals("post")) {
 						writer.write("',params");
@@ -529,19 +522,16 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 					writer.write(").then(function(response) {\n");
 
 					writer.write("var msg=response.data;");
-				//	writer.write("var callers=RTSrvc.getCallers();");
+					// writer.write("var callers=RTSrvc.getCallers();");
 
-					writer.write("mainReturn.data= responseHandler.handleResponse(msg,"+bean.getName()+",true);");
+					writer.write("mainReturn.data= responseHandler.handleResponse(msg,"
+							+ bean.getName() + ",true);");
 
-					//writer.write("deffered.resolve();");
+					// writer.write("deffered.resolve();");
 
-				
 					writer.write("return mainReturn.data;"); // }");
-					
-					writer.write("} ,function(response){return $q.reject(response.data);});");
-					
 
-					
+					writer.write("} ,function(response){return $q.reject(response.data);});");
 
 				}
 
@@ -549,11 +539,11 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 
 				if (m.isAnnotationPresent(NGPostConstruct.class)) {
 
-					writer.write(bean.getName()+"."+m.getName() + "();\n");
+					writer.write(bean.getName() + "." + m.getName() + "();\n");
 				}
 			}
 		}
-		writer.write("return "+bean.getName()+";} \n");
+		writer.write("return " + bean.getName() + ";} \n");
 
 	}
 
@@ -566,12 +556,14 @@ writer.write("var angularBeans={ bind:function(scope,service,modelName){"
 		}
 	}
 
-	private void addParams(NGBean bean,Set<Method> setters, Method m, Type[] args) {
+	private void addParams(NGBean bean, Set<Method> setters, Method m,
+			Type[] args) {
 
 		for (Method setter : setters) {
 
 			String name = util.obtainFieldNameFromAccessor(setter.getName());
-			writer.write("params['" + name + "']="+bean.getName()+"." + name + ";");
+			writer.write("params['" + name + "']=" + bean.getName() + "."
+					+ name + ";");
 
 		}
 
