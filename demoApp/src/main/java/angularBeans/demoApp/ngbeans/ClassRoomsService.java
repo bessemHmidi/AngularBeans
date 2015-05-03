@@ -92,18 +92,21 @@ public class ClassRoomsService implements Serializable {
 		
 		notificationsBus.fire(notificationMessage); 
 
- 	//ModelQuery query=modelQueryFactory.get(ClassRoomsService.class).pushTo("users", user);
+ ModelQuery query=modelQueryFactory.get(SingleClassRoomService.class).pushTo("users", user);
 	
  	
  	
+ client.broadcast(query, true);
  	
-		client.broadcast( "joinEvent",
-				
-				new RealTimeMessage()
-				.set("user", user)
-				.set("classRoom", classRoom)
-				
-				,true);
+ // or #1
+ 
+//		client.broadcast( "joinEvent",
+//				
+//				new RealTimeMessage()
+//				.set("user", user)
+//				.set("classRoom", classRoom)
+//				
+//				,true);
 
 		return "/classRoom";
 	}
