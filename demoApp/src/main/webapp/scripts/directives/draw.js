@@ -119,12 +119,14 @@ angular.module('VirtualClassRoomModule')
       }
       
       function draw(lX, lY, cX, cY,color){
-        // line from
+        
+    	  ctx.strokeStyle = color;
+    	  // line from
         ctx.moveTo(lX,lY);
         // to
         ctx.lineTo(cX,cY);
         // color
-        ctx.strokeStyle = color;
+        
         // draw it
         ctx.stroke();
       }

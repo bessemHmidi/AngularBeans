@@ -33,11 +33,9 @@ import java.lang.annotation.Target;
 import javax.inject.Named;
 import javax.inject.Qualifier;
 
-
 @Retention(RUNTIME)
-@Target({TYPE, METHOD, FIELD, PARAMETER})
+@Target({ TYPE, METHOD, FIELD, PARAMETER })
 @Qualifier
-//@Stereotype
 @Named
 public @interface AngularBean {
 

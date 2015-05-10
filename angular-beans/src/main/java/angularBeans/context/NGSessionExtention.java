@@ -21,6 +21,11 @@
  */
 package angularBeans.context;
 
+import java.lang.annotation.Annotation;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AnnotatedType;
@@ -40,7 +45,40 @@ public class NGSessionExtention implements Extension {
 				.getAnnotatedType();
 
 		if (annotatedType.isAnnotationPresent(AngularBean.class)) {
-			// System.out.println("---------"+annotatedType.getJavaClass());
+			System.out.println("------------PROCESSING");
+			
+			Class clazz=annotatedType.getJavaClass();
+			
+			if
+			(
+			(!clazz.isAnnotationPresent(RequestScoped.class))
+			&&
+			(!clazz.isAnnotationPresent(NGSessionScoped.class))
+			&&(!clazz.isAnnotationPresent(SessionScoped.class))
+			&&(!clazz.isAnnotationPresent(ApplicationScoped.class))
+			
+					)		
+					{
+				
+				Annotation requestScopedAnnotation = new Annotation() {
+			        @Override
+			        public Class<? extends Annotation> annotationType() {
+			          return RequestScoped.class;
+			        }
+			      };
+
+			      AnnotatedTypeWrapper<T> wrapper = new AnnotatedTypeWrapper<T>(
+			          annotatedType, annotatedType.getAnnotations());
+			      wrapper.addAnnotation(requestScopedAnnotation);
+
+			      processAnnotatedType.setAnnotatedType(wrapper);
+				
+				
+					}
+					
+					
+			
+			
 		}
 		;
 

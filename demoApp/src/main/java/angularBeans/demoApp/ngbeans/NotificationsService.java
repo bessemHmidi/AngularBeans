@@ -2,6 +2,7 @@ package angularBeans.demoApp.ngbeans;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.ws.rs.Path;
 
 import angularBeans.api.AngularBean;
 import angularBeans.context.NGSessionScoped;
@@ -12,6 +13,7 @@ import angularBeans.util.ModelQueryFactory;
 
 @AngularBean
 @NGSessionScoped
+
 public class NotificationsService {
 
 	@Inject

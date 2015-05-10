@@ -32,6 +32,8 @@ import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.SockJsServer;
 import org.projectodd.sockjs.servlet.SockJsServlet;
 
+import angularBeans.context.GlobalMapHolder;
+import angularBeans.context.NGSessionContextHolder;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.realtime.GlobalConnectionHolder;
 import angularBeans.realtime.RealTimeErrorEvent;
@@ -130,7 +132,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 				connection.onClose(new SockJsConnection.OnCloseHandler() {
 					@Override
 					public void handle() {
-						// globalConnectionHolder.getAllConnections().add(connection);
+
 						getServletContext().log("SockJS client disconnected");
 					}
 				});

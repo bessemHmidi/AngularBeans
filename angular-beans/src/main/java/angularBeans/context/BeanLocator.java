@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.Context;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -90,8 +92,8 @@ public class BeanLocator implements Serializable {
 
 		Set<Bean<?>> beans = beanManager.getBeans(beanName);
 
+		Class beanClass = util.beanNamesHolder.get(beanName);
 		if (beans.size() == 0) {
-			Class beanClass = util.beanNamesHolder.get(beanName);
 			beans = beanManager.getBeans(beanClass,
 					new AnnotationLiteral<Any>() {
 					});
@@ -99,14 +101,26 @@ public class BeanLocator implements Serializable {
 
 		Bean bean = (Bean) beanManager.resolve(beans);
 
-		Class scopeAnnotationClass = bean.getScope();
+		
 
 		Context context = null;
 
-		context = beanManager.getContext(scopeAnnotationClass);
+		Class scopeAnnotationClass = bean.getScope();
+		
+		
+	
+		
+		
+	
+		if(scopeAnnotationClass.equals(RequestScoped.class)){
+	 return bean.create(beanManager.createCreationalContext(bean));
 
+		}
+	
+		context = beanManager.getContext(scopeAnnotationClass);
+		CreationalContext	creationalContext =beanManager.createCreationalContext(bean);
 		reference = context
-				.get(bean, beanManager.createCreationalContext(bean));
+				.get(bean, creationalContext);
 
 		return reference;
 	}

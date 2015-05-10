@@ -34,12 +34,12 @@ import angularBeans.context.NGSessionContextHolder.CustomScopeInstance;
 
 public class NGSessionScopeContext implements Context, Serializable {
 
-	private static ThreadLocal<NGSessionContextHolder> holder=new ThreadLocal<>();
+	private static ThreadLocal<NGSessionContextHolder> holder = new ThreadLocal<>();
 
 	public static void setCurrentContext(String holderId) {
 
-		NGSessionContextHolder selectedHolder=GlobalMapHolder.get(holderId);
-		
+		NGSessionContextHolder selectedHolder = GlobalMapHolder.get(holderId);
+
 		holder.set(selectedHolder);
 
 	}
@@ -59,7 +59,8 @@ public class NGSessionScopeContext implements Context, Serializable {
 	@Override
 	public <T> T get(Contextual<T> contextual,
 			CreationalContext<T> creationalContext) {
-		if (holder.get()==null)return null;
+		if (holder.get() == null)
+			return null;
 
 		Bean bean = (Bean) contextual;
 		if (holder.get().getBeans().containsKey(bean.getBeanClass())) {

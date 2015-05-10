@@ -97,7 +97,7 @@ public class AuthenticationService {
 	// (strategie=RealTimeStrategie.BroadcastWithoutME)
 
 	@NGSubmit(backEndModels = "*")
-	@NGReturn
+	@NGReturn(model="users",updates="*")
 	public String authenticate() {
 
 		User user = new User(login, password);
