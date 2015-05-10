@@ -67,5 +67,13 @@
 			<name>snapshots-repo</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
+		<repository>
+		
+		<id>deploymentRepo</id>
+			<name>releses-repo</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		
+		</repository>
+		
 	</distributionManagement>
 </project>
