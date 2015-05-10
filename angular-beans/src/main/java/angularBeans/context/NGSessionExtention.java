@@ -44,43 +44,40 @@ public class NGSessionExtention implements Extension {
 		AnnotatedType<T> annotatedType = processAnnotatedType
 				.getAnnotatedType();
 
-		if (annotatedType.isAnnotationPresent(AngularBean.class)) {
-			System.out.println("------------PROCESSING");
-			
-			Class clazz=annotatedType.getJavaClass();
-			
-			if
-			(
-			(!clazz.isAnnotationPresent(RequestScoped.class))
-			&&
-			(!clazz.isAnnotationPresent(NGSessionScoped.class))
-			&&(!clazz.isAnnotationPresent(SessionScoped.class))
-			&&(!clazz.isAnnotationPresent(ApplicationScoped.class))
-			
-					)		
-					{
-				
-				Annotation requestScopedAnnotation = new Annotation() {
-			        @Override
-			        public Class<? extends Annotation> annotationType() {
-			          return RequestScoped.class;
-			        }
-			      };
-
-			      AnnotatedTypeWrapper<T> wrapper = new AnnotatedTypeWrapper<T>(
-			          annotatedType, annotatedType.getAnnotations());
-			      wrapper.addAnnotation(requestScopedAnnotation);
-
-			      processAnnotatedType.setAnnotatedType(wrapper);
-				
-				
-					}
-					
-					
-			
-			
-		}
-		;
+//		if (annotatedType.isAnnotationPresent(AngularBean.class)) {
+//			System.out.println("------------PROCESSING");
+//			
+//			Class clazz=annotatedType.getJavaClass();
+//			
+//			if
+//			(
+//			(!clazz.isAnnotationPresent(RequestScoped.class))
+//			&&
+//			(!clazz.isAnnotationPresent(NGSessionScoped.class))
+//			&&(!clazz.isAnnotationPresent(SessionScoped.class))
+//			&&(!clazz.isAnnotationPresent(ApplicationScoped.class))
+//			
+//					)		
+//					{
+//				
+//				Annotation requestScopedAnnotation = new Annotation() {
+//			        @Override
+//			        public Class<? extends Annotation> annotationType() {
+//			          return RequestScoped.class;
+//			        }
+//			      };
+//
+//			      AnnotatedTypeWrapper<T> wrapper = new AnnotatedTypeWrapper<T>(
+//			          annotatedType, annotatedType.getAnnotations());
+//			      wrapper.addAnnotation(requestScopedAnnotation);
+//
+//			      processAnnotatedType.setAnnotatedType(wrapper);
+//				
+//				
+//					}
+//	
+//		}
+//		;
 
 	}
 
