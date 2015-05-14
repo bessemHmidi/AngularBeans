@@ -9,11 +9,11 @@
 	<dependencies>
 
 		<dependency>
-  	<groupId>javax</groupId>
-  	<artifactId>javaee-web-api</artifactId>
-  	<version>7.0</version>
-  	<scope>provided</scope>
-  </dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
 
 
 		<!-- <dependency> <groupId>javax.json</groupId> <artifactId>javax.json-api</artifactId> 
@@ -31,20 +31,16 @@
 			<version>v20141215</version>
 		</dependency>
 
-  <dependency>
-      <groupId>org.projectodd.sockjs</groupId>
-      <artifactId>sockjs-servlet</artifactId>
-      <version>[0.1.0,)</version>
-    </dependency>
+		<dependency>
+			<groupId>org.projectodd.sockjs</groupId>
+			<artifactId>sockjs-servlet</artifactId>
+			<version>[0.1.0,)</version>
+		</dependency>
 
 	</dependencies>
-	<url>https://github.com/bessemHmidi/angular-bridge</url>
-	<scm>
-		<url>https://github.com/bessemHmidi/angular-bridge.git</url>
-	</scm>
-	<issueManagement>
-		<system>jira</system>
-	</issueManagement>
+	<url>http://bessemhmidi.github.io/AngularBeans</url>
+	<!-- <scm> <url>https://github.com/bessemHmidi/AngularBeans.git</url> </scm> 
+		<issueManagement> <system>jira</system> </issueManagement> -->
 
 	<build>
 		<plugins>
@@ -56,7 +52,59 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
 		</plugins>
 
 	</build>
@@ -68,12 +116,12 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<repository>
-		
-		<id>deploymentRepo</id>
+
+			<id>deploymentRepo</id>
 			<name>releses-repo</name>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-		
+
 		</repository>
-		
+
 	</distributionManagement>
 </project>
