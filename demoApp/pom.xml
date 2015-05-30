@@ -7,7 +7,7 @@
 	<packaging>war</packaging>
 
 
-
+ 
 
 	<dependencies>
 
@@ -21,12 +21,13 @@
 
 
 
+ 
+
 		<dependency>
 			<groupId>com.github.bessemHmidi</groupId>
 			<artifactId>angularBeans</artifactId>
 			<version>1.0.1-RELEASE</version>
 		</dependency>
-
 	</dependencies>
 
 	<properties>
@@ -47,8 +48,14 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		
+		
 	</build>
 
+<repositories> 
 
+
+
+</repositories>
 
 </project>

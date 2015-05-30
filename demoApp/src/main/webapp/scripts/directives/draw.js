@@ -22,11 +22,6 @@ angular.module('VirtualClassRoomModule')
      		offsetX=element.offset().left;
      		offsetY=element.offset().top-100;
      		
-//    		var bottom = $window.height() - element.height();
-//    		bottom = element.offset().top - bottom;
-    		
-    		
-    		
     		
          }
     	
@@ -92,12 +87,10 @@ angular.module('VirtualClassRoomModule')
             currentY = event.offsetY;
             }
         	
-        	//alert(JSON.stringify(event.data));
-        	
+        
           // get current mouse position
-         
-          
-        //  sharedService.changeXY(currentX,currentY);
+           
+      
           canvasService.notifyAllCanvas(lastX, lastY, currentX, currentY,color);
           
           draw(lastX, lastY, currentX, currentY,color);

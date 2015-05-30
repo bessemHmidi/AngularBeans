@@ -6,6 +6,12 @@
 	<version>1.0.1-RELEASE</version>
 	<name>angularBeans</name>
 
+<properties>
+<maven.compiler.source>1.7</maven.compiler.source>
+<maven.compiler.target>1.7</maven.compiler.target>
+
+</properties>
+
 	<dependencies>
 
 		<dependency>
@@ -42,7 +48,7 @@
 	<!-- <scm> <url>https://github.com/bessemHmidi/AngularBeans.git</url> </scm> 
 		<issueManagement> <system>jira</system> </issueManagement> -->
 
-	<build>
+<!-- 	<build>
 		<plugins>
 
 			<plugin>
@@ -83,6 +89,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
 				<version>1.5</version>
+				<configuration>
+			
+				
+				</configuration>
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
@@ -123,5 +133,5 @@
 
 		</repository>
 
-	</distributionManagement>
+	</distributionManagement> -->
 </project>

@@ -27,12 +27,9 @@ public class CanvasService {
 		.set("lastY", lastY)
 		.set("currentX", currentX)
 		.set("currentY", currentY);
-		
-		
-		
+
 		client.broadcast("drawEvent", message, true);
-		
-		//System.out.println("x: " +x+" y: "+y);
+	
 	} 
 	
 
