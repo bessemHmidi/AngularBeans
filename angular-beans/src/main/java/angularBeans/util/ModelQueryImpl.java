@@ -1,11 +1,12 @@
 package angularBeans.util;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ModelQueryImpl implements ModelQuery {
+public class ModelQueryImpl implements ModelQuery ,Serializable{
 
 	private Map<String, Object> data = new HashMap<String, Object>();
 
