@@ -1,5 +1,6 @@
 package angularBeans.io;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import angularBeans.context.NGSessionScoped;
 
 
 @NGSessionScoped
-public class FileUploadHandler {
+public class FileUploadHandler implements Serializable{
 
 	private Map<String, Call> uploadsActions=new HashMap<String, Call>();
 	

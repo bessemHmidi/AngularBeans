@@ -21,6 +21,7 @@
  */
 package angularBeans.validation;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -31,7 +32,7 @@ import javax.validation.ValidatorFactory;
 import angularBeans.context.NGSessionScoped;
 
 @NGSessionScoped
-public class BeanValidator {
+public class BeanValidator implements Serializable{
 
 	
 	public Set validate(Object bean){

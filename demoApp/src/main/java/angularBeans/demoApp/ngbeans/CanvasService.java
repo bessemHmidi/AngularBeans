@@ -1,5 +1,7 @@
 package angularBeans.demoApp.ngbeans;
 
+import java.io.Serializable;
+
 import javax.inject.Inject;
 
 import angularBeans.api.AngularBean;
@@ -11,7 +13,7 @@ import angularBeans.realtime.RealTimeMessage;
 
 @AngularBean
 @NGSessionScoped
-public class CanvasService {
+public class CanvasService implements Serializable{
 	
 	@Inject
 	RealTimeClient client;

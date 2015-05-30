@@ -1,5 +1,7 @@
 package angularBeans.demoApp.ngbeans;
 
+import java.io.Serializable;
+
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.ws.rs.Path;
@@ -14,7 +16,7 @@ import angularBeans.util.ModelQueryFactory;
 @AngularBean
 @NGSessionScoped
 
-public class NotificationsService {
+public class NotificationsService implements Serializable{
 
 	@Inject
 	RealTimeClient client;

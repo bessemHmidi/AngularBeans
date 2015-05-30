@@ -1,10 +1,12 @@
 package angularBeans.util;
 
+import java.io.Serializable;
+
 import angularBeans.context.NGSessionScoped;
 
 
 @NGSessionScoped
-public class CurrentNGSession {
+public class CurrentNGSession implements Serializable {
 	
 	private String sessionId;
 

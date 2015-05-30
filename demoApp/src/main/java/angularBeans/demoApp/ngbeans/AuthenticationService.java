@@ -1,5 +1,6 @@
 package angularBeans.demoApp.ngbeans;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.enterprise.event.Event;
@@ -31,7 +32,7 @@ import angularBeans.util.ModelQueryFactory;
 
 @AngularBean
 @NGSessionScoped
-public class AuthenticationService {
+public class AuthenticationService implements Serializable{
 
 	@Inject
 	VirtualClassService virtualClassService;
