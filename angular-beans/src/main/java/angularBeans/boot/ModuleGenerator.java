@@ -34,6 +34,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -74,7 +75,7 @@ public class ModuleGenerator implements Serializable {
 	private String UID;;
 
 	@Inject
-	transient ModelQueryFactory modelQueryFactory;
+	ModelQueryFactory modelQueryFactory;
 
 	@Inject
 	AngularBeansUtil util;
@@ -121,7 +122,7 @@ public class ModuleGenerator implements Serializable {
 	Instance<Object> ext;
 
 	@Inject
-	transient FileUploadHandler uploadHandler;
+	 FileUploadHandler uploadHandler;
 
 	@Inject
 	BeanValidationProcessor validationAdapter;
@@ -129,7 +130,7 @@ public class ModuleGenerator implements Serializable {
 
 
 	@Inject
-	transient CurrentNGSession ngSession;
+	 CurrentNGSession ngSession;
 
 	private StringWriter writer;
 

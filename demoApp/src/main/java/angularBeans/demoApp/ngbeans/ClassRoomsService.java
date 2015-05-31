@@ -36,9 +36,6 @@ public class ClassRoomsService implements Serializable {
 	@Inject
 	Event<NotificationMessage> notificationsBus;
 
-	@Inject
-	@AngularBean
-	SingleClassRoomService singleClassRoomsCtrl;
 
 	@Inject
 	@AngularBean

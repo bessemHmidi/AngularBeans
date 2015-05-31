@@ -42,7 +42,7 @@ import com.google.gson.JsonObject;
 @WebServlet(asyncSupported = false, urlPatterns = "/http/invoke/*")
 public class OneWayEndPoint extends HttpServlet implements Serializable {
 
-	@Inject
+@Inject
 	InvocationHandler remoteInvoker;
 
 	@Inject
@@ -113,14 +113,21 @@ public class OneWayEndPoint extends HttpServlet implements Serializable {
 
 		JsonObject paramsObj = util.parse(params);
 
-		String UID = paramsObj.get("sessionUID").getAsString();
+		
+		String UID = (paramsObj.get("sessionUID")).getAsString();
+		
 		NGSessionScopeContext.setCurrentContext(UID);
 
+		
+		
 		receiveEvents.fire(new OneWayDataReceivedEvent(paramsObj));
 
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID),
 				method, paramsObj, UID);
 
+		
+		
+		
 		String jsonResponse = util.getJson(result);
 
 		// System.out.println(jsonResponse);

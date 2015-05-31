@@ -82,7 +82,7 @@ public class NGSessionExtention implements Extension {
 	}
 
 	public void addScope(@Observes final BeforeBeanDiscovery event) {
-		event.addScope(NGSessionScoped.class, false, false);
+		event.addScope(NGSessionScoped.class,true , false);
 	}
 
 	public void registerContext(@Observes final AfterBeanDiscovery event) {

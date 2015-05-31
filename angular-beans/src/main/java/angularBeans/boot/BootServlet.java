@@ -21,10 +21,7 @@
  */
 package angularBeans.boot;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.inject.Inject;
@@ -34,19 +31,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.javascript.jscomp.CheckLevel;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
-import com.google.javascript.jscomp.PropertyRenamingPolicy;
 import com.google.javascript.jscomp.SourceFile;
-import com.google.javascript.jscomp.VariableRenamingPolicy;
-import com.google.javascript.jscomp.CompilerOptions.Reach;
 
 @WebServlet(urlPatterns = "/angular-beans.js")
 public class BootServlet extends HttpServlet {
 
-	
 	@Inject
 	ModuleGenerator generator;
 
@@ -59,41 +51,37 @@ public class BootServlet extends HttpServlet {
 		StringWriter stringWriter = new StringWriter();
 		generator.getScript(stringWriter);
 
-		String jsContent=stringWriter.toString();
+		String jsContent = stringWriter.toString();
 
-		
-		
 		String compressed = getCompressedJavaScript(jsContent);
 		resp.getWriter().write(compressed);
-		
-		//resp.getWriter().write(jsContent);
+
+		// resp.getWriter().write(jsContent);
 
 		resp.getWriter().flush();
 	}
 
 	private String getCompressedJavaScript(String jsContent) {
-		String compiled="";
-		
-		
-		compiled=compile(jsContent, CompilationLevel.SIMPLE_OPTIMIZATIONS);
-		
-		//compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
+		String compiled = "";
+
+		compiled = compile(jsContent, CompilationLevel.SIMPLE_OPTIMIZATIONS);
+
+		// compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
 		return compiled;
 	}
 
-	
-	 public static String compile(String code,CompilationLevel level) {
-		    Compiler compiler = new Compiler();
+	public static String compile(String code, CompilationLevel level) {
+		Compiler compiler = new Compiler();
 
-		    CompilerOptions options = new CompilerOptions();
-		    		    
-		    options.setAngularPass(true);
-		    
-		    SourceFile extern = SourceFile.fromCode("externs.js","function alert(x) {}");
-		    SourceFile input =SourceFile .fromCode("input.js", code);
-		    compiler.compile(extern, input, options);
-		    return compiler.toSource();   
-		  }
-	 
+		CompilerOptions options = new CompilerOptions();
+
+		options.setAngularPass(true);
+
+		SourceFile extern = SourceFile.fromCode("externs.js",
+				"function alert(x) {}");
+		SourceFile input = SourceFile.fromCode("input.js", code);
+		compiler.compile(extern, input, options);
+		return compiler.toSource();
+	}
 
 }

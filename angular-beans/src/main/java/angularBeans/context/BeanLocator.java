@@ -101,15 +101,9 @@ public class BeanLocator implements Serializable {
 
 		Bean bean = (Bean) beanManager.resolve(beans);
 
-		
-
 		Context context = null;
 
 		Class scopeAnnotationClass = bean.getScope();
-		
-		
-	
-		
 		
 	
 		if(scopeAnnotationClass.equals(RequestScoped.class)){

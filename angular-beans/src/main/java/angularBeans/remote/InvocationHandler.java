@@ -34,9 +34,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.swing.text.rtf.RTFEditorKit;
 
+import angularBeans.api.AngularBean;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
 import angularBeans.context.NGSessionScopeContext;
@@ -57,7 +59,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 
-@NGSessionScoped
+@ApplicationScoped
 public class InvocationHandler implements Serializable {
 
 //	@Inject
