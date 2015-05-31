@@ -48,8 +48,7 @@ public class NGBean implements Serializable{
 //		m2 = proxyClass.getMethod("getTargetInstance");
 //		targetInstance=m.invoke(controller);
 	} catch (NoSuchMethodException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
+		targetClass=proxyClass;
 	} catch (SecurityException e1) {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();

@@ -11,7 +11,7 @@ import javax.enterprise.inject.spi.PassivationCapable;
 import angularBeans.context.NGSessionScoped;
 
 @NGSessionScoped
-public class ModelQueryFactory  {//PassivationCapable {
+public class ModelQueryFactory implements Serializable {//PassivationCapable {
 
 	
 	

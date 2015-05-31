@@ -16,7 +16,7 @@ import angularBeans.context.NGSessionScoped;
 
 
 @NGSessionScoped
-public class FileUploadHandler {
+public class FileUploadHandler implements Serializable{
 
 	private Map<String, Call> uploadsActions=new HashMap<String, Call>();
 	
