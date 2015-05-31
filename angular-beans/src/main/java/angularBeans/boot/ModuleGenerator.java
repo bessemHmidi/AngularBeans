@@ -74,7 +74,7 @@ public class ModuleGenerator implements Serializable {
 	private String UID;;
 
 	@Inject
-	ModelQueryFactory scopeUtil;
+	transient ModelQueryFactory modelQueryFactory;
 
 	@Inject
 	AngularBeansUtil util;
@@ -92,7 +92,7 @@ public class ModuleGenerator implements Serializable {
 
 	@PostConstruct
 	public void init() {
-
+		NGSessionScopeContext.setCurrentContext(UID);
 	}
 
 	public synchronized String getUID() {
@@ -121,16 +121,15 @@ public class ModuleGenerator implements Serializable {
 	Instance<Object> ext;
 
 	@Inject
-	FileUploadHandler uploadHandler;
+	transient FileUploadHandler uploadHandler;
 
 	@Inject
 	BeanValidationProcessor validationAdapter;
 
-	@Inject
-	ModelQueryFactory modelQueryFactory;
+
 
 	@Inject
-	CurrentNGSession ngSession;
+	transient CurrentNGSession ngSession;
 
 	private StringWriter writer;
 
@@ -224,10 +223,10 @@ public class ModuleGenerator implements Serializable {
 		writer.write(".run(function($rootScope) {$rootScope.sessionUID = \""
 				+ UID + "\";");
 
-		for (String model : scopeUtil.getRootScope().getProperties()) {
+		for (String model : modelQueryFactory.getRootScope().getProperties()) {
 
 			writer.write("$rootScope." + model + " = "
-					+ util.getJson(scopeUtil.getRootScope().getProperty(model))
+					+ util.getJson(modelQueryFactory.getRootScope().getProperty(model))
 					+ ";");
 
 		}

@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
 import angularBeans.context.NGSessionScoped;
 
 
 @NGSessionScoped
-public class FileUploadHandler implements Serializable{
+public class FileUploadHandler {
 
 	private Map<String, Call> uploadsActions=new HashMap<String, Call>();
 	

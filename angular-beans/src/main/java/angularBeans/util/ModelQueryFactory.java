@@ -6,11 +6,19 @@ import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.spi.PassivationCapable;
 
 import angularBeans.context.NGSessionScoped;
 
 @NGSessionScoped
-public class ModelQueryFactory implements Serializable {
+public class ModelQueryFactory  {//PassivationCapable {
+
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private Map<Class, ModelQuery> allQueries = new HashMap<Class, ModelQuery>();
 
@@ -67,5 +75,7 @@ public class ModelQueryFactory implements Serializable {
 		// TODO Auto-generated method stub
 		return rootScope;
 	}
+
+	
 
 }

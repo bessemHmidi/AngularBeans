@@ -41,7 +41,7 @@ public class NGSessionScopeContext implements Context, Serializable {
 		NGSessionContextHolder selectedHolder = GlobalMapHolder.get(holderId);
 
 		holder.set(selectedHolder);
-
+ 
 	}
 
 	private Logger log = Logger.getLogger(getClass().getSimpleName());
