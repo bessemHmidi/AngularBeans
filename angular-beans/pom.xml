@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.bessemHmidi</groupId>
 	<artifactId>angularBeans</artifactId>
-	<version>1.0.1-RELEASE</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>angularBeans</name>
 
 <properties>
 <maven.compiler.source>1.7</maven.compiler.source>
-<maven.compiler.target>1.7</maven.compiler.target>
-
+ <maven.compiler.target>1.7</maven.compiler.target>
+<!-- <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> -->
 </properties>
 
 	<dependencies>
@@ -51,12 +51,6 @@
 <!-- 	<build>
 		<plugins>
 
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.7</source>					<target>1.7</target>
-				</configuration>
-			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -102,7 +96,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> 
 
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
@@ -117,7 +111,7 @@
 			</plugin>
 		</plugins>
 
-	</build>
+	</build> -->
 	<distributionManagement>
 
 		<snapshotRepository>
@@ -133,5 +127,5 @@
 
 		</repository>
 
-	</distributionManagement> -->
+	</distributionManagement>
 </project>

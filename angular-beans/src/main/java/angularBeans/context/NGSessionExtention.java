@@ -90,6 +90,7 @@ public class NGSessionExtention implements Extension {
 		NGSessionScopeContext context = new NGSessionScopeContext();
 		//
 		event.addContext(context);
+		
 	}
 
 	<T> void pat(@Observes ProcessAnnotatedType<T> event, BeanManager bm) {

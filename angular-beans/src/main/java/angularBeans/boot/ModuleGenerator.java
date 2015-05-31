@@ -92,7 +92,7 @@ public class ModuleGenerator implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		NGSessionScopeContext.setCurrentContext(UID);
+		//NGSessionScopeContext.setCurrentContext(UID);
 	}
 
 	public synchronized String getUID() {
