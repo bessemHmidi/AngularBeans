@@ -1,5 +1,7 @@
 package angularBeans.demoApp.domain;
 
+import javax.ws.rs.GET;
+
 import angularBeans.io.LobWrapper;
 
 public class NotificationMessage {
@@ -8,7 +10,7 @@ public class NotificationMessage {
 	private String title;
 	private String body;
 	private String type;
-	private LobWrapper image;
+	private String image;
 	private boolean broadcast;
 	
 	
@@ -45,11 +47,11 @@ public class NotificationMessage {
 		return broadcast;
 	}
 
-	public LobWrapper getImage() {
+	public String getImage() {
 		return image;
 	}
-
-	public void setImage(LobWrapper image) {
+	
+	public void setImage(String image) {
 		this.image = image;
 	}
 

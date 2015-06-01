@@ -19,7 +19,6 @@ import angularBeans.context.NGSessionScoped;
 import angularBeans.demoApp.domain.NotificationMessage;
 import angularBeans.demoApp.domain.User;
 import angularBeans.demoApp.service.VirtualClassService;
-import angularBeans.demoApp.util.FileSource;
 import angularBeans.io.FileUpload;
 import angularBeans.io.LobWrapper;
 import angularBeans.io.Upload;
@@ -27,12 +26,11 @@ import angularBeans.log.NGLogger;
 import angularBeans.log.NGLogger.Level;
 import angularBeans.realtime.RealTime;
 import angularBeans.realtime.RealTimeClient;
-import angularBeans.realtime.RealTimeMessage;
 import angularBeans.util.ModelQueryFactory;
 
 @AngularBean
 @NGSessionScoped
-public class AuthenticationService implements Serializable{
+public class AuthenticationService implements Serializable {
 
 	@Inject
 	VirtualClassService virtualClassService;
@@ -45,7 +43,7 @@ public class AuthenticationService implements Serializable{
 
 	@Inject
 	RealTimeClient client;
-	
+
 	@Inject
 	Event<NotificationMessage> notificationBus;
 
@@ -59,11 +57,11 @@ public class AuthenticationService implements Serializable{
 
 		logger.log(Level.WARN, "please log in %s  ", "and enjoy !!");
 
-//		if (connectedUser != null) {
-//			modelQueryFactory.getRootScope().setProperty("GRANT_LOGIN", true);
-//			modelQueryFactory.getRootScope()
-//					.setProperty("connectedUser", connectedUser);
-//		}
+		// if (connectedUser != null) {
+		// modelQueryFactory.getRootScope().setProperty("GRANT_LOGIN", true);
+		// modelQueryFactory.getRootScope()
+		// .setProperty("connectedUser", connectedUser);
+		// }
 
 	}
 
@@ -76,7 +74,6 @@ public class AuthenticationService implements Serializable{
 
 	private LobWrapper avatar;
 
-	
 	public LobWrapper getAvatar() {
 		return avatar;
 	}
@@ -84,21 +81,17 @@ public class AuthenticationService implements Serializable{
 	@FileUpload(path = "/avatar")
 	public void uploadAvatar(List<Upload> uploads) {
 
-		
 		avatar = new LobWrapper(uploads.get(0).getAsByteArray(), this);
 
-	
-		client.publish(modelQueryFactory.get(this.getClass())
-				.setProperty("avatar", avatar));
+		client.publish(modelQueryFactory.get(this.getClass()).setProperty(
+				"avatar", avatar));
 
 	}
 
-
 	@RealTime
 	// (strategie=RealTimeStrategie.BroadcastWithoutME)
-
 	@NGSubmit(backEndModels = "*")
-	@NGReturn(model="users",updates="*")
+	@NGReturn(model = "users", updates = "*")
 	public String authenticate() {
 
 		User user = new User(login, password);
@@ -108,17 +101,18 @@ public class AuthenticationService implements Serializable{
 			connectedUser = virtualClassService.getUsers().get(
 					virtualClassService.getUsers().indexOf(user));
 
-			modelQueryFactory.getRootScope()
-					.setProperty("connectedUser", connectedUser);
+			modelQueryFactory.getRootScope().setProperty("connectedUser",
+					connectedUser);
 
 			modelQueryFactory.getRootScope().setProperty("GRANT_LOGIN", true);
 			login = "";
 			password = "";
 
 			NotificationMessage message = new NotificationMessage("img",
-					"SECURITY", " HI !!", false);
-			message.setImage(new LobWrapper(FileSource.open("dorra.jpg"),
-					message));
+					"GRANT-ACCESS", " Welcome !!", false);
+
+			message.setImage("images/mini_logo.png");
+
 			notificationBus.fire(message);
 
 			return "/choice";
@@ -126,8 +120,8 @@ public class AuthenticationService implements Serializable{
 
 		notificationBus.fire(new NotificationMessage("danger", "SECURITY",
 				"UNAUTORIZED !!", false));
-		modelQueryFactory.get(AuthenticationService.class).setProperty("message",
-				"incorrect login or password !!");
+		modelQueryFactory.get(AuthenticationService.class).setProperty(
+				"message", "incorrect login or password !!");
 
 		return "/";
 
