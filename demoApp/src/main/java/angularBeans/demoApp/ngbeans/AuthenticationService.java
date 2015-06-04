@@ -89,7 +89,7 @@ public class AuthenticationService implements Serializable {
 	}
 
 	@RealTime
-	// (strategie=RealTimeStrategie.BroadcastWithoutME)
+
 	@NGSubmit(backEndModels = "*")
 	@NGReturn(model = "users", updates = "*")
 	public String authenticate() {
