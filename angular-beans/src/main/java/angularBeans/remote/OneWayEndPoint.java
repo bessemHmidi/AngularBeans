@@ -125,14 +125,10 @@ public class OneWayEndPoint extends HttpServlet implements Serializable {
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID),
 				method, paramsObj, UID);
 
-		
-		
-		
-		String jsonResponse = util.getJson(result);
 
-		// System.out.println(jsonResponse);
+		// System.out.println(util.getJson(result));
 
-		return jsonResponse;
+		return util.getJson(result);
 	}
 
 }

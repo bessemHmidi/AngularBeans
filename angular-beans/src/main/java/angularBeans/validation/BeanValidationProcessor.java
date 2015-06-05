@@ -50,7 +50,7 @@ public class BeanValidationProcessor implements Serializable {
 	@Inject
 	AngularBeansUtil util;
 	
-	private StringBuffer buffer = new StringBuffer();;
+	private StringBuffer buffer = new StringBuffer();
 
 	public void processBeanValidationParsing(Method method) {
 
@@ -85,16 +85,16 @@ public class BeanValidationProcessor implements Serializable {
 				buffer.append("\nentries[e].setAttribute('required', 'true');");
 				Size sizeAnno = (Size) a;
 
-				int maxLenth = sizeAnno.max();
-				int minLenth = sizeAnno.min();
+				int maxLength = sizeAnno.max();
+				int minLength = sizeAnno.min();
 
-				if (!(minLenth <= Integer.MIN_VALUE))
+				if (!(minLength <= Integer.MIN_VALUE))
 					buffer.append("\nentries[e].setAttribute('ng-minlength', '")
-							.append(minLenth).append("');");
+							.append(minLength).append("');");
 
-				if (!(maxLenth >= Integer.MAX_VALUE))
+				if (!(maxLength >= Integer.MAX_VALUE))
 					buffer.append("\nentries[e].setAttribute('ng-maxlength', '")
-							.append(maxLenth).append("');");
+							.append(maxLength).append("');");
 
 				break;
 

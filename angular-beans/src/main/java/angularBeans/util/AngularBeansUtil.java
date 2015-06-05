@@ -175,8 +175,7 @@ public class AngularBeansUtil implements Serializable {
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(message);
 
-		JsonObject jObj = element.getAsJsonObject();
-		return jObj;
+		return element.getAsJsonObject();
 	}
 
 	public Object convertFromString(String value, Class type) {
@@ -248,13 +247,9 @@ public class AngularBeansUtil implements Serializable {
 
 	public boolean isSetter(Method m) {
 
-		if (m.getName().startsWith("set")
+		return m.getName().startsWith("set")
 				&& m.getReturnType().equals(void.class)
-				&& (m.getParameterTypes().length > 0 && m.getParameterTypes().length < 2)) {
-			return true;
-		} else {
-			return false;
-		}
+				&& (m.getParameterTypes().length > 0 && m.getParameterTypes().length < 2);
 
 	}
 

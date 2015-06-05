@@ -72,7 +72,7 @@ import angularBeans.validation.BeanValidationProcessor;
 @SessionScoped
 public class ModuleGenerator implements Serializable {
 
-	private String UID;;
+	private String UID;
 
 	@Inject
 	ModelQueryFactory modelQueryFactory;
@@ -152,7 +152,6 @@ public class ModuleGenerator implements Serializable {
 
 		Class appClass = null;
 		for (Object ap : app) {
-			ap.toString();
 
 			appClass = ap.getClass();
 			if (appClass.isAnnotationPresent(Named.class)) {
@@ -253,7 +252,6 @@ public class ModuleGenerator implements Serializable {
 
 			Method m;
 			try {
-				extention.toString();
 				m = extention.getClass().getMethod("render");
 				writer.write(m.invoke(extention) + ";");
 			} catch (Exception e) {
@@ -272,7 +270,6 @@ public class ModuleGenerator implements Serializable {
 		Class<? extends Object> clazz = bean.getTargetClass();
 
 		Method[] methods = clazz.getDeclaredMethods();
-		Object o = reference;
 
 		modelQueryFactory.addQuery(clazz);
 
@@ -324,7 +321,7 @@ public class ModuleGenerator implements Serializable {
 			if (get.getReturnType().equals(LobWrapper.class)) {
 
 				String uid = String.valueOf(UUID.randomUUID());
-				cache.getCache().put(uid, new Call(o, get));
+				cache.getCache().put(uid, new Call(reference, get));
 				result = "lob/" + uid;
 
 				writer.write(bean.getName() + "." + modelName + "='" + result
@@ -339,9 +336,9 @@ public class ModuleGenerator implements Serializable {
 
 			try {
 
-				m = o.getClass().getMethod((getter));
+				m = reference.getClass().getMethod((getter));
 
-				result = m.invoke(o);
+				result = m.invoke(reference);
 
 				if ((result == null && (m.getReturnType().equals(String.class))))
 					result = "";
@@ -392,7 +389,7 @@ public class ModuleGenerator implements Serializable {
 					String uploadPath = ((FileUpload) m
 							.getAnnotation(FileUpload.class)).path();
 
-					Call call = new Call(o, m);
+					Call call = new Call(reference, m);
 
 					uploadHandler.getUploadsActions().put(uploadPath, call);
 				}
