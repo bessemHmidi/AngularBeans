@@ -1,6 +1,16 @@
 package angularBeans.realtime;
 
+
+/**
+ * 
+ * @author bessem
+ *
+ *an NGEvent will be inserted to a response and 
+ *converted to an AngularJS event
+ */
 public class NGEvent {
+	
+	
 	
 	private String name;
 	private Object data;

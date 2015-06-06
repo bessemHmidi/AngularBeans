@@ -21,14 +21,30 @@
  */
 package angularBeans.api;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**  
+* first method to be called when initializing 
+* the js proxy  
+* <p> 
+* when the angular service is created it will send a 
+* HTTP GET request and AngularBeans will call the 
+* annotated method.
+* 
+
+* <strong>method annotated with @NGPostConstruct must
+* be a public void with no args methods
+**/
+
+
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@Documented
 public @interface NGPostConstruct {
 
 	String[] updates() default {}; 
