@@ -21,6 +21,15 @@
  */
 package angularBeans.log;
 
+/**
+ * 
+ * @author bessem
+ *
+ *a class internally used by angular beans to
+ *send log messages to the front end
+ *(with NGLogger)
+ */
+
 public class LogMessage {
 
 	private String level;

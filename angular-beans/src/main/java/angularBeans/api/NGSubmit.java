@@ -26,6 +26,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**  
+* specify 
+* what other back end models  will be synchronized
+* with front end models before the method call
+* <p> 
+* backEndModels: array of models names or 
+* ' backEndModels={"*"} ' to tell AngularBeans
+* that all the @NGModel annotated properties
+* of the back end bean will be updated.
+* 
+* <strong>work only with @NGModel annotated properties
+**/
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

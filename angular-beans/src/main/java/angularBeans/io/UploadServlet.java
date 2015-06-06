@@ -60,7 +60,7 @@ public class UploadServlet extends HttpServlet {
 //			out.println("<title>Servlet TestServlet</title>");
 //			out.println("</head>");
 //			out.println("<body>");
-//			out.println("<h1>Angular Beans Uplaud Service"
+//			out.println("<h1>Angular Beans Upload Service"
 //					+ request.getContextPath() + ": param</h1>");
 //
 //			
