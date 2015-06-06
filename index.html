@@ -1,324 +1,168 @@
 <!DOCTYPE html>
 <html>
-
-    <head>
-        <meta charset='utf-8'>
-        <meta http-equiv="X-UA-Compatible" content="chrome=1">
-        <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-        <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-        <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-        <!--[if lt IE 9]>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-        <title>AngularBeans by Bessem Hmidi</title>
-    </head>
+    <title>Angularbeans by bessemHmidi</title>
+  </head>
 
-    <body>
-        <div id="container">
-            <div class="inner">
+  <body>
+    <div id="container">
+      <div class="inner">
 
-                <header>
-                    <div align="center">
-                        <img src="images/AngularBeans_logo_transparent.png" width="30%" height="30%">
-                        <h1>AngularBeans</h1>
-                    </div>
-                </header>
+        <header>
+        <div align="center">
+        <img src="images/AngularBeans_logo_transparent.png" width="30%" height="30%">
+          <h1>Angularbeans</h1>
+          </div>
+        </header>
 
-                <section id="downloads" class="clearfix">
-                    <a href="https://github.com/bessemHmidi/AngularBeans/zipball/master" id="download-zip" class="button">
-                        <span>Download .zip</span>
-                    </a>
-                    <a href="https://github.com/bessemHmidi/AngularBeans/tarball/master" id="download-tar-gz" class="button">
-                        <span>Download .tar.gz</span>
-                    </a>
-                    <a href="https://github.com/bessemHmidi/AngularBeans" id="view-on-github" class="button">
-                        <span>View on GitHub</span>
-                    </a>
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/bessemHmidi/AngularBeans/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/bessemHmidi/AngularBeans/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/bessemHmidi/AngularBeans" id="view-on-github" class="button"><span>View on GitHub</span></a>
+            
+        </section>
 
-                </section>
+   
+
+   
+        <hr>
+
+        <section id="main_content">
+          <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to AngularBeans Pages.</h3>
+
+<p>AngularBeans is an effort to have one well integrated Web Framework for any Java-WEB-CDI container, it simplify the building of complex, realtime, JavaScript client side MV* , with javaEE/CDI backend  applications,
+ it generate AngularJs ready to use module containing injectables angular services (CDI beans proxies)</p>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
+
+<p><h4>- Bean validation support (converted to client side angularJS form validation)</h4> </p>
+<p><h4>- Built-in translation service</h4></p>
+<p><h4>- browser console logging via CDI beans</h4></p>
+<p><h4>- Event-driven file uploads !</h4></p>
+<p><h4>- handling binary content (like images)</h4></p>
+<p><h4>- SockJs support!</h4></p>
+<p><h4>- Realtime Event broadcasting from backend to clients (as angular events)</h4></p>
+<p><h4>- QueryModel: a query from the backend to front end('s) to update their model('s) </h4></p>
 
 
+<!-- <pre><code>$ cd your_repo_root/repo_name
+$ git fetch origin
+$ git checkout gh-pages
+</code></pre> -->
 
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h3>
+<p>considering the following CDI bean: </p>
+<p>HelloBean.java :</p>
+<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #f92672">package</span> <span style="color: #f8f8f2">helloWorld</span><span style="color: #f92672">;</span>
 
-                <hr>
+<span style="color: #f92672">import</span> <span style="color: #f8f8f2">angularBeans.api.AngularBean</span><span style="color: #f92672">;</span>
+<span style="color: #f92672">import</span> <span style="color: #f8f8f2">angularBeans.api.NGReturn</span><span style="color: #f92672">;</span>
+<span style="color: #f92672">import</span> <span style="color: #f8f8f2">angularBeans.realtime.RealTime</span><span style="color: #f92672">;</span>
 
-                <section id="main_content">
-                    <h3>
-                        <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true">
-                            <span class="octicon octicon-link"></span>
-                        </a>Welcome to AngularBeans</h3>
+<span style="color: #f92672">import</span> <span style="color: #f8f8f2">java.io.Serializable</span><span style="color: #f92672">;</span>
 
-                    <p>
-                        <em>AngularBeans</em> is an effort to have one well integrated Web Framework for any Java-WEB-CDI container, it simplifies the building of complex, realtime, JavaScript client-side MV* , with JavaEE/CDI backend applications, it generates
-                        an AngularJS ready to use module containing injectables Angular services (CDI beans proxies).</p>
+<span style="color: #f92672">import</span> <span style="color: #f8f8f2">javax.enterprise.context.RequestScoped</span><span style="color: #f92672">;</span>
+<span style="color: #f92672">import</span> <span style="color: #f8f8f2">javax.ws.rs.GET</span><span style="color: #f92672">;</span>
 
-                    <h3>
-                        <a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true">
-                            <span class="octicon octicon-link"></span>
-                        </a>Features</h3>
-
-                    <p>
-                        <h4>- Bean validation support (converted to client side angularJS form validation).</h4>
-                    </p>
-                    <p>
-                        <h4>- Built-in translation service.</h4>
-                    </p>
-                    <p>
-                        <h4>- Browser console logging via CDI beans.</h4>
-                    </p>
-                    <p>
-                        <h4>- Event-driven file uploads!</h4>
-                    </p>
-                    <p>
-                        <h4>- handling binary content. (like images)</h4>
-                    </p>
-                    <p>
-                        <h4>- SockJs support!</h4>
-                    </p>
-                    <p>
-                        <h4>- Realtime Event broadcasting from backend to clients. (As Angular events)</h4>
-                    </p>
-                    <p>
-                        <h4>- QueryModel: A query from the backend to the front end('s) to update their model('s) </h4>
-                    </p>
-
-                    <h3>
-                        <a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true">
-                            <span class="octicon octicon-link"></span>
-                        </a>Example</h3>
-                    <p>Considering the following CDI bean: </p>
-                    <p>HelloBean.java :</p>
-                    <!-- HTML generated using hilite.me -->
-                    <div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
-                        <pre style="margin: 0; line-height: 125%">
-                            <span style="color: #f92672">package</span>
-                            <span style="color: #f8f8f2">helloWorld</span>
-                            <span style="color: #f92672">;</span>
-
-                            <span style="color: #f92672">import</span>
-                            <span style="color: #f8f8f2">angularBeans.api.AngularBean</span>
-                            <span style="color: #f92672">;</span>
-                            <span style="color: #f92672">import</span>
-                            <span style="color: #f8f8f2">angularBeans.api.NGReturn</span>
-                            <span style="color: #f92672">;</span>
-                            <span style="color: #f92672">import</span>
-                            <span style="color: #f8f8f2">angularBeans.realtime.RealTime</span>
-                            <span style="color: #f92672">;</span>
-
-                            <span style="color: #f92672">import</span>
-                            <span style="color: #f8f8f2">java.io.Serializable</span>
-                            <span style="color: #f92672">;</span>
-
-                            <span style="color: #f92672">import</span>
-                            <span style="color: #f8f8f2">javax.enterprise.context.RequestScoped</span>
-                            <span style="color: #f92672">;</span>
-                            <span style="color: #f92672">import</span>
-                            <span style="color: #f8f8f2">javax.ws.rs.GET</span>
-                            <span style="color: #f92672">;</span>
-
-                            <span style="color: #a6e22e">@AngularBean</span>
-                            <span style="color: #a6e22e">@RequestScoped</span>
-                            <span style="color: #66d9ef">public</span>
-                            <span style="color: #66d9ef">class</span>
-                            <span style="color: #a6e22e">HelloBean</span>
-                            <span style="color: #66d9ef">implements</span>
-                            <span style="color: #f8f8f2">Serializable</span>
-                            <span style="color: #f92672">{</span>
-
-                            <span style="color: #a6e22e">@GET</span>
-                            <span style="color: #66d9ef">public</span>
-                            <span style="color: #f8f8f2">String</span>
-                            <span style="color: #a6e22e">sayHello</span>
-                            <span style="color: #f92672">(</span>
-                            <span style="color: #f8f8f2">String</span>
-                            <span style="color: #f8f8f2">name</span>
-                            <span style="color: #f92672">)</span>
-                            <span style="color: #f92672">{</span>
-                            <span style="color: #66d9ef">return</span>
-                            <span style="color: #e6db74">&quot;hello &quot;</span>
-                            <span style="color: #f92672">+</span>
-                            <span style="color: #f8f8f2">name</span>
-                            <span style="color: #f92672">;</span>
-                            <span style="color: #f92672">}</span>
-                            <span style="color: #f92672">}</span>
-                        </pre>
-                    </div>
+<span style="color: #a6e22e">@AngularBean</span>
+<span style="color: #a6e22e">@RequestScoped</span>
+<span style="color: #66d9ef">public</span> <span style="color: #66d9ef">class</span> <span style="color: #a6e22e">HelloBean</span> <span style="color: #66d9ef">implements</span> <span style="color: #f8f8f2">Serializable</span> <span style="color: #f92672">{</span>
+	
+	<span style="color: #a6e22e">@GET</span>
+	<span style="color: #66d9ef">public</span> <span style="color: #f8f8f2">String</span> <span style="color: #a6e22e">sayHello</span><span style="color: #f92672">(</span><span style="color: #f8f8f2">String</span> <span style="color: #f8f8f2">name</span><span style="color: #f92672">)</span> <span style="color: #f92672">{</span>
+		<span style="color: #66d9ef">return</span> <span style="color: #e6db74">&quot;hello &quot;</span> <span style="color: #f92672">+</span> <span style="color: #f8f8f2">name</span><span style="color: #f92672">;</span>
+	<span style="color: #f92672">}</span>
+<span style="color: #f92672">}</span>
+</pre></div>
 
 
 
 
 
-                    <p>app.js :</p>
+<p>app.js :</p>
 
-                    <!-- HTML generated using hilite.me -->
-                    <div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
-                        <pre style="margin: 0; line-height: 125%">
-                            <span style="color: #e6db74">&#39;use strict&#39;</span>
-                            <span style="color: #f8f8f2">;</span>
+<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #e6db74">&#39;use strict&#39;</span><span style="color: #f8f8f2">;</span>
 
-                            <span style="color: #a6e22e">angular</span>
-                            <span style="color: #f8f8f2">.</span>
-                            <span style="color: #a6e22e">module</span>
-                            <span style="color: #f8f8f2">(</span>
-                            <span style="color: #e6db74">&#39;myModule&#39;</span>
-                            <span style="color: #f8f8f2">,</span>
-                            <span style="color: #f8f8f2">[</span>
-                            <span style="color: #e6db74">&#39;angularBeans&#39;</span>
-                            <span style="color: #f8f8f2">]);</span>
+<span style="color: #a6e22e">angular</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">module</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">&#39;myModule&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #f8f8f2">[</span> <span style="color: #e6db74">&#39;angularBeans&#39;</span> <span style="color: #f8f8f2">]);</span>
 
-                            <span style="color: #a6e22e">angular</span>
-                            <span style="color: #f8f8f2">.</span>
-                            <span style="color: #a6e22e">module</span>
-                            <span style="color: #f8f8f2">(</span>
-                            <span style="color: #e6db74">&#39;myModule&#39;</span>
-                            <span style="color: #f8f8f2">)</span>
-                            <span style="color: #f8f8f2">.</span>
-                            <span style="color: #a6e22e">controller</span>
-                            <span style="color: #f8f8f2">(</span>
-                            <span style="color: #e6db74">&#39;HelloCtrl&#39;</span>
-                            <span style="color: #f8f8f2">,</span>
-                            <span style="color: #66d9ef">function</span>
-                            <span style="color: #f8f8f2">(</span>
-                            <span style="color: #a6e22e">$scope</span>
-                            <span style="color: #f8f8f2">,</span>
-                            <span style="color: #a6e22e">helloBean</span>
-                            <span style="color: #f8f8f2">)</span>
-                            <span style="color: #f8f8f2">{</span>
+<span style="color: #a6e22e">angular</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">module</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">&#39;myModule&#39;</span><span style="color: #f8f8f2">)</span>
+<span style="color: #f8f8f2">.</span><span style="color: #a6e22e">controller</span><span style="color: #f8f8f2">(</span><span style="color: #e6db74">&#39;HelloCtrl&#39;</span><span style="color: #f8f8f2">,</span> <span style="color: #66d9ef">function</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">$scope</span><span style="color: #f8f8f2">,</span> <span style="color: #a6e22e">helloBean</span><span style="color: #f8f8f2">)</span> <span style="color: #f8f8f2">{</span>
 
 
-                            <span style="color: #a6e22e">$scope</span>
-                            <span style="color: #f8f8f2">.</span>
-                            <span style="color: #a6e22e">sayHello</span>
-                            <span style="color: #f92672">=</span>
-                            <span style="color: #66d9ef">function</span>
-                            <span style="color: #f8f8f2">(</span>
-                            <span style="color: #a6e22e">name</span>
-                            <span style="color: #f8f8f2">)</span>
-                            <span style="color: #f8f8f2">{</span>
-                            <span style="color: #a6e22e">helloBean</span>
-                            <span style="color: #f8f8f2">.</span>
-                            <span style="color: #a6e22e">sayHello</span>
-                            <span style="color: #f8f8f2">(</span>
-                            <span style="color: #a6e22e">name</span>
-                            <span style="color: #f8f8f2">).</span>
-                            <span style="color: #a6e22e">then</span>
-                            <span style="color: #f8f8f2">(</span>
-                            <span style="color: #66d9ef">function</span>
-                            <span style="color: #f8f8f2">(</span>
-                            <span style="color: #a6e22e">result</span>
-                            <span style="color: #f8f8f2">){</span>
-                            <span style="color: #a6e22e">$scope</span>
-                            <span style="color: #f8f8f2">.</span>
-                            <span style="color: #a6e22e">result</span>
-                            <span style="color: #f92672">=</span>
-                            <span style="color: #a6e22e">result</span>
-                            <span style="color: #f8f8f2">;</span>
-                            <span style="color: #f8f8f2">}</span>
-                            <span style="color: #f8f8f2">);</span>
-                            <span style="color: #f8f8f2">}</span>
+	<span style="color: #a6e22e">$scope</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">sayHello</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">function</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">name</span><span style="color: #f8f8f2">)</span> <span style="color: #f8f8f2">{</span>
+		<span style="color: #a6e22e">helloBean</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">sayHello</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">name</span><span style="color: #f8f8f2">).</span><span style="color: #a6e22e">then</span><span style="color: #f8f8f2">(</span><span style="color: #66d9ef">function</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">result</span><span style="color: #f8f8f2">){</span>
+			<span style="color: #a6e22e">$scope</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">result</span><span style="color: #f92672">=</span><span style="color: #a6e22e">result</span><span style="color: #f8f8f2">;</span>	
+		<span style="color: #f8f8f2">}</span>
+		<span style="color: #f8f8f2">);</span>
+	<span style="color: #f8f8f2">}</span>
 
-                            <span style="color: #f8f8f2">});</span>
-                        </pre>
-                    </div>
+<span style="color: #f8f8f2">});</span>
+</pre></div>
 
 
-                    <p>and the HTML5 file :</p>
+<p>and the HTML5 file :</p>
 
-                    <!-- HTML generated using hilite.me -->
-                    <div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
-                        <pre style="margin: 0; line-height: 125%">
-                            <span style="color: #75715e">&lt;!DOCTYPE html&gt;</span>
-                            <span style="color: #f92672">&lt;html&gt;</span>
-                            <span style="color: #f92672">&lt;head&gt;</span>
-                            <span style="color: #f92672">&lt;meta</span>
-                            <span style="color: #a6e22e">charset=</span>
-                            <span style="color: #e6db74">&quot;ISO-8859-1&quot;</span>
-                            <span style="color: #f92672">&gt;</span>
+<!-- HTML generated using hilite.me --><div style="background: #272822; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #75715e">&lt;!DOCTYPE html&gt;</span>
+<span style="color: #f92672">&lt;html&gt;</span>
+<span style="color: #f92672">&lt;head&gt;</span>
+<span style="color: #f92672">&lt;meta</span> <span style="color: #a6e22e">charset=</span><span style="color: #e6db74">&quot;ISO-8859-1&quot;</span><span style="color: #f92672">&gt;</span>
 
-                            <span style="color: #f92672">&lt;script </span>
-                            <span style="color: #a6e22e">type=</span>
-                            <span style="color: #e6db74">&quot;text/javascript&quot;</span>
-                            <span style="color: #a6e22e">src=</span>
-                            <span style="color: #e6db74">&quot;angular/angular.min.js&quot;</span>
-                            <span style="color: #f92672">&gt;&lt;/script&gt;</span>
-                            <span style="color: #f92672">&lt;script </span>
-                            <span style="color: #a6e22e">type=</span>
-                            <span style="color: #e6db74">&quot;text/javascript&quot;</span>
-                            <span style="color: #a6e22e">src=</span>
-                            <span style="color: #e6db74">&quot;sockjs/sockjs.min.js&quot;</span>
-                            <span style="color: #f92672">&gt;&lt;/script&gt;</span>
-                            <span style="color: #f92672">&lt;script </span>
-                            <span style="color: #a6e22e">type=</span>
-                            <span style="color: #e6db74">&quot;text/javascript&quot;</span>
-                            <span style="color: #a6e22e">src=</span>
-                            <span style="color: #e6db74">&quot;angular-beans.js&quot;</span>
-                            <span style="color: #f92672">&gt;&lt;/script&gt;</span>
-                            <span style="color: #f92672">&lt;script </span>
-                            <span style="color: #a6e22e">type=</span>
-                            <span style="color: #e6db74">&quot;text/javascript&quot;</span>
-                            <span style="color: #a6e22e">src=</span>
-                            <span style="color: #e6db74">&quot;app.js&quot;</span>
-                            <span style="color: #f92672">&gt;&lt;/script&gt;</span>
-                            <span style="color: #f92672">&lt;/head&gt;</span>
+<span style="color: #f92672">&lt;script </span><span style="color: #a6e22e">type=</span><span style="color: #e6db74">&quot;text/javascript&quot;</span> <span style="color: #a6e22e">src=</span><span style="color: #e6db74">&quot;angular/angular.min.js&quot;</span><span style="color: #f92672">&gt;&lt;/script&gt;</span>
+<span style="color: #f92672">&lt;script </span><span style="color: #a6e22e">type=</span><span style="color: #e6db74">&quot;text/javascript&quot;</span> <span style="color: #a6e22e">src=</span><span style="color: #e6db74">&quot;sockjs/sockjs.min.js&quot;</span><span style="color: #f92672">&gt;&lt;/script&gt;</span>
+<span style="color: #f92672">&lt;script </span><span style="color: #a6e22e">type=</span><span style="color: #e6db74">&quot;text/javascript&quot;</span> <span style="color: #a6e22e">src=</span><span style="color: #e6db74">&quot;angular-beans.js&quot;</span><span style="color: #f92672">&gt;&lt;/script&gt;</span>
+<span style="color: #f92672">&lt;script </span><span style="color: #a6e22e">type=</span><span style="color: #e6db74">&quot;text/javascript&quot;</span> <span style="color: #a6e22e">src=</span><span style="color: #e6db74">&quot;app.js&quot;</span><span style="color: #f92672">&gt;&lt;/script&gt;</span>
+<span style="color: #f92672">&lt;/head&gt;</span>
 
-                            <span style="color: #f92672">&lt;body</span>
-                            <span style="color: #a6e22e">ng-app=</span>
-                            <span style="color: #e6db74">&quot;myModule&quot;</span>
-                            <span style="color: #f92672">&gt;</span>
-                            <span style="color: #f92672">&lt;div</span>
-                            <span style="color: #a6e22e">ng-controller=</span>
-                            <span style="color: #e6db74">&quot;HelloCtrl&quot;</span>
-                            <span style="color: #f92672">&gt;</span>
-                            <span style="color: #f92672">&lt;label&gt;</span>your name :
-                            <span style="color: #f92672">&lt;/label&gt;</span>
-                            <span style="color: #f92672">&lt;input</span>
-                            <span style="color: #a6e22e">type=</span>
-                            <span style="color: #e6db74">&quot;text&quot;</span>
-                            <span style="color: #a6e22e">ng-model=</span>
-                            <span style="color: #e6db74">&quot;name&quot;</span>
-                            <span style="color: #f92672">/&gt;</span>
-                            <span style="color: #f92672">&lt;button</span>
-                            <span style="color: #a6e22e">ng-click=</span>
-                            <span style="color: #e6db74">&quot;sayHello(name)&quot;</span>
-                            <span style="color: #f92672">&gt;</span>sayHello
-                            <span style="color: #f92672">&lt;/button&gt;</span>
-                            {{result}}
-                            <span style="color: #f92672">&lt;/div&gt;</span>
-                            <span style="color: #f92672">&lt;/body&gt;</span>
-                            <span style="color: #f92672">&lt;/html&gt;</span>
-                        </pre>
-                    </div>
+<span style="color: #f92672">&lt;body</span> <span style="color: #a6e22e">ng-app=</span><span style="color: #e6db74">&quot;myModule&quot;</span><span style="color: #f92672">&gt;</span>
+	<span style="color: #f92672">&lt;div</span> <span style="color: #a6e22e">ng-controller=</span><span style="color: #e6db74">&quot;HelloCtrl&quot;</span><span style="color: #f92672">&gt;</span>
+		<span style="color: #f92672">&lt;label&gt;</span>your name :<span style="color: #f92672">&lt;/label&gt;</span> <span style="color: #f92672">&lt;input</span> <span style="color: #a6e22e">type=</span><span style="color: #e6db74">&quot;text&quot;</span> <span style="color: #a6e22e">ng-model=</span><span style="color: #e6db74">&quot;name&quot;</span> <span style="color: #f92672">/&gt;</span>
+		<span style="color: #f92672">&lt;button</span> <span style="color: #a6e22e">ng-click=</span><span style="color: #e6db74">&quot;sayHello(name)&quot;</span><span style="color: #f92672">&gt;</span>sayHello<span style="color: #f92672">&lt;/button&gt;</span>
+		{{result}}
+	<span style="color: #f92672">&lt;/div&gt;</span>
+<span style="color: #f92672">&lt;/body&gt;</span>
+<span style="color: #f92672">&lt;/html&gt;</span>
+</pre></div>
 
 
 
-                    <p>
-                        The result :
-                    </p>
-                    <img src="images/demo.jpg" align="middle">
+<p>
+result :
+</p>
+<img  src="images/demo.jpg" align="middle">
 
-                    <br/>
-                    <br/>
-                    <h3>Getting started ?</h3>
-                    <p>Check the
-                        <a href="GettingStarted.html" id="view-on-github" class="button">
-                            <span>Getting Started</span>
-                        </a>
-                        getting started guide.
-                    </p>
+<br/>
+ <h3>Getting started ?</h3><br/>
+<p><a href="GettingStarted.html" id="view-on-github" class="button"><span>Getting Started</span></a></p> 
 
+<br/>
 
+<br/>
 
-                </section>
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
 
-                <footer>
-                    Angularbeans is maintained by <a href="https://github.com/bessemHmidi">bessemHmidi</a>
-                    <br> This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-                </footer>
+<p>Having trouble with Pages? Check out the documentation at <a href="https://help.github.com/pages">https://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+       
+        </section>
 
+        <footer>
+          Angularbeans is maintained by <a href="https://github.com/bessemHmidi">bessemHmidi</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
 
-            </div>
-        </div>
-    </body>
-
+        
+      </div>
+    </div>
+  </body>
 </html>
