@@ -23,6 +23,7 @@ package angularBeans.boot;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -41,12 +42,14 @@ public class BootServlet extends HttpServlet {
 
 	@Inject
 	ModuleGenerator generator;
+	@Inject
+	Logger log;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		generator.setHTTPRequest(req);
-
+		long startTime = System.currentTimeMillis();
 		resp.setContentType("text/javascript");
 		StringWriter stringWriter = new StringWriter();
 		generator.getScript(stringWriter);
@@ -56,8 +59,8 @@ public class BootServlet extends HttpServlet {
 		String compressed = getCompressedJavaScript(jsContent);
 		resp.getWriter().write(compressed);
 
-		// resp.getWriter().write(jsContent);
-
+		long endTime = System.currentTimeMillis();
+		log.info("Module generated successfully in "+(endTime-startTime)+" ms");
 		resp.getWriter().flush();
 	}
 
