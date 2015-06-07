@@ -4,10 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.spi.PassivationCapable;
-
 import angularBeans.context.NGSessionScoped;
 
 @NGSessionScoped

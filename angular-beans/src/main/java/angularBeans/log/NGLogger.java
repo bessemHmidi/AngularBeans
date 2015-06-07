@@ -26,6 +26,14 @@ import java.util.LinkedList;
 
 import angularBeans.context.NGSessionScoped;
 
+/**
+ * when injected, NGLogger will log 
+ *  messages directly on the browser
+ *  console.
+ *  
+ *  **/
+
+
 @NGSessionScoped
 public class NGLogger implements Serializable {
 
@@ -51,6 +59,17 @@ public class NGLogger implements Serializable {
 	// UID = uID;
 	// }
 
+	/**
+	 * main method of the NGLogger
+	 * 
+	 * @param level : angularBeans.log.NGLogger.Level :
+	 * LOG("log"), INFO("info"), WARN("warn"), ERROR("error"), DEBUG("debug")
+	 * 
+	 * 
+	 * @param message :String message to log
+	 * @param args : define values with String template 
+	 */
+	
 	public void log(Level level, String message,Object... args) {
 		// LinkedList<LogMessage> logPool=locator.getLogPool(UID);
 		logPool.addLast(new LogMessage(level.getLevel(),String.format(message, args) ));

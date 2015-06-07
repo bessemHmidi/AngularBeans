@@ -29,7 +29,6 @@ import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.websocket.Session;
 
 import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.Transport.READY_STATE;
@@ -42,138 +41,178 @@ import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ModelQuery;
 import angularBeans.util.ModelQueryImpl;
 
+/**
+ * 
+ * @author bessem
+ * 
+ *         when injected, a realTime client represent the current real time
+ *         session (websocket or fallback protocol)
+ * 
+ **/
+
 @NGSessionScoped
 public class RealTimeClient implements Serializable {
 
-	private Set<SockJsConnection> sessions=new HashSet<SockJsConnection>();
-	
+	private Set<SockJsConnection> sessions = new HashSet<SockJsConnection>();
+
 	@Inject
 	GlobalConnectionHolder connectionHolder;
-	
+
 	@Inject
 	AngularBeansUtil util;
-	
+
 	@Inject
 	NGLogger logger;
 
-	
-	
-	
-	public void onSessionReady(@Observes @RealTimeSessionReadyEvent RealTimeDataReceiveEvent event) {
-  
+	public void onSessionReady(
+			@Observes @RealTimeSessionReadyEvent RealTimeDataReceiveEvent event) {
+
 		connectionHolder.getAllConnections().add(event.getConnection());
 		sessions.add(event.getConnection());
-		
-		
-	event.setClient(this);
-	
-	}
 
-	public void onClose(@Observes @RealTimeSessionCloseEvent RealTimeDataReceiveEvent event) {
-		connectionHolder.getAllConnections().remove(event.getConnection());
-	}
-
-	public void onError(@Observes @RealTimeErrorEvent RealTimeDataReceiveEvent event) {
-		throw new RuntimeException(event.getData().toString());
-	}
-
-	public void onData(@Observes @DataReceivedEvent RealTimeDataReceiveEvent event) {
-
-		//sessions.add(event.getConnection());
 		event.setClient(this);
 
 	}
 
-//	public Set<SockJsConnection> getSessions() {
-//		return sessions;
-//	}
+	public void onClose(
+			@Observes @RealTimeSessionCloseEvent RealTimeDataReceiveEvent event) {
+		connectionHolder.getAllConnections().remove(event.getConnection());
+	}
 
-	
-	public void invalidateSession(){
-		for(SockJsConnection connection:sessions){
-			connection.close(javax.websocket.CloseReason.CloseCodes.CANNOT_ACCEPT.getCode(), "CLOSED BY BACKEND");
+	public void onError(
+			@Observes @RealTimeErrorEvent RealTimeDataReceiveEvent event) {
+		throw new RuntimeException(event.getData().toString());
+	}
+
+	public void onData(
+			@Observes @DataReceivedEvent RealTimeDataReceiveEvent event) {
+
+		// sessions.add(event.getConnection());
+		event.setClient(this);
+
+	}
+
+	// public Set<SockJsConnection> getSessions() {
+	// return sessions;
+	// }
+
+	/**
+	 * will close all current realTime sessions bound to the current HTTP
+	 * session
+	 */
+	public void invalidateSession() {
+		for (SockJsConnection connection : sessions) {
+			connection.close(
+					javax.websocket.CloseReason.CloseCodes.CANNOT_ACCEPT
+							.getCode(), "CLOSED BY BACKEND");
 		}
 	}
-	
+
+	/**
+	 * send a message to the current session front end
+	 * 
+	 * @param channel
+	 *            : can be
+	 * 
+	 *            - The AngularBean class name - A custom channel
+	 * 
+	 * @param message
+	 *            : the RealTimeMessage to send
+	 */
 	public void publish(String channel, RealTimeMessage message) {
 
-		Map<String, Object> paramsToSend =prepareData(channel, message);
-		 
-   publish(paramsToSend);
-		 
-		 
-	}
-
-
-
-	
-	
-
-	
-	
-	public void publish(ModelQuery query){
-Map<String, Object> paramsToSend = prepareData(query);
-		
-
-		 publish(paramsToSend);
-		 
-	}
-
-	
-	
-	
-	
-	public void broadcast(String channel, RealTimeMessage message,boolean withoutMe) {
-		
 		Map<String, Object> paramsToSend = prepareData(channel, message);
-	
-		
-			broadcast(withoutMe, paramsToSend);
-				
-		
-		
+
+		publish(paramsToSend);
+
 	}
-	
-	
-	public void broadcast(ModelQuery query,boolean withoutMe){
-	
+
+	/**
+	 * send a ModelQuery to the current session front end AngularBean proxy to
+	 * update his models
+	 * 
+	 * @param query
+	 *            : the ModelQuery to send
+	 */
+
+	public void publish(ModelQuery query) {
 		Map<String, Object> paramsToSend = prepareData(query);
-		
+		publish(paramsToSend);
+
+	}
+
+	/**
+	 * send a message to all front end open sessions
+	 * 
+	 * @param channel
+	 *            : can be
+	 * 
+	 *            - The AngularBean class name - A custom channel
+	 * 
+	 * @param message
+	 *            : the RealTimeMessage to send
+	 * @param withoutMe
+	 *            : possible values: -true: the current session client will not
+	 *            receive the message.
+	 * 
+	 *            -true: the current session client will also receive the
+	 *            message.
+	 */
+
+	public void broadcast(String channel, RealTimeMessage message,
+			boolean withoutMe) {
+
+		Map<String, Object> paramsToSend = prepareData(channel, message);
+
 		broadcast(withoutMe, paramsToSend);
-	
-		
+
 	}
 
-	
-	
-	
-	
-	private String getServiceName(ModelQuery query){
+	/**
+	 * send a ModelQuery to all front end open sessions
+	 * 
+	 * @param query
+	 *            : the ModelQuery to send
+	 * 
+	 * @param withoutMe
+	 *            : possible values: -true: the current session client will not
+	 *            receive the query.
+	 * 
+	 *            -true: the current session client will also receive the query.
+	 */
 
-		ModelQueryImpl modelQuery=(ModelQueryImpl) query;
-		
-		return modelQuery.getOwner().getSimpleName();
-		
-		
+	public void broadcast(ModelQuery query, boolean withoutMe) {
+
+		Map<String, Object> paramsToSend = prepareData(query);
+
+		broadcast(withoutMe, paramsToSend);
+
 	}
-	
-	
+
+	// private String getServiceName(ModelQuery query){
+	//
+	// ModelQueryImpl modelQuery=(ModelQueryImpl) query;
+	//
+	// return modelQuery.getOwner().getSimpleName();
+	//
+	//
+	// }
+
 	private Map<String, Object> prepareData(ModelQuery query) {
 		Map<String, Object> paramsToSend = new HashMap<String, Object>();
-				
-				
-		ModelQueryImpl modelQuery=(ModelQueryImpl) query;
-		
-				NGEvent ngEvent=new NGEvent();
-				
-				ngEvent.setName("modelQuery");
-				ngEvent.setData(util.getBeanName(modelQuery.getOwner()));
-				
-				paramsToSend.putAll(modelQuery.getData());
-				paramsToSend.put("ngEvent", ngEvent);
-				
-				paramsToSend.put("log", logger.getLogPool());
-				paramsToSend.put("isRT", true);
+
+		ModelQueryImpl modelQuery = (ModelQueryImpl) query;
+
+		NGEvent ngEvent = new NGEvent();
+
+		ngEvent.setName("modelQuery");
+		ngEvent.setData(util.getBeanName(modelQuery.getOwner()));
+
+		paramsToSend.putAll(modelQuery.getData());
+		paramsToSend.put("ngEvent", ngEvent);
+
+		paramsToSend.put("log", logger.getLogPool());
+		paramsToSend.put("isRT", true);
 		return paramsToSend;
 	}
 
@@ -181,52 +220,48 @@ Map<String, Object> paramsToSend = prepareData(query);
 			RealTimeMessage message) {
 		Map<String, Object> paramsToSend = new HashMap<String, Object>(
 				message.build());
-		
-		
-		NGEvent ngEvent=new NGEvent();
-		
+
+		NGEvent ngEvent = new NGEvent();
+
 		ngEvent.setName(channel);
 		ngEvent.setData(message.build());
-		
-		
+
 		paramsToSend.put("ngEvent", ngEvent);
-		
+
 		paramsToSend.put("log", logger.getLogPool());
 		paramsToSend.put("isRT", true);
 		return paramsToSend;
 	}
 
 	private void broadcast(boolean withoutMe, Map<String, Object> paramsToSend) {
-		for(SockJsConnection connection:connectionHolder.getAllConnections()){
-			
-			
-			if (withoutMe){if(sessions.contains(connection)){continue;}}
+		for (SockJsConnection connection : connectionHolder.getAllConnections()) {
 
-			if(connection.getReadyState().equals(READY_STATE.OPEN)){
-				
-				String objectMessage=util.getJson(paramsToSend);
-				
-				connection.write(objectMessage);
-				
-			
-		}
-		}
-	}
-
-	
-	private void publish(Map<String, Object> paramsToSend) {
-		for(SockJsConnection session:new HashSet<SockJsConnection>(sessions)){
-					
-			
-					 if(!session.getReadyState().equals(READY_STATE.OPEN)){sessions.remove(session);}
-					 else{
-					session.write(util.getJson(paramsToSend));
-					 }
-			
+			if (withoutMe) {
+				if (sessions.contains(connection)) {
+					continue;
+				}
 			}
+
+			if (connection.getReadyState().equals(READY_STATE.OPEN)) {
+
+				String objectMessage = util.getJson(paramsToSend);
+
+				connection.write(objectMessage);
+
+			}
+		}
 	}
-	
-	
-	
+
+	private void publish(Map<String, Object> paramsToSend) {
+		for (SockJsConnection session : new HashSet<SockJsConnection>(sessions)) {
+
+			if (!session.getReadyState().equals(READY_STATE.OPEN)) {
+				sessions.remove(session);
+			} else {
+				session.write(util.getJson(paramsToSend));
+			}
+
+		}
+	}
 
 }

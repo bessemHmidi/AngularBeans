@@ -8,12 +8,24 @@ import java.util.Set;
 
 import javax.enterprise.inject.Default;
 
+/**
+ * 
+ * @author bessem
+ * an object representing the $rootScope
+ */
 
 public class RootScope implements Serializable {
 
 	
 	private Map<String, Object> rootScopeMap = Collections.synchronizedMap(new HashMap<String, Object>());
 
+	
+	
+	/**
+	 * change the value of the model of the $rootScope
+	 * @param model
+	 * @param value
+	 */
 	public void setProperty(String model, Object value) {
 		rootScopeMap.put(model, value);
 

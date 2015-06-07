@@ -33,6 +33,15 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
+/**  
+* Declare a class as an AngularBean
+* <p>
+* compatibles scopes :
+* <li> javax.enterprise.context.RequestScoped
+* <li> javax.enterprise.context.ApplicationScoped
+* <li> javax.enterprise.context.NGSessionScoped
+**/ 
+
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD, FIELD, PARAMETER })
 @Qualifier
