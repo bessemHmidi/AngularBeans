@@ -8,37 +8,40 @@ public class User {
 	private String email;
 	private String password;
 	private LobWrapper photo;
-	
+
 	public User() {
-		// TODO Auto-generated constructor stub
 	}
-	
+
 	public User(String email, String password) {
-		this.password=password;
-		this.email=email;
+		this.password = password;
+		this.email = email;
 	}
-	
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 	public LobWrapper getPhoto() {
 		return photo;
 	}
+
 	public void setPhoto(LobWrapper photo) {
-		
+
 		this.photo = photo;
 	}
-	
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -48,6 +51,7 @@ public class User {
 				+ ((password == null) ? 0 : password.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -82,9 +86,5 @@ public class User {
 	public void setPseudo(String pseudo) {
 		this.pseudo = pseudo;
 	}
-	
-	
-	
-	
-	
+
 }

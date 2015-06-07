@@ -31,7 +31,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.inject.Named;
 import javax.inject.Qualifier;
 
 @Retention(RUNTIME)

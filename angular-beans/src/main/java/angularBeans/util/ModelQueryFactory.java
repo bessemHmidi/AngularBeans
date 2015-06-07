@@ -72,10 +72,6 @@ public class ModelQueryFactory implements Serializable {//PassivationCapable {
 	}
 
 	public RootScope getRootScope() {
-		// TODO Auto-generated method stub
 		return rootScope;
 	}
-
-	
-
 }

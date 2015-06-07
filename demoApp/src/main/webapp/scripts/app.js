@@ -46,10 +46,6 @@ angular.module('VirtualClassRoomModule')
         templateUrl: 'views/classRoom.html',
         controller: 'SingleClassRoomCtrl'
       })
-     
-      
-     
-     
       .otherwise({
         redirectTo: '404.html'
       });
@@ -57,23 +53,16 @@ angular.module('VirtualClassRoomModule')
  
 
 angular.module('VirtualClassRoomModule').run(function($rootScope, $location) {
-	    $rootScope.$on( "$routeChangeStart", function(event, next, current) {
+	    $rootScope.$on("$routeChangeStart", function(event, next, current) {
 	    	
 	      if ($rootScope.GRANT_LOGIN==null) {
 	    	
 	        // no logged user, redirect to /login
 	        if ( next.templateUrl === "views/login.html") {
-	        } else {
+	        }
+	        else {
 	          $location.path("/login");
 	        }
-	      }else{
-	    	  //console.log('ok');
 	      }
 	    });
 	  });
-
-
-
-
-
-

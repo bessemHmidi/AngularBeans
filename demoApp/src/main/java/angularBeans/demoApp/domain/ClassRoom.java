@@ -2,7 +2,6 @@ package angularBeans.demoApp.domain;
 
 public class ClassRoom {
 	
-	
 	private String name;
 
 	public String getName() {
@@ -42,8 +41,4 @@ public class ClassRoom {
 	public String toString() {
 		return "ClassRoom [name=" + name + "]";
 	}
-	
-
-	
-	
 }
