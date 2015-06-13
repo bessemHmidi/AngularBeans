@@ -1,23 +1,22 @@
 # AngularBeans
-AngularBeans is a framework whose intention is to use javaEE7 and more precisely the CDI specification with AngularJS 
-it allows to create "AngularJS aware" JavaEE Applications .
+![AngularBeans_Logo](https://cloud.githubusercontent.com/assets/1442690/8021018/e493e554-0c87-11e5-81ab-4dc894897044.png "AngularBeans Logo")
 
-#features:
+AngularBeans is a framework whose intention is to use JavaEE7 -and more precisely the CDI specification- with AngularJS. It allows the creatation of "_AngularJS aware_" JavaEE Applications.
 
-- Generate ready to inject && callables AngularJs Service from CDI Beans.
-- Binding $scope with beans models
+## Features:
+- Generate ready to inject and callable AngularJS Service from CDI Beans.
+- Binding `$scope` with beans models.
 - Handle HTTP methods calls.  
-- Finest control over server side & client side data updates.
-- Handle Real Time calls via webSockets or SockJS integration.
+- Finest control over server side and client side data updates.
+- Handle Real Time calls via >ebSockets or SockJS integration.
 - queryModels: query's from server to client's to update their model's.
 - Events and queryModels broadcast.
 - Angular form validation based on Bean Validation annotations.
 - Built in I18n Translation.
 - Event Driven, Real Time, lightweight.
 
-#How to run the demo:
-
-1. Install maven.
+## How to run the [demo](https://github.com/bessemHmidi/AngularBeans/tree/master/demoApp):
+1. Install [maven](https://maven.apache.org/).
 2. Under the AngularBeans directory run `mvn clean install`.
 3. Navigate to the demoApp directory and run `mvn package`.
-4. deploy the war file to your application server.
+4. Deploy the war file to your application server.
