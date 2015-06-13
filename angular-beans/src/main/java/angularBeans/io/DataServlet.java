@@ -36,8 +36,10 @@ public class DataServlet extends HttpServlet {
 			OutputStream o;
 			try {
 
+				
 				Object result = m.invoke(container);
 
+				if(result!=null){
 				byte[] data = ((LobWrapper) result).getData();
 
 				o = response.getOutputStream();
@@ -47,7 +49,7 @@ public class DataServlet extends HttpServlet {
 				o.write(data);
 				o.flush();
 				o.close();
-
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

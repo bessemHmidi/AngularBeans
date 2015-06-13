@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.javascript.jscomp.CompilationLevel;
-import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
 import com.google.javascript.jscomp.SourceFile;
 
@@ -53,10 +52,10 @@ public class BootServlet extends HttpServlet {
 
 		String jsContent = stringWriter.toString();
 
-		String compressed = getCompressedJavaScript(jsContent);
-		resp.getWriter().write(compressed);
+//		String compressed = getCompressedJavaScript(jsContent);
+//		resp.getWriter().write(compressed);
 
-		// resp.getWriter().write(jsContent);
+		 resp.getWriter().write(jsContent);
 
 		resp.getWriter().flush();
 	}
@@ -71,7 +70,7 @@ public class BootServlet extends HttpServlet {
 	}
 
 	public static String compile(String code, CompilationLevel level) {
-		Compiler compiler = new Compiler();
+		com.google.javascript.jscomp.Compiler compiler = new com.google.javascript.jscomp.Compiler();
 
 		CompilerOptions options = new CompilerOptions();
 

@@ -94,5 +94,9 @@ public class NGSessionScopeContext implements Context, Serializable {
 		// TODO Auto-generated method stub
 		return true;
 	}
+	
+//	public Class getScope(){
+//		return NGSessionScoped.class; 
+//	}
 
 }
