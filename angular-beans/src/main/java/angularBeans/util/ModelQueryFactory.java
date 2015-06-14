@@ -7,10 +7,12 @@ import java.util.Map;
 import angularBeans.context.NGSessionScoped;
 
 @NGSessionScoped
-public class ModelQueryFactory implements Serializable {// PassivationCapable {
+public class ModelQueryFactory implements Serializable {//PassivationCapable {
 
+	
+	
 	/**
-	 * a factory bean that return a ModelQuery reference
+	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -18,13 +20,6 @@ public class ModelQueryFactory implements Serializable {// PassivationCapable {
 
 	RootScope rootScope = new RootScope();
 
-	/**
-	 * 
-	 * @param clazz
-	 *            : the AngularBeanClass of the targeted AngularJS service
-	 * 
-	 * @return ModelQuery that represent the Model query updates
-	 */
 	public ModelQuery get(Class clazz) {
 
 		ModelQueryImpl query = (ModelQueryImpl) allQueries.get(clazz);
@@ -72,15 +67,7 @@ public class ModelQueryFactory implements Serializable {// PassivationCapable {
 		allQueries.put(clazz, new ModelQueryImpl());
 	}
 
-	/**
-	 * 
-	 * @return RootScope object used to update a $rootScope property on the
-	 *         AngularJS front end.
-	 */
-
 	public RootScope getRootScope() {
-		// TODO Auto-generated method stub
 		return rootScope;
 	}
-
 }

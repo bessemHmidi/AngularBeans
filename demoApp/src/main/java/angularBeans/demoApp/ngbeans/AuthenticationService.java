@@ -89,7 +89,6 @@ public class AuthenticationService implements Serializable {
 	}
 
 	@RealTime
-
 	@NGSubmit(backEndModels = "*")
 	@NGReturn(model = "users", updates = "*")
 	public String authenticate() {
@@ -119,7 +118,7 @@ public class AuthenticationService implements Serializable {
 		}
 
 		notificationBus.fire(new NotificationMessage("danger", "SECURITY",
-				"UNAUTORIZED !!", false));
+				"UNAUTHORIZED !!", false));
 		modelQueryFactory.get(AuthenticationService.class).setProperty(
 				"message", "incorrect login or password !!");
 

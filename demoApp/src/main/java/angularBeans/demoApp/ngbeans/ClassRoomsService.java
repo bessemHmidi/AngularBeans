@@ -36,7 +36,6 @@ public class ClassRoomsService implements Serializable {
 	@Inject
 	Event<NotificationMessage> notificationsBus;
 
-
 	@Inject
 	@AngularBean
 	AuthenticationService authenticationService;
@@ -47,10 +46,10 @@ public class ClassRoomsService implements Serializable {
 	@Inject
 	RealTimeClient client;
 
-//	public void tata(@Observes @DataReceivedEvent DataReceived event) {
-//		System.out.println("RECEIVED: " + event.getData());
-//
-//	}
+	// public void tata(@Observes @DataReceivedEvent DataReceived event) {
+	// System.out.println("RECEIVED: " + event.getData());
+	//
+	// }
 
 	@NGModel
 	public Set<ClassRoom> getClassRooms() {
@@ -58,7 +57,6 @@ public class ClassRoomsService implements Serializable {
 
 	}
 
-	
 	public Set<User> getUsers(ClassRoom classRoom) {
 
 		return virtualClassService.getClassRoomsMap().get(classRoom);
@@ -67,43 +65,37 @@ public class ClassRoomsService implements Serializable {
 	@NGPostConstruct
 	public void init() {
 
-		
-//		modelQueryFactory.get(ClassRoomsService.class).setProperty("classRooms",
-//				getClassRooms());
+		// modelQueryFactory.get(ClassRoomsService.class).setProperty("classRooms",
+		// getClassRooms());
 
 	}
 
 	@PUT
 	public String join(ClassRoom classRoom) {
-		
-		//singleClassRoomsCtrl.setActualClassRoom(classRoom);
 
-		User user=authenticationService.getConnectedUser();
-		
+		// singleClassRoomsCtrl.setActualClassRoom(classRoom);
+
+		User user = authenticationService.getConnectedUser();
 		virtualClassService.getClassRoomsMap().get(classRoom).add(user);
-
 		NotificationMessage notificationMessage = new NotificationMessage(
 				"info", "new Member",
-				user.getPseudo() + " has joined the class "
-						+ classRoom.getName() + " !", true);
-		
-		notificationsBus.fire(notificationMessage); 
+				user.getPseudo() + " has joined the class "+classRoom.getName() + " !", true);
+		notificationsBus.fire(notificationMessage);
 
- ModelQuery query=modelQueryFactory.get(SingleClassRoomService.class).pushTo("users", user);
-	
- 	
- 	
- client.broadcast(query, true);
- 	
- // or #1
- 
-//		client.broadcast( "joinEvent",
-//				
-//				new RealTimeMessage()
-//				.set("user", user)
-//				.set("classRoom", classRoom)
-//				
-//				,true);
+		ModelQuery query = modelQueryFactory.get(SingleClassRoomService.class)
+				.pushTo("users", user);
+
+		client.broadcast(query, true);
+
+		// or #1
+
+		// client.broadcast( "joinEvent",
+		//
+		// new RealTimeMessage()
+		// .set("user", user)
+		// .set("classRoom", classRoom)
+		//
+		// ,true);
 
 		return "/classRoom";
 	}
@@ -116,10 +108,10 @@ public class ClassRoomsService implements Serializable {
 		virtualClassService.getClassRoomsMap().put(classRoom,
 				new HashSet<User>());
 
-		client.broadcast(modelQueryFactory.get(ClassRoomsService.class).pushTo("classRooms",classRoom),false);
+		client.broadcast(
+				modelQueryFactory.get(ClassRoomsService.class).pushTo(
+						"classRooms", classRoom), false);
 
-	
-		
 	}
 
 }

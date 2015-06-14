@@ -59,7 +59,6 @@ public class LogMessage {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return "LEVEL: " + getLevel() + " MESSAGE: " + getMessage();
 	}
 

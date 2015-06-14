@@ -6,18 +6,14 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-
- 
-
 	<dependencies>
-
-
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-web-api</artifactId>
 			<version>7.0</version>
 			<scope>provided</scope>
 		</dependency>
+
 
 
 <!-- <dependency>
@@ -43,26 +39,17 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-
- 
 	<build>
 		<plugins>
-			<plugin> 
+			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-
 				</configuration>
 			</plugin>
 		</plugins>
-		
-		
 	</build>
 
-<repositories> 
-
-
-
-</repositories>
+	<repositories />
 
 </project>

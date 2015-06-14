@@ -17,8 +17,7 @@ import javax.enterprise.inject.Default;
 public class RootScope implements Serializable {
 
 	
-	private Map<String, Object> rootScopeMap = Collections
-			.synchronizedMap(new HashMap<String, Object>());
+	private Map<String, Object> rootScopeMap = Collections.synchronizedMap(new HashMap<String, Object>());
 
 	
 	
@@ -41,7 +40,6 @@ public class RootScope implements Serializable {
 	}
 
 	public Set<String> getProperties() {
-		// TODO Auto-generated method stub
 		return rootScopeMap.keySet();
 	}
 

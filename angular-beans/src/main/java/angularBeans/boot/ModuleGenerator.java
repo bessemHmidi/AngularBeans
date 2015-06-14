@@ -81,14 +81,10 @@ public class ModuleGenerator implements Serializable {
 	AngularBeansUtil util;
 
 	public ModuleGenerator() {
-
 		if (this.getClass().equals(ModuleGenerator.class)) {
-
 			UID = String.valueOf(UUID.randomUUID());
 		}
-
 		NGSessionScopeContext.setCurrentContext(UID);
-
 	}
 
 	@PostConstruct
@@ -130,26 +126,18 @@ public class ModuleGenerator implements Serializable {
 
 
 	@Inject
-	 CurrentNGSession ngSession;
+	CurrentNGSession ngSession;
 
 	private StringWriter writer;
-
 	private HttpServletRequest request;
-
 	private String contextPath;
 
 	public void getScript(StringWriter writer) {
-
 		NGSessionScopeContext.setCurrentContext(UID);
-
 		ngSession.setSessionId(UID);
-
 		contextPath = (request.getServletContext().getContextPath());
-
 		this.writer = writer;
-
 		String appName = null;
-
 		Class appClass = null;
 		for (Object ap : app) {
 
@@ -255,7 +243,6 @@ public class ModuleGenerator implements Serializable {
 				m = extention.getClass().getMethod("render");
 				writer.write(m.invoke(extention) + ";");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -345,29 +332,20 @@ public class ModuleGenerator implements Serializable {
 
 				if (result == null)
 					continue;
-
 				Class<? extends Object> resultClazz = result.getClass();
-
 				if (!resultClazz.isPrimitive()) {
-
 					result = util.getJson(result);
-
 				}
 
 			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -555,46 +533,36 @@ public class ModuleGenerator implements Serializable {
 		}
 	}
 
-	private void addParams(NGBean bean, Set<Method> setters, Method m,
-			Type[] args) {
+	private void addParams(NGBean bean, Set<Method> setters, Method m,Type[] args) {
 
 		for (Method setter : setters) {
 
 			String name = util.obtainFieldNameFromAccessor(setter.getName());
 			writer.write("params['" + name + "']=" + bean.getName() + "."
 					+ name + ";");
-
 		}
-
-		// ---------------------------------
-		// handle args
 
 		if (args.length > 0) {
 			String argsString = "";
 			for (int i = 0; i < args.length; i++) {
-
 				argsString += "arg" + i + ",";
-
 			}
-
 			argsString = argsString.substring(0, argsString.length() - 1);
-
 			writer.write("params['args']=[" + argsString + "];\n");
-
 		}
-		// }
-
 	}
 
 	public void setHTTPRequest(HttpServletRequest request) {
-
 		request.getSession().setAttribute(util.NG_SESSION_ATTRIBUTE_NAME, UID);
-
 		this.request = request;
-
 	}
 
 	public HttpServletRequest getRequest() {
 		return request;
 	}
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9146331095657429874L;
 }
