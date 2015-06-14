@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(urlPatterns="/angularBridgeException")
 @SessionScoped
 public class ErrorServlet extends HttpServlet{
-	
+	 
 	Exception e;
 	
 	

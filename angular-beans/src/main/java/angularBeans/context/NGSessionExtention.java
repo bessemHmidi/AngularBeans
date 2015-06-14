@@ -38,54 +38,56 @@ import angularBeans.api.AngularBean;
 
 public class NGSessionExtention implements Extension {
 
-	public <T> void processAnnotatedType(
-			@Observes ProcessAnnotatedType<T> processAnnotatedType) {
-
-		AnnotatedType<T> annotatedType = processAnnotatedType
-				.getAnnotatedType();
-
-//		if (annotatedType.isAnnotationPresent(AngularBean.class)) {
-//			System.out.println("------------PROCESSING");
-//			
-//			Class clazz=annotatedType.getJavaClass();
-//			
-//			if
-//			(
-//			(!clazz.isAnnotationPresent(RequestScoped.class))
-//			&&
-//			(!clazz.isAnnotationPresent(NGSessionScoped.class))
-//			&&(!clazz.isAnnotationPresent(SessionScoped.class))
-//			&&(!clazz.isAnnotationPresent(ApplicationScoped.class))
-//			
-//					)		
-//					{
-//				
-//				Annotation requestScopedAnnotation = new Annotation() {
-//			        @Override
-//			        public Class<? extends Annotation> annotationType() {
-//			          return RequestScoped.class;
-//			        }
-//			      };
+//	public <T> void processAnnotatedType(
+//			@Observes ProcessAnnotatedType<T> processAnnotatedType) {
 //
-//			      AnnotatedTypeWrapper<T> wrapper = new AnnotatedTypeWrapper<T>(
-//			          annotatedType, annotatedType.getAnnotations());
-//			      wrapper.addAnnotation(requestScopedAnnotation);
+//		AnnotatedType<T> annotatedType = processAnnotatedType
+//				.getAnnotatedType();
 //
-//			      processAnnotatedType.setAnnotatedType(wrapper);
-//				
-//				
-//					}
-//	
-//		}
-//		;
+////		if (annotatedType.isAnnotationPresent(AngularBean.class)) {
+////			System.out.println("------------PROCESSING");
+////			
+////			Class clazz=annotatedType.getJavaClass();
+////			
+////			if
+////			(
+////			(!clazz.isAnnotationPresent(RequestScoped.class))
+////			&&
+////			(!clazz.isAnnotationPresent(NGSessionScoped.class))
+////			&&(!clazz.isAnnotationPresent(SessionScoped.class))
+////			&&(!clazz.isAnnotationPresent(ApplicationScoped.class))
+////			
+////					)		
+////					{
+////				
+////				Annotation requestScopedAnnotation = new Annotation() {
+////			        @Override
+////			        public Class<? extends Annotation> annotationType() {
+////			          return RequestScoped.class;
+////			        }
+////			      };
+////
+////			      AnnotatedTypeWrapper<T> wrapper = new AnnotatedTypeWrapper<T>(
+////			          annotatedType, annotatedType.getAnnotations());
+////			      wrapper.addAnnotation(requestScopedAnnotation);
+////
+////			      processAnnotatedType.setAnnotatedType(wrapper);
+////				
+////				
+////					}
+////	
+////		}
+////		;
+//
+//	}
 
-	}
+	
+//	public void addScopes(@Observes  final BeforeBeanDiscovery event) {
+//
+//		event.addScope(NGSessionScoped.class, true, false);
+//	}
 
-	public void addScope(@Observes final BeforeBeanDiscovery event) {
-		event.addScope(NGSessionScoped.class,true , false);
-	}
-
-	public void registerContext(@Observes final AfterBeanDiscovery event) {
+	public void registerContext(@Observes final AfterBeanDiscovery event,BeanManager manager) {
 
 		NGSessionScopeContext context = new NGSessionScopeContext();
 		//
@@ -93,7 +95,7 @@ public class NGSessionExtention implements Extension {
 		
 	}
 
-	<T> void pat(@Observes ProcessAnnotatedType<T> event, BeanManager bm) {
-
-	}
+//	<T> void pat(@Observes ProcessAnnotatedType<T> event, BeanManager bm) {
+//
+//	}
 }

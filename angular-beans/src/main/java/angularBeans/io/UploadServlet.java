@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import javax.ws.rs.core.MediaType;
 
+import org.ietf.jgss.Oid;
+
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.log.NGLogger;
 import angularBeans.util.AngularBeansUtil;
@@ -31,7 +33,7 @@ public class UploadServlet extends HttpServlet {
 
 	protected void processRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-
+	
 		//request.getSession(true);
 
 		NGSessionScopeContext.setCurrentContext((request.getSession()
@@ -52,7 +54,7 @@ public class UploadServlet extends HttpServlet {
 		try (PrintWriter out = response.getWriter()) {
 			
 			
-			out.println("{answer:\"File transfer completed\"}");
+			
 			
 //			out.println("<!DOCTYPE html>");
 //			out.println("<html>");
@@ -70,6 +72,7 @@ public class UploadServlet extends HttpServlet {
 //			out.println("</html>");
 			//out.flush();
 			//out.close();
+		
 			List<Upload> uploads = new ArrayList<Upload>();
 			
 			for (Part part : request.getParts()) {
@@ -78,9 +81,11 @@ public class UploadServlet extends HttpServlet {
 				// fileName = part.getSubmittedFileName();
 				// part.write(fileName);
 
-				uploadHandler.handleUploads(uploads, param);
+			uploadHandler.handleUploads(uploads, param);
 
 			}
+			
+			out.write(" ");
 		}
 
 	}

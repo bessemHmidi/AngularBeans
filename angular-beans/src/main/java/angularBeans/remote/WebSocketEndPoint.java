@@ -21,7 +21,7 @@ import angularBeans.util.AngularBeansUtil;
 
 import com.google.gson.JsonObject;
 
-@ServerEndpoint("/rt-service")
+//@ServerEndpoint("/rt-service")
 @ApplicationScoped
 public class WebSocketEndPoint {
 

@@ -5,7 +5,7 @@
 	<artifactId>angularBeans</artifactId>
 	<version>1.0.1-RELEASE</version>
 	<name>angularBeans</name>
-
+ 
 <properties>
 <maven.compiler.source>1.7</maven.compiler.source>
  <maven.compiler.target>1.7</maven.compiler.target>
@@ -29,19 +29,28 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.3</version>
+	
 		</dependency>
 
-		<dependency>
+<dependency>
+	<groupId>com.google.guava</groupId>
+	<artifactId>guava</artifactId>
+	<version>18.0</version>
+</dependency>
+
+
+	<dependency>
 			<groupId>com.google.javascript</groupId>
 			<artifactId>closure-compiler</artifactId>
 			<version>v20141215</version>
-		</dependency>
+			<scope>compile</scope>
+		</dependency> 
 
-		<dependency>
+	<!-- 	<dependency>
 			<groupId>org.projectodd.sockjs</groupId>
 			<artifactId>sockjs-servlet</artifactId>
 			<version>[0.1.0,)</version>
-		</dependency>
+		</dependency> -->
 
 	</dependencies>
 	<url>http://bessemhmidi.github.io/AngularBeans</url>

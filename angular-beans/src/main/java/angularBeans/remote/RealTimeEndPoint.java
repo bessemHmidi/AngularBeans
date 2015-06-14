@@ -23,8 +23,10 @@ package angularBeans.remote;
 
 import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 
@@ -36,6 +38,7 @@ import angularBeans.context.GlobalMapHolder;
 import angularBeans.context.NGSessionContextHolder;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.realtime.GlobalConnectionHolder;
+import angularBeans.realtime.MyServletContextListenerAnnotated;
 import angularBeans.realtime.RealTimeErrorEvent;
 import angularBeans.realtime.RealTimeSessionCloseEvent;
 import angularBeans.realtime.RealTimeSessionReadyEvent;
@@ -79,17 +82,33 @@ public class RealTimeEndPoint extends SockJsServlet {
 	// }
 	//
 
+//	@PostConstruct
+//	public void start() {
+//		try {
+//			super.inito();
+//		} catch (ServletException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//	}
+	
 	@Override
 	public void init() throws ServletException {
-		SockJsServer server = new SockJsServer();
+		SockJsServer server = MyServletContextListenerAnnotated.sockJsServer;
 		// Various options can be set on the server, such as:
 		// echoServer.options.responseLimit = 4 * 1024;
 
 		//server.options.
 		// onConnection is the main entry point for handling SockJS connections
 		server.onConnection(new SockJsServer.OnConnectionHandler() {
+			
+			
+			
 			@Override
 			public void handle(final SockJsConnection connection) {
+				
+				
 				getServletContext().log("SockJS client connected");
 				
 
@@ -140,6 +159,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 		});
 
 		setServer(server);
+		
 		// Don't forget to call super.init() to wire everything up
 		super.init();
 

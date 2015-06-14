@@ -33,7 +33,7 @@ public class FileUploadHandler implements Serializable{
 
 
 
-	public void handleUploads(List<Upload> uploads, String path) {
+	public  void handleUploads(List<Upload> uploads, String path) {
 		
 		Call call=uploadsActions.get(path);
 		
@@ -57,12 +57,13 @@ public class FileUploadHandler implements Serializable{
 		
 		
 		try {
-			call.getMethod().invoke(call.getObject(), uploads);
+			 call.getMethod().invoke(call.getObject(), uploads);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 	
 	

@@ -27,6 +27,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.enterprise.context.NormalScope;
 import javax.inject.Scope;
 
 
@@ -41,7 +42,7 @@ import javax.inject.Scope;
 **/
 
 
-@Scope
+@NormalScope 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
 

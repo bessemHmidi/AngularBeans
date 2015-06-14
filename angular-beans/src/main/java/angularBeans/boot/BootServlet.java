@@ -56,9 +56,10 @@ public class BootServlet extends HttpServlet {
 
 		String jsContent = stringWriter.toString();
 
-		String compressed = getCompressedJavaScript(jsContent);
-		resp.getWriter().write(compressed);
+		//String compressed = getCompressedJavaScript(jsContent);
+		//resp.getWriter().write(compressed);
 
+		resp.getWriter().write(jsContent);
 		long endTime = System.currentTimeMillis();
 		log.info("Module generated successfully in "+(endTime-startTime)+" ms");
 		resp.getWriter().flush();
