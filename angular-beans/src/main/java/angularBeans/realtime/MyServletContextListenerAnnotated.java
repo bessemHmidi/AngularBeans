@@ -126,7 +126,7 @@ if (sockJsServer.options.websocket) {
                 .create(SockJsEndpoint.class, websocketPath)
                 .configurator(configuratorFor(commonPrefix, false))
                 .build();
-
+  //rt-service/websocket
         String rawWebsocketPath = commonPrefix + "/websocket";
         ServerEndpointConfig rawWsConfig = ServerEndpointConfig.Builder
                 .create(RawWebsocketEndpoint.class, rawWebsocketPath)

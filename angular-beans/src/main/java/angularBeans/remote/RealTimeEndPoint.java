@@ -68,6 +68,9 @@ public class RealTimeEndPoint extends SockJsServlet {
 	@Inject
 	GlobalConnectionHolder globalConnectionHolder;
 
+	@Inject
+	Logger logger;
+	
 	// @OnClose
 	// public void onclose(Session session) {
 	// sessionCloseEvent.fire(new WSocketEvent(session, null));
@@ -108,10 +111,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 			@Override
 			public void handle(final SockJsConnection connection) {
 				
-				
-				getServletContext().log("SockJS client connected");
-				
-
+				//logger.info("session opened");
 				// onData gets called when a client sends data to the server
 				connection.onData(new SockJsConnection.OnDataHandler() {
 					@Override
@@ -119,10 +119,6 @@ public class RealTimeEndPoint extends SockJsServlet {
 
 						JsonObject jObj = AngularBeansUtil.parse(message);
 						String UID = jObj.get("session").getAsString();
-
-						
-						
-						
 						RealTimeDataReceiveEvent ev = new RealTimeDataReceiveEvent(connection,
 								jObj);
 
@@ -135,12 +131,13 @@ public class RealTimeEndPoint extends SockJsServlet {
 						if (service.equals("ping")) {
 
 							sessionOpenEvent.fire(ev);
-							Logger.getLogger("AngularBeans").info(
+							logger.info(
 									"AngularBeans-client: " + UID);
 
 						} else {
 
 							receiveEvents.fire(ev);
+							
 						}
 
 						// connection.write(message);

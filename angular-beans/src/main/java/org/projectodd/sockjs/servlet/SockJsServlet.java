@@ -31,8 +31,6 @@ import java.util.regex.Pattern;
 
 public class SockJsServlet extends HttpServlet {
 
-	
-	
     public SockJsServlet() {
 
     }

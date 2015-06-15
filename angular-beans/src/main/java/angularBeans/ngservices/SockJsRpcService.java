@@ -45,7 +45,7 @@ public class SockJsRpcService implements NGService {
 				+ contextPath + "/rt-service/");
 
 		String webSocketPath=("ws://"+serverName+":" + portNumber
-				+ contextPath + "/rt-service");
+				+ contextPath + "/rt-service/websocket");
 		
 		String result = "";
 
