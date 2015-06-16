@@ -25,7 +25,7 @@ import angularBeans.util.ModelQueryFactory;
 public class SingleClassRoomService implements Serializable {
 
 	@Inject
-	ModelQueryFactory modelQueryFactory;
+	ModelQuery modelQuery;
 
 	@Inject
 	@AngularBean
@@ -65,7 +65,7 @@ public class SingleClassRoomService implements Serializable {
 	public String leave(ClassRoom classRoom) {
 		User user = authenticationService.getConnectedUser();
 
-		ModelQuery query=  modelQueryFactory.get(SingleClassRoomService.class).removeFrom("users", user);
+		ModelQuery query=  modelQuery.removeFrom("users", user);
 		
 		client.broadcast(query,false);
 		

@@ -258,6 +258,7 @@ public class ModuleGenerator implements Serializable {
 
 		Method[] methods = clazz.getDeclaredMethods();
 
+
 		modelQueryFactory.addQuery(clazz);
 
 		// writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','RTSrvc',function");

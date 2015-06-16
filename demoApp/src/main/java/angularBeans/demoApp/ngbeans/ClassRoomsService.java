@@ -41,8 +41,10 @@ public class ClassRoomsService implements Serializable {
 	AuthenticationService authenticationService;
 
 	@Inject
-	ModelQueryFactory modelQueryFactory;
+	ModelQuery modelQuery;
 
+	@Inject ModelQueryFactory modelQueryFactory;
+	
 	@Inject
 	RealTimeClient client;
 
@@ -109,7 +111,7 @@ public class ClassRoomsService implements Serializable {
 				new HashSet<User>());
 
 		client.broadcast(
-				modelQueryFactory.get(ClassRoomsService.class).pushTo(
+				modelQuery.pushTo(
 						"classRooms", classRoom), false);
 
 	}

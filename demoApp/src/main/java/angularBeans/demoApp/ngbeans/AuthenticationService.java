@@ -26,7 +26,9 @@ import angularBeans.log.NGLogger;
 import angularBeans.log.NGLogger.Level;
 import angularBeans.realtime.RealTime;
 import angularBeans.realtime.RealTimeClient;
+import angularBeans.util.ModelQuery;
 import angularBeans.util.ModelQueryFactory;
+import angularBeans.util.RootScope;
 
 @AngularBean
 @NGSessionScoped
@@ -39,8 +41,10 @@ public class AuthenticationService implements Serializable {
 	NGLogger logger;
 
 	@Inject
-	ModelQueryFactory modelQueryFactory;
+	ModelQuery modelQuery;
 
+	@Inject RootScope rootScope;
+	
 	@Inject
 	RealTimeClient client;
 
@@ -83,7 +87,7 @@ public class AuthenticationService implements Serializable {
 
 		avatar = new LobWrapper(uploads.get(0).getAsByteArray(), this);
 
-		client.publish(modelQueryFactory.get(this.getClass()).setProperty(
+		client.publish(modelQuery.setProperty(
 				"avatar", avatar));
 
 	}
@@ -100,10 +104,11 @@ public class AuthenticationService implements Serializable {
 			connectedUser = virtualClassService.getUsers().get(
 					virtualClassService.getUsers().indexOf(user));
 
-			modelQueryFactory.getRootScope().setProperty("connectedUser",
+			rootScope.setProperty("connectedUser",
 					connectedUser);
 
-			modelQueryFactory.getRootScope().setProperty("GRANT_LOGIN", true);
+			rootScope.setProperty("GRANT_LOGIN", true);
+			
 			login = "";
 			password = "";
 
@@ -119,7 +124,7 @@ public class AuthenticationService implements Serializable {
 
 		notificationBus.fire(new NotificationMessage("danger", "SECURITY",
 				"UNAUTHORIZED !!", false));
-		modelQueryFactory.get(AuthenticationService.class).setProperty(
+		modelQuery.setProperty(
 				"message", "incorrect login or password !!");
 
 		return "/";

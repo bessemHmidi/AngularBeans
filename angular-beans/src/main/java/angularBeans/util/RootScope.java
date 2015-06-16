@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Default;
 
 /**
@@ -14,6 +15,7 @@ import javax.enterprise.inject.Default;
  * an object representing the $rootScope
  */
 
+@Alternative
 public class RootScope implements Serializable {
 
 	
