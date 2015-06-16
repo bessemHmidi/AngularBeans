@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.Alternative;
+
+@Alternative
 public class ModelQueryImpl implements ModelQuery ,Serializable{
 
 	private Map<String, Object> data = new HashMap<String, Object>();
