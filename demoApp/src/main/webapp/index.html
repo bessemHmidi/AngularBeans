@@ -2,22 +2,19 @@
 <html class="no-js">
 <head>
 
-<meta charset="utf-8">
-<title></title>
-<meta name="description" content="">
-<meta name="viewport" content="width=device-width">
-<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-<!-- build:css(.) styles/vendor.css -->
-<!-- bower:css -->
-<link rel="stylesheet"
-	href="bower_components/bootstrap/dist/css/bootstrap.css" />
-<!-- endbower -->
-<!-- endbuild -->
-<!-- build:css(.tmp) styles/main.css -->
-<link rel="stylesheet" href="styles/main.css">
-<!-- endbuild -->
-
-
+    <meta charset="utf-8">
+    <title>AngularBeans Demo App</title>
+    <meta name="description" content="A little app simulating a VirtualClassRoom scenario to demonstrate AngularBeans">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
 
 </head>
 <body ng-app="VirtualClassRoomModule">
@@ -58,12 +55,7 @@
 
 
 	<div class="container">
-
-
-
 		<div ng-view class="page-c"></div>
-
-
 	</div>
 
 	<div class="footer">
@@ -99,36 +91,26 @@
 	<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 	<script src="bower_components/angular-touch/angular-touch.js"></script>
 	<script src="bower_components/modernizr/modernizr.js"  type="text/javascript"></script>
-	
-	
-	  <script src="bower_components/sockjs/sockjs.js"></script> 
-	<script
-		src="bower_components/remarkable-bootstrap-notify/bootstrap-notify.js"></script>
+    <script src="bower_components/sockjs/sockjs.js"></script> 
+	<script src="bower_components/remarkable-bootstrap-notify/bootstrap-notify.js"></script>
 	<!-- endbower -->
 	<!-- endbuild -->
 
 	<!-- build:js({.tmp,app}) scripts/scripts.js -->
 
-
-
 	<script type="text/javascript" src="angular-beans.js"></script>
-	<script src="scripts/app.js"></script>
+	<script type="text/javascript" src="scripts/app.js"></script>
 
-	<script src="scripts/angular-file-upload.js"></script>
-	<script src="scripts/directives/thumbail.js"></script>
-	
-
+	<script type="text/javascript" src="scripts/angular-file-upload.js"></script>
+	<script type="text/javascript" src="scripts/directives/thumbail.js"></script>
 	<script type="text/javascript" src="scripts/services/growl.js"></script>
 	<script type="text/javascript" src="scripts/controllers/GrowlCtrl.js"></script>
 	<script type="text/javascript" src="scripts/controllers/UploadCtrl.js"></script>
-<script type="text/javascript" src="scripts/controllers/AuthenticationCtrl.js"></script>
-<script type="text/javascript" src="scripts/controllers/LanguageCtrl.js"></script>
-<script type="text/javascript" src="scripts/controllers/ClassRoomCtrl.js"></script>
-<script type="text/javascript" src="scripts/controllers/SingleClassRoomCtrl.js"></script>
-
+    <script type="text/javascript" src="scripts/controllers/AuthenticationCtrl.js"></script>
+    <script type="text/javascript" src="scripts/controllers/LanguageCtrl.js"></script>
+    <script type="text/javascript" src="scripts/controllers/ClassRoomCtrl.js"></script>
+    <script type="text/javascript" src="scripts/controllers/SingleClassRoomCtrl.js"></script>
 	<!-- <script type="text/javascript" src="scripts/services/SharedService.js"></script> -->
-
-
 	<script src="scripts/directives/draw.js"></script>
 	<!-- endbuild -->
 
