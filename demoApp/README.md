@@ -10,3 +10,4 @@ A little app simulating a VirtualClassRoom scenario to demonstrate AngularBeans.
 3. Navigate to the demoApp directory and run `mvn clean compile package`.
 4. Deploy the war file to your running application server.  
 If you don't have a running application server, you can run the application on the embedded Wildfly: `mvn wildfly:run` 
+5. In your browser, navigate localhost:8080/AngularBeansDemo
