@@ -9,7 +9,6 @@ public class NotificationMessage {
 	private boolean broadcast;
 
 	public NotificationMessage(String type, String title, String body, boolean broadcast) {
-		super();
 		this.title = title;
 		this.body = body;
 		this.type = type;
