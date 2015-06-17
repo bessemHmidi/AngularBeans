@@ -33,8 +33,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -55,7 +53,6 @@ import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
-import angularBeans.context.NGSessionScoped;
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
@@ -89,7 +86,7 @@ public class ModuleGenerator implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		//NGSessionScopeContext.setCurrentContext(UID);
+		// NGSessionScopeContext.setCurrentContext(UID);
 	}
 
 	public synchronized String getUID() {
@@ -118,12 +115,10 @@ public class ModuleGenerator implements Serializable {
 	Instance<Object> ext;
 
 	@Inject
-	 FileUploadHandler uploadHandler;
+	FileUploadHandler uploadHandler;
 
 	@Inject
 	BeanValidationProcessor validationAdapter;
-
-
 
 	@Inject
 	CurrentNGSession ngSession;
@@ -152,21 +147,46 @@ public class ModuleGenerator implements Serializable {
 			}
 		}
 
+		
+		
 		writer.write("var angularBeans={ "
 
-				+ "bind:function(scope,service,modelName){"
-				+ "var members={};"
+				+ "bind:function(scope,service,modelsName){"
+				// + "var members={};"
 
 				+ "scope[service.serviceID]=service;"
 
-				+ " scope.$watch((service.serviceID+'.'+modelName), function (newVal, oldVal, scope) {"
-				+ "		    if(newVal) { "
+				+"for (i in modelsName){"
+				+"modelsName[i]=service.serviceID+'.'+modelsName[i];"
+				+"}"  
+			//	+"console.log('-->'+angular.toJson(modelsName).split('\\\"').join(''));"
+				+ "scope.$watch(angular.toJson(modelsName).split('\\\"').join(''), function (newValue, oldValue) {"
 
-				+ "		      scope[modelName] = newVal;"
-				+ "	    }"
-				+ "		  });"
+				+"for (i in modelsName){"
+				+ "scope[modelsName[i].split(service.serviceID+'.')[1]]=newValue[i];} "
+				
+//				+  "  scope[modelsName[0]]=newValue[0];"
+//+"    console.log(newValue[1]);"
+//+ "   console.log('------->'+scope[modelsName]);"
+//+ "   console.log(oldValue[1]);"
++"}, true);"
+				
+				
+				
+				
+//				+ " for (modelName in modelsName){"
+//				+ "		   var m= modelsName[modelName];"
+//				+"console.log((service.serviceID+'.'+m));"
+//				+ " scope.$watch((service.serviceID+'.'+m), function (newVal, oldVal, scope) {"
+//				
+//				+ "			if(newVal) { "
+//				+"console.log(m +' has changed');"
+//				+ "		      (scope[m]) = newVal;"
+//				+ "	    }"
+//				+ "		  });}"
 
 				+ "}"
+
 				+ ",isIn:function(array,elem){var found=false;"
 				+ "for(item in array){"
 				+ "if(this.isSame(array[item],elem)){found =true;break;}"
@@ -213,9 +233,11 @@ public class ModuleGenerator implements Serializable {
 
 		for (String model : modelQueryFactory.getRootScope().getProperties()) {
 
-			writer.write("$rootScope." + model + " = "
-					+ util.getJson(modelQueryFactory.getRootScope().getProperty(model))
-					+ ";");
+			writer.write("$rootScope."
+					+ model
+					+ " = "
+					+ util.getJson(modelQueryFactory.getRootScope()
+							.getProperty(model)) + ";");
 
 		}
 
@@ -257,7 +279,6 @@ public class ModuleGenerator implements Serializable {
 		Class<? extends Object> clazz = bean.getTargetClass();
 
 		Method[] methods = clazz.getDeclaredMethods();
-
 
 		modelQueryFactory.addQuery(clazz);
 
@@ -534,7 +555,8 @@ public class ModuleGenerator implements Serializable {
 		}
 	}
 
-	private void addParams(NGBean bean, Set<Method> setters, Method m,Type[] args) {
+	private void addParams(NGBean bean, Set<Method> setters, Method m,
+			Type[] args) {
 
 		for (Method setter : setters) {
 
@@ -561,7 +583,7 @@ public class ModuleGenerator implements Serializable {
 	public HttpServletRequest getRequest() {
 		return request;
 	}
-	
+
 	/**
 	 * 
 	 */
