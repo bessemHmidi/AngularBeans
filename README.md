@@ -1,6 +1,5 @@
 # AngularBeans
 
-[![Join the chat at https://gitter.im/bessemHmidi/AngularBeans](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bessemHmidi/AngularBeans?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ![AngularBeans_Logo](https://cloud.githubusercontent.com/assets/1442690/8021018/e493e554-0c87-11e5-81ab-4dc894897044.png "AngularBeans Logo")
 
 AngularBeans is a framework whose intention is to use JavaEE7 -and more precisely the CDI specification- with AngularJS. It allows the creatation of "_AngularJS aware_" JavaEE Applications.
@@ -22,3 +21,6 @@ AngularBeans is a framework whose intention is to use JavaEE7 -and more precisel
 2. Under the AngularBeans directory run `mvn clean install`.
 3. Navigate to the demoApp directory and run `mvn package`.
 4. Deploy the war file to your application server.
+ 
+
+[![Join the chat at https://gitter.im/bessemHmidi/AngularBeans](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bessemHmidi/AngularBeans?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
