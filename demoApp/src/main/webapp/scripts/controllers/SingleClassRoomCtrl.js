@@ -11,7 +11,7 @@ angular.module('VirtualClassRoomModule')
 
 .controller("SingleClassRoomCtrl",function ($scope,singleClassRoomService,$location,$routeParams) {
 	
-	angularBeans.bind($scope,singleClassRoomService,"users");
+	angularBeans.bind($scope,singleClassRoomService,["users"]);
 		
 	$scope.classRoomName=$routeParams.classRoomName;
 

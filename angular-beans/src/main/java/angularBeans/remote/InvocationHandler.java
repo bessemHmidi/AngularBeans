@@ -22,6 +22,7 @@
 package angularBeans.remote;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -76,6 +77,8 @@ public class InvocationHandler implements Serializable {
 
 	Map<String, Class> builtInMap = new HashMap<String, Class>();
 
+	Map<String, Class> arrayTypesMap=new HashMap<>();
+	
 	@PostConstruct
 	public void init() {
 		builtInMap.put("int", Integer.TYPE);
@@ -87,6 +90,27 @@ public class InvocationHandler implements Serializable {
 		builtInMap.put("byte", Byte.TYPE);
 		// builtInMap("void", Void.TYPE );
 		builtInMap.put("short", Short.TYPE);
+		
+		
+		arrayTypesMap.put("[I", int[].class);
+		arrayTypesMap.put("[F", float[].class);
+		arrayTypesMap.put("[D", double[].class);
+		arrayTypesMap.put("[J", long[].class);
+		arrayTypesMap.put("[S", short[].class);
+		arrayTypesMap.put("[B", byte[].class);
+		arrayTypesMap.put("[C", char[].class);
+		arrayTypesMap.put("[Z", boolean[].class); 
+		
+		arrayTypesMap.put("[Ljava.lang.Long;", Long[].class);
+		arrayTypesMap.put("[Ljava.lang.Double;", Double[].class);
+		arrayTypesMap.put("[Ljava.lang.Integer;", Integer[].class);
+		arrayTypesMap.put("[Ljava.lang.Float;", Float[].class);
+		arrayTypesMap.put("[Ljava.lang.Short;", Short[].class);
+		arrayTypesMap.put("[Ljava.lang.Byte;", Byte[].class);
+		arrayTypesMap.put("[Ljava.lang.Character;", Character[].class);
+		arrayTypesMap.put("[Ljava.lang.Boolean;", Boolean[].class);
+		
+		
 	}
 
 	public synchronized void realTimeInvoke(Object ServiceToInvoque,
@@ -162,24 +186,37 @@ public class InvocationHandler implements Serializable {
 
 			JsonArray args = params.get("args").getAsJsonArray();
 
+		
+			
 			for (Method mt : service.getClass().getMethods()) {
 
 				if (mt.getName().equals(methodName)) {
 
 					Type[] parameters = mt.getParameterTypes();
 
+					
+					
+					
 					if (parameters.length == args.size()) {
 
+						
 						List<Object> argsValues = new ArrayList<Object>();
 
 						for (int i = 0; i < parameters.length; i++) {
 
 							Class typeClass = null;
+							
+							
+							
+							
+							
 							String typeString = ((parameters[i]).toString());
 
 							if (typeString.startsWith("class")) {
 								typeString = typeString.substring(6);
+								
 								typeClass = Class.forName(typeString);
+						
 							}
 
 							else {
@@ -188,16 +225,41 @@ public class InvocationHandler implements Serializable {
 							}
 
 							JsonElement element = args.get(i);
-
+		
+							//System.out.println(element);
+							
+							
 							if (element.isJsonPrimitive()) {
+								
 								String val = element.getAsString();
 								argsValues.add(util.convertFromString(val,
 										typeClass));
 
-							} else {
+							} else 
+							if(element.isJsonArray())
+							{
+						
+								
+								
+								//System.out.println(typeString);
+							JsonArray arr=	element.getAsJsonArray();
+							
+							
+							
+							
+							
+							argsValues.add(deserialise(arrayTypesMap.get(typeString), arr));
+								
+							}else{
+								
 								argsValues.add(deserialise(typeClass, element));
+								
 							}
 
+							//-----
+							
+							
+							
 						}
 
 						m = mt;
@@ -210,7 +272,7 @@ public class InvocationHandler implements Serializable {
 						}
 						mainReturn = m.invoke(service, argsValues.toArray());
 
-					}
+				}
 
 				}
 

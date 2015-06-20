@@ -147,8 +147,6 @@ public class ModuleGenerator implements Serializable {
 			}
 		}
 
-		
-		
 		writer.write("var angularBeans={ "
 
 				+ "bind:function(scope,service,modelsName){"
@@ -156,37 +154,65 @@ public class ModuleGenerator implements Serializable {
 
 				+ "scope[service.serviceID]=service;"
 
-				+"for (i in modelsName){"
-				+"modelsName[i]=service.serviceID+'.'+modelsName[i];"
-				+"}"  
-			//	+"console.log('-->'+angular.toJson(modelsName).split('\\\"').join(''));"
+				+ "for (i in modelsName){"
+				+ "modelsName[i]=service.serviceID+'.'+modelsName[i];"
+				+ "}"
+				// +"console.log('-->'+angular.toJson(modelsName).split('\\\"').join(''));"
 				+ "scope.$watch(angular.toJson(modelsName).split('\\\"').join(''), function (newValue, oldValue) {"
 
-				+"for (i in modelsName){"
+				+ "for (i in modelsName){"
 				+ "scope[modelsName[i].split(service.serviceID+'.')[1]]=newValue[i];} "
-				
-//				+  "  scope[modelsName[0]]=newValue[0];"
-//+"    console.log(newValue[1]);"
-//+ "   console.log('------->'+scope[modelsName]);"
-//+ "   console.log(oldValue[1]);"
-+"}, true);"
-				
-				
-				
-				
-//				+ " for (modelName in modelsName){"
-//				+ "		   var m= modelsName[modelName];"
-//				+"console.log((service.serviceID+'.'+m));"
-//				+ " scope.$watch((service.serviceID+'.'+m), function (newVal, oldVal, scope) {"
-//				
-//				+ "			if(newVal) { "
-//				+"console.log(m +' has changed');"
-//				+ "		      (scope[m]) = newVal;"
-//				+ "	    }"
-//				+ "		  });}"
+
+				// + "  scope[modelsName[0]]=newValue[0];"
+				// +"    console.log(newValue[1]);"
+				// + "   console.log('------->'+scope[modelsName]);"
+				// + "   console.log(oldValue[1]);"
+				+ "}, true);"
+
+				// + " for (modelName in modelsName){"
+				// + "		   var m= modelsName[modelName];"
+				// +"console.log((service.serviceID+'.'+m));"
+				// +
+				// " scope.$watch((service.serviceID+'.'+m), function (newVal, oldVal, scope) {"
+				//
+				// + "			if(newVal) { "
+				// +"console.log(m +' has changed');"
+				// + "		      (scope[m]) = newVal;"
+				// + "	    }"
+				// + "		  });}"
+
+				+ "}"
+				// *
+
+				+ ",addMethod :function(object,name,fn){"
+
+				+ "if (object['$ab_fn_cache']==null){object['$ab_fn_cache']=[]; }"
+
+				+ "  if((object['$ab_fn_cache'][name])==undefined){object['$ab_fn_cache'][name]=[];}"
+
+				// +" console.log(object['$ab_fn_cache'][name]+' ---');"
+
+				+ " var index= object['$ab_fn_cache'][name].length;"
+
+				+ "object['$ab_fn_cache'][name][index]=fn;"
+
+				+ "object[name]=function  (){"
+
+				+ "  for (index in object['$ab_fn_cache'][name]){"
+
+				+ "      var actf=object['$ab_fn_cache'][name][index];"
+
+				+ "     if(arguments.length==actf.length){"
+
+				// +"  console.log('>> '+actf);"
+
+				+ "        return actf.apply(object,arguments);"
+
+				+ "      } }};"
 
 				+ "}"
 
+				// *
 				+ ",isIn:function(array,elem){var found=false;"
 				+ "for(item in array){"
 				+ "if(this.isSame(array[item],elem)){found =true;break;}"
@@ -451,7 +477,14 @@ public class ModuleGenerator implements Serializable {
 				// pushScope(methods, setters);
 				// }
 
-				writer.write(bean.getName() + "." + m.getName() + "= function(");
+				//
+
+				writer.write("angularBeans.addMethod(" + bean.getName() + ",'"
+						+ m.getName() + "',function(");
+
+				// writer.write(bean.getName() + "." + m.getName() +
+				// "= function(");
+
 				// ---------------------------------------------
 
 				// Handle args
@@ -534,7 +567,7 @@ public class ModuleGenerator implements Serializable {
 
 				}
 
-				writer.write("};");
+				writer.write("});");
 
 				if (m.isAnnotationPresent(NGPostConstruct.class)) {
 

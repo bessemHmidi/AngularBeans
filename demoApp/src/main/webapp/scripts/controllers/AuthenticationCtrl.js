@@ -15,6 +15,9 @@ angular.module('VirtualClassRoomModule')
 				
 				authenticationService.login = login;
 				authenticationService.password = password;
+				
+				
+				
 				authenticationService.authenticate().then(function(data) {
 
 					$location.path(data);

@@ -93,6 +93,9 @@ public class AuthenticationService implements Serializable {
 	}
 
 	@RealTime
+	public String authenticate(int s) {return "";}
+	
+	@RealTime
 	@NGSubmit(backEndModels = "*")
 	@NGReturn(model = "users", updates = "*")
 	public String authenticate() {
