@@ -37,7 +37,7 @@ public class NGSessionContextHolder implements Serializable {
 													// key is a class
 
 	public NGSessionContextHolder() {
-		
+
 		beans = Collections
 				.synchronizedMap(new HashMap<Class, CustomScopeInstance>());
 	}

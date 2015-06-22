@@ -30,7 +30,6 @@ import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
-import javax.xml.ws.Holder;
 
 import angularBeans.context.NGSessionContextHolder.CustomScopeInstance;
 
@@ -49,17 +48,13 @@ public class NGSessionScopeContext implements Context, Serializable {
 		return INSTANCE;
 	}
 
-	//private static ThreadLocal<NGSessionContextHolder> holder = new ThreadLocal<>();
-	
-	private static NGSessionContextHolder holder;
+	private static ThreadLocal<NGSessionContextHolder> holder = new ThreadLocal<>();
 
 	public static void setCurrentContext(String holderId) {
 
 		NGSessionContextHolder selectedHolder = GlobalMapHolder.get(holderId);
-		holder=selectedHolder;
-		//holder.set(selectedHolder);
-		
-		
+
+		holder.set(selectedHolder);
  
 	}
 
@@ -76,12 +71,12 @@ public class NGSessionScopeContext implements Context, Serializable {
 	@Override
 	public <T> T get(Contextual<T> contextual,
 			CreationalContext<T> creationalContext) {
-		if (holder == null)
+		if (holder.get() == null)
 			return null;
 
 		Bean bean = (Bean) contextual;
-		if (holder.getBeans().containsKey(bean.getBeanClass())) {
-			return (T) holder.getBean(bean.getBeanClass()).instance;
+		if (holder.get().getBeans().containsKey(bean.getBeanClass())) {
+			return (T) holder.get().getBean(bean.getBeanClass()).instance;
 		} else {
 			
 			//System.out.println("bean creation..."+bean.getBeanClass());
@@ -91,7 +86,7 @@ public class NGSessionScopeContext implements Context, Serializable {
 			customInstance.bean = bean;
 			customInstance.ctx = creationalContext;
 			customInstance.instance = t;
-			holder.putBean(customInstance);
+			holder.get().putBean(customInstance);
 			return t;
 		}
 
@@ -103,8 +98,8 @@ public class NGSessionScopeContext implements Context, Serializable {
 		Bean bean = (Bean) contextual;
 
 		
-		if (holder.getBeans().containsKey(bean.getBeanClass())) {
-			return (T) holder.getBean(bean.getBeanClass()).instance;
+		if (holder.get().getBeans().containsKey(bean.getBeanClass())) {
+			return (T) holder.get().getBean(bean.getBeanClass()).instance;
 		} else {
 			return null;
 		}
