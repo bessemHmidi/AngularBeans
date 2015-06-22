@@ -38,6 +38,8 @@ public class GlobalMapHolder {
 
 		if (!map.containsKey(holderId)) {
 			map.put(holderId, new NGSessionContextHolder());
+			
+			
 		}
 		return map.get(holderId);
 	}

@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -53,6 +54,7 @@ import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
+import angularBeans.context.NGSessionScoped;
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
@@ -71,8 +73,9 @@ public class ModuleGenerator implements Serializable {
 
 	private String UID;
 
-	@Inject
-	ModelQueryFactory modelQueryFactory;
+//	@Inject
+//	
+//	transient ModelQueryFactory modelQueryFactory;
 
 	@Inject
 	AngularBeansUtil util;
@@ -114,14 +117,19 @@ public class ModuleGenerator implements Serializable {
 	@NGExtention
 	Instance<Object> ext;
 
+//	@Inject
+//	@Any
+//	Instance<ModelQueryFactory> modelQueryFactory;
+	
+	
 	@Inject
-	FileUploadHandler uploadHandler;
+	transient	FileUploadHandler uploadHandler;
 
 	@Inject
 	BeanValidationProcessor validationAdapter;
 
 	@Inject
-	CurrentNGSession ngSession;
+	transient	CurrentNGSession ngSession;
 
 	private StringWriter writer;
 	private HttpServletRequest request;
@@ -257,15 +265,17 @@ public class ModuleGenerator implements Serializable {
 		writer.write(".run(function($rootScope) {$rootScope.sessionUID = \""
 				+ UID + "\";");
 
-		for (String model : modelQueryFactory.getRootScope().getProperties()) {
-
-			writer.write("$rootScope."
-					+ model
-					+ " = "
-					+ util.getJson(modelQueryFactory.getRootScope()
-							.getProperty(model)) + ";");
-
-		}
+	//	modelQueryFactory=(ModelQueryFactory) locator.lookup("ModelQueryFactory", UID);
+		
+//		for (String model : (modelQueryFactory.get()).getRootScope().getProperties()) {
+//
+//			writer.write("$rootScope."
+//					+ model
+//					+ " = "
+//					+ util.getJson(( modelQueryFactory.get()).getRootScope()
+//							.getProperty(model)) + ";");
+//
+//		}
 
 		writer.write("});");
 
@@ -305,8 +315,8 @@ public class ModuleGenerator implements Serializable {
 		Class<? extends Object> clazz = bean.getTargetClass();
 
 		Method[] methods = clazz.getDeclaredMethods();
-
-		modelQueryFactory.addQuery(clazz);
+ 
+//		( modelQueryFactory).get().addQuery(clazz);
 
 		// writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','RTSrvc',function");
 

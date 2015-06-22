@@ -42,7 +42,7 @@ import javax.inject.Scope;
 **/
 
 
-@NormalScope 
+@NormalScope(passivating=false)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
 

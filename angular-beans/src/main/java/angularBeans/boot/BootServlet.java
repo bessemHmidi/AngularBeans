@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,16 +46,23 @@ public class BootServlet extends HttpServlet {
 	@Inject
 	Logger log;
 
+	String jsContent;
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		generator.setHTTPRequest(req);
+		
 		long startTime = System.currentTimeMillis();
+		
+		generator.setHTTPRequest(req);
+		
 		resp.setContentType("text/javascript");
 		StringWriter stringWriter = new StringWriter();
 		generator.getScript(stringWriter);
-
-		String jsContent = stringWriter.toString();
+		 jsContent = stringWriter.toString();
+	
+          
+        
 
 		//String compressed = getCompressedJavaScript(jsContent);
 		//resp.getWriter().write(compressed);

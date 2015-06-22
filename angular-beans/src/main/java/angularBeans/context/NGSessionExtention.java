@@ -26,6 +26,7 @@ import java.lang.annotation.Annotation;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.spi.Context;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AnnotatedType;
@@ -82,14 +83,16 @@ public class NGSessionExtention implements Extension {
 //	}
 
 	
-//	public void addScopes(@Observes  final BeforeBeanDiscovery event) {
-//
-//		event.addScope(NGSessionScoped.class, true, false);
-//	}
+	public void addScopes(@Observes  final BeforeBeanDiscovery event) {
+
+		//event.addScope(NGSessionScoped.class, false, false);
+	}
 
 	public void registerContext(@Observes final AfterBeanDiscovery event,BeanManager manager) {
 
-		NGSessionScopeContext context = new NGSessionScopeContext();
+		
+		
+		Context context =  NGSessionScopeContext.getINSTANCE();
 		//
 		event.addContext(context);
 		

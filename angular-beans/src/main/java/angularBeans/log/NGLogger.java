@@ -24,6 +24,8 @@ package angularBeans.log;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import angularBeans.context.NGSessionScoped;
 
 /**

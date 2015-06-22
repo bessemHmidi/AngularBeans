@@ -29,6 +29,7 @@ import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
@@ -105,13 +106,19 @@ public class BeanLocator implements Serializable {
 
 		Class scopeAnnotationClass = bean.getScope();
 		
-	
 		if(scopeAnnotationClass.equals(RequestScoped.class)){
 	 return bean.create(beanManager.createCreationalContext(bean));
 
-		}
+		}else{
 	
-		context = beanManager.getContext(scopeAnnotationClass);
+		if(scopeAnnotationClass.equals(NGSessionScopeContext.class)){
+		context = NGSessionScopeContext.getINSTANCE();
+		}
+		else{
+			context =beanManager.getContext(scopeAnnotationClass);
+		}
+		
+		}
 		CreationalContext	creationalContext =beanManager.createCreationalContext(bean);
 		reference = context
 				.get(bean, creationalContext);

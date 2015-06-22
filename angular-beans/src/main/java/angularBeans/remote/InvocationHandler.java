@@ -42,6 +42,7 @@ import javax.swing.text.rtf.RTFEditorKit;
 import angularBeans.api.AngularBean;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
+import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.io.LobWrapper;
@@ -60,7 +61,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 
-@ApplicationScoped
+@NGSessionScoped
 public class InvocationHandler implements Serializable {
 
 //	@Inject
@@ -72,6 +73,9 @@ public class InvocationHandler implements Serializable {
 	@Inject
 	AngularBeansUtil util;
 
+	@Inject
+	BeanLocator locator;
+	
 	@Inject
 	ModelQueryFactory modelQueryFactory;
 
@@ -125,7 +129,7 @@ public class InvocationHandler implements Serializable {
 		returns.put("isRT", true);
 
 		try {
-			genericInvoke(ServiceToInvoque, methodName, params, returns,reqID);
+			genericInvoke(ServiceToInvoque, methodName, params, returns,reqID,UID);
 			
 			if(returns.get("mainReturn")!=null)
 			{
@@ -152,7 +156,7 @@ public class InvocationHandler implements Serializable {
 		try {
 
 			returns.put("isRT", false);
-			genericInvoke(o, method, params, returns,0);
+			genericInvoke(o, method, params, returns,0,UID);
 
 		} catch (Exception e) {
 			// fire(e);
@@ -165,7 +169,7 @@ public class InvocationHandler implements Serializable {
 	}
 
 	private void genericInvoke(Object service, String methodName,
-			JsonObject params, Map<String, Object> returns,long reqID)
+			JsonObject params, Map<String, Object> returns,long reqID, String UID)
 			
 			throws SecurityException, ClassNotFoundException,
 			IllegalAccessException, IllegalArgumentException,
@@ -301,6 +305,28 @@ public class InvocationHandler implements Serializable {
 			logger.getLogPool().clear();
 		}
 
+		// 1
+
+		
+//		modelQueryFactory=(ModelQueryFactory) locator.lookup("ModelQueryFactory",UID );
+		
+					ModelQueryImpl qImpl= (ModelQueryImpl)modelQueryFactory.get(service.getClass());
+					
+					Map<String, Object> scMap = new HashMap<String, Object>(
+							(qImpl).getData());
+
+					//System.out.println("---: "+scMap.size());
+					
+					returns.putAll(scMap);
+
+					(qImpl).getData().clear();
+
+					if (!modelQueryFactory.getRootScope().getRootScopeMap().isEmpty()) {
+						returns.put("rootScope", new HashMap<String, Object>(modelQueryFactory
+								.getRootScope().getRootScopeMap()));
+						modelQueryFactory.getRootScope().getRootScopeMap().clear();
+					}
+		
 		String[] updates = null;
 
 //		if ((m.isAnnotationPresent(NGReturn.class))
@@ -374,22 +400,7 @@ public class InvocationHandler implements Serializable {
 
 			}}
 
-			// 1
-
-			ModelQueryImpl qImpl= (ModelQueryImpl)modelQueryFactory.get(service.getClass());
 			
-			Map<String, Object> scMap = new HashMap<String, Object>(
-					(qImpl).getData());
-
-			returns.putAll(scMap);
-
-			(qImpl).getData().clear();
-
-			if (!modelQueryFactory.getRootScope().getRootScopeMap().isEmpty()) {
-				returns.put("rootScope", new HashMap<String, Object>(modelQueryFactory
-						.getRootScope().getRootScopeMap()));
-				modelQueryFactory.getRootScope().getRootScopeMap().clear();
-			}
 
 
 	//	}
