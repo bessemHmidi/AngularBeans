@@ -29,8 +29,8 @@ import angularBeans.boot.ModuleGenerator;
 @NGExtention
 public class SockJsRpcService implements NGService {
 
-	@Inject
-	ModuleGenerator generator;
+	
+	private ModuleGenerator generator;
 
 	@Override
 	public String render() {
@@ -168,4 +168,8 @@ public class SockJsRpcService implements NGService {
 		return result;
 	}
 
+	@Override
+	public void setGenerator(ModuleGenerator generator) {
+		this.generator = generator;
+	}
 }

@@ -21,8 +21,12 @@
  */
 package angularBeans.ngservices;
 
+import angularBeans.boot.ModuleGenerator;
+
 public interface NGService {
 
 	String render();
+
+	void setGenerator(ModuleGenerator generator);
 
 }

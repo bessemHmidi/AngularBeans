@@ -253,7 +253,7 @@ public class AngularBeansUtil implements Serializable {
 
 	}
 
-	public boolean isGetter(Method m) {
+	public static boolean isGetter(Method m) {
 		return (
 
 		(m.getParameterTypes().length==0) && ((m.getName().startsWith("get")) || (((m.getReturnType()

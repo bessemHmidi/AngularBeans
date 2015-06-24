@@ -26,14 +26,13 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -45,37 +44,99 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
-import angularBeans.api.AngularBean;
 import angularBeans.api.NGApp;
-import angularBeans.api.NGModel;
 import angularBeans.api.NGModules;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
-import angularBeans.context.NGSessionScoped;
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
 import angularBeans.io.FileUploadHandler;
 import angularBeans.io.LobWrapper;
-import angularBeans.ngservices.NGExtention;
+import angularBeans.ngservices.NGService;
 import angularBeans.realtime.RealTime;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.CurrentNGSession;
-import angularBeans.util.ModelQueryFactory;
 import angularBeans.util.NGBean;
 import angularBeans.validation.BeanValidationProcessor;
 
 @SessionScoped
 public class ModuleGenerator implements Serializable {
 
-	private String UID;
+	final String angularBeanMainFunction = "var angularBeans={ "
 
-//	@Inject
-//	
-//	transient ModelQueryFactory modelQueryFactory;
+			+ "bind:function(scope,service,modelsName){"
+			// + "var members={};"
+
+			+ "scope[service.serviceID]=service;"
+
+			+ "for (i in modelsName){"
+
+			+ "modelsName[i]=service.serviceID+'.'+modelsName[i];"
+			+ "}"
+
+			+ "scope.$watch(angular.toJson(modelsName).split('\\\"').join(''), function (newValue, oldValue) {"
+
+			+ "for (i in modelsName){"
+			+ "scope[modelsName[i].split(service.serviceID+'.')[1]]=newValue[i];} "
+
+			+ "}, true);"
+
+			+ "}"
+
+			+ ",addMethod :function(object,name,fn){"
+
+			+ "if (object['$ab_fn_cache']==null){object['$ab_fn_cache']=[]; }"
+
+			+ "  if((object['$ab_fn_cache'][name])==undefined){object['$ab_fn_cache'][name]=[];}"
+
+			+ " var index= object['$ab_fn_cache'][name].length;"
+
+			+ "object['$ab_fn_cache'][name][index]=fn;"
+
+			+ "object[name]=function  (){"
+
+			+ "  for (index in object['$ab_fn_cache'][name]){"
+
+			+ "      var actf=object['$ab_fn_cache'][name][index];"
+
+			+ "     if(arguments.length==actf.length){"
+
+			+ "        return actf.apply(object,arguments);"
+
+			+ "      } }};"
+
+			+ "}"
+
+			// *
+			+ ",isIn:function(array,elem){var found=false;"
+			+ "for(item in array){"
+			+ "if(this.isSame(array[item],elem)){found =true;break;}"
+			+ "}"
+
+			+ "return found;}"
+
+			+ ",isSame:function(item1,item2){"
+
+			+ "var same=true;"
+
+			+ "for(prop in item1){"
+
+			+ "if(prop=='$$hashKey'){continue;}"
+			+ "if (typeof item1[prop] == 'string' || item1[prop] instanceof String){if(item1[prop].startsWith('lob/')){continue;}}"
+
+			+ "if(!(angular.toJson(item1[prop])==angular.toJson(item2[prop]))){same=false;}"
+
+			+ "}"
+
+			+ "return same;}"
+
+			+ " };";
+
+	private String UID;
 
 	@Inject
 	AngularBeansUtil util;
@@ -108,28 +169,13 @@ public class ModuleGenerator implements Serializable {
 	BeanLocator locator;
 
 	@Inject
-	@AngularBean
-	@Any
-	Instance<Object> beans;
-
-	@Inject
-	@Any
-	@NGExtention
-	Instance<Object> ext;
-
-//	@Inject
-//	@Any
-//	Instance<ModelQueryFactory> modelQueryFactory;
-	
-	
-	@Inject
-	transient	FileUploadHandler uploadHandler;
+	transient FileUploadHandler uploadHandler;
 
 	@Inject
 	BeanValidationProcessor validationAdapter;
 
 	@Inject
-	transient	CurrentNGSession ngSession;
+	transient CurrentNGSession ngSession;
 
 	private StringWriter writer;
 	private HttpServletRequest request;
@@ -141,7 +187,7 @@ public class ModuleGenerator implements Serializable {
 		contextPath = (request.getServletContext().getContextPath());
 		this.writer = writer;
 		String appName = null;
-		Class appClass = null;
+		Class<? extends Object> appClass = null;
 		for (Object ap : app) {
 
 			appClass = ap.getClass();
@@ -155,102 +201,13 @@ public class ModuleGenerator implements Serializable {
 			}
 		}
 
-		writer.write("var angularBeans={ "
-
-				+ "bind:function(scope,service,modelsName){"
-				// + "var members={};"
-
-				+ "scope[service.serviceID]=service;"
-
-				+ "for (i in modelsName){"
-				+ "modelsName[i]=service.serviceID+'.'+modelsName[i];"
-				+ "}"
-				// +"console.log('-->'+angular.toJson(modelsName).split('\\\"').join(''));"
-				+ "scope.$watch(angular.toJson(modelsName).split('\\\"').join(''), function (newValue, oldValue) {"
-
-				+ "for (i in modelsName){"
-				+ "scope[modelsName[i].split(service.serviceID+'.')[1]]=newValue[i];} "
-
-				// + "  scope[modelsName[0]]=newValue[0];"
-				// +"    console.log(newValue[1]);"
-				// + "   console.log('------->'+scope[modelsName]);"
-				// + "   console.log(oldValue[1]);"
-				+ "}, true);"
-
-				// + " for (modelName in modelsName){"
-				// + "		   var m= modelsName[modelName];"
-				// +"console.log((service.serviceID+'.'+m));"
-				// +
-				// " scope.$watch((service.serviceID+'.'+m), function (newVal, oldVal, scope) {"
-				//
-				// + "			if(newVal) { "
-				// +"console.log(m +' has changed');"
-				// + "		      (scope[m]) = newVal;"
-				// + "	    }"
-				// + "		  });}"
-
-				+ "}"
-				// *
-
-				+ ",addMethod :function(object,name,fn){"
-
-				+ "if (object['$ab_fn_cache']==null){object['$ab_fn_cache']=[]; }"
-
-				+ "  if((object['$ab_fn_cache'][name])==undefined){object['$ab_fn_cache'][name]=[];}"
-
-				// +" console.log(object['$ab_fn_cache'][name]+' ---');"
-
-				+ " var index= object['$ab_fn_cache'][name].length;"
-
-				+ "object['$ab_fn_cache'][name][index]=fn;"
-
-				+ "object[name]=function  (){"
-
-				+ "  for (index in object['$ab_fn_cache'][name]){"
-
-				+ "      var actf=object['$ab_fn_cache'][name][index];"
-
-				+ "     if(arguments.length==actf.length){"
-
-				// +"  console.log('>> '+actf);"
-
-				+ "        return actf.apply(object,arguments);"
-
-				+ "      } }};"
-
-				+ "}"
-
-				// *
-				+ ",isIn:function(array,elem){var found=false;"
-				+ "for(item in array){"
-				+ "if(this.isSame(array[item],elem)){found =true;break;}"
-				+ "}"
-
-				+ "return found;}"
-
-				+ ",isSame:function(item1,item2){"
-
-				+ "var same=true;"
-
-				+ "for(prop in item1){"
-
-				+ "if(prop=='$$hashKey'){continue;}"
-				+ "if (typeof item1[prop] == 'string' || item1[prop] instanceof String){if(item1[prop].startsWith('lob/')){continue;}}"
-
-				+ "if(!(angular.toJson(item1[prop])==angular.toJson(item2[prop]))){same=false;}"
-
-				+ "}"
-
-				+ "return same;}"
-
-				+ " };");
+		writer.write(angularBeanMainFunction);
 
 		writer.write("var app=angular.module('" + appName + "', [");
 
 		if (appClass.isAnnotationPresent(NGModules.class)) {
 
-			NGModules ngModAnno = (NGModules) appClass
-					.getAnnotation(NGModules.class);
+			NGModules ngModAnno = appClass.getAnnotation(NGModules.class);
 			String[] modules = ngModAnno.value();
 			String modulesPart = "";
 			for (String module : modules) {
@@ -265,25 +222,12 @@ public class ModuleGenerator implements Serializable {
 		writer.write(".run(function($rootScope) {$rootScope.sessionUID = \""
 				+ UID + "\";");
 
-	//	modelQueryFactory=(ModelQueryFactory) locator.lookup("ModelQueryFactory", UID);
-		
-//		for (String model : (modelQueryFactory.get()).getRootScope().getProperties()) {
-//
-//			writer.write("$rootScope."
-//					+ model
-//					+ " = "
-//					+ util.getJson(( modelQueryFactory.get()).getRootScope()
-//							.getProperty(model)) + ";");
-//
-//		}
-
 		writer.write("});");
 
-		for (Object bean : beans) {
+		for (NGBean mb : BeanRegistry.getInstance().getAngularBeans()) {
 
-			NGBean mb = new NGBean(bean);
+			// locator.lookup(mb.getName(), UID);
 
-			// writer.write(";angular.module('"+appName+"')");
 			writer.write(";app.factory('" + mb.getName() + "',function "
 					+ mb.getName() + "(");
 
@@ -294,8 +238,9 @@ public class ModuleGenerator implements Serializable {
 
 		validationAdapter.build(writer);
 
-		for (Object extention : ext) {
+		for (NGService extention : BeanRegistry.getInstance().getExtentions()) {
 
+			extention.setGenerator(this);
 			Method m;
 			try {
 				m = extention.getClass().getMethod("render");
@@ -310,13 +255,9 @@ public class ModuleGenerator implements Serializable {
 
 	public void generateBean(NGBean bean, String contextPath) {
 
-		Object reference = locator.lookup(bean.getName(), UID);
-
 		Class<? extends Object> clazz = bean.getTargetClass();
 
-		Method[] methods = clazz.getDeclaredMethods();
- 
-//		( modelQueryFactory).get().addQuery(clazz);
+		Method[] methods = bean.getMethods();
 
 		// writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','RTSrvc',function");
 
@@ -332,31 +273,9 @@ public class ModuleGenerator implements Serializable {
 		writer.write("\nvar rpath='" + contextPath
 				+ "/http/invoke/service/';\n");
 
-		// String defaultChannel = clazz.getSimpleName();
+		Object reference = locator.lookup(bean.getName(), UID);
 
-		// writer.write("\nRTSrvc.subscribe("+bean.getName()+",'" +
-		// defaultChannel + "');");
-		// if (clazz.isAnnotationPresent(Subscribe.class)) {
-		// String[] channels = ((Subscribe) clazz
-		// .getAnnotation(Subscribe.class)).channels();
-		//
-		// for (String channel : channels) {
-		//
-		// writer.write("RTSrvc.subscribe($scope,'" + channel + "');");
-		// }
-		// }
-
-		List<Method> getters = new ArrayList<Method>();
-
-		for (Method m : methods) {
-			if (util.isGetter(m)) {
-				if (m.isAnnotationPresent(NGModel.class)) {
-					getters.add(m);
-				}
-			}
-		}
-
-		for (Method get : getters) {
+		for (Method get : bean.getters()) {
 			Object result = null;
 
 			String getter = get.getName();
@@ -381,7 +300,7 @@ public class ModuleGenerator implements Serializable {
 
 			try {
 
-				m = reference.getClass().getMethod((getter));
+				m = bean.getTargetClass().getMethod((getter));
 
 				result = m.invoke(reference);
 
@@ -411,7 +330,47 @@ public class ModuleGenerator implements Serializable {
 
 		}
 
-		for (Method m : methods) {
+		for (Method m : bean.getMethods()) {
+			if (m.isAnnotationPresent(FileUpload.class)) {
+
+				String uploadPath = m.getAnnotation(FileUpload.class).path();
+
+				Call call = new Call(reference, m);
+
+				uploadHandler.getUploadsActions().put(uploadPath, call);
+			}
+		}
+
+		writer.write(generateStaticPart(bean).toString());
+
+		// for (Method m : bean.getMethods()) {
+		//
+		// }
+		writer.write("return " + bean.getName() + ";} \n");
+	}
+
+	private static Map<Class, StringBuffer> cachedStaticParts = new HashMap<Class, StringBuffer>();
+
+	private synchronized StringBuffer generateStaticPart(NGBean bean) {
+
+		StringBuffer cachedStaticPart = new StringBuffer();
+		if (cachedStaticParts.containsKey(bean.getTargetClass())) {
+			return cachedStaticParts.get(bean.getTargetClass());
+		}
+
+		Method[] nativesMethods = Object.class.getMethods();
+
+		for (Method m : bean.getMethods()) {
+
+			boolean isNative = false;
+			for (Method nativeMethod : nativesMethods) {
+				if (nativeMethod.equals(m))
+					isNative = true;
+			}
+
+			if (isNative)
+				continue;
+
 			if ((!util.isSetter(m)) && (!util.isGetter(m))) {
 
 				// String csModel = null;
@@ -419,16 +378,6 @@ public class ModuleGenerator implements Serializable {
 				Set<Method> setters = new HashSet<Method>();
 
 				String httpMethod = "get";
-
-				if (m.isAnnotationPresent(FileUpload.class)) {
-
-					String uploadPath = ((FileUpload) m
-							.getAnnotation(FileUpload.class)).path();
-
-					Call call = new Call(reference, m);
-
-					uploadHandler.getUploadsActions().put(uploadPath, call);
-				}
 
 				if (m.isAnnotationPresent(GET.class)) {
 					httpMethod = "get";
@@ -461,13 +410,13 @@ public class ModuleGenerator implements Serializable {
 
 					if (models.length == 1 && models[0].equals("*")) {
 
-						pushScope(methods, setters);
+						pushScope(bean.getMethods(), setters);
 
 					} else {
 
 						for (String model : models) {
 
-							for (Method md : methods) {
+							for (Method md : bean.getMethods()) {
 
 								if (util.isSetter(md)) {
 									String methodName = md.getName();
@@ -489,8 +438,8 @@ public class ModuleGenerator implements Serializable {
 
 				//
 
-				writer.write("angularBeans.addMethod(" + bean.getName() + ",'"
-						+ m.getName() + "',function(");
+				cachedStaticPart.append("angularBeans.addMethod("
+						+ bean.getName() + ",'" + m.getName() + "',function(");
 
 				// writer.write(bean.getName() + "." + m.getName() +
 				// "= function(");
@@ -511,7 +460,7 @@ public class ModuleGenerator implements Serializable {
 
 						}
 
-						writer.write(argsString.substring(0,
+						cachedStaticPart.append(argsString.substring(0,
 								argsString.length() - 1));
 
 					}
@@ -519,73 +468,80 @@ public class ModuleGenerator implements Serializable {
 				// ------------------------------------------------
 				// -------------------------------
 
-				writer.write(") {");
+				cachedStaticPart
+						.append(") {")
 
-				writer.write("var mainReturn={data:{}};");
-				writer.write("var params={sessionUID:$rootScope.sessionUID};");
-				addParams(bean, setters, m, args);
+						.append("var mainReturn={data:{}};")
+						.append("var params={sessionUID:$rootScope.sessionUID};");
+
+				cachedStaticPart.append(addParams(bean, setters, m, args));
 
 				if (m.isAnnotationPresent(RealTime.class)) {
 
-					writer.write("return RTSrvc.call(" + bean.getName() + ",'"
-							+ bean.getName() + "." + m.getName() + "',params");
+					cachedStaticPart.append("return RTSrvc.call("
+							+ bean.getName() + ",'" + bean.getName() + "."
+							+ m.getName() + "',params");
 
-					writer.write(").then(function(response) {\n");
+					cachedStaticPart.append(").then(function(response) {\n");
 
-					writer.write("var msg=(response);");
+					cachedStaticPart.append("var msg=(response);");
 
-					// writer.write("console.log((response));");
+					cachedStaticPart
+							.append("mainReturn.data= responseHandler.handleResponse(msg,"
+									+ bean.getName() + ",true);");
 
-					// writer.write("var callers=RTSrvc.getCallers();");
+					cachedStaticPart.append("return mainReturn.data;"); // }");
 
-					writer.write("mainReturn.data= responseHandler.handleResponse(msg,"
-							+ bean.getName() + ",true);");
-
-					// writer.write("deffered.resolve();");
-
-					writer.write("return mainReturn.data;"); // }");
-
-					writer.write("} ,function(response){return $q.reject(response.data);});");
+					cachedStaticPart
+							.append("} ,function(response){return $q.reject(response.data);});");
 
 				} else {
 
-					writer.write("\n  return $http." + httpMethod + "(rpath+'"
-							+ bean.getName() + "/" + m.getName() + "/json");
+					cachedStaticPart.append("\n  return $http." + httpMethod
+							+ "(rpath+'" + bean.getName() + "/" + m.getName()
+							+ "/json");
 
 					if (httpMethod.equals("post")) {
-						writer.write("',params");
+						cachedStaticPart.append("',params");
 					} else {
 						// encodeURI
 						String paramsQuery = ("?params='+encodeURIComponent(angular.toJson(params))");
 
-						writer.write(paramsQuery);
+						cachedStaticPart.append(paramsQuery);
 					}
 
-					writer.write(").then(function(response) {\n");
+					cachedStaticPart.append(").then(function(response) {\n");
 
-					writer.write("var msg=response.data;");
+					cachedStaticPart.append("var msg=response.data;");
 					// writer.write("var callers=RTSrvc.getCallers();");
 
-					writer.write("mainReturn.data= responseHandler.handleResponse(msg,"
-							+ bean.getName() + ",true);");
+					cachedStaticPart
+							.append("mainReturn.data= responseHandler.handleResponse(msg,"
+									+ bean.getName() + ",true);");
 
 					// writer.write("deffered.resolve();");
 
-					writer.write("return mainReturn.data;"); // }");
+					cachedStaticPart.append("return mainReturn.data;"); // }");
 
-					writer.write("} ,function(response){return $q.reject(response.data);});");
+					cachedStaticPart
+							.append("} ,function(response){return $q.reject(response.data);});");
 
 				}
 
-				writer.write("});");
+				cachedStaticPart.append("});");
 
-				if (m.isAnnotationPresent(NGPostConstruct.class)) {
+				if ((!util.isSetter(m)) && (!util.isGetter(m))) {
+					if (m.isAnnotationPresent(NGPostConstruct.class)) {
 
-					writer.write(bean.getName() + "." + m.getName() + "();\n");
+						cachedStaticPart.append(bean.getName() + "."
+								+ m.getName() + "();\n");
+					}
 				}
 			}
 		}
-		writer.write("return " + bean.getName() + ";} \n");
+
+		cachedStaticParts.put(bean.getClass(), cachedStaticPart);
+		return cachedStaticPart;
 
 	}
 
@@ -598,14 +554,16 @@ public class ModuleGenerator implements Serializable {
 		}
 	}
 
-	private void addParams(NGBean bean, Set<Method> setters, Method m,
+	private StringBuffer addParams(NGBean bean, Set<Method> setters, Method m,
 			Type[] args) {
+
+		StringBuffer sb = new StringBuffer();
 
 		for (Method setter : setters) {
 
 			String name = util.obtainFieldNameFromAccessor(setter.getName());
-			writer.write("params['" + name + "']=" + bean.getName() + "."
-					+ name + ";");
+			sb.append("params['" + name + "']=" + bean.getName() + "." + name
+					+ ";");
 		}
 
 		if (args.length > 0) {
@@ -614,8 +572,9 @@ public class ModuleGenerator implements Serializable {
 				argsString += "arg" + i + ",";
 			}
 			argsString = argsString.substring(0, argsString.length() - 1);
-			writer.write("params['args']=[" + argsString + "];\n");
+			sb.append("params['args']=[" + argsString + "];\n");
 		}
+		return sb;
 	}
 
 	public void setHTTPRequest(HttpServletRequest request) {

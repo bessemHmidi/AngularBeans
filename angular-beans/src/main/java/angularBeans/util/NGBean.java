@@ -22,64 +22,94 @@
 package angularBeans.util;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
-public class NGBean implements Serializable{
+import angularBeans.api.NGModel;
 
-	Class<? extends Object> proxyClass;
+public class NGBean implements Serializable {
+
 	private Class<?> targetClass = null;
-	private String name=null;
-	
-	private Object bean;
-	public NGBean(Object bean) {
-		
-	this.bean=bean;
-	proxyClass=bean.getClass();
-	
-	Method m;
-	//Method m2;
-	Object targetInstance=null;
-	try {
-		m = proxyClass.getMethod("getTargetClass");
-		
-		targetClass=(Class) m.invoke(bean);
+	private String name = null;
 
-//		m2 = proxyClass.getMethod("getTargetInstance");
-//		targetInstance=m.invoke(controller);
-	} catch (NoSuchMethodException e1) {
-		targetClass=proxyClass;
-	} catch (SecurityException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-	} catch (IllegalAccessException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IllegalArgumentException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (InvocationTargetException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	
+	public NGBean(Class beanclass) {
 
-	setName(AngularBeansUtil.getBeanName(targetClass));
-	
-	
+		targetClass = beanclass;
+		scan();
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 
 	}
-	
+
 	public Class getTargetClass() {
 		return targetClass;
 	}
+
+	private Set<Method> setters = new HashSet<>();
+	private Set<Method> getters = new HashSet<>();
+	private Method[] methods;
+
+	public void scan() {
+		setName(AngularBeansUtil.getBeanName(targetClass));
+		methods=targetClass.getMethods();
+
+		for (Method m : methods) {
+			if (AngularBeansUtil.isGetter(m)) {
+				if (m.isAnnotationPresent(NGModel.class)) {
+					getters.add(m);
+				}
+			}
+
+		}
+
+	}
+
 	
+	public Method[] getMethods() {
+		return methods;
+	}
+	
+	public Set<Method> getters() {
+
+		return getters;
+	}
+
+	@Override
+	public int hashCode() {
+
+		return name.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NGBean other = (NGBean) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (targetClass == null) {
+			if (other.targetClass != null)
+				return false;
+		} else if (!targetClass.equals(other.targetClass))
+			return false;
+		return true;
+	}
+
+
 	
 	
 }

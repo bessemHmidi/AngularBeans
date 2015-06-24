@@ -21,10 +21,14 @@
  */
 package angularBeans.ngservices;
 
+import angularBeans.boot.ModuleGenerator;
+
 
 @NGExtention
 public class LoggerService implements NGService {
 
+	private ModuleGenerator moduleGenerator;
+	
 	public String render() {
 		String result = "";
 
@@ -42,6 +46,12 @@ public class LoggerService implements NGService {
 		result += "			 }}]);";
 
 		return result;
+	}
+
+	@Override
+	public void setGenerator(ModuleGenerator generator) {
+		this.moduleGenerator=generator;
+		
 	}
 
 }

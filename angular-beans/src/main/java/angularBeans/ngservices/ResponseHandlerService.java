@@ -28,7 +28,7 @@ import angularBeans.boot.ModuleGenerator;
 @NGExtention
 public class ResponseHandlerService implements NGService {
 
-	@Inject
+	
 	ModuleGenerator generator;
 
 	@Override
@@ -39,8 +39,6 @@ public class ResponseHandlerService implements NGService {
 		result += "app.service('responseHandler',['logger','$rootScope','$filter',function(logger,$rootScope,$filter){\n";
 
 		result += ("\nthis.handleResponse=function(msg,caller,isRPC){");
-
-		
 		
 		result += "var mainReturn={};";
 
@@ -141,6 +139,12 @@ public class ResponseHandlerService implements NGService {
 		result += ("}]);\n");
 
 		return result;
+	}
+
+	@Override
+	public void setGenerator(ModuleGenerator generator) {
+		this.generator=generator;
+		
 	}
 
 }

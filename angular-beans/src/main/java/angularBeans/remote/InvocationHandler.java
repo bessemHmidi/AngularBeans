@@ -22,7 +22,6 @@
 package angularBeans.remote;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -35,11 +34,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.swing.text.rtf.RTFEditorKit;
 
-import angularBeans.api.AngularBean;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
 import angularBeans.context.BeanLocator;
@@ -64,8 +60,8 @@ import com.google.gson.JsonPrimitive;
 @NGSessionScoped
 public class InvocationHandler implements Serializable {
 
-//	@Inject
-//	RealTimeClient holder;
+	// @Inject
+	// RealTimeClient holder;
 
 	@Inject
 	NGLogger logger;
@@ -75,14 +71,14 @@ public class InvocationHandler implements Serializable {
 
 	@Inject
 	BeanLocator locator;
-	
+
 	@Inject
 	ModelQueryFactory modelQueryFactory;
 
 	Map<String, Class> builtInMap = new HashMap<String, Class>();
 
-	Map<String, Class> arrayTypesMap=new HashMap<>();
-	
+	Map<String, Class> arrayTypesMap = new HashMap<>();
+
 	@PostConstruct
 	public void init() {
 		builtInMap.put("int", Integer.TYPE);
@@ -94,8 +90,7 @@ public class InvocationHandler implements Serializable {
 		builtInMap.put("byte", Byte.TYPE);
 		// builtInMap("void", Void.TYPE );
 		builtInMap.put("short", Short.TYPE);
-		
-		
+
 		arrayTypesMap.put("[I", int[].class);
 		arrayTypesMap.put("[F", float[].class);
 		arrayTypesMap.put("[D", double[].class);
@@ -103,8 +98,8 @@ public class InvocationHandler implements Serializable {
 		arrayTypesMap.put("[S", short[].class);
 		arrayTypesMap.put("[B", byte[].class);
 		arrayTypesMap.put("[C", char[].class);
-		arrayTypesMap.put("[Z", boolean[].class); 
-		
+		arrayTypesMap.put("[Z", boolean[].class);
+
 		arrayTypesMap.put("[Ljava.lang.Long;", Long[].class);
 		arrayTypesMap.put("[Ljava.lang.Double;", Double[].class);
 		arrayTypesMap.put("[Ljava.lang.Integer;", Integer[].class);
@@ -113,13 +108,12 @@ public class InvocationHandler implements Serializable {
 		arrayTypesMap.put("[Ljava.lang.Byte;", Byte[].class);
 		arrayTypesMap.put("[Ljava.lang.Character;", Character[].class);
 		arrayTypesMap.put("[Ljava.lang.Boolean;", Boolean[].class);
-		
-		
+
 	}
 
 	public synchronized void realTimeInvoke(Object ServiceToInvoque,
-			String methodName, JsonObject params, RealTimeDataReceiveEvent event,
-			long reqID, String UID) {
+			String methodName, JsonObject params,
+			RealTimeDataReceiveEvent event, long reqID, String UID) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
@@ -129,20 +123,20 @@ public class InvocationHandler implements Serializable {
 		returns.put("isRT", true);
 
 		try {
-			genericInvoke(ServiceToInvoque, methodName, params, returns,reqID,UID);
-			
-			if(returns.get("mainReturn")!=null)
-			{
-			event.getConnection().write(util.getJson(returns));
-		    }
+			genericInvoke(ServiceToInvoque, methodName, params, returns, reqID,
+					UID);
+
+			if (returns.get("mainReturn") != null) {
+				event.getConnection().write(util.getJson(returns));
+			}
 		} catch (SecurityException | ClassNotFoundException
 				| IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//if(returns.get("mainReturn")==null){returns =null;}
+
+		// if(returns.get("mainReturn")==null){returns =null;}
 
 	}
 
@@ -156,24 +150,23 @@ public class InvocationHandler implements Serializable {
 		try {
 
 			returns.put("isRT", false);
-			genericInvoke(o, method, params, returns,0,UID);
+			genericInvoke(o, method, params, returns, 0, UID);
 
 		} catch (Exception e) {
 			// fire(e);
 			e.printStackTrace();
 		}
 
-		
-		
 		return returns;
 	}
 
 	private void genericInvoke(Object service, String methodName,
-			JsonObject params, Map<String, Object> returns,long reqID, String UID)
-			
-			throws SecurityException, ClassNotFoundException,
-			IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException {
+			JsonObject params, Map<String, Object> returns, long reqID,
+			String UID)
+
+	throws SecurityException, ClassNotFoundException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException {
 
 		Object mainReturn = null;
 
@@ -182,45 +175,35 @@ public class InvocationHandler implements Serializable {
 		JsonElement argsElem = params.get("args");
 
 		// returns.put("isRT", false);
-		
-		if(reqID>0){
-		returns.put("reqId", reqID);
+
+		if (reqID > 0) {
+			returns.put("reqId", reqID);
 		}
 		if (argsElem != null) {
 
 			JsonArray args = params.get("args").getAsJsonArray();
 
-		
-			
 			for (Method mt : service.getClass().getMethods()) {
 
 				if (mt.getName().equals(methodName)) {
 
 					Type[] parameters = mt.getParameterTypes();
 
-					
-					
-					
 					if (parameters.length == args.size()) {
 
-						
 						List<Object> argsValues = new ArrayList<Object>();
 
 						for (int i = 0; i < parameters.length; i++) {
 
 							Class typeClass = null;
-							
-							
-							
-							
-							
+
 							String typeString = ((parameters[i]).toString());
 
 							if (typeString.startsWith("class")) {
 								typeString = typeString.substring(6);
-								
+
 								typeClass = Class.forName(typeString);
-						
+
 							}
 
 							else {
@@ -229,41 +212,28 @@ public class InvocationHandler implements Serializable {
 							}
 
 							JsonElement element = args.get(i);
-		
-							//System.out.println(element);
-							
-							
+
 							if (element.isJsonPrimitive()) {
-								
+
 								String val = element.getAsString();
 								argsValues.add(util.convertFromString(val,
 										typeClass));
 
-							} else 
-							if(element.isJsonArray())
-							{
-						
-								
-								
-								//System.out.println(typeString);
-							JsonArray arr=	element.getAsJsonArray();
-							
-							
-							
-							
-							
-							argsValues.add(deserialise(arrayTypesMap.get(typeString), arr));
-								
-							}else{
-								
+							} else if (element.isJsonArray()) {
+
+								JsonArray arr = element.getAsJsonArray();
+
+								argsValues.add(deserialise(
+										arrayTypesMap.get(typeString), arr));
+
+							} else {
+
 								argsValues.add(deserialise(typeClass, element));
-								
+
 							}
 
-							//-----
-							
-							
-							
+							// -----
+
 						}
 
 						m = mt;
@@ -276,7 +246,7 @@ public class InvocationHandler implements Serializable {
 						}
 						mainReturn = m.invoke(service, argsValues.toArray());
 
-				}
+					}
 
 				}
 
@@ -307,82 +277,78 @@ public class InvocationHandler implements Serializable {
 
 		// 1
 
-		
-//		modelQueryFactory=(ModelQueryFactory) locator.lookup("ModelQueryFactory",UID );
-		
-					ModelQueryImpl qImpl= (ModelQueryImpl)modelQueryFactory.get(service.getClass());
-					
-					Map<String, Object> scMap = new HashMap<String, Object>(
-							(qImpl).getData());
+		// modelQueryFactory=(ModelQueryFactory)
+		// locator.lookup("ModelQueryFactory",UID );
 
-					//System.out.println("---: "+scMap.size());
-					
-					returns.putAll(scMap);
+		ModelQueryImpl qImpl = (ModelQueryImpl) modelQueryFactory.get(service
+				.getClass());
 
-					(qImpl).getData().clear();
+		Map<String, Object> scMap = new HashMap<String, Object>(
+				(qImpl).getData());
 
-					if (!modelQueryFactory.getRootScope().getRootScopeMap().isEmpty()) {
-						returns.put("rootScope", new HashMap<String, Object>(modelQueryFactory
-								.getRootScope().getRootScopeMap()));
-						modelQueryFactory.getRootScope().getRootScopeMap().clear();
-					}
-		
+		returns.putAll(scMap);
+
+		(qImpl).getData().clear();
+
+		if (!modelQueryFactory.getRootScope().getRootScopeMap().isEmpty()) {
+			returns.put("rootScope", new HashMap<String, Object>(
+					modelQueryFactory.getRootScope().getRootScopeMap()));
+			modelQueryFactory.getRootScope().getRootScopeMap().clear();
+		}
+
 		String[] updates = null;
 
-//		if ((m.isAnnotationPresent(NGReturn.class))
-//				|| (m.isAnnotationPresent(NGPostConstruct.class))
-//		) {
+		// if ((m.isAnnotationPresent(NGReturn.class))
+		// || (m.isAnnotationPresent(NGPostConstruct.class))
+		// ) {
 
-			if (m.isAnnotationPresent(NGReturn.class)) {
-				NGReturn ngReturn = m.getAnnotation(NGReturn.class);
-				updates = ngReturn.updates();
+		if (m.isAnnotationPresent(NGReturn.class)) {
+			NGReturn ngReturn = m.getAnnotation(NGReturn.class);
+			updates = ngReturn.updates();
 
-				if(ngReturn.model().length()>0){
-				 returns.put(ngReturn.model(), mainReturn);
-				 Map<String, String> binding=new HashMap<String, String>();
-				 
-				 binding.put("boundTo", ngReturn.model());
-				 
-				 mainReturn=binding;
-				}
+			if (ngReturn.model().length() > 0) {
+				returns.put(ngReturn.model(), mainReturn);
+				Map<String, String> binding = new HashMap<String, String>();
+
+				binding.put("boundTo", ngReturn.model());
+
+				mainReturn = binding;
 			}
+		}
 
-		
+		if (m.isAnnotationPresent(NGPostConstruct.class)) {
+			NGPostConstruct ngPostConstruct = m
+					.getAnnotation(NGPostConstruct.class);
+			updates = ngPostConstruct.updates();
 
-			if (m.isAnnotationPresent(NGPostConstruct.class)) {
-				NGPostConstruct ngPostConstruct = m
-						.getAnnotation(NGPostConstruct.class);
-				updates = ngPostConstruct.updates();
+		}
 
-			}
+		if (updates != null) {
+			if ((updates.length == 1) && (updates[0].equals("*"))) {
 
-			if (updates != null) {
-				if ((updates.length == 1) && (updates[0].equals("*"))) {
+				List<String> upd = new ArrayList<String>();
+				for (Method met : service.getClass().getDeclaredMethods()) {
 
-					List<String> upd = new ArrayList<String>();
-					for (Method met : service.getClass()
-							.getDeclaredMethods()) {
+					if (util.isGetter(met)) {
 
-						if (util.isGetter(met)) {
+						String fieldName = (met.getName()).substring(3);
+						String firstCar = fieldName.substring(0, 1);
+						upd.add((firstCar.toLowerCase() + fieldName
+								.substring(1)));
 
-							String fieldName = (met.getName()).substring(3);
-							String firstCar = fieldName.substring(0, 1);
-							upd.add((firstCar.toLowerCase() + fieldName
-									.substring(1)));
-
-						}
 					}
-
-					updates = new String[upd.size()];
-
-					for (int i = 0; i < upd.size(); i++) {
-						updates[i] = upd.get(i);
-					}
-
 				}
+
+				updates = new String[upd.size()];
+
+				for (int i = 0; i < upd.size(); i++) {
+					updates[i] = upd.get(i);
+				}
+
 			}
-			
-			if(updates!=null){
+		}
+
+		if (updates != null) {
 			for (String up : updates) {
 
 				String getterName = "get" + up.substring(0, 1).toUpperCase()
@@ -398,25 +364,16 @@ public class InvocationHandler implements Serializable {
 				Object result = getter.invoke(service);
 				returns.put(up, result);
 
-			}}
+			}
+		}
 
-			
+		// }
 
+		// if (m.isAnnotationPresent(NGReturn.class)) {
 
-	//	}
+		returns.put("mainReturn", mainReturn);
+		// }
 
-		
-		//if (m.isAnnotationPresent(NGReturn.class)) {
-
-			
-			
-			
-			returns.put("mainReturn", mainReturn);
-		//}
-	
-		
-
-			
 	}
 
 	private void update(Object o, JsonObject params) {

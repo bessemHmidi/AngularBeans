@@ -34,11 +34,58 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.inject.Inject;
 
 import angularBeans.api.AngularBean;
+import angularBeans.api.NGApp;
+import angularBeans.boot.BeanRegistry;
+import angularBeans.ngservices.NGExtention;
+import angularBeans.ngservices.NGService;
 
 public class NGSessionExtention implements Extension {
 
+	
+	 
+	
+	public <T> void processAnnotatedType(
+	@Observes ProcessAnnotatedType<T> processAnnotatedType) {
+
+AnnotatedType<T> annotatedType = processAnnotatedType
+		.getAnnotatedType();
+
+if (annotatedType.isAnnotationPresent(AngularBean.class)){
+{BeanRegistry.getInstance().registerBean(annotatedType.getJavaClass());};
+
+	}
+	
+	
+	if (annotatedType.isAnnotationPresent(NGExtention.class)){
+	{try {
+		
+		
+		BeanRegistry.getInstance().registerExtention((NGService) annotatedType.getJavaClass().newInstance());
+	} catch (InstantiationException | IllegalAccessException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}};
+
+		}
+	
+	
+//	if (annotatedType.isAnnotationPresent(NGApp.class)){
+//			
+//		BeanRegistry.getInstance().registerApp(annotatedType.getJavaClass());
+//		}
+	
+}
+//if (annotatedType.isAnnotationPresent(AngularBean.class)) {
+//	System.out.println("------------PROCESSING");
+//	
+//	Class clazz=annotatedType.getJavaClass();
+//	
+//	
+	
+	
 //	public <T> void processAnnotatedType(
 //			@Observes ProcessAnnotatedType<T> processAnnotatedType) {
 //

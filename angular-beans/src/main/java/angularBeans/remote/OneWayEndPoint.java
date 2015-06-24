@@ -117,15 +117,14 @@ public class OneWayEndPoint extends HttpServlet implements Serializable {
 		String UID = (paramsObj.get("sessionUID")).getAsString();
 		
 		NGSessionScopeContext.setCurrentContext(UID);
-
-		
 		
 		receiveEvents.fire(new OneWayDataReceivedEvent(paramsObj));
 
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID),
 				method, paramsObj, UID);
 
-
+		
+		
 		// System.out.println(util.getJson(result));
 
 		return util.getJson(result);

@@ -21,11 +21,14 @@
  */
 package angularBeans.ngservices;
 
+import angularBeans.boot.ModuleGenerator;
+
 
 
 @NGExtention
 public class BundleService implements NGService {
 
+private ModuleGenerator moduleGenerator;
 	@Override
 	public String render() {
 		String result = "";
@@ -34,6 +37,12 @@ public class BundleService implements NGService {
 				+ " $http.get('resources/'+bundleName).success(function(data){"
 				+ " $rootScope[aleas]=data;" + "});};;}]);";
 		return result;
+	}
+
+	@Override
+	public void setGenerator(ModuleGenerator generator) {
+		this.moduleGenerator=generator;
+		
 	}
 
 }
