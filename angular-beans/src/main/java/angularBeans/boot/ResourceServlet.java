@@ -21,10 +21,7 @@
  */
 package angularBeans.boot;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -33,14 +30,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import angularBeans.util.AngularBeansUtil;
-
 @WebServlet(urlPatterns = "/resources/*")
 public class ResourceServlet extends HttpServlet {
 
 	@Inject
-	AngularBeansUtil util;
-	
+	ResourcesCache resourcesCache;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -49,27 +44,13 @@ public class ResourceServlet extends HttpServlet {
 
 		int index = (requestURI.indexOf("/resources/")) + 10;
 
-		InputStream is =null;
-		try {
-			 is = getServletConfig().getServletContext().getResourceAsStream(
-					"/META-INF" + (requestURI.substring(index)) + ".properties");
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
-		
+		String resourceName = (requestURI.substring(index));
 
-	//	ServletContext application = getServletConfig().getServletContext();
-//		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//		InputStream input = classLoader.getResourceAsStream("WEB-INF/"+ (requestURI.substring(index)) + ".properties");
+		resp.setHeader("Access-Control-Allow-Origin", "*");
 		
-		
-		
-		Properties properties = new Properties();
-
-		properties.load(is);
-
-		resp.getWriter().write(util.getJson(properties));
+		resp.getWriter().write(
+				resourcesCache.get(resourceName, getServletConfig()
+						.getServletContext()));
 
 	}
 

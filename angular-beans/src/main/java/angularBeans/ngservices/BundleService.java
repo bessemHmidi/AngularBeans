@@ -21,28 +21,17 @@
  */
 package angularBeans.ngservices;
 
-import angularBeans.boot.ModuleGenerator;
-
-
-
 @NGExtention
 public class BundleService implements NGService {
 
-private ModuleGenerator moduleGenerator;
 	@Override
 	public String render() {
 		String result = "";
 		result += "app.service(\"bundleService\",['$http','$rootScope','$timeout',function($http,$rootScope,$timeout){"
 				+ "this.loadBundle=function(bundleName,aleas){"
-				+ " $http.get('resources/'+bundleName).success(function(data){"
+				+ " $http.get($rootScope.baseUrl+'resources/'+bundleName).success(function(data){"
 				+ " $rootScope[aleas]=data;" + "});};;}]);";
 		return result;
-	}
-
-	@Override
-	public void setGenerator(ModuleGenerator generator) {
-		this.moduleGenerator=generator;
-		
 	}
 
 }

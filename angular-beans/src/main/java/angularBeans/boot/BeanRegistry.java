@@ -3,7 +3,6 @@ package angularBeans.boot;
 import java.util.HashSet;
 import java.util.Set;
 
-import angularBeans.ngservices.NGExtention;
 import angularBeans.ngservices.NGService;
 import angularBeans.util.NGBean;
 
@@ -13,23 +12,21 @@ public class BeanRegistry {
 
 	private Set<NGBean> angularBeans = new HashSet<>();
 
-	private Set<NGService> extentions=new HashSet<>();
+	private Set<NGService> extentions = new HashSet<>();
 
-	private Set<Class> apps=new HashSet<>();
+	private Class<? extends Object> appClass;
 
-	public void registerApp(Class appClass){
-		apps.add(appClass);
-		
+	public void registerApp(Class appClass) {
+		this.appClass = appClass;
+
 	}
-	
-	public void registerBean(Class targetClass) {
 
+	public void registerBean(Class targetClass) {
 		angularBeans.add(new NGBean(targetClass));
 
 	}
-	
-	public void registerExtention(NGService extention){
-		
+
+	public void registerExtention(NGService extention) {
 
 		extentions.add(extention);
 	}
@@ -48,12 +45,9 @@ public class BeanRegistry {
 		return extentions;
 	}
 
-	public Set<Class> getApps() {
+	public Class<? extends Object> getAppClass() {
 		// TODO Auto-generated method stub
-		return apps;
+		return appClass;
 	}
-	
-	
-	
 
 }

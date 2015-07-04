@@ -35,17 +35,19 @@ public class SockJsRpcService implements NGService {
 	@Override
 	public String render() {
 
-		HttpServletRequest request = generator.getRequest();
+//		HttpServletRequest request = generator.getRequest();
+//
+//		String serverName = (request.getServerName());
+//		String portNumber = (String.valueOf(request.getServerPort()));
+//		String contextPath = (request.getServletContext().getContextPath());
 
-		String serverName = (request.getServerName());
-		String portNumber = (String.valueOf(request.getServerPort()));
-		String contextPath = (request.getServletContext().getContextPath());
+		
+		
+//		String sockJsPath = ("http://"+serverName + ":" + portNumber
+//				+ contextPath + "/rt-service/");
 
-		String sockJsPath = ("http://"+serverName + ":" + portNumber
-				+ contextPath + "/rt-service/");
-
-		String webSocketPath=("ws://"+serverName+":" + portNumber
-				+ contextPath + "/rt-service/websocket");
+//		String webSocketPath=("ws://"+serverName+":" + portNumber
+//				+ contextPath + "/rt-service/websocket");
 		
 		String result = "";
 
@@ -54,8 +56,16 @@ public class SockJsRpcService implements NGService {
 		// result +=
 		// "app.service('RTSrvc',['logger','$rootScope','$http','responseHandler','$q',function(logger,$rootScope,$http,responseHandler,$q){\n";
 		
-		result += "var wsuri =\"" + webSocketPath + "\";";
-		result += "var sjsuri =\"" + sockJsPath + "\";";
+		
+		result += "var wsuri =sript_origin.replace('http:','ws:') +'rt-service/websocket';";
+		
+		result += "var sjsuri = sript_origin +'rt-service/';";
+		
+		
+		
+		//result +="alert(sjsuri);";
+//		result += "var wsuri =\"" + webSocketPath + "\";";
+//		result += "var sjsuri =\"" + sockJsPath + "\";";
 		
 		result+="var ws={};";
 		result+="if (!((typeof SockJS !=='undefined')&&(angular.isDefined(SockJS.constructor)))){"
@@ -168,8 +178,8 @@ public class SockJsRpcService implements NGService {
 		return result;
 	}
 
-	@Override
-	public void setGenerator(ModuleGenerator generator) {
-		this.generator = generator;
-	}
+//	@Override
+//	public void setGenerator(ModuleGenerator generator) {
+//		this.generator = generator;
+//	}
 }

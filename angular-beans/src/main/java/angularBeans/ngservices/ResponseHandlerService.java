@@ -21,15 +21,8 @@
  */
 package angularBeans.ngservices;
 
-import javax.inject.Inject;
-
-import angularBeans.boot.ModuleGenerator;
-
 @NGExtention
 public class ResponseHandlerService implements NGService {
-
-	
-	ModuleGenerator generator;
 
 	@Override
 	public String render() {
@@ -39,7 +32,7 @@ public class ResponseHandlerService implements NGService {
 		result += "app.service('responseHandler',['logger','$rootScope','$filter',function(logger,$rootScope,$filter){\n";
 
 		result += ("\nthis.handleResponse=function(msg,caller,isRPC){");
-		
+
 		result += "var mainReturn={};";
 
 		result += ("\nfor (var key in msg) {");
@@ -78,9 +71,9 @@ public class ResponseHandlerService implements NGService {
 		result += "if(equalsKey=='NAN'){";
 
 		result += "for (var item in caller[modelkey]) {";
-		
-		result+="";
-		result +="if(angularBeans.isIn(caller[modelkey],tab[value])){caller[modelkey].splice(item, 1);}";
+
+		result += "";
+		result += "if(angularBeans.isIn(caller[modelkey],tab[value])){caller[modelkey].splice(item, 1);}";
 		result += "}";
 
 		result += "}else{";
@@ -88,14 +81,13 @@ public class ResponseHandlerService implements NGService {
 		result += "criteria[equalsKey]='!'+tab[value][equalsKey];";
 		result += "caller[modelkey] = $filter('filter')(caller[modelkey], criteria);";
 		result += "}}";
-		//
 
 		result += "if(key==='add'){";
-		result += "\n var found=false;";
-		result += "for (var item in caller[modelkey]) {";
+		result += "\n var found=false; ";
+		// result += "for(item in caller[modelkey]) {";
 		result += "if(angularBeans.isIn(caller[modelkey],tab[value])){ found=true;}";
-		result += "}";
-		result += "if(!(found)){";
+		// result += "};";
+		result += "if(!(found)){  ";
 		result += "caller[modelkey].push(tab[value]);";
 		result += "}};"
 
@@ -108,18 +100,16 @@ public class ResponseHandlerService implements NGService {
 		// --------------------------------------------------------------------
 
 		result += ("if(!(key in ['rootScope','add','mainReturn','rm'])){");
-		
-		
+
 		result += ("\ncaller[key]=msg[key];");
-		
-		
+
 		result += ("\n  }");
 
 		result += "if ((key==='mainReturn')&&(msg[key])){"
 				+ "if(msg[key].hasOwnProperty('boundTo')){"
 				+ "mainReturn=msg[msg[key].boundTo];"
 
-			    + "}else{"
+				+ "}else{"
 
 				+ "mainReturn=msg[key];}}";
 
@@ -129,9 +119,9 @@ public class ResponseHandlerService implements NGService {
 
 		// -->
 
-		//result+="if(isRT){$rootScope.$apply();}";
-		result+="if(!isRPC){$rootScope.$digest();$rootScope.$apply();}";
-		
+		// result+="if(isRT){$rootScope.$apply();}";
+		result += "if(!isRPC){$rootScope.$digest();$rootScope.$apply();}";
+
 		result += ("return mainReturn;");
 
 		result += ("};");
@@ -139,12 +129,6 @@ public class ResponseHandlerService implements NGService {
 		result += ("}]);\n");
 
 		return result;
-	}
-
-	@Override
-	public void setGenerator(ModuleGenerator generator) {
-		this.generator=generator;
-		
 	}
 
 }

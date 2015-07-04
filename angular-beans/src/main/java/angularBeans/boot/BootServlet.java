@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -47,29 +46,29 @@ public class BootServlet extends HttpServlet {
 	Logger log;
 
 	String jsContent;
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
+
 		long startTime = System.currentTimeMillis();
-		
-		generator.setHTTPRequest(req);
-		
+
+		generator.setContextPath(req.getScheme() + "://" + req.getServerName()
+				+ ":" + req.getServerPort()
+				+ req.getServletContext().getContextPath() + "/");
+
 		resp.setContentType("text/javascript");
 		StringWriter stringWriter = new StringWriter();
 		generator.getScript(stringWriter);
-		 jsContent = stringWriter.toString();
-	
-          
-        
+		jsContent = stringWriter.toString();
 
-		//String compressed = getCompressedJavaScript(jsContent);
-		//resp.getWriter().write(compressed);
+		// String compressed = getCompressedJavaScript(jsContent);
+		// resp.getWriter().write(compressed);
 
 		resp.getWriter().write(jsContent);
 		long endTime = System.currentTimeMillis();
-		log.info("Module generated successfully in "+(endTime-startTime)+" ms");
+		log.info("Module generated successfully in " + (endTime - startTime)
+				+ " ms");
 		resp.getWriter().flush();
 	}
 

@@ -27,6 +27,6 @@ public interface NGService {
 
 	String render();
 
-	void setGenerator(ModuleGenerator generator);
+	
 
 }

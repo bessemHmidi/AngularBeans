@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.logging.Logger;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
@@ -34,17 +33,16 @@ import javax.enterprise.inject.spi.Bean;
 import angularBeans.context.NGSessionContextHolder.CustomScopeInstance;
 
 public class NGSessionScopeContext implements Context, Serializable {
-	
-	
-	
+
 	private static Context INSTANCE;
-	
+
 	public NGSessionScopeContext() {
-		INSTANCE=this;
+		INSTANCE = this;
 	}
-	
+
 	public static Context getINSTANCE() {
-		if (INSTANCE==null)INSTANCE=new NGSessionScopeContext();
+		if (INSTANCE == null)
+			INSTANCE = new NGSessionScopeContext();
 		return INSTANCE;
 	}
 
@@ -55,12 +53,10 @@ public class NGSessionScopeContext implements Context, Serializable {
 		NGSessionContextHolder selectedHolder = GlobalMapHolder.get(holderId);
 
 		holder.set(selectedHolder);
- 
+
 	}
 
 	private Logger log = Logger.getLogger(getClass().getSimpleName());
-
-	
 
 	@Override
 	public Class<? extends Annotation> getScope() {
@@ -78,9 +74,9 @@ public class NGSessionScopeContext implements Context, Serializable {
 		if (holder.get().getBeans().containsKey(bean.getBeanClass())) {
 			return (T) holder.get().getBean(bean.getBeanClass()).instance;
 		} else {
-			
-			//System.out.println("bean creation..."+bean.getBeanClass());
-			
+
+			// System.out.println("bean creation..."+bean.getBeanClass());
+
 			T t = (T) bean.create(creationalContext);
 			CustomScopeInstance customInstance = new CustomScopeInstance();
 			customInstance.bean = bean;
@@ -97,7 +93,6 @@ public class NGSessionScopeContext implements Context, Serializable {
 
 		Bean bean = (Bean) contextual;
 
-		
 		if (holder.get().getBeans().containsKey(bean.getBeanClass())) {
 			return (T) holder.get().getBean(bean.getBeanClass()).instance;
 		} else {
@@ -110,7 +105,5 @@ public class NGSessionScopeContext implements Context, Serializable {
 		// TODO Auto-generated method stub
 		return true;
 	}
-	
-
 
 }

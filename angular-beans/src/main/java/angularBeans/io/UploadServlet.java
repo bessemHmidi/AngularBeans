@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.ietf.jgss.Oid;
 
+import angularBeans.boot.ModuleGenerator;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.log.NGLogger;
 import angularBeans.util.AngularBeansUtil;
@@ -31,11 +32,18 @@ public class UploadServlet extends HttpServlet {
 	@Inject
 	NGLogger logger;
 
+	@Inject
+	ModuleGenerator generator;
+	
 	protected void processRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 	
-		//request.getSession(true);
-
+		Object sessionUID=request.getSession().getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME);
+		
+		if(sessionUID==null){
+		request.getSession(true);
+		request.getSession().setAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME, generator.getUID());		
+		}
 		NGSessionScopeContext.setCurrentContext((request.getSession()
 				.getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME)
 				.toString()));
@@ -56,22 +64,6 @@ public class UploadServlet extends HttpServlet {
 			
 			
 			
-//			out.println("<!DOCTYPE html>");
-//			out.println("<html>");
-//			out.println("<head>");
-//			out.println("<title>Servlet TestServlet</title>");
-//			out.println("</head>");
-//			out.println("<body>");
-//			out.println("<h1>Angular Beans Upload Service"
-//					+ request.getContextPath() + ": param</h1>");
-//
-//			
-//			
-//
-//			out.println("</body>");
-//			out.println("</html>");
-			//out.flush();
-			//out.close();
 		
 			List<Upload> uploads = new ArrayList<Upload>();
 			
@@ -80,7 +72,6 @@ public class UploadServlet extends HttpServlet {
 				uploads.add(event);
 				// fileName = part.getSubmittedFileName();
 				// part.write(fileName);
-
 			uploadHandler.handleUploads(uploads, param);
 
 			}

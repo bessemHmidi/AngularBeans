@@ -22,14 +22,10 @@
 package angularBeans.context;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
@@ -40,7 +36,6 @@ import javax.inject.Inject;
 
 import angularBeans.util.AngularBeansUtil;
 
-
 @ApplicationScoped
 public class BeanLocator implements Serializable {
 
@@ -49,42 +44,7 @@ public class BeanLocator implements Serializable {
 
 	@Inject
 	AngularBeansUtil util;
-	
-	public BeanLocator() {
-		// TODO Auto-generated constructor stub
-	}
 
-	
-	
-//	public synchronized Object lookupHybrid(Class beanClass,String UID){
-//		
-//		if(!hybrideBeans.containsKey(UID)){
-//			hybrideBeans.put(UID, new HashMap<Class, Object>());
-//		}
-//		
-//		
-//		if(!hybrideBeans.get(UID).containsKey(beanClass)){
-//			
-//			try {
-//				registerHybridBean(beanClass.newInstance(), UID);
-//			
-//			
-//			
-//			} catch (InstantiationException | IllegalAccessException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		return hybrideBeans.get(UID).get(beanClass);
-//		
-//	}
-//	
-//	private Map<String,Map<Class, Object>> hybrideBeans=new HashMap<String, Map<Class,Object>>();
-//	
-//	public void registerHybridBean(Object Bean,String UID){
-//		
-//	}
-	
 	public synchronized Object lookup(String beanName, String UID) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
@@ -104,23 +64,22 @@ public class BeanLocator implements Serializable {
 		Context context = null;
 
 		Class scopeAnnotationClass = bean.getScope();
-		
-		if(scopeAnnotationClass.equals(RequestScoped.class)){
-	 return bean.create(beanManager.createCreationalContext(bean));
 
-		}else{
-	
-		if(scopeAnnotationClass.equals(NGSessionScopeContext.class)){
-		context = NGSessionScopeContext.getINSTANCE();
+		if (scopeAnnotationClass.equals(RequestScoped.class)) {
+			return bean.create(beanManager.createCreationalContext(bean));
+
+		} else {
+
+			if (scopeAnnotationClass.equals(NGSessionScopeContext.class)) {
+				context = NGSessionScopeContext.getINSTANCE();
+			} else {
+				context = beanManager.getContext(scopeAnnotationClass);
+			}
+
 		}
-		else{
-			context =beanManager.getContext(scopeAnnotationClass);
-		}
-		
-		}
-		CreationalContext	creationalContext =beanManager.createCreationalContext(bean);
-		reference = context
-				.get(bean, creationalContext);
+		CreationalContext creationalContext = beanManager
+				.createCreationalContext(bean);
+		reference = context.get(bean, creationalContext);
 
 		return reference;
 	}

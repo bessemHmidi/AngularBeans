@@ -131,6 +131,7 @@ public class SockJsServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
        
+    	res.setHeader("Access-Control-Allow-Origin", "true");
     	//if(sockJsServer==null)
     	//initJSR356();
     	log.log(Level.FINE, "SockJsServlet#service for {0} {1}", new Object[] {req.getMethod(), req.getPathInfo()});

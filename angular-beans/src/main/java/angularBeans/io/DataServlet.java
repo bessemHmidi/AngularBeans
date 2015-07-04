@@ -28,6 +28,8 @@ public class DataServlet extends HttpServlet {
 		int index = (requestURI.indexOf("/lob")) + 5;
 		String resourceId = requestURI.substring(index);
 
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		
 		if (cache.getCache().containsKey(resourceId)) {
 			Call call = cache.getCache().get(resourceId);
 			Method m = call.getMethod();

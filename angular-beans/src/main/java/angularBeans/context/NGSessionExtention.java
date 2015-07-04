@@ -21,11 +21,6 @@
  */
 package angularBeans.context;
 
-import java.lang.annotation.Annotation;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
@@ -34,7 +29,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.inject.Inject;
 
 import angularBeans.api.AngularBean;
 import angularBeans.api.NGApp;
@@ -44,108 +38,58 @@ import angularBeans.ngservices.NGService;
 
 public class NGSessionExtention implements Extension {
 
-	
-	 
-	
 	public <T> void processAnnotatedType(
-	@Observes ProcessAnnotatedType<T> processAnnotatedType) {
+			@Observes ProcessAnnotatedType<T> processAnnotatedType) {
 
-AnnotatedType<T> annotatedType = processAnnotatedType
-		.getAnnotatedType();
+		AnnotatedType<T> annotatedType = processAnnotatedType
+				.getAnnotatedType();
 
-if (annotatedType.isAnnotationPresent(AngularBean.class)){
-{BeanRegistry.getInstance().registerBean(annotatedType.getJavaClass());};
-
-	}
-	
-	
-	if (annotatedType.isAnnotationPresent(NGExtention.class)){
-	{try {
-		
-		
-		BeanRegistry.getInstance().registerExtention((NGService) annotatedType.getJavaClass().newInstance());
-	} catch (InstantiationException | IllegalAccessException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}};
+		if (annotatedType.isAnnotationPresent(AngularBean.class)) {
+			{
+				BeanRegistry.getInstance().registerBean(
+						annotatedType.getJavaClass());
+			}
+			;
 
 		}
-	
-	
-//	if (annotatedType.isAnnotationPresent(NGApp.class)){
-//			
-//		BeanRegistry.getInstance().registerApp(annotatedType.getJavaClass());
-//		}
-	
-}
-//if (annotatedType.isAnnotationPresent(AngularBean.class)) {
-//	System.out.println("------------PROCESSING");
-//	
-//	Class clazz=annotatedType.getJavaClass();
-//	
-//	
-	
-	
-//	public <T> void processAnnotatedType(
-//			@Observes ProcessAnnotatedType<T> processAnnotatedType) {
-//
-//		AnnotatedType<T> annotatedType = processAnnotatedType
-//				.getAnnotatedType();
-//
-////		if (annotatedType.isAnnotationPresent(AngularBean.class)) {
-////			System.out.println("------------PROCESSING");
-////			
-////			Class clazz=annotatedType.getJavaClass();
-////			
-////			if
-////			(
-////			(!clazz.isAnnotationPresent(RequestScoped.class))
-////			&&
-////			(!clazz.isAnnotationPresent(NGSessionScoped.class))
-////			&&(!clazz.isAnnotationPresent(SessionScoped.class))
-////			&&(!clazz.isAnnotationPresent(ApplicationScoped.class))
-////			
-////					)		
-////					{
-////				
-////				Annotation requestScopedAnnotation = new Annotation() {
-////			        @Override
-////			        public Class<? extends Annotation> annotationType() {
-////			          return RequestScoped.class;
-////			        }
-////			      };
-////
-////			      AnnotatedTypeWrapper<T> wrapper = new AnnotatedTypeWrapper<T>(
-////			          annotatedType, annotatedType.getAnnotations());
-////			      wrapper.addAnnotation(requestScopedAnnotation);
-////
-////			      processAnnotatedType.setAnnotatedType(wrapper);
-////				
-////				
-////					}
-////	
-////		}
-////		;
-//
-//	}
 
-	
-	public void addScopes(@Observes  final BeforeBeanDiscovery event) {
+		if (annotatedType.isAnnotationPresent(NGExtention.class)) {
+			{
+				try {
 
-		//event.addScope(NGSessionScoped.class, false, false);
+					BeanRegistry.getInstance().registerExtention(
+							(NGService) annotatedType.getJavaClass()
+									.newInstance());
+				} catch (InstantiationException | IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			;
+
+		}
+
+		if (annotatedType.isAnnotationPresent(NGApp.class)) {
+
+			BeanRegistry.getInstance()
+					.registerApp(annotatedType.getJavaClass());
+
+		}
+
 	}
 
-	public void registerContext(@Observes final AfterBeanDiscovery event,BeanManager manager) {
+	public void addScopes(@Observes final BeforeBeanDiscovery event) {
 
-		
-		
-		Context context =  NGSessionScopeContext.getINSTANCE();
+		// event.addScope(NGSessionScoped.class, false, false);
+	}
+
+	public void registerContext(@Observes final AfterBeanDiscovery event,
+			BeanManager manager) {
+
+		Context context = NGSessionScopeContext.getINSTANCE();
 		//
 		event.addContext(context);
-		
+
 	}
 
-//	<T> void pat(@Observes ProcessAnnotatedType<T> event, BeanManager bm) {
-//
-//	}
 }

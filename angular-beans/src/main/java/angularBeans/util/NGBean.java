@@ -58,7 +58,7 @@ public class NGBean implements Serializable {
 
 	public void scan() {
 		setName(AngularBeansUtil.getBeanName(targetClass));
-		methods=targetClass.getMethods();
+		methods = targetClass.getMethods();
 
 		for (Method m : methods) {
 			if (AngularBeansUtil.isGetter(m)) {
@@ -71,11 +71,10 @@ public class NGBean implements Serializable {
 
 	}
 
-	
 	public Method[] getMethods() {
 		return methods;
 	}
-	
+
 	public Set<Method> getters() {
 
 		return getters;
@@ -109,7 +108,4 @@ public class NGBean implements Serializable {
 		return true;
 	}
 
-
-	
-	
 }

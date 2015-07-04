@@ -58,29 +58,30 @@ public class OneWayEndPoint extends HttpServlet implements Serializable {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.getWriter().write(process(req).toString());
+		resp.getWriter().write(process(req, resp).toString());
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.getWriter().write(process(req).toString());
+		resp.getWriter().write(process(req, resp).toString());
 	}
 
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.getWriter().write(process(req).toString());
+		resp.getWriter().write(process(req, resp).toString());
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.getWriter().write(process(req).toString());
+		resp.getWriter().write(process(req,resp).toString());
 	}
 
-	private Object process(HttpServletRequest request) {
+	private Object process(HttpServletRequest request, HttpServletResponse resp) {
 
+		resp.setHeader("Access-Control-Allow-Origin", "*");
 		String fullPath = request.getRequestURI();
 		fullPath = (fullPath.substring(fullPath.indexOf("/service/") + 9));
 
