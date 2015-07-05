@@ -8,7 +8,7 @@ package angularBeans.realtime;
  *an NGEvent will be inserted to a response and 
  *converted to an AngularJS event
  */
-public class NGEvent {
+public class QueryEvent {
 	
 	
 	

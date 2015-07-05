@@ -26,7 +26,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -43,8 +42,11 @@ import angularBeans.io.LobWrapper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
@@ -57,13 +59,11 @@ public class AngularBeansUtil implements Serializable {
 
 	@Inject
 	private CurrentNGSession currentSession;
-	
-	
-	
+
 	public String getCurrentSessionId() {
 		return currentSession.getSessionId();
 	}
-	
+
 	@Inject
 	ByteArrayCache cache;
 
@@ -125,29 +125,26 @@ public class AngularBeansUtil implements Serializable {
 
 	}
 
-	
-	
-	
-	
-	public  String getJson(Object object) {
+	public String getJson(Object object) {
 
-		
-		if(object instanceof Properties){
+		if (object instanceof Properties) {
 			return new Gson().toJson(object);
 		}
-		
+
 		GsonBuilder builder = new GsonBuilder().serializeNulls();
 
-		if(object==null){
+		if (object == null) {
 			return new GsonBuilder().serializeNulls().create().toJson(null);
-			
-		}
-			
-		
-		Class clazz = object.getClass();
 
-		builder.registerTypeAdapter(LobWrapper.class, new ByteArrayJsonAdapter(
-				cache));
+		}
+
+		// Class clazz = object.getClass();
+
+		builder.registerTypeAdapter(LobWrapper.class,
+				new LobWrapperJsonAdapter(cache));
+
+		builder.registerTypeAdapter(byte[].class, new ByteArrayJsonAdapter(
+				cache, contextPath));
 
 		Gson gson = builder.create();
 
@@ -168,10 +165,7 @@ public class AngularBeansUtil implements Serializable {
 	}
 
 	public static JsonObject parse(String message) {
-		
-		
-		
-		
+
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(message);
 
@@ -184,8 +178,6 @@ public class AngularBeansUtil implements Serializable {
 
 		// NPE
 
-		
-		
 		if (type.equals(int.class) || type.equals(Integer.class)) {
 			param = Integer.parseInt(value);
 			return param;
@@ -256,8 +248,8 @@ public class AngularBeansUtil implements Serializable {
 	public static boolean isGetter(Method m) {
 		return (
 
-		(m.getParameterTypes().length==0) && ((m.getName().startsWith("get")) || (((m.getReturnType()
-				.equals(boolean.class)) || (m.getReturnType()
+		(m.getParameterTypes().length == 0) && ((m.getName().startsWith("get")) || (((m
+				.getReturnType().equals(boolean.class)) || (m.getReturnType()
 				.equals(Boolean.class))) && (m.getName().startsWith("is")))));
 
 	}
@@ -278,14 +270,45 @@ public class AngularBeansUtil implements Serializable {
 		return false;
 	}
 
+	private String contextPath;
+
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
+
+	}
+	
+	public Object deserialise(Class clazz, JsonElement element) {
+		Object elem;
+		GsonBuilder builder = new GsonBuilder();
+
+		builder.registerTypeAdapter(LobWrapper.class,
+				new JsonDeserializer<LobWrapper>() {
+
+					@Override
+					public LobWrapper deserialize(JsonElement json,
+							Type typeOfT, JsonDeserializationContext context)
+							throws JsonParseException {
+
+						return null;
+					}
+				});
+
+		
+
+		Gson gson = builder.create();
+
+		elem = gson.fromJson(element, clazz);
+		return elem;
+	}
+
 }
 
-class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
+class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 
 	Object container;
 	ByteArrayCache cache;
 
-	public ByteArrayJsonAdapter(ByteArrayCache cache) {
+	public LobWrapperJsonAdapter(ByteArrayCache cache) {
 
 		this.cache = cache;
 	}
@@ -316,12 +339,12 @@ class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
 						} else {
 							for (String idf : (cache.getCache().keySet())) {
 								Call ls = cache.getCache().get(idf);
-								if (ls.equals(lobSource)){
-									id=idf;
-//									cache.getCache().remove(idf);
-//									id = String.valueOf(UUID.randomUUID());
-//									cache.getCache().put(id, lobSource);
-								
+								if (ls.equals(lobSource)) {
+									id = idf;
+									// cache.getCache().remove(idf);
+									// id = String.valueOf(UUID.randomUUID());
+									// cache.getCache().put(id, lobSource);
+
 									break;
 								}
 							}
@@ -340,8 +363,37 @@ class ByteArrayJsonAdapter implements JsonSerializer<LobWrapper> {
 			}
 
 		}
-		
-		return new JsonPrimitive("lob/" + id+"?"+Calendar.getInstance().getTimeInMillis());
+
+		return new JsonPrimitive("lob/" + id + "?"
+				+ Calendar.getInstance().getTimeInMillis());
 	}
 
+
+}
+
+class ByteArrayJsonAdapter implements JsonSerializer<byte[]> {
+
+	ByteArrayCache cache;
+
+	String contextPath;
+
+	public ByteArrayJsonAdapter(ByteArrayCache cache, String contextPath) {
+		this.contextPath = contextPath;
+		this.cache = cache;
+	}
+
+	public JsonElement serialize(byte[] src, Type typeOfSrc,
+			JsonSerializationContext context) {
+
+		String id = String.valueOf(UUID.randomUUID());
+		cache.getTempCache().put(id, src);
+
+		String result = contextPath + "lob/" + id + "?"
+				+ Calendar.getInstance().getTimeInMillis();
+
+		return new JsonPrimitive(result);
+	}
+
+	
+	
 }

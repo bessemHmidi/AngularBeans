@@ -8,7 +8,9 @@ public class LobWrapper {
 	private Object owner;
 	private byte[] data;
 	
+	
 	public LobWrapper(byte[] data,Object owner) {
+
 		this.owner=owner;
 		this.data=data;
 	

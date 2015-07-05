@@ -119,6 +119,10 @@ public class OneWayEndPoint extends HttpServlet implements Serializable {
 		
 		NGSessionScopeContext.setCurrentContext(UID);
 		
+		
+		
+		
+		
 		receiveEvents.fire(new OneWayDataReceivedEvent(paramsObj));
 
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID),

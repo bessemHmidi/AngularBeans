@@ -30,19 +30,33 @@ public class DataServlet extends HttpServlet {
 
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		
+		byte[] data = null ;
+		OutputStream o;
+		try {
 		if (cache.getCache().containsKey(resourceId)) {
 			Call call = cache.getCache().get(resourceId);
 			Method m = call.getMethod();
 			Object container = call.getObject();
 
-			OutputStream o;
-			try {
+			
+		
 
 				
 				Object result = m.invoke(container);
 
 				if(result!=null){
-				byte[] data = ((LobWrapper) result).getData();
+				 data = ((LobWrapper) result).getData();
+				 
+				}
+
+		}
+				else{
+					if(cache.getTempCache().containsKey(resourceId)){
+						data=cache.getTempCache().get(resourceId);
+						cache.getTempCache().remove(resourceId);
+					}	
+					}
+				
 
 				o = response.getOutputStream();
 				if (data == null) {
@@ -51,7 +65,9 @@ public class DataServlet extends HttpServlet {
 				o.write(data);
 				o.flush();
 				o.close();
-				}
+			
+				
+		
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -66,7 +82,9 @@ public class DataServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 
-		}
+	
+		
+		
 	}
 
 }

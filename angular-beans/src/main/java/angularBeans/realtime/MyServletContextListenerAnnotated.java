@@ -26,7 +26,7 @@ import org.projectodd.sockjs.servlet.SockJsEndpoint;
 @WebListener
 public class MyServletContextListenerAnnotated implements ServletContextListener {
 
-	public static SockJsServer sockJsServer;
+	public static  SockJsServer sockJsServer;
 
 	ServletContext context;
 	

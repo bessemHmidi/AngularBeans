@@ -16,14 +16,20 @@ public class ByteArrayCache implements Serializable{
 
 	private Map<String,Call> cache = new HashMap<String, Call>();
 	
+	private Map<String, byte[]> tempCache = new HashMap<String, byte[]>();
 	
 	@PostConstruct
 	public void init(){
 		
 	}
 
-
+//
 public Map<String, Call> getCache() {
 	return cache;
+}
+
+
+public Map<String, byte[]> getTempCache() {
+	return tempCache;
 }
 }

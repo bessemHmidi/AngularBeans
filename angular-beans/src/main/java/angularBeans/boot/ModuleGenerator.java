@@ -69,11 +69,18 @@ public class ModuleGenerator implements Serializable {
 	
 	private String contextPath;
 	
-	final String scriptDetection="var sript_origin=((document.scripts[document.scripts.length-1].src).replace('angular-beans.js',''));";
-			
+	private String UID;
+		
 	
-	final String angularBeanMainFunction = scriptDetection+"var angularBeans={ "
+	String sessionPart;
+	final String scriptDetection="var sript_origin=((document.scripts[document.scripts.length-1].src).replace('angular-beans.js',''));";
+	final String angularBeanMainFunction =scriptDetection+"var angularBeans={ "
 
+
+//			+ "fire:function(eventName,data){"
+//			+ "scope[service.serviceID]=service;"
+//			+ "},"
+			
 			+ "bind:function(scope,service,modelsName){"
 	
 			+ "scope[service.serviceID]=service;"
@@ -144,7 +151,7 @@ public class ModuleGenerator implements Serializable {
 
 			+ " };";
 
-	private String UID;
+	
 
 	@Inject
 	AngularBeansUtil util;
@@ -201,8 +208,13 @@ public class ModuleGenerator implements Serializable {
 		appName = util.getBeanName(appClass);
 	}
 
-		writer.write(angularBeanMainFunction);
+	sessionPart="var sessionId=\""+UID+"\";";
+	writer.write(sessionPart);
+	
+	writer.write(angularBeanMainFunction);
 
+		
+		
 		writer.write("var app=angular.module('" + appName + "', [");
 
 		if (appClass.isAnnotationPresent(NGModules.class)) {
@@ -219,8 +231,7 @@ public class ModuleGenerator implements Serializable {
 
 		writer.write("])");
 
-		writer.write(".run(function($rootScope) {$rootScope.sessionUID = \""
-				+ UID + "\";");
+		writer.write(".run(function($rootScope) {$rootScope.sessionUID = sessionId;");
 		writer.write("$rootScope.baseUrl=sript_origin;");
 		writer.write("});");
 
@@ -542,6 +553,8 @@ public class ModuleGenerator implements Serializable {
 			}
 		}
 
+		
+		
 		cachedStaticParts.put(bean.getClass(), cachedStaticPart);
 		return cachedStaticPart;
 
@@ -580,6 +593,7 @@ public class ModuleGenerator implements Serializable {
 	}
 
 	public void setContextPath(String contextPath) {
+		util.setContextPath(contextPath);
 		this.contextPath = contextPath;
 	}
 
@@ -587,4 +601,9 @@ public class ModuleGenerator implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -9146331095657429874L;
+
+	public String getContextPath() {
+		// TODO Auto-generated method stub
+		return contextPath;
+	}
 }

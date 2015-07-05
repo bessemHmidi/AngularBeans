@@ -203,7 +203,7 @@ public class RealTimeClient implements Serializable {
 
 		ModelQueryImpl modelQuery = (ModelQueryImpl) query;
 
-		NGEvent ngEvent = new NGEvent();
+		QueryEvent ngEvent = new QueryEvent();
 
 		ngEvent.setName("modelQuery");
 		ngEvent.setData(util.getBeanName(modelQuery.getOwner()));
@@ -221,7 +221,7 @@ public class RealTimeClient implements Serializable {
 		Map<String, Object> paramsToSend = new HashMap<String, Object>(
 				message.build());
 
-		NGEvent ngEvent = new NGEvent();
+		QueryEvent ngEvent = new QueryEvent();
 
 		ngEvent.setName(channel);
 		ngEvent.setData(message.build());

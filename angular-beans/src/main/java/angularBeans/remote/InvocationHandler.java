@@ -27,10 +27,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -41,6 +43,7 @@ import angularBeans.api.NGReturn;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.context.NGSessionScoped;
+import angularBeans.io.ByteArrayCache;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
 import angularBeans.util.AngularBeansUtil;
@@ -56,12 +59,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @NGSessionScoped
 public class InvocationHandler implements Serializable {
 
-	// @Inject
-	// RealTimeClient holder;
+	@Inject
+	ByteArrayCache cache;
 
 	@Inject
 	NGLogger logger;
@@ -75,12 +80,12 @@ public class InvocationHandler implements Serializable {
 	@Inject
 	ModelQueryFactory modelQueryFactory;
 
-	Map<String, Class> builtInMap = new HashMap<String, Class>();
+	static Map<String, Class> builtInMap = new HashMap<String, Class>();
 
-	Map<String, Class> arrayTypesMap = new HashMap<>();
+	static Map<String, Class> arrayTypesMap = new HashMap<>();
 
-	@PostConstruct
-	public void init() {
+	static{
+		
 		builtInMap.put("int", Integer.TYPE);
 		builtInMap.put("long", Long.TYPE);
 		builtInMap.put("double", Double.TYPE);
@@ -108,7 +113,8 @@ public class InvocationHandler implements Serializable {
 		arrayTypesMap.put("[Ljava.lang.Byte;", Byte[].class);
 		arrayTypesMap.put("[Ljava.lang.Character;", Character[].class);
 		arrayTypesMap.put("[Ljava.lang.Boolean;", Boolean[].class);
-
+		
+		
 	}
 
 	public synchronized void realTimeInvoke(Object ServiceToInvoque,
@@ -223,16 +229,16 @@ public class InvocationHandler implements Serializable {
 
 								JsonArray arr = element.getAsJsonArray();
 
-								argsValues.add(deserialise(
+								argsValues.add(util.deserialise(
 										arrayTypesMap.get(typeString), arr));
 
 							} else {
 
-								argsValues.add(deserialise(typeClass, element));
+								argsValues.add(util.deserialise(typeClass, element));
 
 							}
 
-							// -----
+							
 
 						}
 
@@ -454,7 +460,7 @@ public class InvocationHandler implements Serializable {
 
 							} else {
 
-								elem = deserialise(clazz, element);
+								elem = util.deserialise(clazz, element);
 
 							}
 
@@ -539,26 +545,7 @@ public class InvocationHandler implements Serializable {
 
 	}
 
-	private Object deserialise(Class clazz, JsonElement element) {
-		Object elem;
-		GsonBuilder builder = new GsonBuilder();
 
-		builder.registerTypeAdapter(LobWrapper.class,
-				new JsonDeserializer<LobWrapper>() {
-
-					@Override
-					public LobWrapper deserialize(JsonElement json,
-							Type typeOfT, JsonDeserializationContext context)
-							throws JsonParseException {
-
-						return null;
-					}
-				});
-
-		Gson gson = builder.create();
-
-		elem = gson.fromJson(element, clazz);
-		return elem;
-	}
 
 }
+

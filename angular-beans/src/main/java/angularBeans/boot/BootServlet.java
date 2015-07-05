@@ -47,6 +47,9 @@ public class BootServlet extends HttpServlet {
 
 	String jsContent;
 
+	String compressed;
+	
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -62,10 +65,10 @@ public class BootServlet extends HttpServlet {
 		generator.getScript(stringWriter);
 		jsContent = stringWriter.toString();
 
-		// String compressed = getCompressedJavaScript(jsContent);
-		// resp.getWriter().write(compressed);
+		String compressed = getCompressedJavaScript(jsContent);
+		resp.getWriter().write(compressed);
 
-		resp.getWriter().write(jsContent);
+		// resp.getWriter().write(jsContent);
 		long endTime = System.currentTimeMillis();
 		log.info("Module generated successfully in " + (endTime - startTime)
 				+ " ms");
