@@ -19,7 +19,7 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.realtime;
+package angularBeans.remote;
 
 import java.io.Serializable;
 
@@ -30,9 +30,6 @@ import javax.inject.Inject;
 
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
-import angularBeans.remote.DataReceivedEvent;
-import angularBeans.remote.InvocationHandler;
-import angularBeans.remote.RealTimeDataReceiveEvent;
 
 import com.google.gson.JsonObject;
 

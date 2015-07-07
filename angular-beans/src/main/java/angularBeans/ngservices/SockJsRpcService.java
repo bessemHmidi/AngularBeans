@@ -21,61 +21,30 @@
  */
 package angularBeans.ngservices;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import angularBeans.boot.ModuleGenerator;
-
 @NGExtention
 public class SockJsRpcService implements NGService {
-
-	
-	private ModuleGenerator generator;
 
 	@Override
 	public String render() {
 
-//		HttpServletRequest request = generator.getRequest();
-//
-//		String serverName = (request.getServerName());
-//		String portNumber = (String.valueOf(request.getServerPort()));
-//		String contextPath = (request.getServletContext().getContextPath());
-
-		
-		
-//		String sockJsPath = ("http://"+serverName + ":" + portNumber
-//				+ contextPath + "/rt-service/");
-
-//		String webSocketPath=("ws://"+serverName+":" + portNumber
-//				+ contextPath + "/rt-service/websocket");
-		
 		String result = "";
 
 		result += "app.factory('RTSrvc',function RTSrvc(logger,$rootScope,$http,responseHandler,$q,$injector){\n";
 
 		// result +=
 		// "app.service('RTSrvc',['logger','$rootScope','$http','responseHandler','$q',function(logger,$rootScope,$http,responseHandler,$q){\n";
-		
-		
+
 		result += "var wsuri =sript_origin.replace('http:','ws:') +'rt-service/websocket';";
-		
+
 		result += "var sjsuri = sript_origin +'rt-service/';";
-		
-		
-		
-		//result +="alert(sjsuri);";
-//		result += "var wsuri =\"" + webSocketPath + "\";";
-//		result += "var sjsuri =\"" + sockJsPath + "\";";
-		
-		result+="var ws={};";
-		result+="if (!((typeof SockJS !=='undefined')&&(angular.isDefined(SockJS.constructor)))){"
-				
+
+		result += "var ws={};";
+		result += "if (!((typeof SockJS !=='undefined')&&(angular.isDefined(SockJS.constructor)))){"
+
 				+ "ws = new WebSocket(wsuri);}";
-		
-		result+="else{ws = new SockJS(sjsuri, undefined, {debug: false});}";
-	
-		
-		
+
+		result += "else{ws = new SockJS(sjsuri, undefined, {debug: false});}";
+
 		result += "var rt={};";
 
 		result += "\nrt.rootScope=$rootScope;";
@@ -100,32 +69,26 @@ public class SockJsRpcService implements NGService {
 
 		// -----------------------
 
-		result+="var REQ_ID=parseInt(msg.reqId);";
-		
-		
+		result += "var REQ_ID=parseInt(msg.reqId);";
+
 		result += " if (angular.isDefined(callbacks[REQ_ID])) {";
 		result += "    var callback = callbacks[REQ_ID];";
 		result += "delete callbacks[REQ_ID];";
 		result += "callback.resolve(msg);";
 		result += "  }";
 
-		
 		result += " if (angular.isDefined(msg.ngEvent)) {";
-		
-		result+="if(msg.ngEvent.name=='modelQuery'){"
-				+"var caller={};"
+
+		result += "if(msg.ngEvent.name=='modelQuery'){"
+				+ "var caller={};"
 				+ "$injector.invoke([msg.ngEvent.data, function(icaller){caller=icaller;}]);"
 				+ "responseHandler.handleResponse(msg,caller,false);}"
-				
+
 				+ "else{";
 		result += "$rootScope.$broadcast(msg.ngEvent.name,msg.ngEvent.data);";
 		result += " } }";
 
-		
-
 		result += "\n }; ";
-
-	
 
 		result += "\nrt.sendAsync = function(message) {";
 		result += "\nws.send(angular.toJson(message));";
@@ -178,8 +141,4 @@ public class SockJsRpcService implements NGService {
 		return result;
 	}
 
-//	@Override
-//	public void setGenerator(ModuleGenerator generator) {
-//		this.generator = generator;
-//	}
 }

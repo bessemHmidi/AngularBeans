@@ -34,6 +34,7 @@ import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.Transport.READY_STATE;
 
 import angularBeans.context.NGSessionScoped;
+import angularBeans.events.ServerEvent;
 import angularBeans.log.NGLogger;
 import angularBeans.remote.DataReceivedEvent;
 import angularBeans.remote.RealTimeDataReceiveEvent;
@@ -92,9 +93,7 @@ public class RealTimeClient implements Serializable {
 
 	}
 
-	// public Set<SockJsConnection> getSessions() {
-	// return sessions;
-	// }
+
 
 	/**
 	 * will close all current realTime sessions bound to the current HTTP
@@ -189,21 +188,13 @@ public class RealTimeClient implements Serializable {
 
 	}
 
-	// private String getServiceName(ModelQuery query){
-	//
-	// ModelQueryImpl modelQuery=(ModelQueryImpl) query;
-	//
-	// return modelQuery.getOwner().getSimpleName();
-	//
-	//
-	// }
 
 	private Map<String, Object> prepareData(ModelQuery query) {
 		Map<String, Object> paramsToSend = new HashMap<String, Object>();
 
 		ModelQueryImpl modelQuery = (ModelQueryImpl) query;
 
-		QueryEvent ngEvent = new QueryEvent();
+		ServerEvent ngEvent = new ServerEvent();
 
 		ngEvent.setName("modelQuery");
 		ngEvent.setData(util.getBeanName(modelQuery.getOwner()));
@@ -216,14 +207,14 @@ public class RealTimeClient implements Serializable {
 		return paramsToSend;
 	}
 
-	private Map<String, Object> prepareData(String channel,
+	private Map<String, Object> prepareData(String eventName,
 			RealTimeMessage message) {
 		Map<String, Object> paramsToSend = new HashMap<String, Object>(
 				message.build());
 
-		QueryEvent ngEvent = new QueryEvent();
+		ServerEvent ngEvent = new ServerEvent();
 
-		ngEvent.setName(channel);
+		ngEvent.setName(eventName);
 		ngEvent.setData(message.build());
 
 		paramsToSend.put("ngEvent", ngEvent);

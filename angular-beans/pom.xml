@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.bessemHmidi</groupId>
 	<artifactId>angularBeans</artifactId>
-	<version>1.0.1-RELEASE</version>
+	<version>1.0.2-RC1</version>
 	<name>angularBeans</name>
  
 <properties>

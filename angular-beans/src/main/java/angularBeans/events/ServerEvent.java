@@ -1,14 +1,14 @@
-package angularBeans.realtime;
+package angularBeans.events;
 
 
 /**
  * 
  * @author bessem
  *
- *an NGEvent will be inserted to a response and 
+ *a ServerEvent will be inserted to a response and 
  *converted to an AngularJS event
  */
-public class QueryEvent {
+public class ServerEvent {
 	
 	
 	

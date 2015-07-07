@@ -27,15 +27,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import angularBeans.api.NGPostConstruct;
@@ -50,19 +48,12 @@ import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ModelQueryFactory;
 import angularBeans.util.ModelQueryImpl;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
-@NGSessionScoped
+@ApplicationScoped
 public class InvocationHandler implements Serializable {
 
 	@Inject
@@ -84,8 +75,8 @@ public class InvocationHandler implements Serializable {
 
 	static Map<String, Class> arrayTypesMap = new HashMap<>();
 
-	static{
-		
+	static {
+
 		builtInMap.put("int", Integer.TYPE);
 		builtInMap.put("long", Long.TYPE);
 		builtInMap.put("double", Double.TYPE);
@@ -113,11 +104,10 @@ public class InvocationHandler implements Serializable {
 		arrayTypesMap.put("[Ljava.lang.Byte;", Byte[].class);
 		arrayTypesMap.put("[Ljava.lang.Character;", Character[].class);
 		arrayTypesMap.put("[Ljava.lang.Boolean;", Boolean[].class);
-		
-		
+
 	}
 
-	public synchronized void realTimeInvoke(Object ServiceToInvoque,
+	public  void realTimeInvoke(Object ServiceToInvoque,
 			String methodName, JsonObject params,
 			RealTimeDataReceiveEvent event, long reqID, String UID) {
 
@@ -142,11 +132,11 @@ public class InvocationHandler implements Serializable {
 			e.printStackTrace();
 		}
 
-		// if(returns.get("mainReturn")==null){returns =null;}
+		
 
 	}
 
-	public synchronized Object invoke(Object o, String method,
+	public  Object invoke(Object o, String method,
 			JsonObject params, String UID) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
@@ -234,11 +224,10 @@ public class InvocationHandler implements Serializable {
 
 							} else {
 
-								argsValues.add(util.deserialise(typeClass, element));
+								argsValues.add(util.deserialise(typeClass,
+										element));
 
 							}
-
-							
 
 						}
 
@@ -432,7 +421,7 @@ public class InvocationHandler implements Serializable {
 						ParameterizedType pt = (ParameterizedType) type;
 						Type actType = pt.getActualTypeArguments()[0];
 
-						Class collectionClazz = get.getReturnType();
+						//Class collectionClazz = get.getReturnType();
 
 						String className = actType.toString();
 
@@ -545,7 +534,4 @@ public class InvocationHandler implements Serializable {
 
 	}
 
-
-
 }
-
