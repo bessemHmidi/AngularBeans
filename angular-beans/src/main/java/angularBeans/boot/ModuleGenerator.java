@@ -34,17 +34,13 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
-import angularBeans.api.NGApp;
 import angularBeans.api.NGModules;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
@@ -61,97 +57,17 @@ import angularBeans.realtime.RealTime;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.CurrentNGSession;
 import angularBeans.util.NGBean;
+import angularBeans.util.StaticJs;
 import angularBeans.validation.BeanValidationProcessor;
 
 @SessionScoped
 public class ModuleGenerator implements Serializable {
 
-	
 	private String contextPath;
-	
+
 	private String UID;
-		
-	
+
 	String sessionPart;
-	final String scriptDetection="var sript_origin=((document.scripts[document.scripts.length-1].src).replace('angular-beans.js',''));";
-	final String angularBeanMainFunction =scriptDetection+"var angularBeans={ "
-
-
-//			+ "fire:function(eventName,data){"
-//			+ "scope[service.serviceID]=service;"
-//			+ "},"
-			
-			+ "bind:function(scope,service,modelsName){"
-	
-			+ "scope[service.serviceID]=service;"
-
-			+ "for (i in modelsName){"
-
-			+ "modelsName[i]=service.serviceID+'.'+modelsName[i];"
-			+ "}"
-
-			+ "scope.$watch(angular.toJson(modelsName).split('\\\"').join(''), function (newValue, oldValue) {"
-
-			+ "for (i in modelsName){"
-			+ "scope[modelsName[i].split(service.serviceID+'.')[1]]=newValue[i];} "
-
-			+ "}, true);"
-
-			+ "}"
-
-			+ ",addMethod :function(object,name,fn){"
-
-			+ "if (object['$ab_fn_cache']==null){object['$ab_fn_cache']=[]; }"
-
-			+ "  if((object['$ab_fn_cache'][name])==undefined){object['$ab_fn_cache'][name]=[];}"
-
-			+ " var index= object['$ab_fn_cache'][name].length;"
-
-			+ "object['$ab_fn_cache'][name][index]=fn;"
-
-			+ "object[name]=function  (){"
-
-			+ "  for (index in object['$ab_fn_cache'][name]){"
-
-			+ "      var actf=object['$ab_fn_cache'][name][index];"
-
-			+ "     if(arguments.length==actf.length){"
-
-			+ "        return actf.apply(object,arguments);"
-
-			+ "      } }};"
-
-			+ "}"
-
-			// *
-			+ ",isIn:function(array,elem){var found=false;"
-			+ "for(item in array){"
-			+ "if(this.isSame(array[item],elem)){found =true;break;}"
-			+ "}"
-
-			+ "return found;}"
-
-			+ ",isSame:function(item1,item2){"
-
-			+ "var same=true;"
-			
-			+ "for(prop in item1){"
-		
-
-			+ "if(prop=='$$hashKey'){continue;}"
-			+ "if (item1[prop] instanceof String){if(item1[prop].startsWith('lob/')){continue;}}"
-			//typeof item1[prop] == 'string' ||
-	
-			
-			+ "if(!(angular.toJson(item1[prop])==angular.toJson(item2[prop]))){same=false;}"
-
-			+ "}"
-
-			+ "return same;}"
-
-			+ " };";
-
-	
 
 	@Inject
 	AngularBeansUtil util;
@@ -192,48 +108,64 @@ public class ModuleGenerator implements Serializable {
 	public void getScript(StringWriter writer) {
 		NGSessionScopeContext.setCurrentContext(UID);
 		ngSession.setSessionId(UID);
-	
+
 		this.writer = writer;
-		String appName = null;
-		Class<? extends Object> appClass = null;
-		
-				
-		appClass=BeanRegistry.getInstance().getAppClass();
-		if (appClass.isAnnotationPresent(Named.class)) {
-		appName = appClass.getAnnotation(Named.class).value();
-	}
-
-	if ((appName == null) || (appName.length() < 1)) {
-
-		appName = util.getBeanName(appClass);
-	}
-
-	sessionPart="var sessionId=\""+UID+"\";";
-	writer.write(sessionPart);
 	
-	writer.write(angularBeanMainFunction);
+
+		sessionPart = "var sessionId=\"" + UID + "\";";
+
+		
+		writer.write(sessionPart);
 
 		
 		
-		writer.write("var app=angular.module('" + appName + "', [");
+		
+		if (StaticJs.CORE_SCRIPT.length() == 0) {
+			
+			System.out.println("FIRST TIME.......");
+			
+			String appName = null;
+			Class<? extends Object> appClass = null;
 
-		if (appClass.isAnnotationPresent(NGModules.class)) {
-
-			NGModules ngModAnno = appClass.getAnnotation(NGModules.class);
-			String[] modules = ngModAnno.value();
-			String modulesPart = "";
-			for (String module : modules) {
-				modulesPart += ("'" + module + "',");
+			appClass = BeanRegistry.getInstance().getAppClass();
+			if (appClass.isAnnotationPresent(Named.class)) {
+				appName = appClass.getAnnotation(Named.class).value();
 			}
-			modulesPart = modulesPart.substring(0, modulesPart.length() - 1);
-			writer.write(modulesPart);
+
+			if ((appName == null) || (appName.length() < 1)) {
+
+				appName = util.getBeanName(appClass);
+			}
+			
+
+			StaticJs.CORE_SCRIPT.append(StaticJs.angularBeanMainFunction);
+
+			StaticJs.CORE_SCRIPT.append("var app=angular.module('" + appName
+					+ "', [");
+
+			if (appClass.isAnnotationPresent(NGModules.class)) {
+
+				NGModules ngModAnno = appClass.getAnnotation(NGModules.class);
+				String[] modules = ngModAnno.value();
+				String modulesPart = "";
+				for (String module : modules) {
+					modulesPart += ("'" + module + "',");
+				}
+				modulesPart = modulesPart
+						.substring(0, modulesPart.length() - 1);
+				StaticJs.CORE_SCRIPT.append(modulesPart);
+			}
+
+			StaticJs.CORE_SCRIPT.append("])");
+
+			StaticJs.CORE_SCRIPT
+					.append(".run(function($rootScope) {$rootScope.sessionUID = sessionId;");
+			StaticJs.CORE_SCRIPT.append("$rootScope.baseUrl=sript_origin;");
+			StaticJs.CORE_SCRIPT.append("});");
+
 		}
 
-		writer.write("])");
-
-		writer.write(".run(function($rootScope) {$rootScope.sessionUID = sessionId;");
-		writer.write("$rootScope.baseUrl=sript_origin;");
-		writer.write("});");
+		writer.write(StaticJs.CORE_SCRIPT.toString());
 
 		for (NGBean mb : BeanRegistry.getInstance().getAngularBeans()) {
 
@@ -251,7 +183,7 @@ public class ModuleGenerator implements Serializable {
 
 		for (NGService extention : BeanRegistry.getInstance().getExtentions()) {
 
-			//extention.setGenerator(this);
+			// extention.setGenerator(this);
 			Method m;
 			try {
 				m = extention.getClass().getMethod("render");
@@ -281,7 +213,7 @@ public class ModuleGenerator implements Serializable {
 		writer.write("var " + bean.getName() + "={serviceID:'" + bean.getName()
 				+ "'};");// ,scopes:[]};");
 
-		writer.write("\nvar rpath=$rootScope.baseUrl+'" //+ contextPath
+		writer.write("\nvar rpath=$rootScope.baseUrl+'" // + contextPath
 				+ "/http/invoke/service/';\n");
 
 		Object reference = locator.lookup(bean.getName(), UID);
@@ -297,10 +229,8 @@ public class ModuleGenerator implements Serializable {
 
 				String uid = String.valueOf(UUID.randomUUID());
 				cache.getCache().put(uid, new Call(reference, get));
-				
-				
-				
-				result = contextPath+"lob/" + uid;
+
+				result = contextPath + "lob/" + uid;
 
 				writer.write(bean.getName() + "." + modelName + "='" + result
 						+ "';");
@@ -357,10 +287,8 @@ public class ModuleGenerator implements Serializable {
 
 		writer.write(generateStaticPart(bean).toString());
 
-		// for (Method m : bean.getMethods()) {
-		//
-		// }
-		writer.write("return " + bean.getName() + ";} \n");
+
+	
 	}
 
 	private static Map<Class, StringBuffer> cachedStaticParts = new HashMap<Class, StringBuffer>();
@@ -479,7 +407,6 @@ public class ModuleGenerator implements Serializable {
 
 					}
 				}
-			
 
 				cachedStaticPart
 						.append(") {")
@@ -553,8 +480,7 @@ public class ModuleGenerator implements Serializable {
 			}
 		}
 
-		
-		
+		cachedStaticPart.append("return " + bean.getName() + ";} \n");
 		cachedStaticParts.put(bean.getClass(), cachedStaticPart);
 		return cachedStaticPart;
 
@@ -603,7 +529,7 @@ public class ModuleGenerator implements Serializable {
 	private static final long serialVersionUID = -9146331095657429874L;
 
 	public String getContextPath() {
-		// TODO Auto-generated method stub
+
 		return contextPath;
 	}
 }

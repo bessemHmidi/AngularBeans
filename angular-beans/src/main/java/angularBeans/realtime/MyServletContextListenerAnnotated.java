@@ -41,7 +41,7 @@ public class MyServletContextListenerAnnotated implements ServletContextListener
 			initJSR356();
     		}
 		} catch (ServletException e) {
-			// TODO Auto-generated catch block
+	
 			e.printStackTrace();
 		}
     }

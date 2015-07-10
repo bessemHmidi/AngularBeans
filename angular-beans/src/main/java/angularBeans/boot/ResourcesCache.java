@@ -37,7 +37,7 @@ public class ResourcesCache {
 			
 			json=util.getJson(properties);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		

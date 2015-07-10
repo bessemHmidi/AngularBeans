@@ -61,7 +61,7 @@ public class NGSessionExtention implements Extension {
 							(NGService) annotatedType.getJavaClass()
 									.newInstance());
 				} catch (InstantiationException | IllegalAccessException e) {
-					// TODO Auto-generated catch block
+				
 					e.printStackTrace();
 				}
 			}

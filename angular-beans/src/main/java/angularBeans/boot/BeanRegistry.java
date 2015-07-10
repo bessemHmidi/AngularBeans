@@ -36,17 +36,17 @@ public class BeanRegistry {
 	}
 
 	public static synchronized BeanRegistry getInstance() {
-		// TODO Auto-generated method stub
+
 		return instance;
 	}
 
 	public Set<NGService> getExtentions() {
-		// TODO Auto-generated method stub
+		
 		return extentions;
 	}
 
 	public Class<? extends Object> getAppClass() {
-		// TODO Auto-generated method stub
+		
 		return appClass;
 	}
 

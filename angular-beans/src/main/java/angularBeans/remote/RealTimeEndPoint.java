@@ -90,7 +90,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 //		try {
 //			super.inito();
 //		} catch (ServletException e) {
-//			// TODO Auto-generated catch block
+
 //			e.printStackTrace();
 //		}
 //		

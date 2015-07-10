@@ -60,7 +60,7 @@ public class FileUploadHandler implements Serializable{
 			 call.getMethod().invoke(call.getObject(), uploads);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			// TODO Auto-generated catch block
+		
 			e.printStackTrace();
 		}
 		

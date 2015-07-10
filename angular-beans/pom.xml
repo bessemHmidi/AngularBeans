@@ -5,126 +5,64 @@
 	<artifactId>angularBeans</artifactId>
 	<version>1.0.2-RC1</version>
 	<name>angularBeans</name>
- 
-<properties>
-<maven.compiler.source>1.7</maven.compiler.source>
- <maven.compiler.target>1.7</maven.compiler.target>
-<!-- <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> -->
-</properties>
 
-	<dependencies> 
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<!-- <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> -->
+	</properties>
+
+	<dependencies>
 
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-web-api</artifactId>
 			<version>7.0</version>
 			<scope>provided</scope>
-		</dependency>  
-  
-<dependency>   
- <groupId>com.google.javascript</groupId>
-  <artifactId>closure-compiler</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  
-   <!-- v20150609 -->
-<scope>compile</scope> 
+		</dependency>
 
-<!-- 
-	<exclusions>
-		<exclusion>
-			<artifactId>guava</artifactId>
-			<groupId>com.google.guava</groupId>
-		</exclusion>
-	</exclusions> -->
-</dependency>
+		<!-- <dependency>
+			<groupId>com.google.javascript</groupId>
+			<artifactId>closure-compiler</artifactId>
+			<version>v20150609</version>
+
+			v20150609
+			<scope>compile</scope>
+
+
+		</dependency> -->
 		<!-- <dependency> <groupId>javax.json</groupId> <artifactId>javax.json-api</artifactId> 
 			<version>1.0-b06</version> </dependency> -->
- 
-	 	<dependency>
+
+		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.3</version>
-	
-		</dependency> 
 
+		</dependency>
 
- 
-
-	<!-- 	<dependency>
-			<groupId>org.projectodd.sockjs</groupId>
-			<artifactId>sockjs-servlet</artifactId>
-			<version>[0.1.0,)</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>io.fastjson</groupId> <artifactId>boon</artifactId> 
+			<version>0.33</version> </dependency> -->
 
 	</dependencies>
 	<url>http://bessemhmidi.github.io/AngularBeans</url>
 	<!-- <scm> <url>https://github.com/bessemHmidi/AngularBeans.git</url> </scm> 
 		<issueManagement> <system>jira</system> </issueManagement> -->
 
-<!-- 	<build>
-		<plugins>
-
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2.1</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.5</version>
-				<configuration>
-			
-				
-				</configuration>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin> 
-
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.3</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>ossrh</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
-		</plugins>
-
-	</build> -->
+	<!-- <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-source-plugin</artifactId> <version>2.2.1</version> <executions> 
+		<execution> <id>attach-sources</id> <goals> <goal>jar-no-fork</goal> </goals> 
+		</execution> </executions> </plugin> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-javadoc-plugin</artifactId> <version>2.9.1</version> <executions> 
+		<execution> <id>attach-javadocs</id> <goals> <goal>jar</goal> </goals> </execution> 
+		</executions> </plugin> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-gpg-plugin</artifactId> <version>1.5</version> <configuration> 
+		</configuration> <executions> <execution> <id>sign-artifacts</id> <phase>verify</phase> 
+		<goals> <goal>sign</goal> </goals> </execution> </executions> </plugin> <plugin> 
+		<groupId>org.sonatype.plugins</groupId> <artifactId>nexus-staging-maven-plugin</artifactId> 
+		<version>1.6.3</version> <extensions>true</extensions> <configuration> <serverId>ossrh</serverId> 
+		<nexusUrl>https://oss.sonatype.org/</nexusUrl> <autoReleaseAfterClose>true</autoReleaseAfterClose> 
+		</configuration> </plugin> </plugins> </build> -->
 	<distributionManagement>
 
 		<snapshotRepository>

@@ -12,7 +12,7 @@ public class OneWayDataReceivedEvent implements DataReceived,Serializable {
 	
 	@Override
 	public JsonObject getData() {
-		// TODO Auto-generated method stub
+	
 		return data;
 	}
 	

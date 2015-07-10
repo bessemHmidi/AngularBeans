@@ -60,7 +60,7 @@ public class NGSessionScopeContext implements Context, Serializable {
 
 	@Override
 	public Class<? extends Annotation> getScope() {
-		// TODO Auto-generated method stub
+		
 		return NGSessionScoped.class;
 	}
 
@@ -102,7 +102,7 @@ public class NGSessionScopeContext implements Context, Serializable {
 
 	@Override
 	public boolean isActive() {
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 

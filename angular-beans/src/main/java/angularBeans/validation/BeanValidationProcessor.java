@@ -26,7 +26,9 @@ import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -52,8 +54,11 @@ public class BeanValidationProcessor implements Serializable {
 	
 	private StringBuffer buffer = new StringBuffer();
 
+	
 	public void processBeanValidationParsing(Method method) {
 
+		
+		
 		String modelName = AngularBeansUtil.obtainFieldNameFromAccessor(method.getName());
 		Annotation[] scannedAnnotations = method.getAnnotations();
 
@@ -160,7 +165,6 @@ public class BeanValidationProcessor implements Serializable {
 
 		String result = buffer.toString();
 		writer.write(result);
-		buffer = new StringBuffer();
 
 		writer.write("\n};");
 		writer.write("\nvar old = \"<!-- validation -->\" + elem.html();");

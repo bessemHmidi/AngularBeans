@@ -32,11 +32,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.javascript.jscomp.CompilationLevel;
-import com.google.javascript.jscomp.Compiler;
-import com.google.javascript.jscomp.CompilerOptions;
-import com.google.javascript.jscomp.SourceFile;
-
 @WebServlet(urlPatterns = "/angular-beans.js")
 public class BootServlet extends HttpServlet {
 
@@ -48,8 +43,7 @@ public class BootServlet extends HttpServlet {
 	String jsContent;
 
 	String compressed;
-	
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -65,37 +59,36 @@ public class BootServlet extends HttpServlet {
 		generator.getScript(stringWriter);
 		jsContent = stringWriter.toString();
 
-		String compressed = getCompressedJavaScript(jsContent);
-		resp.getWriter().write(compressed);
+		// String compressed = getCompressedJavaScript(jsContent);
+		resp.getWriter().write(jsContent);
 
-		// resp.getWriter().write(jsContent);
 		long endTime = System.currentTimeMillis();
 		log.info("Module generated successfully in " + (endTime - startTime)
 				+ " ms");
 		resp.getWriter().flush();
 	}
 
-	private String getCompressedJavaScript(String jsContent) {
-		String compiled = "";
+	// private String getCompressedJavaScript(String jsContent) {
+	// String compiled = "";
+	//
+	// compiled = compile(jsContent, CompilationLevel.SIMPLE_OPTIMIZATIONS);
+	//
+	// // compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
+	// return compiled;
+	// }
 
-		compiled = compile(jsContent, CompilationLevel.SIMPLE_OPTIMIZATIONS);
-
-		// compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
-		return compiled;
-	}
-
-	public static String compile(String code, CompilationLevel level) {
-		Compiler compiler = new Compiler();
-
-		CompilerOptions options = new CompilerOptions();
-
-		options.setAngularPass(true);
-
-		SourceFile extern = SourceFile.fromCode("externs.js",
-				"function alert(x) {}");
-		SourceFile input = SourceFile.fromCode("input.js", code);
-		compiler.compile(extern, input, options);
-		return compiler.toSource();
-	}
+	// public static String compile(String code, CompilationLevel level) {
+	// Compiler compiler = new Compiler();
+	//
+	// CompilerOptions options = new CompilerOptions();
+	//
+	// options.setAngularPass(true);
+	//
+	// SourceFile extern = SourceFile.fromCode("externs.js",
+	// "function alert(x) {}");
+	// SourceFile input = SourceFile.fromCode("input.js", code);
+	// compiler.compile(extern, input, options);
+	// return compiler.toSource();
+	// }
 
 }
