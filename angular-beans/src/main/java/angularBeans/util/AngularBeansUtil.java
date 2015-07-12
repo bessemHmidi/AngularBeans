@@ -164,12 +164,12 @@ public class AngularBeansUtil implements Serializable {
 		return fieldName;
 	}
 
-	public static JsonObject parse(String message) {
+	public static JsonElement parse(String message) {
 
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(message);
 
-		return element.getAsJsonObject();
+		return element;
 	}
 
 	public Object convertFromString(String value, Class type) {

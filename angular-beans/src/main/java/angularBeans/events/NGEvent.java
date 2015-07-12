@@ -9,10 +9,10 @@ public class NGEvent {
 public String getDataClass() {
 	return dataClass;
 }
-//
-//public void setDataClass(String dataClass) {
-//	this.dataClass = dataClass;
-//}
+
+public void setDataClass(String dataClass) {
+	this.dataClass = dataClass;
+}
 
 public String getData() {
 	return data;

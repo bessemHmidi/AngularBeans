@@ -1,5 +1,8 @@
 package angularBeans.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class StaticJs {
 
 	final static String scriptDetection="var sript_origin=((document.scripts[document.scripts.length-1].src).replace('angular-beans.js',''));";
@@ -82,9 +85,10 @@ public class StaticJs {
 
 	
 	public static StringBuilder CORE_SCRIPT=new StringBuilder();
+	public static Map<Class, StringBuffer> CACHED_BEAN_STATIC_PART = new HashMap<Class, StringBuffer>();
+	public static StringBuilder EXTENTIONS_SCRIPT=new StringBuilder();
+	public static StringBuilder VLIDATION_SCRIPT=new StringBuilder();
 	
-	
-	
-	
+
 	
 }

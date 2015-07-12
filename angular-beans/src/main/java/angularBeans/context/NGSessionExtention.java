@@ -21,6 +21,8 @@
  */
 package angularBeans.context;
 
+import java.io.IOException;
+
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
@@ -89,6 +91,14 @@ public class NGSessionExtention implements Extension {
 		Context context = NGSessionScopeContext.getINSTANCE();
 		//
 		event.addContext(context);
+		
+		
+//		try {
+//			Process process=new ProcessBuilder("mkdir","toto").start();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 	}
 

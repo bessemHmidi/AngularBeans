@@ -113,7 +113,7 @@ public class RealTimeClient implements Serializable {
 	 * @param channel
 	 *            : can be
 	 * 
-	 *            - The AngularBean class name - A custom channel
+	 *            - The AngularBean class name OR A custom channel
 	 * 
 	 * @param message
 	 *            : the RealTimeMessage to send

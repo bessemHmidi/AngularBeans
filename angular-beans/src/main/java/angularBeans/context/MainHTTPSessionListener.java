@@ -29,18 +29,21 @@ import javax.servlet.http.HttpSessionListener;
 import angularBeans.util.AngularBeansUtil;
 
 @WebListener
-public class HTTPSessionListener implements HttpSessionListener{
+public class MainHTTPSessionListener implements HttpSessionListener{
 
+	
+	
 	@Override
 	public void sessionCreated(HttpSessionEvent se) {
 		
+		se.getSession().setAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME, se.getSession().getId());
 		
 	}
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
 		GlobalMapHolder.destroySession(String.valueOf(se.getSession().getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME)));
-		
+		SessionMapper.getSessionsMap().remove( se.getSession().getId());
 	}
 
 }

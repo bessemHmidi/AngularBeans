@@ -130,7 +130,7 @@ public class SockJsRpcService implements NGService {
 		result += "\nreqId++;";
 		result += "\nvar message = {";
 		result += "\n'reqId':reqId,";
-		result += "\n'session': rt.rootScope.sessionUID,";
+		//result += "\n'session': rt.rootScope.sessionUID,";
 		result += "\n'service': invockation.split(\".\")[0],";
 		result += "\n'method': invockation.split(\".\")[1],";
 		result += "\n'params': params";

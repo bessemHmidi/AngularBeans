@@ -43,6 +43,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.StaticJs;
 
 @ApplicationScoped
 public class BeanValidationProcessor implements Serializable {
@@ -144,33 +145,34 @@ public class BeanValidationProcessor implements Serializable {
 
 	}
 
-	public void build(StringWriter writer) {
+	public void build() {
 
-		writer.write("app");
-		writer.write(".directive('beanValidate', function($compile) {");
-		writer.write("\nreturn {");
-		writer.write("\ncompile : function(tElem, attrs) {");
-		writer.write("\nreturn function(scope, elem, attrs, compile) {");
-		writer.write("\nvar getAllInputModel = function(attribute) {");
-		writer.write("\nvar matchingElements = [];");
-		writer.write("\nvar allElements = document.getElementsByTagName('input');");
-		writer.write("\nfor (var i = 0, n = allElements.length; i < n; i++) {");
-		writer.write("\nif (allElements[i].getAttribute(attribute)) {");
-		writer.write("\nmatchingElements.push(allElements[i]);");
-		writer.write("\n}}");
-		writer.write("\nreturn matchingElements;}");
-		writer.write("\nvar entries = (getAllInputModel('ng-model'));");
-		writer.write("\nfor (e in entries) {");
-		writer.write("\nvar modelName = (entries[e].getAttribute('ng-model'));");
+		StringBuilder stringBuilder=StaticJs.VLIDATION_SCRIPT;
+		stringBuilder.append("app");
+		stringBuilder.append(".directive('beanValidate', function($compile) {");
+		stringBuilder.append("\nreturn {");
+		stringBuilder.append("\ncompile : function(tElem, attrs) {");
+		stringBuilder.append("\nreturn function(scope, elem, attrs, compile) {");
+		stringBuilder.append("\nvar getAllInputModel = function(attribute) {");
+		stringBuilder.append("\nvar matchingElements = [];");
+		stringBuilder.append("\nvar allElements = document.getElementsByTagName('input');");
+		stringBuilder.append("\nfor (var i = 0, n = allElements.length; i < n; i++) {");
+		stringBuilder.append("\nif (allElements[i].getAttribute(attribute)) {");
+		stringBuilder.append("\nmatchingElements.push(allElements[i]);");
+		stringBuilder.append("\n}}");
+		stringBuilder.append("\nreturn matchingElements;}");
+		stringBuilder.append("\nvar entries = (getAllInputModel('ng-model'));");
+		stringBuilder.append("\nfor (e in entries) {");
+		stringBuilder.append("\nvar modelName = (entries[e].getAttribute('ng-model'));");
 
-		String result = buffer.toString();
-		writer.write(result);
+	
+		stringBuilder.append(buffer);
 
-		writer.write("\n};");
-		writer.write("\nvar old = \"<!-- validation -->\" + elem.html();");
-		writer.write("\nelem.html('');");
-		writer.write("\nelem.append($compile(old)(scope));");
-		writer.write("\n;};}};});");
+		stringBuilder.append("\n};");
+		stringBuilder.append("\nvar old = \"<!-- validation -->\" + elem.html();");
+		stringBuilder.append("\nelem.html('');");
+		stringBuilder.append("\nelem.append($compile(old)(scope));");
+		stringBuilder.append("\n;};}};});");
 
 	}
 

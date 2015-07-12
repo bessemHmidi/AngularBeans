@@ -21,6 +21,7 @@
  */
 package angularBeans.remote;
 
+import java.util.HashSet;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -37,6 +38,7 @@ import org.projectodd.sockjs.servlet.SockJsServlet;
 import angularBeans.context.GlobalMapHolder;
 import angularBeans.context.NGSessionContextHolder;
 import angularBeans.context.NGSessionScopeContext;
+import angularBeans.context.SessionMapper;
 import angularBeans.realtime.GlobalConnectionHolder;
 import angularBeans.realtime.MyServletContextListenerAnnotated;
 import angularBeans.realtime.RealTimeErrorEvent;
@@ -117,8 +119,24 @@ public class RealTimeEndPoint extends SockJsServlet {
 					@Override
 					public void handle(String message) {
 
-						JsonObject jObj = AngularBeansUtil.parse(message);
-						String UID = jObj.get("session").getAsString();
+						
+					
+						JsonObject jObj = AngularBeansUtil.parse(message).getAsJsonObject();
+						String UID = null;
+						
+					
+						
+						if(jObj.get("session")==null){
+							UID=SessionMapper.getHTTPSessionID(connection.id);
+				        }
+						else{
+							UID = jObj.get("session").getAsString();
+							SessionMapper.getSessionsMap().put(UID, new HashSet<String>());
+							
+						}
+						SessionMapper.getSessionsMap().get(UID).add(connection.id);
+						
+						
 						RealTimeDataReceiveEvent ev = new RealTimeDataReceiveEvent(connection,
 								jObj);
 

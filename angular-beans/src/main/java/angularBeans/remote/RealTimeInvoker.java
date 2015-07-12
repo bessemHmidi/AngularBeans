@@ -50,7 +50,7 @@ public class RealTimeInvoker implements Serializable {
 	public void process(@Observes @DataReceivedEvent RealTimeDataReceiveEvent event) {
 
 		JsonObject jObj = event.getData();
-		String UID = jObj.get("session").getAsString();
+		String UID = event.getSessionId();
 		String beanName = jObj.get("service").getAsString();
 		String method = jObj.get("method").getAsString();
 		long reqId = jObj.get("reqId").getAsLong();

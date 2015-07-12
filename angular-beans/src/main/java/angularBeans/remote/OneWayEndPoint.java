@@ -32,6 +32,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
@@ -51,6 +52,10 @@ public class OneWayEndPoint extends HttpServlet implements Serializable {
 	@Inject
 	AngularBeansUtil util;
 
+	@Inject
+	HttpSession session;
+	
+	
 	@Inject
 	@DataReceivedEvent
 	private Event<DataReceived> receiveEvents;
@@ -112,10 +117,12 @@ public class OneWayEndPoint extends HttpServlet implements Serializable {
 			}
 		}
 
-		JsonObject paramsObj = util.parse(params);
+		JsonObject paramsObj = util.parse(params).getAsJsonObject();
 
 		
-		String UID = (paramsObj.get("sessionUID")).getAsString();
+		String UID = session.getId();// (paramsObj.get("sessionUID")).getAsString();
+		
+		
 		
 		NGSessionScopeContext.setCurrentContext(UID);
 		
