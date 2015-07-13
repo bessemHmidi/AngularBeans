@@ -123,7 +123,8 @@ public class InvocationHandler implements Serializable {
 					UID);
 
 			if (returns.get("mainReturn") != null) {
-				event.getConnection().write(util.getJson(returns));
+				
+				event.getConnection().write(util.getJson(returns),false);
 			}
 		} catch (SecurityException | ClassNotFoundException
 				| IllegalAccessException | IllegalArgumentException

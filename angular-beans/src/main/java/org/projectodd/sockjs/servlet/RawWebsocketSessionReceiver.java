@@ -58,12 +58,14 @@ public class RawWebsocketSessionReceiver extends Session {
     }
 
     @Override
-    public boolean send(String payload) {
+    public boolean send(String payload,boolean async) {
         if (readyState != Transport.READY_STATE.OPEN) {
             return false;
         }
         try {
+        	if(!async)
             ws.getBasicRemote().sendText(payload);
+        	ws.getAsyncRemote().sendText(payload);
         } catch (IOException ex) {
             log.log(Level.WARNING, "Error sending raw websocket data", ex);
         }

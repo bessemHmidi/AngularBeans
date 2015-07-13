@@ -28,8 +28,8 @@ public class SockJsConnection {
      * @param message the message to send
      * @return true on success, false on failure
      */
-    public boolean write(String message) {
-        return session.send(message);
+    public boolean write(String message,boolean async) {
+        return session.send(message,async);
     }
 
     /**
@@ -47,7 +47,8 @@ public class SockJsConnection {
      */
     public void end(String message) {
         if (message != null) {
-            write(message);
+        	boolean async=true;
+            write(message,async);
         }
         end();
     }

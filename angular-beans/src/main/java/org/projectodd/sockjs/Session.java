@@ -176,7 +176,7 @@ public class Session {
         }
     }
 
-    public boolean send(String payload) {
+    public boolean send(String payload,boolean async) {
         if (readyState != Transport.READY_STATE.OPEN) {
             return false;
         }
@@ -232,4 +232,5 @@ public class Session {
     // TODO: Should this  be scoped to SockJsServer instances instead of across all apps?
     private static Map<String, Session> sessions = new ConcurrentHashMap<>();
     private static final Logger log = Logger.getLogger(Session.class.getName());
+
 }

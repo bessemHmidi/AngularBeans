@@ -88,7 +88,7 @@ public class AuthenticationService implements Serializable {
 		avatar = new LobWrapper(uploads.get(0).getAsByteArray(), this);
 
 		client.publish(modelQuery.setProperty(
-				"avatar", avatar));
+				"avatar", avatar),false);
 
 	}
 

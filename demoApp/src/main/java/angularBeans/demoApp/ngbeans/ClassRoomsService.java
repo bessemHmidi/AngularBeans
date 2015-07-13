@@ -87,7 +87,7 @@ public class ClassRoomsService implements Serializable {
 		ModelQuery query = modelQueryFactory.get(SingleClassRoomService.class)
 				.pushTo("users", user);
 
-		client.broadcast(query, true);
+		client.broadcast(query, true,false);
 
 		// or #1
 
@@ -112,7 +112,7 @@ public class ClassRoomsService implements Serializable {
 
 		client.broadcast(
 				modelQuery.pushTo(
-						"classRooms", classRoom), false);
+						"classRooms", classRoom), true,true);
 
 	}
 

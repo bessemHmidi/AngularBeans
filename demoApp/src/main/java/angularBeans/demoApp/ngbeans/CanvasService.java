@@ -30,7 +30,7 @@ public class CanvasService implements Serializable{
 		.set("currentX", currentX)
 		.set("currentY", currentY);
 
-		client.broadcast("drawEvent", message, true);
+		client.broadcast("drawEvent", message, true,false);
 	
 	} 
 	

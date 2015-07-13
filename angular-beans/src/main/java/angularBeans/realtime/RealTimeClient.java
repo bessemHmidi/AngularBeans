@@ -118,11 +118,11 @@ public class RealTimeClient implements Serializable {
 	 * @param message
 	 *            : the RealTimeMessage to send
 	 */
-	public void publish(String channel, RealTimeMessage message) {
+	public void publish(String channel, RealTimeMessage message,boolean async) {
 
 		Map<String, Object> paramsToSend = prepareData(channel, message);
 
-		publish(paramsToSend);
+		publish(paramsToSend,async);
 
 	}
 
@@ -134,9 +134,9 @@ public class RealTimeClient implements Serializable {
 	 *            : the ModelQuery to send
 	 */
 
-	public void publish(ModelQuery query) {
+	public void publish(ModelQuery query,boolean async) {
 		Map<String, Object> paramsToSend = prepareData(query);
-		publish(paramsToSend);
+		publish(paramsToSend,async);
 
 	}
 
@@ -159,11 +159,11 @@ public class RealTimeClient implements Serializable {
 	 */
 
 	public void broadcast(String channel, RealTimeMessage message,
-			boolean withoutMe) {
+			boolean withoutMe,boolean async) {
 
 		Map<String, Object> paramsToSend = prepareData(channel, message);
 
-		broadcast(withoutMe, paramsToSend);
+		broadcast(withoutMe, paramsToSend,async);
 
 	}
 
@@ -180,11 +180,11 @@ public class RealTimeClient implements Serializable {
 	 *            -true: the current session client will also receive the query.
 	 */
 
-	public void broadcast(ModelQuery query, boolean withoutMe) {
+	public void broadcast(ModelQuery query, boolean withoutMe,boolean async) {
 
 		Map<String, Object> paramsToSend = prepareData(query);
 
-		broadcast(withoutMe, paramsToSend);
+		broadcast(withoutMe, paramsToSend,async);
 
 	}
 
@@ -224,7 +224,7 @@ public class RealTimeClient implements Serializable {
 		return paramsToSend;
 	}
 
-	private void broadcast(boolean withoutMe, Map<String, Object> paramsToSend) {
+	private void broadcast(boolean withoutMe, Map<String, Object> paramsToSend,boolean async) {
 		for (SockJsConnection connection : connectionHolder.getAllConnections()) {
 
 			if (withoutMe) {
@@ -237,19 +237,19 @@ public class RealTimeClient implements Serializable {
 
 				String objectMessage = util.getJson(paramsToSend);
 
-				connection.write(objectMessage);
+				connection.write(objectMessage,async);
 
 			}
 		}
 	}
 
-	private void publish(Map<String, Object> paramsToSend) {
+	private void publish(Map<String, Object> paramsToSend,boolean async) {
 		for (SockJsConnection session : new HashSet<SockJsConnection>(sessions)) {
 
 			if (!session.getReadyState().equals(READY_STATE.OPEN)) {
 				sessions.remove(session);
 			} else {
-				session.write(util.getJson(paramsToSend));
+				session.write(util.getJson(paramsToSend),async);
 			}
 
 		}
