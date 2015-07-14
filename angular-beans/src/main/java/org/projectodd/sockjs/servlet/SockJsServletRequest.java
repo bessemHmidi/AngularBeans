@@ -89,6 +89,8 @@ public class SockJsServletRequest extends SockJsRequest implements ReadListener 
     public void onDataAvailable() throws IOException {
         ServletInputStream inputStream = request.getInputStream();
         do {
+        	while(!inputStream.isReady()){}
+        	
             byte[] buffer = new byte[1024*4];
             int length = inputStream.read(buffer);
             if (length > 0) {
@@ -117,6 +119,7 @@ public class SockJsServletRequest extends SockJsRequest implements ReadListener 
     @Override
     public void onError(Throwable throwable) {
         log.log(Level.WARNING, "Error in SockJS request ReadListener", throwable);
+        throwable.printStackTrace();
     }
 
     private HttpServletRequest request;

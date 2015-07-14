@@ -1,5 +1,6 @@
 package angularBeans.realtime;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -23,17 +25,32 @@ import org.projectodd.sockjs.SockJsServer;
 import org.projectodd.sockjs.servlet.RawWebsocketEndpoint;
 import org.projectodd.sockjs.servlet.SockJsEndpoint;
 
+import angularBeans.api.NGModules;
+import angularBeans.boot.BeanRegistry;
+import angularBeans.ngservices.NGService;
+import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.ClosureCompiler;
+import angularBeans.util.StaticJs;
+
 @WebListener
 public class MyServletContextListenerAnnotated implements ServletContextListener {
 
 	public static  SockJsServer sockJsServer;
 
+	ClosureCompiler compiler=ClosureCompiler.getINSTANCE();
+	
 	ServletContext context;
 	
 	 private static final Pattern SESSION_PATTERN = Pattern.compile(".*/.+/(.+)/websocket$");
 	
+	 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
+    	
+    	
+    	generateModule();
+    	generateExtentions();
+    	
 
     	context=servletContextEvent.getServletContext();
     	try {
@@ -142,6 +159,76 @@ if (sockJsServer.options.websocket) {
         }
     }
 }
+
+
+public void generateModule(){
+	
+	
+	
+	StringBuffer buffer=new StringBuffer();
+	
+	String appName = null;
+	Class<? extends Object> appClass = null;
+
+	appClass = BeanRegistry.getInstance().getAppClass();
+	if (appClass.isAnnotationPresent(Named.class)) {
+		appName = appClass.getAnnotation(Named.class).value();
+	}
+
+	if ((appName == null) || (appName.length() < 1)) {
+
+		appName = AngularBeansUtil.getBeanName(appClass);
+	}
+
+	buffer.append(StaticJs.angularBeanMainFunction);
+
+	buffer.append("var app=angular.module('" + appName
+			+ "', [");
+
+	if (appClass.isAnnotationPresent(NGModules.class)) {
+
+		NGModules ngModAnno = appClass.getAnnotation(NGModules.class);
+		String[] modules = ngModAnno.value();
+		String modulesPart = "";
+		for (String module : modules) {
+			modulesPart += ("'" + module + "',");
+		}
+		modulesPart = modulesPart
+				.substring(0, modulesPart.length() - 1);
+		
+		
+		
+		buffer.append(modulesPart);
+	}
+
+	buffer.append("])");
+
+	buffer
+			.append(".run(function($rootScope) {$rootScope.sessionUID = sessionId;");
+	buffer.append("$rootScope.baseUrl=sript_origin;");
+	buffer.append("});");
+	
+	StaticJs.CORE_SCRIPT.append(compiler.getCompressedJavaScript(buffer.toString()));
+	
+}
+
+private void generateExtentions() {
+	StringBuffer buffer=new StringBuffer();
+	for (NGService extention : BeanRegistry.getInstance()
+			.getExtentions()) {
+
+		Method m;
+		try {
+			m = extention.getClass().getMethod("render");
+			buffer.append(m.invoke(extention) + ";");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	StaticJs.EXTENTIONS_SCRIPT.append(compiler.getCompressedJavaScript(buffer.toString()));
+}
+
 }
 
 

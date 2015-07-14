@@ -106,49 +106,54 @@ public class AngularBeansUtil implements Serializable {
 	@PostConstruct
 	public void init() {
 
-		// builder.registerTypeAdapter(byte[].class, new
-		// JsonSerializer<Object>() {
-		//
-		// @Override
-		// public JsonElement serialize(Object src, Type typeOfSrc,
-		// JsonSerializationContext context) {
-		//
-		// for (String key : cache.getCache().keySet()) {
-		// if (cache.getCache().get(key).equals(src)) {
-		// return new JsonPrimitive("lob" + key);
-		// }
-		// }
-		//
-		// return new JsonPrimitive("hoho");
-		// }
-		// });
-
-	}
-
-	public String getJson(Object object) {
-
-		if (object instanceof Properties) {
-			return new Gson().toJson(object);
-		}
-
 		GsonBuilder builder = new GsonBuilder().serializeNulls();
-
-		if (object == null) {
-			return new GsonBuilder().serializeNulls().create().toJson(null);
-
-		}
-
-		// Class clazz = object.getClass();
 
 		builder.registerTypeAdapter(LobWrapper.class,
 				new LobWrapperJsonAdapter(cache));
 
 		builder.registerTypeAdapter(byte[].class, new ByteArrayJsonAdapter(
 				cache, contextPath));
+		
+		builder.registerTypeAdapter(LobWrapper.class,
+				new JsonDeserializer<LobWrapper>() {
 
-		Gson gson = builder.create();
+					@Override
+					public LobWrapper deserialize(JsonElement json,
+							Type typeOfT, JsonDeserializationContext context)
+							throws JsonParseException {
 
-		return gson.toJson(object);
+						return null;
+					}
+				});
+		
+		
+		
+		mainSerializer= builder.create();
+
+	}
+
+	
+	private Gson mainSerializer;
+	
+	public String getJson(Object object) {
+
+		if(mainSerializer==null)
+		{
+		//	if (object instanceof Properties) {
+			//	return new Gson().toJson(object);
+		//	}
+
+
+			
+			if (object == null) {
+				mainSerializer.toJson(null);
+
+			}
+
+		}
+	
+
+		return mainSerializer.toJson(object);
 
 	}
 
@@ -278,27 +283,8 @@ public class AngularBeansUtil implements Serializable {
 	}
 	
 	public Object deserialise(Class clazz, JsonElement element) {
-		Object elem;
-		GsonBuilder builder = new GsonBuilder();
-
-		builder.registerTypeAdapter(LobWrapper.class,
-				new JsonDeserializer<LobWrapper>() {
-
-					@Override
-					public LobWrapper deserialize(JsonElement json,
-							Type typeOfT, JsonDeserializationContext context)
-							throws JsonParseException {
-
-						return null;
-					}
-				});
-
-		
-
-		Gson gson = builder.create();
-
-		elem = gson.fromJson(element, clazz);
-		return elem;
+	
+	 return  mainSerializer.fromJson(element, clazz);
 	}
 
 }

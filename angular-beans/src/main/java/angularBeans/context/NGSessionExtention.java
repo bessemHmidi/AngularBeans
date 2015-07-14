@@ -31,15 +31,23 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import angularBeans.api.AngularBean;
 import angularBeans.api.NGApp;
+import angularBeans.api.NGModules;
 import angularBeans.boot.BeanRegistry;
 import angularBeans.ngservices.NGExtention;
 import angularBeans.ngservices.NGService;
+import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.ClosureCompiler;
+import angularBeans.util.StaticJs;
 
 public class NGSessionExtention implements Extension {
-
+	
+	
+	
 	public <T> void processAnnotatedType(
 			@Observes ProcessAnnotatedType<T> processAnnotatedType) {
 
@@ -93,13 +101,12 @@ public class NGSessionExtention implements Extension {
 		event.addContext(context);
 		
 		
-//		try {
-//			Process process=new ProcessBuilder("mkdir","toto").start();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
+	
 
 	}
 
+	
+	
+	
 }

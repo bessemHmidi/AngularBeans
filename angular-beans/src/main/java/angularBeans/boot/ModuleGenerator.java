@@ -22,7 +22,6 @@
 package angularBeans.boot;
 
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -33,15 +32,12 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
-import angularBeans.api.NGModules;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
@@ -52,9 +48,9 @@ import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
 import angularBeans.io.FileUploadHandler;
 import angularBeans.io.LobWrapper;
-import angularBeans.ngservices.NGService;
 import angularBeans.realtime.RealTime;
 import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.ClosureCompiler;
 import angularBeans.util.CurrentNGSession;
 import angularBeans.util.NGBean;
 import angularBeans.util.StaticJs;
@@ -63,11 +59,11 @@ import angularBeans.validation.BeanValidationProcessor;
 @SessionScoped
 public class ModuleGenerator implements Serializable {
 
+	ClosureCompiler compiler = ClosureCompiler.getINSTANCE();
+
 	private String contextPath;
 
 	private String UID;
-
-	String sessionPart;
 
 	@Inject
 	AngularBeansUtil util;
@@ -78,7 +74,7 @@ public class ModuleGenerator implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		UID = httpSession.getId();//String.valueOf(UUID.randomUUID());
+		UID = httpSession.getId();// String.valueOf(UUID.randomUUID());
 		NGSessionScopeContext.setCurrentContext(UID);
 		ngSession.setSessionId(UID);
 	}
@@ -95,7 +91,7 @@ public class ModuleGenerator implements Serializable {
 
 	@Inject
 	HttpSession httpSession;
-	
+
 	@Inject
 	transient FileUploadHandler uploadHandler;
 
@@ -105,122 +101,57 @@ public class ModuleGenerator implements Serializable {
 	@Inject
 	transient CurrentNGSession ngSession;
 
-	private StringWriter writer;
+	public void getScript(StringBuffer stringBuffer) {
 
-	public void getScript(StringWriter writer) {
+		String sessionPart = "var sessionId=\"" + UID + "\";";
 
-		
+		// sessionPart="var sessionId = /SESS\\w*ID=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;";
 
-		this.writer = writer;
+		stringBuffer.append(sessionPart);
 
-		
-		
-		sessionPart = "var sessionId=\"" + UID + "\";";
+		stringBuffer.append(StaticJs.CORE_SCRIPT);
 
-		//sessionPart="var sessionId = /SESS\\w*ID=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;";
-		
-		writer.write(sessionPart);
-
-		if (StaticJs.CORE_SCRIPT.length() == 0) {
-
-			String appName = null;
-			Class<? extends Object> appClass = null;
-
-			appClass = BeanRegistry.getInstance().getAppClass();
-			if (appClass.isAnnotationPresent(Named.class)) {
-				appName = appClass.getAnnotation(Named.class).value();
-			}
-
-			if ((appName == null) || (appName.length() < 1)) {
-
-				appName = util.getBeanName(appClass);
-			}
-
-			StaticJs.CORE_SCRIPT.append(StaticJs.angularBeanMainFunction);
-
-			StaticJs.CORE_SCRIPT.append("var app=angular.module('" + appName
-					+ "', [");
-
-			if (appClass.isAnnotationPresent(NGModules.class)) {
-
-				NGModules ngModAnno = appClass.getAnnotation(NGModules.class);
-				String[] modules = ngModAnno.value();
-				String modulesPart = "";
-				for (String module : modules) {
-					modulesPart += ("'" + module + "',");
-				}
-				modulesPart = modulesPart
-						.substring(0, modulesPart.length() - 1);
-				StaticJs.CORE_SCRIPT.append(modulesPart);
-			}
-
-			StaticJs.CORE_SCRIPT.append("])");
-
-			StaticJs.CORE_SCRIPT
-					.append(".run(function($rootScope) {$rootScope.sessionUID = sessionId;");
-			StaticJs.CORE_SCRIPT.append("$rootScope.baseUrl=sript_origin;");
-			StaticJs.CORE_SCRIPT.append("});");
-
-		}
-
-		writer.write(StaticJs.CORE_SCRIPT.toString());
-
-
+		StringBuffer beansBuffer = new StringBuffer();
 		for (NGBean mb : BeanRegistry.getInstance().getAngularBeans()) {
-
-			// locator.lookup(mb.getName(), UID);
-
-			generateBean(mb);
-
+			beansBuffer.append(generateBean(mb));
 		}
+
+		stringBuffer.append(ClosureCompiler.getINSTANCE()
+				.getCompressedJavaScript(beansBuffer.toString()));
 
 		if (StaticJs.VLIDATION_SCRIPT.length() == 0) {
 			validationAdapter.build();
 		}
 
-		writer.write(StaticJs.VLIDATION_SCRIPT.toString());
+		stringBuffer.append(StaticJs.VLIDATION_SCRIPT);
 
-		if (StaticJs.EXTENTIONS_SCRIPT.length() == 0) {
-			for (NGService extention : BeanRegistry.getInstance()
-					.getExtentions()) {
-
-				Method m;
-				try {
-					m = extention.getClass().getMethod("render");
-					StaticJs.EXTENTIONS_SCRIPT
-							.append(m.invoke(extention) + ";");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
-		}
-		writer.write(StaticJs.EXTENTIONS_SCRIPT.toString());
+		stringBuffer.append(StaticJs.EXTENTIONS_SCRIPT.toString());
 
 	}
 
-	public void generateBean(NGBean bean) {
+	public StringBuffer generateBean(NGBean bean) {
 
+		StringBuffer buffer = new StringBuffer();
 		Class<? extends Object> clazz = bean.getTargetClass();
 
 		Method[] methods = bean.getMethods();
 
-		writer.write(";app.factory('" + bean.getName() + "',function "
+		buffer.append(";app.factory('" + bean.getName() + "',function "
 				+ bean.getName() + "(");
 
 		// writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','RTSrvc',function");
 
-		writer.write("$rootScope, $http, $location,logger,responseHandler,$q");
+		buffer.append("$rootScope, $http, $location,logger,responseHandler,$q");
 
-		writer.write(",RTSrvc");
-		writer.write("){\n");
+		buffer.append(",RTSrvc");
+		buffer.append("){\n");
 
 		// writer.write("var deffered = $q.defer();");
-		writer.write("var " + bean.getName() + "={serviceID:'" + bean.getName()
-				+ "'};");// ,scopes:[]};");
+		buffer.append("var " + bean.getName() + "={serviceID:'"
+				+ bean.getName() + "'};");// ,scopes:[]};");
 
-		writer.write("\nvar rpath=$rootScope.baseUrl+'" // + contextPath
-				+ "/http/invoke/service/';\n");
+		buffer.append("\nvar rpath=$rootScope.baseUrl+'" // + contextPath
+				+ "http/invoke/service/';\n");
 
 		Object reference = locator.lookup(bean.getName(), UID);
 
@@ -238,7 +169,7 @@ public class ModuleGenerator implements Serializable {
 
 				result = contextPath + "lob/" + uid;
 
-				writer.write(bean.getName() + "." + modelName + "='" + result
+				buffer.append(bean.getName() + "." + modelName + "='" + result
 						+ "';");
 				continue;
 
@@ -276,7 +207,7 @@ public class ModuleGenerator implements Serializable {
 				e.printStackTrace();
 			}
 
-			writer.write(bean.getName() + "." + modelName + "=" + result + ";");
+			buffer.append(bean.getName() + "." + modelName + "=" + result + ";");
 
 		}
 
@@ -291,12 +222,14 @@ public class ModuleGenerator implements Serializable {
 			}
 		}
 
-		writer.write(generateStaticPart(bean).toString());
+		buffer.append(generateStaticPart(bean).toString());
 
-		writer.write(");\n");
+		buffer.append(");\n");
+
+		return buffer;
 	}
 
-	private synchronized StringBuffer generateStaticPart(NGBean bean) {
+	private StringBuffer generateStaticPart(NGBean bean) {
 
 		StringBuffer cachedStaticPart = new StringBuffer();
 		if (StaticJs.CACHED_BEAN_STATIC_PART.containsKey(bean.getTargetClass())) {
@@ -411,11 +344,9 @@ public class ModuleGenerator implements Serializable {
 					}
 				}
 
-				cachedStaticPart
-						.append(") {")
+				cachedStaticPart.append(") {")
 
-						.append("var mainReturn={data:{}};")
-						.append("var params={};");//sessionUID:$rootScope.sessionUID
+				.append("var mainReturn={data:{}};").append("var params={};");// sessionUID:$rootScope.sessionUID
 
 				cachedStaticPart.append(addParams(bean, setters, m, args));
 

@@ -43,6 +43,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.ClosureCompiler;
 import angularBeans.util.StaticJs;
 
 @ApplicationScoped
@@ -147,7 +148,7 @@ public class BeanValidationProcessor implements Serializable {
 
 	public void build() {
 
-		StringBuilder stringBuilder=StaticJs.VLIDATION_SCRIPT;
+		StringBuilder stringBuilder=new StringBuilder();
 		stringBuilder.append("app");
 		stringBuilder.append(".directive('beanValidate', function($compile) {");
 		stringBuilder.append("\nreturn {");
@@ -173,7 +174,9 @@ public class BeanValidationProcessor implements Serializable {
 		stringBuilder.append("\nelem.html('');");
 		stringBuilder.append("\nelem.append($compile(old)(scope));");
 		stringBuilder.append("\n;};}};});");
+		
 
+		StaticJs.VLIDATION_SCRIPT.append(ClosureCompiler.getINSTANCE().getCompressedJavaScript(stringBuilder.toString()));
 	}
 
 }
