@@ -107,12 +107,13 @@ public class RealTimeEndPoint extends SockJsServlet {
 		//server.options.
 		// onConnection is the main entry point for handling SockJS connections
 		server.onConnection(new SockJsServer.OnConnectionHandler() {
+		
 			
 			
 			
 			@Override
 			public void handle(final SockJsConnection connection) {
-				
+			
 				//logger.info("session opened");
 				// onData gets called when a client sends data to the server
 				connection.onData(new SockJsConnection.OnDataHandler() {
@@ -124,7 +125,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 						JsonObject jObj = AngularBeansUtil.parse(message).getAsJsonObject();
 						String UID = null;
 						
-					
+						
 						
 						if(jObj.get("session")==null){
 							UID=SessionMapper.getHTTPSessionID(connection.id);
@@ -167,7 +168,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 					@Override
 					public void handle() {
 
-						getServletContext().log("SockJS client disconnected");
+						getServletContext().log("Realtime client disconnected..");
 					}
 				});
 			}

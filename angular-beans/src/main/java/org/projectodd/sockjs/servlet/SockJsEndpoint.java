@@ -30,6 +30,8 @@ public class SockJsEndpoint extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         log.log(Level.FINER, "onOpen");
+        
+        
         String sessionId = session.getPathParameters().get("session");
         Map<String, List<String>> headers = SockJsServlet.retrieveHeaders(sessionId);
         SockJsRequest req = new SockJsWebsocketRequest(session, contextPath, prefix, headers);

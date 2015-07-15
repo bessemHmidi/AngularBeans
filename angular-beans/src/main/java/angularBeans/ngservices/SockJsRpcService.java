@@ -66,7 +66,7 @@ public class SockJsRpcService implements NGService {
 		result += "\nws.onmessage = function (evt)";
 		result += "\n{";
 		result += "\nvar msg=angular.fromJson(evt.data);";
-
+		
 		// -----------------------
 
 		result += "var REQ_ID=parseInt(msg.reqId);";

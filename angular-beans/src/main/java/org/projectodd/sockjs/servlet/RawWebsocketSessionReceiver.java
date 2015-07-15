@@ -64,8 +64,12 @@ public class RawWebsocketSessionReceiver extends Session {
         }
         try {
         	if(!async)
+        	{
             ws.getBasicRemote().sendText(payload);
+        	}
+        	else{
         	ws.getAsyncRemote().sendText(payload);
+        	}
         } catch (IOException ex) {
             log.log(Level.WARNING, "Error sending raw websocket data", ex);
         }

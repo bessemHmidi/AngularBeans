@@ -35,7 +35,7 @@ public class NGSessionContextHolder implements Serializable {
 	private Map<Class, CustomScopeInstance> beans;// we will have only one
 													// instance of a type so the
 													// key is a class
-
+ 
 	public NGSessionContextHolder() {
 
 		beans = Collections

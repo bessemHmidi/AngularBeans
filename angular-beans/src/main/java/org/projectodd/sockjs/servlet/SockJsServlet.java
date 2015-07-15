@@ -32,12 +32,14 @@ import java.util.regex.Pattern;
 public class SockJsServlet extends HttpServlet {
 
     public SockJsServlet() {
-
+    	
     }
 
-    public SockJsServlet(SockJsServer sockJsServer) {
-        this.sockJsServer = sockJsServer;
-    }
+//    public SockJsServlet(SockJsServer sockJsServer) {
+//        this.sockJsServer = sockJsServer;
+//        
+//        
+//    }
 
     public void setServer(SockJsServer sockJsServer) {
         this.sockJsServer = sockJsServer;
@@ -113,11 +115,13 @@ public class SockJsServlet extends HttpServlet {
 
             @Override
             public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
-                if (isRaw) {
+               
+            	if (isRaw) {
                     // We have no reliable key (like session id) to save
                     // headers with for raw websocket requests
                     return;
                 }
+            	
                 String path = request.getRequestURI().getPath();
                 Matcher matcher = SESSION_PATTERN.matcher(path);
                 if (matcher.matches()) {
@@ -132,8 +136,7 @@ public class SockJsServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
        
     	res.setHeader("Access-Control-Allow-Origin", "true");
-    	//if(sockJsServer==null)
-    	//initJSR356();
+    	
     	log.log(Level.FINE, "SockJsServlet#service for {0} {1}", new Object[] {req.getMethod(), req.getPathInfo()});
         AsyncContext asyncContext = req.startAsync();
         asyncContext.setTimeout(0); // no timeout

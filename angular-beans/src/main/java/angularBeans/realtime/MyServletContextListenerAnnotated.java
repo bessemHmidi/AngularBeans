@@ -36,7 +36,7 @@ import angularBeans.util.StaticJs;
 public class MyServletContextListenerAnnotated implements ServletContextListener {
 
 	public static  SockJsServer sockJsServer;
-
+ 
 	ClosureCompiler compiler=ClosureCompiler.getINSTANCE();
 	
 	ServletContext context;
@@ -46,21 +46,26 @@ public class MyServletContextListenerAnnotated implements ServletContextListener
 	 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
+    	context=servletContextEvent.getServletContext();
     	
+    	
+    	try {
+    		if (sockJsServer == null) {
+			initJSR356();
+			
+    		}
+    		
+    		
+		} catch (ServletException e) {
+	
+			e.printStackTrace();
+		}
     	
     	generateModule();
     	generateExtentions();
     	
 
-    	context=servletContextEvent.getServletContext();
-    	try {
-    		if (sockJsServer == null) {
-			initJSR356();
-    		}
-		} catch (ServletException e) {
-	
-			e.printStackTrace();
-		}
+    	
     }
 
     
@@ -154,9 +159,12 @@ if (sockJsServer.options.websocket) {
         try {
             serverContainer.addEndpoint(sockJsConfig);
             serverContainer.addEndpoint(rawWsConfig);
+            
+            System.out.println("deployement of programmatic WS....end");
         } catch (DeploymentException ex) {
             throw new ServletException("Error deploying websocket endpoint:", ex);
         }
+       
     }
 }
 

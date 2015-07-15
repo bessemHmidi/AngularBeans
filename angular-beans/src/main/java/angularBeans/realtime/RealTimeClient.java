@@ -249,6 +249,7 @@ public class RealTimeClient implements Serializable {
 			if (!session.getReadyState().equals(READY_STATE.OPEN)) {
 				sessions.remove(session);
 			} else {
+				
 				session.write(util.getJson(paramsToSend),async);
 			}
 

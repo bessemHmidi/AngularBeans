@@ -29,6 +29,8 @@ public class RawWebsocketEndpoint extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         log.log(Level.FINER, "onOpen for session {0}", session.getId());
+      
+        
         SockJsRequest req = new SockJsWebsocketRequest(session, contextPath, prefix, Collections.EMPTY_MAP);
         receivers.put(session.getId(), new RawWebsocketSessionReceiver(req, server, session));
     }
