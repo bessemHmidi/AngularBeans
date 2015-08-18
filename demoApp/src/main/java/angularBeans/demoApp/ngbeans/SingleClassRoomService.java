@@ -15,8 +15,8 @@ import angularBeans.context.NGSessionScoped;
 import angularBeans.demoApp.domain.ClassRoom;
 import angularBeans.demoApp.domain.User;
 import angularBeans.demoApp.service.VirtualClassService;
+import angularBeans.events.RealTimeMessage;
 import angularBeans.realtime.RealTimeClient;
-import angularBeans.realtime.RealTimeMessage;
 import angularBeans.util.ModelQuery;
 import angularBeans.util.ModelQueryFactory;
 

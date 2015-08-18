@@ -34,6 +34,10 @@ import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.Transport.READY_STATE;
 
 import angularBeans.context.NGSessionScoped;
+import angularBeans.events.RealTimeErrorEvent;
+import angularBeans.events.RealTimeMessage;
+import angularBeans.events.RealTimeSessionCloseEvent;
+import angularBeans.events.RealTimeSessionReadyEvent;
 import angularBeans.events.ServerEvent;
 import angularBeans.log.NGLogger;
 import angularBeans.remote.DataReceivedEvent;

@@ -24,10 +24,8 @@ package angularBeans.remote;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 
@@ -35,15 +33,13 @@ import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.SockJsServer;
 import org.projectodd.sockjs.servlet.SockJsServlet;
 
-import angularBeans.context.GlobalMapHolder;
-import angularBeans.context.NGSessionContextHolder;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.context.SessionMapper;
+import angularBeans.events.RealTimeErrorEvent;
+import angularBeans.events.RealTimeSessionCloseEvent;
+import angularBeans.events.RealTimeSessionReadyEvent;
+import angularBeans.realtime.AngularBeansServletContextListenerAnnotated;
 import angularBeans.realtime.GlobalConnectionHolder;
-import angularBeans.realtime.MyServletContextListenerAnnotated;
-import angularBeans.realtime.RealTimeErrorEvent;
-import angularBeans.realtime.RealTimeSessionCloseEvent;
-import angularBeans.realtime.RealTimeSessionReadyEvent;
 import angularBeans.util.AngularBeansUtil;
 
 import com.google.gson.JsonObject;
@@ -72,7 +68,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 
 	@Inject
 	Logger logger;
-	
+
 	// @OnClose
 	// public void onclose(Session session) {
 	// sessionCloseEvent.fire(new WSocketEvent(session, null));
@@ -87,59 +83,53 @@ public class RealTimeEndPoint extends SockJsServlet {
 	// }
 	//
 
-//	@PostConstruct
-//	public void start() {
-//		try {
-//			super.inito();
-//		} catch (ServletException e) {
+	// @PostConstruct
+	// public void start() {
+	// try {
+	// super.inito();
+	// } catch (ServletException e) {
 
-//			e.printStackTrace();
-//		}
-//		
-//	}
-	
+	// e.printStackTrace();
+	// }
+	//
+	// }
+
 	@Override
 	public void init() throws ServletException {
-		SockJsServer server = MyServletContextListenerAnnotated.sockJsServer;
+		SockJsServer server = AngularBeansServletContextListenerAnnotated.sockJsServer;
 		// Various options can be set on the server, such as:
 		// echoServer.options.responseLimit = 4 * 1024;
 
-		//server.options.
+		// server.options.
 		// onConnection is the main entry point for handling SockJS connections
 		server.onConnection(new SockJsServer.OnConnectionHandler() {
-		
-			
-			
-			
+
 			@Override
 			public void handle(final SockJsConnection connection) {
-			
-				//logger.info("session opened");
+
+				// logger.info("session opened");
 				// onData gets called when a client sends data to the server
 				connection.onData(new SockJsConnection.OnDataHandler() {
 					@Override
 					public void handle(String message) {
 
-						
-					
-						JsonObject jObj = AngularBeansUtil.parse(message).getAsJsonObject();
+						JsonObject jObj = AngularBeansUtil.parse(message)
+								.getAsJsonObject();
 						String UID = null;
-						
-						
-						
-						if(jObj.get("session")==null){
-							UID=SessionMapper.getHTTPSessionID(connection.id);
-				        }
-						else{
+
+						if (jObj.get("session") == null) {
+							UID = SessionMapper.getHTTPSessionID(connection.id);
+						} else {
 							UID = jObj.get("session").getAsString();
-							SessionMapper.getSessionsMap().put(UID, new HashSet<String>());
-							
+							SessionMapper.getSessionsMap().put(UID,
+									new HashSet<String>());
+
 						}
-						SessionMapper.getSessionsMap().get(UID).add(connection.id);
-						
-						
-						RealTimeDataReceiveEvent ev = new RealTimeDataReceiveEvent(connection,
-								jObj);
+						SessionMapper.getSessionsMap().get(UID)
+								.add(connection.id);
+
+						RealTimeDataReceiveEvent ev = new RealTimeDataReceiveEvent(
+								connection, jObj);
 
 						ev.setConnection(connection);
 						ev.setSessionId(UID);
@@ -150,13 +140,12 @@ public class RealTimeEndPoint extends SockJsServlet {
 						if (service.equals("ping")) {
 
 							sessionOpenEvent.fire(ev);
-							logger.info(
-									"AngularBeans-client: " + UID);
+							logger.info("AngularBeans-client: " + UID);
 
 						} else {
 
 							receiveEvents.fire(ev);
-							
+
 						}
 
 						// connection.write(message);
@@ -168,14 +157,15 @@ public class RealTimeEndPoint extends SockJsServlet {
 					@Override
 					public void handle() {
 
-						getServletContext().log("Realtime client disconnected..");
+						getServletContext().log(
+								"Realtime client disconnected..");
 					}
 				});
 			}
 		});
 
 		setServer(server);
-		
+
 		// Don't forget to call super.init() to wire everything up
 		super.init();
 

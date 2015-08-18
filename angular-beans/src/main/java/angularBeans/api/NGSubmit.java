@@ -29,14 +29,15 @@ import java.lang.annotation.Target;
 /**  
 * specify 
 * what other back end models  will be synchronized
-* with front end models before the method call
+* with front end models before the annotated method call
 * <p> 
 * backEndModels: array of models names or 
 * ' backEndModels={"*"} ' to tell AngularBeans
 * that all the @NGModel annotated properties
 * of the back end bean will be updated.
-* 
+* <p>
 * <strong>work only with @NGModel annotated properties
+* @author bessem hmidi
 **/
 
 @Target({ElementType.METHOD})

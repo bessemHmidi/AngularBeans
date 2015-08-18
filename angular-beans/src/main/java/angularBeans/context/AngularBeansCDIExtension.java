@@ -16,12 +16,8 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
-package angularBeans.context;
 
-import java.io.IOException;
+package angularBeans.context;
 
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.event.Observes;
@@ -31,22 +27,24 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import angularBeans.api.AngularBean;
 import angularBeans.api.NGApp;
-import angularBeans.api.NGModules;
 import angularBeans.boot.BeanRegistry;
-import angularBeans.ngservices.NGExtention;
+import angularBeans.ngservices.NGExtension;
 import angularBeans.ngservices.NGService;
-import angularBeans.util.AngularBeansUtil;
-import angularBeans.util.ClosureCompiler;
-import angularBeans.util.StaticJs;
 
-public class NGSessionExtention implements Extension {
-	
-	
+/**
+@author Bessem Hmidi
+*/
+public class AngularBeansCDIExtension implements Extension {
+
+	/**
+	 * Observe the ProcessAnnotatedType event and register scanned angularBeans specific
+	 * CDI beans (applications (ng module), extensions and angularBeans beans) to the
+	 * BeanRegistry that will be used in the angularBeans script (js) generation
+	 * @param processAnnotatedType
+	 */
 	
 	public <T> void processAnnotatedType(
 			@Observes ProcessAnnotatedType<T> processAnnotatedType) {
@@ -63,7 +61,7 @@ public class NGSessionExtention implements Extension {
 
 		}
 
-		if (annotatedType.isAnnotationPresent(NGExtention.class)) {
+		if (annotatedType.isAnnotationPresent(NGExtension.class)) {
 			{
 				try {
 
@@ -71,7 +69,7 @@ public class NGSessionExtention implements Extension {
 							(NGService) annotatedType.getJavaClass()
 									.newInstance());
 				} catch (InstantiationException | IllegalAccessException e) {
-				
+
 					e.printStackTrace();
 				}
 			}
@@ -93,20 +91,20 @@ public class NGSessionExtention implements Extension {
 		// event.addScope(NGSessionScoped.class, false, false);
 	}
 
+	/**
+	 * auto called method that observe the beans discovery at deployment and register
+	 * the NGSessionScopeContext (and the NGSessionScoped custom CDI scope)
+	 * @param event
+	 * @param manager
+	 * 
+	 */
 	public void registerContext(@Observes final AfterBeanDiscovery event,
 			BeanManager manager) {
 
 		Context context = NGSessionScopeContext.getINSTANCE();
 		//
 		event.addContext(context);
-		
-		
-
-	
 
 	}
 
-	
-	
-	
 }

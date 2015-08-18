@@ -41,7 +41,7 @@ import angularBeans.util.AngularBeansUtil;
 import com.google.gson.JsonObject;
 
 @WebServlet(asyncSupported = false, urlPatterns = "/http/invoke/*")
-public class OneWayEndPoint extends HttpServlet implements Serializable {
+public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 
 @Inject
 	InvocationHandler remoteInvoker;
@@ -130,7 +130,7 @@ public class OneWayEndPoint extends HttpServlet implements Serializable {
 		
 		
 		
-		receiveEvents.fire(new OneWayDataReceivedEvent(paramsObj));
+		receiveEvents.fire(new HalfDuplexDataReceivedEvent(paramsObj));
 
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID),
 				method, paramsObj, UID);

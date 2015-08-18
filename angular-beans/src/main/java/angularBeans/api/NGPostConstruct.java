@@ -37,7 +37,12 @@ import java.lang.annotation.Target;
 * 
 
 * <strong>method annotated with @NGPostConstruct must
-* be a public void with no args methods
+* be : public void and with no args
+* 
+* <p>
+* Attention! when used with RequestScoped Bean : this will trigger the creation of 
+* a new contextual instance of the bean (the @NGPostConstruct will produce an extra HTTP request)
+* @author bessem hmidi
 **/
 
 

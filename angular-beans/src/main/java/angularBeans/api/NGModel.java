@@ -28,13 +28,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**  
-* Declare an angular bean properties mapped as model 
+* Declare an angular bean property mapped as model 
 * on the js proxy side 
 * <p> 
 * this is a property based annotation (on the getter)
 * 
-* this give the possibilitie to separate mapped properties
+* this give the possibility to separate mapped properties
 * from internal java side concern properties
+* (properties non annotated with @NGModel will not be availables on
+*  the angularJS service proxy)
+* 
+* @author bessem hmidi
 **/ 
 
 

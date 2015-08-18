@@ -21,7 +21,7 @@
  */
 package angularBeans.ngservices;
 
-@NGExtention
+@NGExtension
 public class BundleService implements NGService {
 
 	@Override

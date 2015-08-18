@@ -14,8 +14,11 @@ import java.lang.annotation.Target;
 * can need some extra module dependencies 
 * so this annotation declare a table of modules
 *  names (ofc they need to be also added as 
-* js dependencies.
+* js dependencies).
 * <strong>used only with @NGAPP annotation
+* and kept for possible future extensions
+* 
+* @author bessem hmidi
 **/
 
 @Retention(RUNTIME)

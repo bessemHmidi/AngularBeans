@@ -16,9 +16,6 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
 package angularBeans.context;
 
 import java.io.Serializable;
@@ -36,6 +33,13 @@ import javax.inject.Inject;
 
 import angularBeans.util.AngularBeansUtil;
 
+/**
+ * provide a lookup method to obtain an angularBean reference from an external
+ * context to the HTTP Session context (useful with realTime methods calls)
+ * 
+ * @author Bessem Hmidi
+ */
+@SuppressWarnings("serial")
 @ApplicationScoped
 public class BeanLocator implements Serializable {
 
@@ -45,9 +49,9 @@ public class BeanLocator implements Serializable {
 	@Inject
 	AngularBeansUtil util;
 
-	public synchronized Object lookup(String beanName, String UID) {
+	public synchronized Object lookup(String beanName, String sessionID) {
 
-		NGSessionScopeContext.setCurrentContext(UID);
+		NGSessionScopeContext.setCurrentContext(sessionID);
 		Object reference = null;
 
 		Set<Bean<?>> beans = beanManager.getBeans(beanName);

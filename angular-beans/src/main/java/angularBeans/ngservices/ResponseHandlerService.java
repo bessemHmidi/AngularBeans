@@ -21,7 +21,7 @@
  */
 package angularBeans.ngservices;
 
-@NGExtention
+@NGExtension
 public class ResponseHandlerService implements NGService {
 
 	@Override

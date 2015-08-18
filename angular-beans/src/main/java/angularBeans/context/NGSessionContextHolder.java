@@ -17,6 +17,7 @@
  */
 
 /**
+ * declare a "NGSession" beans store for 
  @author Bessem Hmidi
  */
 package angularBeans.context;
@@ -28,38 +29,43 @@ import java.util.Map;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
-
+/**
+ * bean store for the NGSessionScopeContext
+ * @author bessem
+ *
+ */
+@SuppressWarnings("serial")
 public class NGSessionContextHolder implements Serializable {
 
 	// private static NGSessionContextHolder INSTANCE;
-	private Map<Class, CustomScopeInstance> beans;// we will have only one
+	private Map<Class, NGSessionScopeInstance> beans;// we will have only one
 													// instance of a type so the
 													// key is a class
  
 	public NGSessionContextHolder() {
 
 		beans = Collections
-				.synchronizedMap(new HashMap<Class, CustomScopeInstance>());
+				.synchronizedMap(new HashMap<Class, NGSessionScopeInstance>());
 	}
 
 
-	public Map<Class, CustomScopeInstance> getBeans() {
+	public Map<Class, NGSessionScopeInstance> getBeans() {
 		
 
 		return beans;
 
 	}
 
-	public CustomScopeInstance getBean(Class type) {
+	public NGSessionScopeInstance getBean(Class type) {
 		return getBeans().get(type);
 	}
 
-	public void putBean(CustomScopeInstance customInstance) {
+	public void putBean(NGSessionScopeInstance customInstance) {
 
 		getBeans().put(customInstance.bean.getBeanClass(), customInstance);
 	}
 
-	void destroyBean(CustomScopeInstance customScopeInstance) {
+	void destroyBean(NGSessionScopeInstance customScopeInstance) {
 		getBeans().remove(customScopeInstance.bean.getBeanClass());
 		customScopeInstance.bean.destroy(customScopeInstance.instance,
 				customScopeInstance.ctx);
@@ -68,9 +74,9 @@ public class NGSessionContextHolder implements Serializable {
 	/**
 	 * wrap necessary properties so we can destroy the bean later:
 	 * 
-	 * @see CustomScopeContextHolder#destroyBean(custom.scope.extension.CustomScopeContextHolder.CustomScopeInstance)
+	 * @see NGSessionContextHolder#destroyBean(angularBeans.context.NGSessionContextHolder.NGSessionScopeInstance)
 	 */
-	public static class CustomScopeInstance<T> {
+	public static class NGSessionScopeInstance<T> {
 
 		Bean<T> bean;
 		CreationalContext<T> ctx;

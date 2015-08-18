@@ -16,22 +16,25 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
+
 package angularBeans.context;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.util.logging.Logger;
 
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 
-import angularBeans.context.NGSessionContextHolder.CustomScopeInstance;
+import angularBeans.context.NGSessionContextHolder.NGSessionScopeInstance;
 
+/**
+ * 
+ * @author Bessem Hmidi
+ * A custom CDI context implementation bound to the NGSession (cross context between the Websockets session and HTTP Session)
+ */
+@SuppressWarnings("serial")
 public class NGSessionScopeContext implements Context, Serializable {
 
 	private static Context INSTANCE;
@@ -48,19 +51,18 @@ public class NGSessionScopeContext implements Context, Serializable {
 
 	private static ThreadLocal<NGSessionContextHolder> holder = new ThreadLocal<>();
 
-	public static void setCurrentContext(String holderId) {
+	public static void setCurrentContext(String sessionId) {
 
-		NGSessionContextHolder selectedHolder = GlobalMapHolder.get(holderId);
+		NGSessionContextHolder selectedHolder = GlobalNGSessionContextsMapHolder
+				.get(sessionId);
 
 		holder.set(selectedHolder);
 
 	}
 
-	private Logger log = Logger.getLogger(getClass().getSimpleName());
-
 	@Override
 	public Class<? extends Annotation> getScope() {
-		
+
 		return NGSessionScoped.class;
 	}
 
@@ -75,15 +77,13 @@ public class NGSessionScopeContext implements Context, Serializable {
 			return (T) holder.get().getBean(bean.getBeanClass()).instance;
 		} else {
 
-			// System.out.println("bean creation..."+bean.getBeanClass());
-
-			T t = (T) bean.create(creationalContext);
-			CustomScopeInstance customInstance = new CustomScopeInstance();
+			T instance = (T) bean.create(creationalContext);
+			NGSessionScopeInstance customInstance = new NGSessionScopeInstance();
 			customInstance.bean = bean;
 			customInstance.ctx = creationalContext;
-			customInstance.instance = t;
+			customInstance.instance = instance;
 			holder.get().putBean(customInstance);
-			return t;
+			return instance;
 		}
 
 	}
@@ -102,7 +102,7 @@ public class NGSessionScopeContext implements Context, Serializable {
 
 	@Override
 	public boolean isActive() {
-		
+
 		return true;
 	}
 

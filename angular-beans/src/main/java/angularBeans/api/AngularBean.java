@@ -16,9 +16,6 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
 package angularBeans.api;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -36,12 +33,17 @@ import javax.enterprise.inject.Stereotype;
 import javax.inject.Qualifier;
 
 /**  
-* Declare a class as an AngularBean
+* Declare a class as an AngularBean that will be proxied via an auto generated
+* AngularJS service.
+* <p>
+* this stereotype define by default a RequestScoped CDI Bean
 * <p>
 * compatibles scopes :
 * <li> javax.enterprise.context.RequestScoped
 * <li> javax.enterprise.context.ApplicationScoped
 * <li> javax.enterprise.context.NGSessionScoped
+* 
+* @author bessem hmidi
 **/ 
 
 @Retention(RUNTIME)

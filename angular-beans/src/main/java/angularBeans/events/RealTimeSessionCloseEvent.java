@@ -19,7 +19,7 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.realtime;
+package angularBeans.events;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -37,6 +37,6 @@ import javax.inject.Qualifier;
 @Retention(RUNTIME)
 
 @Qualifier
-public @interface RealTimeErrorEvent {
+public @interface RealTimeSessionCloseEvent {
 
 }

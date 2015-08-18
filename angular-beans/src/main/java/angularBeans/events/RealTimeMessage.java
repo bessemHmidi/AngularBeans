@@ -16,17 +16,20 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
-package angularBeans.realtime;
+
+package angularBeans.events;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
+/**
+ * a RealTime message is a server to client message
+ * translated to an angularJS event. (only with realTime context)
+ * @author Bessem Hmidi
+ *
+ */
 public class RealTimeMessage {
 
 	private Map<String, Object> data = new HashMap<String, Object>();

@@ -3,10 +3,20 @@ package angularBeans.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StaticJs {
+/**
+ *  
+ * @author bessem
+ *
+ */
+
+public class StaticJsCache {
 
 	final static String scriptDetection="var sript_origin=((document.scripts[document.scripts.length-1].src).replace('angular-beans.js',''));";
-	public final static String angularBeanMainFunction =scriptDetection+"var angularBeans={ "
+	
+	/**
+	 * the angularBeansMainObject is the angularBeans object in the angularBeans javascript api
+	 */
+	public final static String angularBeansMainObject =scriptDetection+"var angularBeans={ "
 
 
 //			+ "fire:function(eventName,data){"
@@ -87,7 +97,7 @@ public class StaticJs {
 	public static StringBuilder CORE_SCRIPT=new StringBuilder();
 	public static Map<Class, StringBuffer> CACHED_BEAN_STATIC_PART = new HashMap<Class, StringBuffer>();
 	public static StringBuilder EXTENTIONS_SCRIPT=new StringBuilder();
-	public static StringBuilder VLIDATION_SCRIPT=new StringBuilder();
+	public static StringBuilder VALIDATION_SCRIPT=new StringBuilder();
 	
 
 	

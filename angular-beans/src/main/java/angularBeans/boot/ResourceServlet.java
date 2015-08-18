@@ -30,6 +30,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * 
+ * The ResourceServlet is the resources end point
+ * by resources we mean properties files that will be served as JSON data
+ * (translation files for example)<br/> consumed by "bundleService.loadBundle(bundle_prefix,aleas)".
+ * 
+ * 
+@author Bessem Hmidi
+*/
+
+@SuppressWarnings("serial")
 @WebServlet(urlPatterns = "/resources/*")
 public class ResourceServlet extends HttpServlet {
 

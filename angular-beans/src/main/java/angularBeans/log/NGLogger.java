@@ -29,13 +29,14 @@ import javax.enterprise.context.ApplicationScoped;
 import angularBeans.context.NGSessionScoped;
 
 /**
- * when injected, NGLogger will log 
+ * when injected into an @AngularBean, NGLogger will log 
  *  messages directly on the browser
  *  console.
  *  
  *  **/
 
 
+@SuppressWarnings("serial")
 @NGSessionScoped
 public class NGLogger implements Serializable {
 

@@ -19,27 +19,24 @@
 /**
  @author Bessem Hmidi
  */
-package angularBeans.context;
+package angularBeans.events;
 
-import java.util.HashMap;
-import java.util.Map;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class GlobalMapHolder {
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	private static Map<String, NGSessionContextHolder> map = new HashMap<String, NGSessionContextHolder>();
+import javax.inject.Qualifier;
 
-	public static synchronized void destroySession(String holderId) {
 
-		map.remove(holderId);
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+@Retention(RUNTIME)
 
-	}
-
-	public static synchronized NGSessionContextHolder get(String holderId) {
-
-		if (!map.containsKey(holderId)) {
-			map.put(holderId, new NGSessionContextHolder());
-		}
-		return map.get(holderId);
-	}
+@Qualifier
+public @interface RealTimeSessionReadyEvent {
 
 }

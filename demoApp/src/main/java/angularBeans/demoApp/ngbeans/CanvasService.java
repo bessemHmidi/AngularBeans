@@ -6,9 +6,9 @@ import javax.inject.Inject;
 
 import angularBeans.api.AngularBean;
 import angularBeans.context.NGSessionScoped;
+import angularBeans.events.RealTimeMessage;
 import angularBeans.realtime.RealTime;
 import angularBeans.realtime.RealTimeClient;
-import angularBeans.realtime.RealTimeMessage;
 
 
 @AngularBean

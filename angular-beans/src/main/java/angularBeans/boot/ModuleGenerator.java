@@ -16,9 +16,7 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
+
 package angularBeans.boot;
 
 import java.io.Serializable;
@@ -53,9 +51,16 @@ import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ClosureCompiler;
 import angularBeans.util.CurrentNGSession;
 import angularBeans.util.NGBean;
-import angularBeans.util.StaticJs;
+import angularBeans.util.StaticJsCache;
 import angularBeans.validation.BeanValidationProcessor;
-
+/**
+ * 
+ * The ModuleGenerator is the main component in the angularBean javaScript generation
+ * used by BootServlet
+ * 
+ * 
+@author Bessem Hmidi
+*/
 @SessionScoped
 public class ModuleGenerator implements Serializable {
 
@@ -63,6 +68,7 @@ public class ModuleGenerator implements Serializable {
 
 	private String contextPath;
 
+	
 	private String UID;
 
 	@Inject
@@ -72,6 +78,9 @@ public class ModuleGenerator implements Serializable {
 
 	}
 
+	/**
+	 *  since  the NGSession scope 
+	 *  lifecycle is the same as the current HTTP session  a unique sessionId by http session, we use the same session id */
 	@PostConstruct
 	public void init() {
 		UID = httpSession.getId();// String.valueOf(UUID.randomUUID());
@@ -101,34 +110,45 @@ public class ModuleGenerator implements Serializable {
 	@Inject
 	transient CurrentNGSession ngSession;
 
-	public void getScript(StringBuffer stringBuffer) {
+	/**
+	 * this method generate the angular-beans.js content and write it to the <br> 
+	 * jsBuffer used by BootServlet
+	 * @param jsBuffer 
+	 */
+	public void getScript(StringBuffer jsBuffer) {
 
 		String sessionPart = "var sessionId=\"" + UID + "\";";
 
 		// sessionPart="var sessionId = /SESS\\w*ID=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;";
 
-		stringBuffer.append(sessionPart);
+		jsBuffer.append(sessionPart);
 
-		stringBuffer.append(StaticJs.CORE_SCRIPT);
+		jsBuffer.append(StaticJsCache.CORE_SCRIPT);
 
 		StringBuffer beansBuffer = new StringBuffer();
 		for (NGBean mb : BeanRegistry.getInstance().getAngularBeans()) {
 			beansBuffer.append(generateBean(mb));
 		}
 
-		stringBuffer.append(ClosureCompiler.getINSTANCE()
+		jsBuffer.append(ClosureCompiler.getINSTANCE()
 				.getCompressedJavaScript(beansBuffer.toString()));
 
-		if (StaticJs.VLIDATION_SCRIPT.length() == 0) {
+		if (StaticJsCache.VALIDATION_SCRIPT.length() == 0) {
 			validationAdapter.build();
 		}
 
-		stringBuffer.append(StaticJs.VLIDATION_SCRIPT);
+		jsBuffer.append(StaticJsCache.VALIDATION_SCRIPT);
 
-		stringBuffer.append(StaticJs.EXTENTIONS_SCRIPT.toString());
+		jsBuffer.append(StaticJsCache.EXTENTIONS_SCRIPT.toString());
 
 	}
 
+	/**
+	 * this method concern is the generation of the AngularJS service from
+	 * the @AngularBean CDI bean. 
+	 * @param bean the bean wrapper for an @AngularBean CDI bean.
+	 * @return a StringBuffer containing the generated angular service code.
+	 */
 	public StringBuffer generateBean(NGBean bean) {
 
 		StringBuffer buffer = new StringBuffer();
@@ -229,11 +249,18 @@ public class ModuleGenerator implements Serializable {
 		return buffer;
 	}
 
+	/**
+	 * 
+	 * @param bean the CDI bean wrapper
+	 * @return StringBuffer containing the javaScript code of the static (non properties values dependent) code.
+	 * by static parts we mean the JS code that can be generated from the java class of the bean 
+	 * (to initialize the angularJs service we need to call getters on the CDI bean instance and that is considered as the dynamic part of the angularBean javascript generation)
+	 */
 	private StringBuffer generateStaticPart(NGBean bean) {
 
 		StringBuffer cachedStaticPart = new StringBuffer();
-		if (StaticJs.CACHED_BEAN_STATIC_PART.containsKey(bean.getTargetClass())) {
-			return StaticJs.CACHED_BEAN_STATIC_PART.get(bean.getTargetClass());
+		if (StaticJsCache.CACHED_BEAN_STATIC_PART.containsKey(bean.getTargetClass())) {
+			return StaticJsCache.CACHED_BEAN_STATIC_PART.get(bean.getTargetClass());
 		}
 
 		Method[] nativesMethods = Object.class.getMethods();
@@ -415,7 +442,7 @@ public class ModuleGenerator implements Serializable {
 		}
 
 		cachedStaticPart.append("return " + bean.getName() + ";} \n");
-		StaticJs.CACHED_BEAN_STATIC_PART.put(bean.getClass(), cachedStaticPart);
+		StaticJsCache.CACHED_BEAN_STATIC_PART.put(bean.getClass(), cachedStaticPart);
 		return cachedStaticPart;
 
 	}

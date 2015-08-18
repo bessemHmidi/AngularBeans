@@ -28,12 +28,15 @@ import java.lang.annotation.Target;
 /**  
 * Specify main return mapped name
 * and models to update (back->front)
+* 
+* <p>
+* usage: { @NGReturn(model="",updates="")}
 * <p> 
 * model: main return name
 * can be very useful with angularBeans.bind(..) method
 * to access the return without handling 
 * the promise (with .then(..) at the JS side )
-* 
+* <p>
 * updates : beside the main return you can specify 
 * an array of names of other front end models that
 * will be synchronized with 
@@ -41,12 +44,16 @@ import java.lang.annotation.Target;
 * (with ' updates={"*"} ' all models will be updated)
 * 
 * <strong>work only with @NGModel annotated properties
+* 
+* @author bessem hmidi
 **/
+
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface NGReturn {
 
+	
 	String model() default "";
 	String[] updates() default {};
 }

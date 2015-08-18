@@ -24,7 +24,7 @@ package angularBeans.ngservices;
 import angularBeans.boot.ModuleGenerator;
 
 
-@NGExtention
+@NGExtension
 public class LoggerService implements NGService {
 
 	

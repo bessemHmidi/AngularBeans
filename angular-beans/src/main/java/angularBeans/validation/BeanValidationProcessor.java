@@ -44,7 +44,7 @@ import javax.validation.constraints.Size;
 
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ClosureCompiler;
-import angularBeans.util.StaticJs;
+import angularBeans.util.StaticJsCache;
 
 @ApplicationScoped
 public class BeanValidationProcessor implements Serializable {
@@ -176,7 +176,7 @@ public class BeanValidationProcessor implements Serializable {
 		stringBuilder.append("\n;};}};});");
 		
 
-		StaticJs.VLIDATION_SCRIPT.append(ClosureCompiler.getINSTANCE().getCompressedJavaScript(stringBuilder.toString()));
+		StaticJsCache.VALIDATION_SCRIPT.append(ClosureCompiler.getINSTANCE().getCompressedJavaScript(stringBuilder.toString()));
 	}
 
 }

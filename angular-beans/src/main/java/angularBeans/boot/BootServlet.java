@@ -16,9 +16,7 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
+
 package angularBeans.boot;
 
 import java.io.IOException;
@@ -31,8 +29,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This Servlet will return the "angularBeans" angularJS module as generated javascript via the ModuleGenerator
+ * 
+ * @author Bessem Hmidi*/ 
+
 @WebServlet(urlPatterns = "/angular-beans.js")
 public class BootServlet extends HttpServlet {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7758329463070440974L;
 
 	@Inject
 	ModuleGenerator generator;

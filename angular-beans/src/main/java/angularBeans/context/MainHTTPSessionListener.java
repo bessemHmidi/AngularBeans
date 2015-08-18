@@ -27,7 +27,11 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import angularBeans.util.AngularBeansUtil;
-
+/**
+ * 
+ * @author bessem
+ *
+ */
 @WebListener
 public class MainHTTPSessionListener implements HttpSessionListener{
 
@@ -39,10 +43,13 @@ public class MainHTTPSessionListener implements HttpSessionListener{
 		se.getSession().setAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME, se.getSession().getId());
 		
 	}
-
+/**
+ * if the HTTP Session is destroyed, the NGSession 
+ * will be destroyed too
+ */
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
-		GlobalMapHolder.destroySession(String.valueOf(se.getSession().getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME)));
+		GlobalNGSessionContextsMapHolder.destroySession(String.valueOf(se.getSession().getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME)));
 		SessionMapper.getSessionsMap().remove( se.getSession().getId());
 	}
 

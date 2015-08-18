@@ -39,8 +39,9 @@ import javax.inject.Qualifier;
 * 
 * AngularBeans will generate a single 
 * AngularJS Module "angularBeans"
-* but this annotaion is for possible futures 
+* but this annotaion is kept for possible futures 
 * changes
+* @author bessem hmidi
 **/ 
 @Retention(RUNTIME)
 @Target({TYPE, METHOD, FIELD, PARAMETER})

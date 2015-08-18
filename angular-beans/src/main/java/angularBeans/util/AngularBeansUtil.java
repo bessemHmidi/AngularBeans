@@ -28,7 +28,6 @@ import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
@@ -45,7 +44,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -56,6 +54,11 @@ import com.google.gson.JsonSerializer;
 public class AngularBeansUtil implements Serializable {
 
 	public static final String NG_SESSION_ATTRIBUTE_NAME = "NG_SESSION_ID";
+
+	/**
+	 * used to obtain a bean java class from a bean name.
+	 */
+	public static Map<String, Class> beanNamesHolder = new HashMap<String, Class>();
 
 	@Inject
 	private CurrentNGSession currentSession;
@@ -85,8 +88,6 @@ public class AngularBeansUtil implements Serializable {
 		return name;
 	}
 
-	public static Map<String, Class> beanNamesHolder = new HashMap<String, Class>();
-
 	public static String obtainGetter(Field field) {
 		String name = field.getName();
 		name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -113,7 +114,7 @@ public class AngularBeansUtil implements Serializable {
 
 		builder.registerTypeAdapter(byte[].class, new ByteArrayJsonAdapter(
 				cache, contextPath));
-		
+
 		builder.registerTypeAdapter(LobWrapper.class,
 				new JsonDeserializer<LobWrapper>() {
 
@@ -125,33 +126,26 @@ public class AngularBeansUtil implements Serializable {
 						return null;
 					}
 				});
-		
-		
-		
-		mainSerializer= builder.create();
+
+		mainSerializer = builder.create();
 
 	}
 
-	
 	private Gson mainSerializer;
-	
+
 	public String getJson(Object object) {
 
-		if(mainSerializer==null)
-		{
-		//	if (object instanceof Properties) {
-			//	return new Gson().toJson(object);
-		//	}
+		if (mainSerializer == null) {
+			// if (object instanceof Properties) {
+			// return new Gson().toJson(object);
+			// }
 
-
-			
 			if (object == null) {
 				mainSerializer.toJson(null);
 
 			}
 
 		}
-	
 
 		return mainSerializer.toJson(object);
 
@@ -281,10 +275,10 @@ public class AngularBeansUtil implements Serializable {
 		this.contextPath = contextPath;
 
 	}
-	
+
 	public Object deserialise(Class clazz, JsonElement element) {
-	
-	 return  mainSerializer.fromJson(element, clazz);
+
+		return mainSerializer.fromJson(element, clazz);
 	}
 
 }
@@ -354,7 +348,6 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 				+ Calendar.getInstance().getTimeInMillis());
 	}
 
-
 }
 
 class ByteArrayJsonAdapter implements JsonSerializer<byte[]> {
@@ -380,6 +373,4 @@ class ByteArrayJsonAdapter implements JsonSerializer<byte[]> {
 		return new JsonPrimitive(result);
 	}
 
-	
-	
 }

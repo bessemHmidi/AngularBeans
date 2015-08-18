@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import javax.ws.rs.core.MediaType;
 
@@ -35,18 +36,20 @@ public class UploadServlet extends HttpServlet {
 	@Inject
 	ModuleGenerator generator;
 	
+	@Inject
+	HttpSession httpSession;
+	
 	protected void processRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 	
-		Object sessionUID=request.getSession().getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME);
+		String sessionID=httpSession.getId();
+				//request.getSession().getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME);
 		
-		if(sessionUID==null){
-		request.getSession(true);
-		request.getSession().setAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME, generator.getUID());		
-		}
-		NGSessionScopeContext.setCurrentContext((request.getSession()
-				.getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME)
-				.toString()));
+//		if(sessionID==null){
+//		request.getSession(true);
+//		request.getSession().setAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME, generator.getUID());		
+//		}
+		NGSessionScopeContext.setCurrentContext(sessionID);
 
 		String contextName = request.getContextPath();
 

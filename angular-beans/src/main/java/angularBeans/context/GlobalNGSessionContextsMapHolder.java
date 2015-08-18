@@ -16,25 +16,32 @@
  *
  */
 
+
+package angularBeans.context;
+
+import java.util.HashMap;
+import java.util.Map;
 /**
- @author Bessem Hmidi
+ *a global holder for all bean stores (on Holder by sessionID)
+ * @author Bessem Hmidi
+ *
  */
-package angularBeans.ngservices;
+public class GlobalNGSessionContextsMapHolder {
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
+	private static Map<String, NGSessionContextHolder> map = new HashMap<String, NGSessionContextHolder>();
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+	public static synchronized void destroySession(String holderId) {
 
-import javax.inject.Qualifier;
+		map.remove(holderId);
 
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ TYPE, METHOD, FIELD, PARAMETER })
-public @interface NGExtention {
+	}
+
+	public static synchronized NGSessionContextHolder get(String holderId) {
+
+		if (!map.containsKey(holderId)) {
+			map.put(holderId, new NGSessionContextHolder());
+		}
+		return map.get(holderId);
+	}
 
 }

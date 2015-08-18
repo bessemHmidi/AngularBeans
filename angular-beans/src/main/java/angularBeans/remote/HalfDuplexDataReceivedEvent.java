@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.google.gson.JsonObject;
 
-public class OneWayDataReceivedEvent implements DataReceived, Serializable {
+public class HalfDuplexDataReceivedEvent implements DataReceived, Serializable {
 
 	private JsonObject data;
 
@@ -14,7 +14,7 @@ public class OneWayDataReceivedEvent implements DataReceived, Serializable {
 		return data;
 	}
 
-	public OneWayDataReceivedEvent(JsonObject data) {
+	public HalfDuplexDataReceivedEvent(JsonObject data) {
 
 		this.data = data;
 
