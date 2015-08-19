@@ -35,6 +35,8 @@ import angularBeans.ngservices.NGExtension;
 import angularBeans.ngservices.NGService;
 
 /**
+ * AngularBeans CDI Extension implementation
+ * to observe application deployment and components scan 
 @author Bessem Hmidi
 */
 public class AngularBeansCDIExtension implements Extension {
@@ -86,13 +88,13 @@ public class AngularBeansCDIExtension implements Extension {
 
 	}
 
-	public void addScopes(@Observes final BeforeBeanDiscovery event) {
-
-		// event.addScope(NGSessionScoped.class, false, false);
-	}
+//	public void addScopes(@Observes final BeforeBeanDiscovery event) {
+//
+//		 event.addScope(NGSessionScoped.class, false, false);
+//	}
 
 	/**
-	 * auto called method that observe the beans discovery at deployment and register
+	 * auto called method that observe the beans discovery at deployment, register
 	 * the NGSessionScopeContext (and the NGSessionScoped custom CDI scope)
 	 * @param event
 	 * @param manager

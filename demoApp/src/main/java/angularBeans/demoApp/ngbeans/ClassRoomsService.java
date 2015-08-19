@@ -5,9 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
 import angularBeans.api.AngularBean;
@@ -18,11 +16,8 @@ import angularBeans.demoApp.domain.ClassRoom;
 import angularBeans.demoApp.domain.NotificationMessage;
 import angularBeans.demoApp.domain.User;
 import angularBeans.demoApp.service.VirtualClassService;
-import angularBeans.events.RealTimeMessage;
 import angularBeans.realtime.RealTime;
 import angularBeans.realtime.RealTimeClient;
-import angularBeans.remote.DataReceived;
-import angularBeans.remote.DataReceivedEvent;
 import angularBeans.util.ModelQuery;
 import angularBeans.util.ModelQueryFactory;
 
@@ -43,8 +38,9 @@ public class ClassRoomsService implements Serializable {
 	@Inject
 	ModelQuery modelQuery;
 
-	@Inject ModelQueryFactory modelQueryFactory;
-	
+	@Inject
+	ModelQueryFactory modelQueryFactory;
+
 	@Inject
 	RealTimeClient client;
 
@@ -81,13 +77,14 @@ public class ClassRoomsService implements Serializable {
 		virtualClassService.getClassRoomsMap().get(classRoom).add(user);
 		NotificationMessage notificationMessage = new NotificationMessage(
 				"info", "new Member",
-				user.getPseudo() + " has joined the class "+classRoom.getName() + " !", true);
+				user.getPseudo() + " has joined the class "
+						+ classRoom.getName() + " !", true);
 		notificationsBus.fire(notificationMessage);
 
 		ModelQuery query = modelQueryFactory.get(SingleClassRoomService.class)
 				.pushTo("users", user);
 
-		client.broadcast(query, true,false);
+		client.broadcast(query, true, false);
 
 		// or #1
 
@@ -110,9 +107,8 @@ public class ClassRoomsService implements Serializable {
 		virtualClassService.getClassRoomsMap().put(classRoom,
 				new HashSet<User>());
 
-		client.broadcast(
-				modelQuery.pushTo(
-						"classRooms", classRoom), true,true);
+		client.broadcast(modelQuery.pushTo("classRooms", classRoom), false,
+				false);
 
 	}
 

@@ -29,62 +29,51 @@ public class DataServlet extends HttpServlet {
 		String resourceId = requestURI.substring(index);
 
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		
-		byte[] data = null ;
+
+		byte[] data = null;
 		OutputStream o;
 		try {
-		if (cache.getCache().containsKey(resourceId)) {
-			Call call = cache.getCache().get(resourceId);
-			Method m = call.getMethod();
-			Object container = call.getObject();
+			if (cache.getCache().containsKey(resourceId)) {
+				Call call = cache.getCache().get(resourceId);
+				Method m = call.getMethod();
+				Object container = call.getObject();
 
-			
-		
-
-				
 				Object result = m.invoke(container);
 
-				if(result!=null){
-				 data = ((LobWrapper) result).getData();
-				 
+				if (result != null) {
+					data = ((LobWrapper) result).getData();
+
 				}
 
-		}
-				else{
-					if(cache.getTempCache().containsKey(resourceId)){
-						data=cache.getTempCache().get(resourceId);
-						cache.getTempCache().remove(resourceId);
-					}	
-					}
-				
-
-				o = response.getOutputStream();
-				if (data == null) {
-					data = "default".getBytes();
+			} else {
+				if (cache.getTempCache().containsKey(resourceId)) {
+					data = cache.getTempCache().get(resourceId);
+					cache.getTempCache().remove(resourceId);
 				}
-				o.write(data);
-				o.flush();
-				o.close();
-			
-				
-		
-			} catch (IOException e) {
-				
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-		
-				e.printStackTrace();
 			}
 
-	
-		
-		
+			o = response.getOutputStream();
+			if (data == null) {
+				data = "default".getBytes();
+			}
+			o.write(data);
+			o.flush();
+			o.close();
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+
+			e.printStackTrace();
+		}
+
 	}
 
 }

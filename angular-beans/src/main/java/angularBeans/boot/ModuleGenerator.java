@@ -61,6 +61,7 @@ import angularBeans.validation.BeanValidationProcessor;
  * 
 @author Bessem Hmidi
 */
+@SuppressWarnings("serial")
 @SessionScoped
 public class ModuleGenerator implements Serializable {
 
@@ -69,7 +70,7 @@ public class ModuleGenerator implements Serializable {
 	private String contextPath;
 
 	
-	private String UID;
+	private String sessionID;
 
 	@Inject
 	AngularBeansUtil util;
@@ -83,13 +84,13 @@ public class ModuleGenerator implements Serializable {
 	 *  lifecycle is the same as the current HTTP session  a unique sessionId by http session, we use the same session id */
 	@PostConstruct
 	public void init() {
-		UID = httpSession.getId();// String.valueOf(UUID.randomUUID());
-		NGSessionScopeContext.setCurrentContext(UID);
-		ngSession.setSessionId(UID);
+		sessionID = httpSession.getId();// String.valueOf(UUID.randomUUID());
+		NGSessionScopeContext.setCurrentContext(sessionID);
+		ngSession.setSessionId(sessionID);
 	}
 
 	public synchronized String getUID() {
-		return UID;
+		return sessionID;
 	}
 
 	@Inject
@@ -117,7 +118,7 @@ public class ModuleGenerator implements Serializable {
 	 */
 	public void getScript(StringBuffer jsBuffer) {
 
-		String sessionPart = "var sessionId=\"" + UID + "\";";
+		String sessionPart = "var sessionId=\"" + sessionID + "\";";
 
 		// sessionPart="var sessionId = /SESS\\w*ID=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;";
 
@@ -173,7 +174,7 @@ public class ModuleGenerator implements Serializable {
 		buffer.append("\nvar rpath=$rootScope.baseUrl+'" // + contextPath
 				+ "http/invoke/service/';\n");
 
-		Object reference = locator.lookup(bean.getName(), UID);
+		Object reference = locator.lookup(bean.getName(), sessionID);
 
 		for (Method get : bean.getters()) {
 			Object result = null;
@@ -484,10 +485,7 @@ public class ModuleGenerator implements Serializable {
 		this.contextPath = contextPath;
 	}
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -9146331095657429874L;
+	
 
 	public String getContextPath() {
 

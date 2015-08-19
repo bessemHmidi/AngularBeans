@@ -97,8 +97,6 @@ public class RealTimeClient implements Serializable {
 
 	}
 
-
-
 	/**
 	 * will close all current realTime sessions bound to the current HTTP
 	 * session
@@ -122,11 +120,11 @@ public class RealTimeClient implements Serializable {
 	 * @param message
 	 *            : the RealTimeMessage to send
 	 */
-	public void publish(String channel, RealTimeMessage message,boolean async) {
+	public void publish(String channel, RealTimeMessage message, boolean async) {
 
 		Map<String, Object> paramsToSend = prepareData(channel, message);
 
-		publish(paramsToSend,async);
+		publish(paramsToSend, async);
 
 	}
 
@@ -138,9 +136,9 @@ public class RealTimeClient implements Serializable {
 	 *            : the ModelQuery to send
 	 */
 
-	public void publish(ModelQuery query,boolean async) {
+	public void publish(ModelQuery query, boolean async) {
 		Map<String, Object> paramsToSend = prepareData(query);
-		publish(paramsToSend,async);
+		publish(paramsToSend, async);
 
 	}
 
@@ -155,19 +153,29 @@ public class RealTimeClient implements Serializable {
 	 * @param message
 	 *            : the RealTimeMessage to send
 	 * @param withoutMe
-	 *            : possible values: -true: the current session client will not
-	 *            receive the message.
-	 * 
-	 *            -true: the current session client will also receive the
+	 *            : possible values:
+	 *            <p>
+	 *            true: the current session client will not receive the message.
+	 *            <p>
+	 *            false: the current session client will also receive the
 	 *            message.
+	 * @param async
+	 *            : possible values:
+	 *            <p>
+	 *            true: the message (event) will be sent in asynchronous way
+	 *            (will use AsyncRemote)
+	 * 
+	 *            <p>
+	 *            false: the message will be sent in synchronous way (will use
+	 *            BasicRemote)
 	 */
 
 	public void broadcast(String channel, RealTimeMessage message,
-			boolean withoutMe,boolean async) {
+			boolean withoutMe, boolean async) {
 
 		Map<String, Object> paramsToSend = prepareData(channel, message);
 
-		broadcast(withoutMe, paramsToSend,async);
+		broadcast(withoutMe, paramsToSend, async);
 
 	}
 
@@ -178,20 +186,29 @@ public class RealTimeClient implements Serializable {
 	 *            : the ModelQuery to send
 	 * 
 	 * @param withoutMe
-	 *            : possible values: -true: the current session client will not
-	 *            receive the query.
+	 *            : possible values:
+	 *            <p>
+	 *            true: the current session client will not receive the query.
+	 *            <p>
+	 *            false: the current session client will also receive the query.
+	 * @param async
+	 *            : possible values:
+	 *            <p>
+	 *            true: the query will be sent in asynchronous way (will use
+	 *            AsyncRemote)
 	 * 
-	 *            -true: the current session client will also receive the query.
+	 *            <p>
+	 *            false: the query will be sent in synchronous way (will use
+	 *            BasicRemote)
 	 */
 
-	public void broadcast(ModelQuery query, boolean withoutMe,boolean async) {
+	public void broadcast(ModelQuery query, boolean withoutMe, boolean async) {
 
 		Map<String, Object> paramsToSend = prepareData(query);
 
-		broadcast(withoutMe, paramsToSend,async);
+		broadcast(withoutMe, paramsToSend, async);
 
 	}
-
 
 	private Map<String, Object> prepareData(ModelQuery query) {
 		Map<String, Object> paramsToSend = new HashMap<String, Object>();
@@ -228,7 +245,8 @@ public class RealTimeClient implements Serializable {
 		return paramsToSend;
 	}
 
-	private void broadcast(boolean withoutMe, Map<String, Object> paramsToSend,boolean async) {
+	private void broadcast(boolean withoutMe, Map<String, Object> paramsToSend,
+			boolean async) {
 		for (SockJsConnection connection : connectionHolder.getAllConnections()) {
 
 			if (withoutMe) {
@@ -241,20 +259,20 @@ public class RealTimeClient implements Serializable {
 
 				String objectMessage = util.getJson(paramsToSend);
 
-				connection.write(objectMessage,async);
+				connection.write(objectMessage, async);
 
 			}
 		}
 	}
 
-	private void publish(Map<String, Object> paramsToSend,boolean async) {
+	private void publish(Map<String, Object> paramsToSend, boolean async) {
 		for (SockJsConnection session : new HashSet<SockJsConnection>(sessions)) {
 
 			if (!session.getReadyState().equals(READY_STATE.OPEN)) {
 				sessions.remove(session);
 			} else {
-				
-				session.write(util.getJson(paramsToSend),async);
+
+				session.write(util.getJson(paramsToSend), async);
 			}
 
 		}
