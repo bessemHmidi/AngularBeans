@@ -39,6 +39,7 @@ public class RealTimeMessage {
 		return this;
 	}
 
+	
 	public Map<String, Object> build() {
 		return data;
 	}

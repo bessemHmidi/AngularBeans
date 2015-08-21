@@ -104,8 +104,8 @@ public class AngularBeansUtil implements Serializable {
 		return "set" + name;
 	}
 
-	@PostConstruct
-	public void init() {
+	
+	public void initJsonSerialiser() {
 
 		GsonBuilder builder = new GsonBuilder().serializeNulls();
 
@@ -258,8 +258,8 @@ public class AngularBeansUtil implements Serializable {
 		String setterName = "set" + name.substring(0, 1).toUpperCase()
 				+ name.substring(1);
 		setterName = setterName.trim();
-
-		for (Method m : clazz.getDeclaredMethods()) {
+ 
+		for (Method m : clazz.getDeclaredMethods()) { 
 
 			if (m.getName().equals(setterName)) {
 				return true;
@@ -272,12 +272,15 @@ public class AngularBeansUtil implements Serializable {
 	private String contextPath;
 
 	public void setContextPath(String contextPath) {
+		
 		this.contextPath = contextPath;
+		initJsonSerialiser();
 
 	}
 
 	public Object deserialise(Class clazz, JsonElement element) {
-
+		
+		
 		return mainSerializer.fromJson(element, clazz);
 	}
 

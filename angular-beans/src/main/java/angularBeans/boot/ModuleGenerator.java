@@ -481,6 +481,7 @@ public class ModuleGenerator implements Serializable {
 	}
 
 	public void setContextPath(String contextPath) {
+		
 		util.setContextPath(contextPath);
 		this.contextPath = contextPath;
 	}
@@ -488,7 +489,8 @@ public class ModuleGenerator implements Serializable {
 	
 
 	public String getContextPath() {
-
+		System.out.println("from util :"+contextPath);
+		
 		return contextPath;
 	}
 }

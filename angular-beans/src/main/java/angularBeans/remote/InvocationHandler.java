@@ -104,7 +104,7 @@ public class InvocationHandler implements Serializable {
 		arrayTypesMap.put("[Ljava.lang.Byte;", Byte[].class);
 		arrayTypesMap.put("[Ljava.lang.Character;", Character[].class);
 		arrayTypesMap.put("[Ljava.lang.Boolean;", Boolean[].class);
-
+		arrayTypesMap.put("[Ljava.lang.String;",String[].class);
 	}
 
 	public  void realTimeInvoke(Object ServiceToInvoque,

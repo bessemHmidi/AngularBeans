@@ -29,6 +29,8 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Stereotype;
 import javax.inject.Qualifier;
 /**
  * CDI qualifier to qualify a CDI event triggered from
