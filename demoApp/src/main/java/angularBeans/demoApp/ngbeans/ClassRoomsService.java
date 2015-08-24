@@ -1,6 +1,5 @@
 package angularBeans.demoApp.ngbeans;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,13 +9,11 @@ import javax.ws.rs.PUT;
 
 import angularBeans.api.AngularBean;
 import angularBeans.api.NGModel;
-import angularBeans.api.NGPostConstruct;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.demoApp.domain.ClassRoom;
 import angularBeans.demoApp.domain.NotificationMessage;
 import angularBeans.demoApp.domain.User;
 import angularBeans.demoApp.service.VirtualClassService;
-import angularBeans.events.RemoteEventBus;
 import angularBeans.realtime.RealTime;
 import angularBeans.realtime.RealTimeClient;
 import angularBeans.util.ModelQuery;
@@ -24,7 +21,7 @@ import angularBeans.util.ModelQueryFactory;
 
 @NGSessionScoped
 @AngularBean
-public class ClassRoomsService implements Serializable {
+public class ClassRoomsService {
 
 	@Inject
 	VirtualClassService virtualClassService;
@@ -61,7 +58,7 @@ public class ClassRoomsService implements Serializable {
 		return virtualClassService.getClassRoomsMap().get(classRoom);
 	}
 
-	@NGPostConstruct
+	// @NGPostConstruct
 	public void init() {
 
 		// modelQueryFactory.get(ClassRoomsService.class).setProperty("classRooms",
@@ -69,35 +66,40 @@ public class ClassRoomsService implements Serializable {
 
 	}
 
-	
-	
 	@PUT
 	public String join(ClassRoom classRoom) {
-		
+
 		// singleClassRoomsCtrl.setActualClassRoom(classRoom);
 
 		User user = authenticationService.getConnectedUser();
-		virtualClassService.getClassRoomsMap().get(classRoom).add(user);
-		NotificationMessage notificationMessage = new NotificationMessage(
-				"info", "new Member",
-				user.getPseudo() + " has joined the class "
-						+ classRoom.getName() + " !", true);
-		notificationsBus.fire(notificationMessage);
 
-		ModelQuery query = modelQueryFactory.get(SingleClassRoomService.class)
-				.pushTo("users", user);
+		if (!virtualClassService.getClassRoomsMap().get(classRoom)
+				.contains(user))
+			
+		{
+			virtualClassService.getClassRoomsMap().get(classRoom).add(user);
 
-		client.broadcast(query, true, false);
+			NotificationMessage notificationMessage = new NotificationMessage(
+					"info", "new Member", user.getPseudo()
+							+ " has joined the class " + classRoom.getName()
+							+ " !", true);
+			notificationsBus.fire(notificationMessage);
 
-		// or #1
+			ModelQuery query = modelQueryFactory.get(
+					SingleClassRoomService.class).pushTo("users", user);
 
-		// client.broadcast( "joinEvent",
-		//
-		// new RealTimeMessage()
-		// .set("user", user)
-		// .set("classRoom", classRoom)
-		//
-		// ,true);
+			client.broadcast(query, true, false);
+
+			// or #1
+
+			// client.broadcast( "joinEvent",
+			//
+			// new RealTimeMessage()
+			// .set("user", user)
+			// .set("classRoom", classRoom)
+			//
+			// ,true);
+		}
 
 		return "/classRoom";
 	}

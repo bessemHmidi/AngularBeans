@@ -39,6 +39,10 @@ public class ResponseHandlerService implements NGService {
 
 		result += ("\nthis.handleResponse=function(msg,caller,isRPC){");
 
+//		result +="console.log(angular.toJson(msg));";
+//		result +="console.log('--'+JSON.stringify(msg));";
+				
+				
 		result += "var mainReturn={};";
 
 		result += ("\nfor (var key in msg) {");
