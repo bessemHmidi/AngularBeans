@@ -16,9 +16,6 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
 package angularBeans.remote;
 
 import java.io.BufferedReader;
@@ -40,10 +37,17 @@ import angularBeans.util.AngularBeansUtil;
 
 import com.google.gson.JsonObject;
 
+/**
+ * The HalfDuplexEndPoint servlet is a standard HTTP protocol endpoint
+ * 
+ * @author Bessem Hmidi
+ *
+ */
+@SuppressWarnings("serial")
 @WebServlet(asyncSupported = false, urlPatterns = "/http/invoke/*")
 public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 
-@Inject
+	@Inject
 	InvocationHandler remoteInvoker;
 
 	@Inject
@@ -54,8 +58,7 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 
 	@Inject
 	HttpSession session;
-	
-	
+
 	@Inject
 	@DataReceivedEvent
 	private Event<DataReceived> receiveEvents;
@@ -81,7 +84,7 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.getWriter().write(process(req,resp).toString());
+		resp.getWriter().write(process(req, resp).toString());
 	}
 
 	private Object process(HttpServletRequest request, HttpServletResponse resp) {
@@ -119,24 +122,15 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 
 		JsonObject paramsObj = util.parse(params).getAsJsonObject();
 
-		
 		String UID = session.getId();// (paramsObj.get("sessionUID")).getAsString();
-		
-		
-		
+
 		NGSessionScopeContext.setCurrentContext(UID);
-		
-		
-		
-		
-		
+
 		receiveEvents.fire(new HalfDuplexDataReceivedEvent(paramsObj));
 
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID),
 				method, paramsObj, UID);
 
-		
-		
 		// System.out.println(util.getJson(result));
 
 		return util.getJson(result);

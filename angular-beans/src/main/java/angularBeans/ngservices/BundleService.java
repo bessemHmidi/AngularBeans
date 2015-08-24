@@ -16,10 +16,15 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
 package angularBeans.ngservices;
+
+/**
+ * this component render  the angularJS service code
+ * that contain the loadBundle() js method
+ * (useful for i18n for example)
+ * @author Bessem Hmidi
+ *
+ */
 
 @NGExtension
 public class BundleService implements NGService {

@@ -17,13 +17,17 @@
  */
 package angularBeans.events;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.ws.rs.POST;
 
 import angularBeans.api.AngularBean;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.realtime.RealTime;
 import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.CurrentNGSession;
 
 import com.google.gson.JsonElement;
 /**
@@ -47,7 +51,27 @@ public class RemoteEventBus {
 	@Inject
 	AngularBeansUtil util;
 
-	@RealTime
+	
+	@Inject
+	CurrentNGSession session;
+	
+	@Inject
+	BroadcastManager broadcastManager;
+	
+	@POST
+	public void subscribe(String channel){
+		
+		broadcastManager.subscribe(session.getSessionId(),channel);
+		
+	}
+	
+	@POST
+	public void unsubscribe(String channel){
+		
+		broadcastManager.unsubscribe(session.getSessionId(),channel);
+	}
+	
+	@POST
 	public void fire(NGEvent event) throws ClassNotFoundException {
 		Object o = null;
 

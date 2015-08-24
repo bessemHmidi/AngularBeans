@@ -28,6 +28,15 @@ import java.util.Set;
 
 import angularBeans.api.NGModel;
 
+/**
+ * a wrapper for an angularBean CDI bean class to provide utility methods for
+ * reflection processing issues
+ * 
+ * @author Bassem Hmidi
+ *
+ */
+
+@SuppressWarnings("serial")
 public class NGBean implements Serializable {
 
 	private Class<?> targetClass = null;

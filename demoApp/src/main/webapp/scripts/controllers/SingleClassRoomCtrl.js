@@ -9,7 +9,7 @@
  */
 angular.module('VirtualClassRoomModule')
 
-.controller("SingleClassRoomCtrl",function ($scope,singleClassRoomService,$location,$routeParams) {
+.controller("SingleClassRoomCtrl",function ($scope,singleClassRoomService,$location,$routeParams,remoteEventBus) {
 	
 	angularBeans.bind($scope,singleClassRoomService,["users"]);
 		
@@ -17,6 +17,15 @@ angular.module('VirtualClassRoomModule')
 
 	singleClassRoomService.getUsers($scope.classRoomName);
 	
+	
+	$scope.busy=function(){
+		remoteEventBus.unsubscribe("drawEvent");
+	};
+	
+
+	$scope.ready=function(){
+		remoteEventBus.subscribe("drawEvent");
+	};
 	
 	//#1
 	

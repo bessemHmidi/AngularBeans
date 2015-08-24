@@ -29,7 +29,7 @@ import java.util.Set;
 public class SessionMapper {
 
 	private static Map<String, Set<String>> sessionsMap=new HashMap<String, Set<String>>();
-	
+	  
     public static Map<String, Set<String>> getSessionsMap() {
 	return sessionsMap;	
 }
@@ -43,7 +43,7 @@ public class SessionMapper {
 		}
 		
 		
-		return sockJSSessionID;
+		return null;
 	}
     
 }

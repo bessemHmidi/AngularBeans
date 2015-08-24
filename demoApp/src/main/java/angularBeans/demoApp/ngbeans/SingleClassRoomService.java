@@ -62,7 +62,7 @@ public class SingleClassRoomService implements Serializable {
 	}
 	
 	@POST
-	public String leave(ClassRoom classRoom) {
+	public String busy(ClassRoom classRoom) {
 		User user = authenticationService.getConnectedUser();
 
 		ModelQuery query=  modelQuery.removeFrom("users", user);

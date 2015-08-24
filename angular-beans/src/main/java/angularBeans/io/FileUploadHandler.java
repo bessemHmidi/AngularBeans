@@ -1,72 +1,57 @@
+/*
+ * AngularBeans, CDI-AngularJS bridge 
+ *
+ * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ */
 package angularBeans.io;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 
 import angularBeans.context.NGSessionScoped;
 
+/**
+ * 
+ * @author Bessem Hmidi handler for uload's actions an upload url is bound to a
+ *         specific action (method call)
+ */
 
 @NGSessionScoped
-public class FileUploadHandler implements Serializable{
+public class FileUploadHandler implements Serializable {
 
-	private Map<String, Call> uploadsActions=new HashMap<String, Call>();
-	
-	@Inject
-	ByteArrayCache cache;
-	
-	
+	private Map<String, Call> uploadsActions = new HashMap<String, Call>();
+
 	public Map<String, Call> getUploadsActions() {
 		return uploadsActions;
 	}
 
+	public void handleUploads(List<Upload> uploads, String path) {
 
+		Call call = uploadsActions.get(path);
 
-
-
-	public  void handleUploads(List<Upload> uploads, String path) {
-		
-		Call call=uploadsActions.get(path);
-		
-		
-//		System.out.println("--> "+cache.getCache());
-//		System.out.println(call);
-//		for (String idf : (new HashSet<String>(cache.getCache().keySet()))) {
-//			
-//			Call ls = cache.getCache().get(idf);
-//			if (ls.getObject()==call.getObject()){
-//				
-//				cache.getCache().remove(idf);
-//				String id = String.valueOf(UUID.randomUUID());
-//				cache.getCache().put(id, call);
-//			
-//				System.out.println("found old id");
-//				
-//				break;
-//			}
-//		}
-		
-		
 		try {
-			 call.getMethod().invoke(call.getObject(), uploads);
+			call.getMethod().invoke(call.getObject(), uploads);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-		
+
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	
-	
-	
+
 }

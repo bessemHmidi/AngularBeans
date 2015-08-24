@@ -16,6 +16,7 @@ import angularBeans.demoApp.domain.ClassRoom;
 import angularBeans.demoApp.domain.NotificationMessage;
 import angularBeans.demoApp.domain.User;
 import angularBeans.demoApp.service.VirtualClassService;
+import angularBeans.events.RemoteEventBus;
 import angularBeans.realtime.RealTime;
 import angularBeans.realtime.RealTimeClient;
 import angularBeans.util.ModelQuery;
@@ -68,9 +69,11 @@ public class ClassRoomsService implements Serializable {
 
 	}
 
+	
+	
 	@PUT
 	public String join(ClassRoom classRoom) {
-
+		
 		// singleClassRoomsCtrl.setActualClassRoom(classRoom);
 
 		User user = authenticationService.getConnectedUser();

@@ -21,8 +21,11 @@
  */
 package angularBeans.ngservices;
 
-import angularBeans.boot.ModuleGenerator;
-
+/**
+ * Common interface for NGServices (extensions)
+ * @author BessemHmidi
+ *
+ */
 public interface NGService {
 
 	String render();

@@ -31,6 +31,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
+/**
+ * Qualifier for extensions (add on javascript generation component)
+ * @author Bessem Hmidi
+ *
+ */
 
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)

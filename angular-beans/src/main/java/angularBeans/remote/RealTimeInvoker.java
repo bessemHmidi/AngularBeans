@@ -23,7 +23,6 @@ package angularBeans.remote;
 
 import java.io.Serializable;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -33,13 +32,16 @@ import angularBeans.context.NGSessionScopeContext;
 
 import com.google.gson.JsonObject;
 
+/**
+ * Realtime remote calls handler
+ * 
+ * @author Bassem Hmidi
+ *
+ */
+
+@SuppressWarnings("serial")
 @Dependent
 public class RealTimeInvoker implements Serializable {
-
-	@PostConstruct
-	public void init() {
-
-	}
 
 	@Inject
 	InvocationHandler remoteInvoker;
@@ -47,7 +49,8 @@ public class RealTimeInvoker implements Serializable {
 	@Inject
 	BeanLocator locator;
 
-	public void process(@Observes @DataReceivedEvent RealTimeDataReceiveEvent event) {
+	public void process(
+			@Observes @DataReceivedEvent RealTimeDataReceivedEvent event) {
 
 		JsonObject jObj = event.getData();
 		String UID = event.getSessionId();
@@ -64,7 +67,8 @@ public class RealTimeInvoker implements Serializable {
 
 		Object bean = locator.lookup(beanName, UID);
 
-		remoteInvoker.realTimeInvoke(bean, method, paramsObj, event, reqId, UID);
+		remoteInvoker
+				.realTimeInvoke(bean, method, paramsObj, event, reqId, UID);
 
 	}
 

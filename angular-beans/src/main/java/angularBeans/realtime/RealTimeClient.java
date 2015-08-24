@@ -33,7 +33,10 @@ import javax.inject.Inject;
 import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.Transport.READY_STATE;
 
+import angularBeans.boot.BeanRegistry;
 import angularBeans.context.NGSessionScoped;
+import angularBeans.context.SessionMapper;
+import angularBeans.events.BroadcastManager;
 import angularBeans.events.RealTimeErrorEvent;
 import angularBeans.events.RealTimeMessage;
 import angularBeans.events.RealTimeSessionCloseEvent;
@@ -41,10 +44,11 @@ import angularBeans.events.RealTimeSessionReadyEvent;
 import angularBeans.events.ServerEvent;
 import angularBeans.log.NGLogger;
 import angularBeans.remote.DataReceivedEvent;
-import angularBeans.remote.RealTimeDataReceiveEvent;
+import angularBeans.remote.RealTimeDataReceivedEvent;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ModelQuery;
 import angularBeans.util.ModelQueryImpl;
+import angularBeans.util.NGBean;
 
 /**
  * 
@@ -60,6 +64,8 @@ public class RealTimeClient implements Serializable {
 
 	private Set<SockJsConnection> sessions = new HashSet<SockJsConnection>();
 
+	@Inject BroadcastManager  broadcastManager;
+	
 	@Inject
 	GlobalConnectionHolder connectionHolder;
 
@@ -69,28 +75,43 @@ public class RealTimeClient implements Serializable {
 	@Inject
 	NGLogger logger;
 
+	
+	
 	public void onSessionReady(
-			@Observes @RealTimeSessionReadyEvent RealTimeDataReceiveEvent event) {
+			@Observes @RealTimeSessionReadyEvent RealTimeDataReceivedEvent event) {
 
 		connectionHolder.getAllConnections().add(event.getConnection());
 		sessions.add(event.getConnection());
 
+		Set<NGBean> angularBeans=BeanRegistry.getInstance().getAngularBeans();
+		
+		for(NGBean bean:angularBeans){
+			
+			String httpSessionId=SessionMapper
+					.getHTTPSessionID(event.getConnection().id);
+			
+			broadcastManager.subscribe(httpSessionId,bean.getTargetClass().getSimpleName());
+		}
+		
+		
+		
 		event.setClient(this);
 
 	}
 
 	public void onClose(
-			@Observes @RealTimeSessionCloseEvent RealTimeDataReceiveEvent event) {
+			@Observes @RealTimeSessionCloseEvent RealTimeDataReceivedEvent event) {
 		connectionHolder.getAllConnections().remove(event.getConnection());
 	}
 
 	public void onError(
-			@Observes @RealTimeErrorEvent RealTimeDataReceiveEvent event) {
+			@Observes @RealTimeErrorEvent RealTimeDataReceivedEvent event) {
+		
 		throw new RuntimeException(event.getData().toString());
 	}
 
 	public void onData(
-			@Observes @DataReceivedEvent RealTimeDataReceiveEvent event) {
+			@Observes @DataReceivedEvent RealTimeDataReceivedEvent event) {
 
 		// sessions.add(event.getConnection());
 		event.setClient(this);
@@ -172,10 +193,10 @@ public class RealTimeClient implements Serializable {
 
 	public void broadcast(String channel, RealTimeMessage message,
 			boolean withoutMe, boolean async) {
-
+		
 		Map<String, Object> paramsToSend = prepareData(channel, message);
 
-		broadcast(withoutMe, paramsToSend, async);
+		broadcast(channel,withoutMe, paramsToSend, async);
 
 	}
 
@@ -206,7 +227,7 @@ public class RealTimeClient implements Serializable {
 
 		Map<String, Object> paramsToSend = prepareData(query);
 
-		broadcast(withoutMe, paramsToSend, async);
+		broadcast(query.getTargetServiceClass(),withoutMe, paramsToSend, async);
 
 	}
 
@@ -245,10 +266,18 @@ public class RealTimeClient implements Serializable {
 		return paramsToSend;
 	}
 
-	private void broadcast(boolean withoutMe, Map<String, Object> paramsToSend,
+	private void broadcast(String channel,boolean withoutMe, Map<String, Object> paramsToSend,
 			boolean async) {
+		
+		
+		
 		for (SockJsConnection connection : connectionHolder.getAllConnections()) {
 
+			
+			if(!broadcastManager.isSubscribed(connection.id,channel)){
+				continue;
+			}
+			
 			if (withoutMe) {
 				if (sessions.contains(connection)) {
 					continue;

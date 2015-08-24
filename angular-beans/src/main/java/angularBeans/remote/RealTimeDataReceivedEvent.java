@@ -23,24 +23,31 @@ package angularBeans.remote;
 
 import java.io.Serializable;
 
-import javax.websocket.Session;
-
 import org.projectodd.sockjs.SockJsConnection;
 
 import angularBeans.realtime.RealTimeClient;
 
 import com.google.gson.JsonObject;
 
-public class RealTimeDataReceiveEvent implements DataReceived,Serializable {
+/**
+ * a RealTimeDataReceivedEvent concern data reception with the realtime sockjs
+ * protocol
+ * 
+ * @author Bessem Hmidi
+ *
+ */
 
-	
+@SuppressWarnings("serial")
+public class RealTimeDataReceivedEvent implements DataReceived, Serializable {
+
 	private SockJsConnection connection;
 	private JsonObject data;
 	private RealTimeClient client;
 	private String sessionId;
-	
-	public RealTimeDataReceiveEvent(SockJsConnection connection, JsonObject data) {
-		this.connection=connection;
+
+	public RealTimeDataReceivedEvent(SockJsConnection connection,
+			JsonObject data) {
+		this.connection = connection;
 		this.data = data;
 
 	}
@@ -48,24 +55,21 @@ public class RealTimeDataReceiveEvent implements DataReceived,Serializable {
 	public void setConnection(SockJsConnection connection) {
 		this.connection = connection;
 	}
-	
+
 	public SockJsConnection getConnection() {
 		return connection;
 	}
-	
-	
-	
+
 	@Override
 	public JsonObject getData() {
 		return data;
 	}
 
 	public void setClient(RealTimeClient wSocketClient) {
-		this.client=wSocketClient;
-		
+		this.client = wSocketClient;
+
 	}
 
-	
 	public RealTimeClient getClient() {
 		return client;
 	}

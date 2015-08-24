@@ -44,24 +44,32 @@ import angularBeans.util.AngularBeansUtil;
 
 import com.google.gson.JsonObject;
 
+/**
+ * The RealTimeEndPoint servlet is the realtime sockjs protocol endpoint
+ * 
+ * @author Bessem Hmidi
+ *
+ */
+
+@SuppressWarnings("serial")
 @WebServlet(loadOnStartup = 1, asyncSupported = true, urlPatterns = "/rt-service/*")
 public class RealTimeEndPoint extends SockJsServlet {
 
 	@Inject
 	@DataReceivedEvent
-	private Event<RealTimeDataReceiveEvent> receiveEvents;
+	private Event<RealTimeDataReceivedEvent> receiveEvents;
 
 	@Inject
 	@RealTimeSessionReadyEvent
-	private Event<RealTimeDataReceiveEvent> sessionOpenEvent;
+	private Event<RealTimeDataReceivedEvent> sessionOpenEvent;
 
 	@Inject
 	@RealTimeSessionCloseEvent
-	private Event<RealTimeDataReceiveEvent> sessionCloseEvent;
+	private Event<RealTimeDataReceivedEvent> sessionCloseEvent;
 
 	@Inject
 	@RealTimeErrorEvent
-	private Event<RealTimeDataReceiveEvent> errorEvent;
+	private Event<RealTimeDataReceivedEvent> errorEvent;
 
 	@Inject
 	GlobalConnectionHolder globalConnectionHolder;
@@ -128,7 +136,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 						SessionMapper.getSessionsMap().get(UID)
 								.add(connection.id);
 
-						RealTimeDataReceiveEvent ev = new RealTimeDataReceiveEvent(
+						RealTimeDataReceivedEvent ev = new RealTimeDataReceivedEvent(
 								connection, jObj);
 
 						ev.setConnection(connection);

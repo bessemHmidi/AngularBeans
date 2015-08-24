@@ -1,30 +1,50 @@
+/*
+ * AngularBeans, CDI-AngularJS bridge 
+ *
+ * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ */
 package angularBeans.util;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *  
- * @author bessem
+ *
+ * A cache for the static (non beans instances dependent) angular-beans.js code
+ * 
+ * @author bassem Hmidi
  *
  */
 
 public class StaticJsCache {
 
-	final static String scriptDetection="var sript_origin=((document.scripts[document.scripts.length-1].src).replace('angular-beans.js',''));";
-	
+	final static String scriptDetection = "var sript_origin=((document.scripts[document.scripts.length-1].src).replace('angular-beans.js',''));";
+
 	/**
-	 * the angularBeansMainObject is the angularBeans object in the angularBeans javascript api
+	 * the angularBeansMainObject is the angularBeans object in the angularBeans
+	 * javascript api
 	 */
-	public final static String angularBeansMainObject =scriptDetection+"var angularBeans={ "
+	public final static String angularBeansMainObject = scriptDetection
+			+ "var angularBeans={ "
 
+			// + "fire:function(eventName,data){"
+			// + "scope[service.serviceID]=service;"
+			// + "},"
 
-//			+ "fire:function(eventName,data){"
-//			+ "scope[service.serviceID]=service;"
-//			+ "},"
-			
 			+ "bind:function(scope,service,modelsName){"
-	
+
 			+ "scope[service.serviceID]=service;"
 
 			+ "for (i in modelsName){"
@@ -76,15 +96,13 @@ public class StaticJsCache {
 			+ ",isSame:function(item1,item2){"
 
 			+ "var same=true;"
-			
+
 			+ "for(prop in item1){"
-		
 
 			+ "if(prop=='$$hashKey'){continue;}"
 			+ "if (item1[prop] instanceof String){if(item1[prop].startsWith('lob/')){continue;}}"
-			//typeof item1[prop] == 'string' ||
-	
-			
+			// typeof item1[prop] == 'string' ||
+
 			+ "if(!(angular.toJson(item1[prop])==angular.toJson(item2[prop]))){same=false;}"
 
 			+ "}"
@@ -93,12 +111,9 @@ public class StaticJsCache {
 
 			+ " };";
 
-	
-	public static StringBuilder CORE_SCRIPT=new StringBuilder();
+	public static StringBuilder CORE_SCRIPT = new StringBuilder();
 	public static Map<Class, StringBuffer> CACHED_BEAN_STATIC_PART = new HashMap<Class, StringBuffer>();
-	public static StringBuilder EXTENTIONS_SCRIPT=new StringBuilder();
-	public static StringBuilder VALIDATION_SCRIPT=new StringBuilder();
-	
+	public static StringBuilder EXTENTIONS_SCRIPT = new StringBuilder();
+	public static StringBuilder VALIDATION_SCRIPT = new StringBuilder();
 
-	
 }

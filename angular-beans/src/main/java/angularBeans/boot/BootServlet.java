@@ -16,7 +16,6 @@
  *
  */
 
-
 package angularBeans.boot;
 
 import java.io.IOException;
@@ -30,9 +29,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This Servlet will return the "angularBeans" angularJS module as generated javascript via the ModuleGenerator
+ * This Servlet will return the "angularBeans" angularJS module as generated
+ * javascript via the ModuleGenerator
  * 
- * @author Bessem Hmidi*/ 
+ * @author Bessem Hmidi
+ */
 
 @WebServlet(urlPatterns = "/angular-beans.js")
 public class BootServlet extends HttpServlet {
@@ -61,17 +62,13 @@ public class BootServlet extends HttpServlet {
 		resp.setContentType("text/javascript");
 		StringBuffer stringBuffer = new StringBuffer();
 		generator.getScript(stringBuffer);
-		
+
 		long endTime = System.currentTimeMillis();
 
 		log.info("Module generated successfully in " + (endTime - startTime)
 				+ " ms");
-		
-		
-		resp.getWriter().write(stringBuffer.toString());
-		
 
-		
+		resp.getWriter().write(stringBuffer.toString());
 
 		resp.getWriter().flush();
 	}

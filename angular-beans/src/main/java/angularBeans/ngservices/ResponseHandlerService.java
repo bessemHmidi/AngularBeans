@@ -16,10 +16,16 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
 package angularBeans.ngservices;
+
+/**
+ * 
+ * responseHandler angularJs Service to handle any server response (Half-duplex
+ * or realtime protocol)
+ * 
+ * @author Bessem Hmidi
+ *
+ */
 
 @NGExtension
 public class ResponseHandlerService implements NGService {

@@ -1,11 +1,24 @@
+/*
+ * AngularBeans, CDI-AngularJS bridge 
+ *
+ * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ */
 package angularBeans.util;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;
@@ -14,24 +27,24 @@ import com.google.javascript.jscomp.Result;
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.VariableRenamingPolicy;
 
-
+/**
+ * A closure compiler utility class used buy AngularBeans to "minify" the
+ * generated angular-beans.js script
+ * 
+ * @author Bassem Hmidi
+ *
+ */
 public class ClosureCompiler {
 
+	Logger logger = Logger.getLogger(ClosureCompiler.class.getSimpleName());
 
-	Logger logger=Logger.getLogger(ClosureCompiler.class.getSimpleName());
-
-	
 	CompilerOptions options;
 
-	
-	private  ClosureCompiler (){
-
-		
+	private ClosureCompiler() {
 
 		options = new CompilerOptions();
 
-		CompilationLevel.WHITESPACE_ONLY
-				.setOptionsForCompilationLevel(options);
+		CompilationLevel.WHITESPACE_ONLY.setOptionsForCompilationLevel(options);
 
 		// options.inlineConstantVars=true;
 		// options.aggressiveVarCheck=CheckLevel.WARNING;
@@ -64,13 +77,10 @@ public class ClosureCompiler {
 		options.setTightenTypes(false);
 		options.prettyPrint = false;
 
-	
-
 	}
 
 	public String getCompressedJavaScript(String jsContent) {
 
-		
 		String compiled = jsContent;
 
 		try {
@@ -79,9 +89,9 @@ public class ClosureCompiler {
 			logger.log(
 					Level.WARNING,
 					"could not compress JS, compression disabled, check for error or your guava library version");
-		
-		e.printStackTrace();
-		
+
+			e.printStackTrace();
+
 		}
 
 		// compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
@@ -90,10 +100,9 @@ public class ClosureCompiler {
 
 	public String compile(String code) {
 
-
-		Compiler compiler=new Compiler();
+		Compiler compiler = new Compiler();
 		compiler.disableThreads();
-			
+
 		SourceFile extern = SourceFile.fromCode("externs.js",
 				"function alert(x) {}");
 		SourceFile input = SourceFile.fromCode("input.js", code);
@@ -102,8 +111,8 @@ public class ClosureCompiler {
 		return compiler.toSource();
 	}
 
-	private static ClosureCompiler INSTANCE=new ClosureCompiler();
-	
+	private static ClosureCompiler INSTANCE = new ClosureCompiler();
+
 	public static ClosureCompiler getINSTANCE() {
 		return INSTANCE;
 	}

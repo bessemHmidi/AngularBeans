@@ -21,14 +21,16 @@
  */
 package angularBeans.ngservices;
 
-import angularBeans.boot.ModuleGenerator;
 
+/**
+ * AngularBeans logger service
+ * @author Bessem Hmidi
+ *
+ */
 
 @NGExtension
 public class LoggerService implements NGService {
 
-	
-	
 	public String render() {
 		String result = "";
 
@@ -47,7 +49,5 @@ public class LoggerService implements NGService {
 
 		return result;
 	}
-
-	
 
 }

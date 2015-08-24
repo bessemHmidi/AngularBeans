@@ -16,10 +16,14 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
 package angularBeans.ngservices;
+
+/**
+ * A sockJs RPC service wrapper for AngularBeans
+ * 
+ * @author Bessem Hmidi
+ *
+ */
 
 @NGExtension
 public class SockJsRpcService implements NGService {
@@ -66,8 +70,6 @@ public class SockJsRpcService implements NGService {
 		result += "\nws.onmessage = function (evt)";
 		result += "\n{";
 		result += "\nvar msg=angular.fromJson(evt.data);";
-		
-		// -----------------------
 
 		result += "var REQ_ID=parseInt(msg.reqId);";
 
@@ -78,16 +80,13 @@ public class SockJsRpcService implements NGService {
 		result += "  }";
 
 		result += " if (angular.isDefined(msg.ngEvent)) {";
-
 		result += "if(msg.ngEvent.name=='modelQuery'){"
 				+ "var caller={};"
 				+ "$injector.invoke([msg.ngEvent.data, function(icaller){caller=icaller;}]);"
 				+ "responseHandler.handleResponse(msg,caller,false);}"
-
 				+ "else{";
 		result += "$rootScope.$broadcast(msg.ngEvent.name,msg.ngEvent.data);";
 		result += " } }";
-
 		result += "\n }; ";
 
 		result += "\nrt.sendAsync = function(message) {";
@@ -102,35 +101,10 @@ public class SockJsRpcService implements NGService {
 		result += "\nws.send(angular.toJson(message));";
 		result += "\n};";
 
-		// result += "\nthis.subscribe=function(rfc,id,isRPC){";
-		// result += "\ncaller=rfc;";
-		// result += "\ncallers.push({'id':id,'caller':rfc,'isRPC':isRPC});";
-
-		// ----------------
-		// result += "\nsessionStorage.setItem(\"scopes\",scopes);";
-
-		// --------------
-
-		// result += "\n}";
-
-		// result += "\nthis.unsubscribe=function(id,rfc){";
-		//
-		// result += "\nfor(var i = callers.length - 1; i >= 0; i--) {";
-		//
-		// result +=
-		// "\nif((callers[i].id === id) && (callers[i].caller === rfc)) {";
-		// result += "\ncallers.splice(i, 1);";
-		// result += "\n}}";
-		// //---------------
-		// //result += "\nsessionStorage.setItem(\"callers\",callers);";
-		// result += "\n}";
-
 		result += "\nrt.call=function(caller,invockation,params){";
-		// result += "\nRTSrvc.subscribe(rfc,reqId,true);";
 		result += "\nreqId++;";
 		result += "\nvar message = {";
 		result += "\n'reqId':reqId,";
-		//result += "\n'session': rt.rootScope.sessionUID,";
 		result += "\n'service': invockation.split(\".\")[0],";
 		result += "\n'method': invockation.split(\".\")[1],";
 		result += "\n'params': params";

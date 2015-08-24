@@ -18,19 +18,17 @@
 package angularBeans.io;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.ws.rs.GET;
 
 /**
- * this is a cache to store java methods calls that return the binary content from AngularBeans components
- *  as LobWrapper (@Model properties) or byte[] (remote method invocation result)
+ * this is a cache to store java methods calls that return the binary content
+ * from AngularBeans components as LobWrapper (@Model properties) or byte[]
+ * (remote method invocation result in a stateless way)
+ * 
  * @see Call
  * @author Bessem Hmidi
  *
@@ -38,24 +36,22 @@ import javax.ws.rs.GET;
 
 @SuppressWarnings("serial")
 @ApplicationScoped
-public class ByteArrayCache implements Serializable{
+public class ByteArrayCache implements Serializable {
 
-	private Map<String,Call> cache = new HashMap<String, Call>();
-	
+	private Map<String, Call> cache = new HashMap<String, Call>();
+
 	private Map<String, byte[]> tempCache = new HashMap<String, byte[]>();
-	
+
 	@PostConstruct
-	public void init(){
-		
+	public void init() {
+
 	}
 
-//
-public Map<String, Call> getCache() {
-	return cache;
-}
+	public Map<String, Call> getCache() {
+		return cache;
+	}
 
-
-public Map<String, byte[]> getTempCache() {
-	return tempCache;
-}
+	public Map<String, byte[]> getTempCache() {
+		return tempCache;
+	}
 }

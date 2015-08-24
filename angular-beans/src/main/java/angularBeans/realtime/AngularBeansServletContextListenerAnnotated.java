@@ -1,3 +1,20 @@
+/*
+ * AngularBeans, CDI-AngularJS bridge 
+ *
+ * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ */
 package angularBeans.realtime;
 
 import java.lang.reflect.Method;
@@ -30,6 +47,17 @@ import angularBeans.ngservices.NGService;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ClosureCompiler;
 import angularBeans.util.StaticJsCache;
+
+/**
+ * this listener:
+ * <p>
+ * initialize the sockJs server end point
+ * <p>
+ * generate and store the CORE and the EXTENTIONS code of the angular-beans
+ * script.
+ * 
+ * @author Bessem Hmidi
+ */
 
 @WebListener
 public class AngularBeansServletContextListenerAnnotated implements
@@ -207,8 +235,8 @@ public class AngularBeansServletContextListenerAnnotated implements
 		buffer.append("$rootScope.baseUrl=sript_origin;");
 		buffer.append("});");
 
-		StaticJsCache.CORE_SCRIPT.append(compiler.getCompressedJavaScript(buffer
-				.toString()));
+		StaticJsCache.CORE_SCRIPT.append(compiler
+				.getCompressedJavaScript(buffer.toString()));
 
 	}
 

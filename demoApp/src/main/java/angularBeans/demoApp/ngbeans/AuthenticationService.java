@@ -19,6 +19,7 @@ import angularBeans.context.NGSessionScoped;
 import angularBeans.demoApp.domain.NotificationMessage;
 import angularBeans.demoApp.domain.User;
 import angularBeans.demoApp.service.VirtualClassService;
+import angularBeans.events.RemoteEventBus;
 import angularBeans.io.FileUpload;
 import angularBeans.io.LobWrapper;
 import angularBeans.io.Upload;
@@ -34,6 +35,10 @@ import angularBeans.util.RootScope;
 @NGSessionScoped
 public class AuthenticationService implements Serializable {
 
+	@Inject
+	@AngularBean
+	RemoteEventBus  remoteEventBus;
+	
 	@Inject
 	VirtualClassService virtualClassService;
 
@@ -92,14 +97,15 @@ public class AuthenticationService implements Serializable {
 
 	}
 
-	@RealTime
-	public String authenticate(int s) {return "";}
+	
 	
 	@RealTime
 	@NGSubmit(backEndModels = "*")
 	@NGReturn(model = "users", updates = "*")
 	public String authenticate() {
 
+		remoteEventBus.subscribe("notificationChannel");
+		
 		User user = new User(login, password);
 
 		if (virtualClassService.getUsers().contains(user)) {

@@ -22,13 +22,10 @@
 package angularBeans.validation;
 
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -46,6 +43,15 @@ import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ClosureCompiler;
 import angularBeans.util.StaticJsCache;
 
+/**
+ * the bean validation processor generate the HTML5 validation attributes from
+ * java bean validation annotations.
+ * 
+ * @author Bessem Hmidi
+ *
+ */
+
+@SuppressWarnings("serial")
 @ApplicationScoped
 public class BeanValidationProcessor implements Serializable {
 
@@ -53,15 +59,13 @@ public class BeanValidationProcessor implements Serializable {
 
 	@Inject
 	AngularBeansUtil util;
-	
+
 	private StringBuffer buffer = new StringBuffer();
 
-	
 	public void processBeanValidationParsing(Method method) {
 
-		
-		
-		String modelName = AngularBeansUtil.obtainFieldNameFromAccessor(method.getName());
+		String modelName = AngularBeansUtil.obtainFieldNameFromAccessor(method
+				.getName());
 		Annotation[] scannedAnnotations = method.getAnnotations();
 
 		buffer.append("\nif (modelName === '").append(modelName).append("') {");
@@ -110,26 +114,25 @@ public class BeanValidationProcessor implements Serializable {
 				buffer.append("\nentries[e].setAttribute('min', '")
 						.append(dMin).append("');");
 				break;
-				
+
 			case "javax.validation.constraints.DecimalMax":
 				String dMax = ((DecimalMax) a).value();
 				buffer.append("\nentries[e].setAttribute('max', '")
 						.append(dMax).append("');");
 				break;
-				
-				
+
 			case "javax.validation.constraints.Min":
 				long min = ((Min) a).value();
-				buffer.append("\nentries[e].setAttribute('min', '")
-						.append(min).append("');");
+				buffer.append("\nentries[e].setAttribute('min', '").append(min)
+						.append("');");
 				break;
-				
+
 			case "javax.validation.constraints.Max":
 				long max = ((Max) a).value();
-				buffer.append("\nentries[e].setAttribute('max', '")
-						.append(max).append("');");
+				buffer.append("\nentries[e].setAttribute('max', '").append(max)
+						.append("');");
 				break;
-				
+
 			default:
 				break;
 			}
@@ -142,41 +145,46 @@ public class BeanValidationProcessor implements Serializable {
 	public void init() {
 		validationAnnotations = new HashSet<>();
 		validationAnnotations.addAll(Arrays.asList(NotNull.class, Size.class,
-				Pattern.class,DecimalMin.class,DecimalMax.class,Min.class,Max.class));
+				Pattern.class, DecimalMin.class, DecimalMax.class, Min.class,
+				Max.class));
 
 	}
 
 	public void build() {
 
-		StringBuilder stringBuilder=new StringBuilder();
+		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("app");
 		stringBuilder.append(".directive('beanValidate', function($compile) {");
 		stringBuilder.append("\nreturn {");
 		stringBuilder.append("\ncompile : function(tElem, attrs) {");
-		stringBuilder.append("\nreturn function(scope, elem, attrs, compile) {");
+		stringBuilder
+				.append("\nreturn function(scope, elem, attrs, compile) {");
 		stringBuilder.append("\nvar getAllInputModel = function(attribute) {");
 		stringBuilder.append("\nvar matchingElements = [];");
-		stringBuilder.append("\nvar allElements = document.getElementsByTagName('input');");
-		stringBuilder.append("\nfor (var i = 0, n = allElements.length; i < n; i++) {");
+		stringBuilder
+				.append("\nvar allElements = document.getElementsByTagName('input');");
+		stringBuilder
+				.append("\nfor (var i = 0, n = allElements.length; i < n; i++) {");
 		stringBuilder.append("\nif (allElements[i].getAttribute(attribute)) {");
 		stringBuilder.append("\nmatchingElements.push(allElements[i]);");
 		stringBuilder.append("\n}}");
 		stringBuilder.append("\nreturn matchingElements;}");
 		stringBuilder.append("\nvar entries = (getAllInputModel('ng-model'));");
 		stringBuilder.append("\nfor (e in entries) {");
-		stringBuilder.append("\nvar modelName = (entries[e].getAttribute('ng-model'));");
+		stringBuilder
+				.append("\nvar modelName = (entries[e].getAttribute('ng-model'));");
 
-	
 		stringBuilder.append(buffer);
 
 		stringBuilder.append("\n};");
-		stringBuilder.append("\nvar old = \"<!-- validation -->\" + elem.html();");
+		stringBuilder
+				.append("\nvar old = \"<!-- validation -->\" + elem.html();");
 		stringBuilder.append("\nelem.html('');");
 		stringBuilder.append("\nelem.append($compile(old)(scope));");
 		stringBuilder.append("\n;};}};});");
-		
 
-		StaticJsCache.VALIDATION_SCRIPT.append(ClosureCompiler.getINSTANCE().getCompressedJavaScript(stringBuilder.toString()));
+		StaticJsCache.VALIDATION_SCRIPT.append(ClosureCompiler.getINSTANCE()
+				.getCompressedJavaScript(stringBuilder.toString()));
 	}
 
 }

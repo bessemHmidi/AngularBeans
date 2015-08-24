@@ -15,31 +15,28 @@
  * for more details.
  *
  */
-package angularBeans.util;
-
-import java.io.Serializable;
-
-import angularBeans.context.NGSessionScoped;
 
 /**
- * when injected, a CurrentNGSession can provide the current HTTP Session Id
- * 
- * @author Bassem Hmidi
- *
+ @author Bessem Hmidi
  */
+package angularBeans.events;
 
-@SuppressWarnings("serial")
-@NGSessionScoped
-public class CurrentNGSession implements Serializable {
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-	private String sessionId;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	public String getSessionId() {
-		return sessionId;
-	}
+import javax.inject.Qualifier;
 
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
-	}
+
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+@Retention(RUNTIME)
+
+@Qualifier
+public @interface RealTimeSessionReadyEvents {
 
 }

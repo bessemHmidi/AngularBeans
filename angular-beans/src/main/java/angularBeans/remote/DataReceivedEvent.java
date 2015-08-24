@@ -32,10 +32,15 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
+/**
+ * a qualifier for the DataReceivedEvent CDI event bus
+ * 
+ * @author Bassem Hmidi
+ *
+ */
 
-@Target({TYPE, METHOD, FIELD, PARAMETER})
+@Target({ TYPE, METHOD, FIELD, PARAMETER })
 @Retention(RUNTIME)
-
 @Qualifier
 public @interface DataReceivedEvent {
 

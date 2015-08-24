@@ -40,10 +40,10 @@ import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
-import angularBeans.context.NGSessionScoped;
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
+import angularBeans.log.NGLogger.Level;
 import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ModelQueryFactory;
 import angularBeans.util.ModelQueryImpl;
@@ -53,6 +53,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+/**
+ * 
+ * @author Bassem Hmidi This is the AngularBeans RPC main handler
+ */
+
+@SuppressWarnings("serial")
 @ApplicationScoped
 public class InvocationHandler implements Serializable {
 
@@ -104,12 +110,12 @@ public class InvocationHandler implements Serializable {
 		arrayTypesMap.put("[Ljava.lang.Byte;", Byte[].class);
 		arrayTypesMap.put("[Ljava.lang.Character;", Character[].class);
 		arrayTypesMap.put("[Ljava.lang.Boolean;", Boolean[].class);
-		arrayTypesMap.put("[Ljava.lang.String;",String[].class);
+		arrayTypesMap.put("[Ljava.lang.String;", String[].class);
 	}
 
-	public  void realTimeInvoke(Object ServiceToInvoque,
-			String methodName, JsonObject params,
-			RealTimeDataReceiveEvent event, long reqID, String UID) {
+	public void realTimeInvoke(Object ServiceToInvoque, String methodName,
+			JsonObject params, RealTimeDataReceivedEvent event, long reqID,
+			String UID) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
@@ -123,22 +129,19 @@ public class InvocationHandler implements Serializable {
 					UID);
 
 			if (returns.get("mainReturn") != null) {
-				
-				event.getConnection().write(util.getJson(returns),false);
+
+				event.getConnection().write(util.getJson(returns), false);
 			}
 		} catch (SecurityException | ClassNotFoundException
 				| IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException e) {
-		
+
 			e.printStackTrace();
 		}
 
-		
-
 	}
 
-	public  Object invoke(Object o, String method,
-			JsonObject params, String UID) {
+	public Object invoke(Object o, String method, JsonObject params, String UID) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
@@ -240,7 +243,18 @@ public class InvocationHandler implements Serializable {
 							// }
 
 						}
-						mainReturn = m.invoke(service, argsValues.toArray());
+
+						String exceptionString = "";
+						try {
+
+							mainReturn = m
+									.invoke(service, argsValues.toArray());
+
+						} catch (Exception e) {
+							handleException(m, e);
+
+							e.printStackTrace();
+						}
 
 					}
 
@@ -262,13 +276,14 @@ public class InvocationHandler implements Serializable {
 
 			}
 
+			try {
+
+			} catch (Exception e) {
+				handleException(m, e);
+				e.printStackTrace();
+			}
 			mainReturn = m.invoke(service);
 
-		}
-
-		if (!logger.getLogPool().isEmpty()) {
-			returns.put("log", logger.getLogPool().toArray());
-			logger.getLogPool().clear();
 		}
 
 		// 1
@@ -368,7 +383,27 @@ public class InvocationHandler implements Serializable {
 		// if (m.isAnnotationPresent(NGReturn.class)) {
 
 		returns.put("mainReturn", mainReturn);
+
+		if (!logger.getLogPool().isEmpty()) {
+			returns.put("log", logger.getLogPool().toArray());
+			logger.getLogPool().clear();
+		}
+
 		// }
+
+	}
+
+	private void handleException(Method m, Exception e) {
+		Throwable cause = e.getCause();
+
+		String exceptionString = m.getName() + " -->"
+				+ cause.getClass().getName();
+
+		if (cause.getMessage() != null) {
+			exceptionString += " " + cause.getMessage();
+		}
+
+		logger.log(Level.ERROR, exceptionString);
 
 	}
 
@@ -422,7 +457,7 @@ public class InvocationHandler implements Serializable {
 						ParameterizedType pt = (ParameterizedType) type;
 						Type actType = pt.getActualTypeArguments()[0];
 
-						//Class collectionClazz = get.getReturnType();
+						// Class collectionClazz = get.getReturnType();
 
 						String className = actType.toString();
 
