@@ -39,10 +39,9 @@ public class ResponseHandlerService implements NGService {
 
 		result += ("\nthis.handleResponse=function(msg,caller,isRPC){");
 
-//		result +="console.log(angular.toJson(msg));";
-//		result +="console.log('--'+JSON.stringify(msg));";
-				
-				
+		// result +="console.log(angular.toJson(msg));";
+		// result +="console.log('--'+JSON.stringify(msg));";
+
 		result += "var mainReturn={};";
 
 		result += ("\nfor (var key in msg) {");
@@ -79,14 +78,13 @@ public class ResponseHandlerService implements NGService {
 		result += "if(key==='rm'){";
 
 		result += "if(equalsKey=='NAN'){";
+		result += "if(tab[value]==='equalsKey:NAN'){continue;}";
 
-		result += "for (var item in caller[modelkey]) {";
+		result += "var index=angularBeans.isIn(caller[modelkey],tab[value]);";
+		result += "if(index>-1){caller[modelkey].splice(index, 1);return;}";
+		result += "}"
 
-		result += "";
-		result += "if(angularBeans.isIn(caller[modelkey],tab[value])){caller[modelkey].splice(item, 1);}";
-		result += "}";
-
-		result += "}else{";
+		+ "else{";
 		result += "var criteria={};";
 		result += "criteria[equalsKey]='!'+tab[value][equalsKey];";
 		result += "caller[modelkey] = $filter('filter')(caller[modelkey], criteria);";
@@ -94,9 +92,9 @@ public class ResponseHandlerService implements NGService {
 
 		result += "if(key==='add'){";
 		result += "\n var found=false; ";
-		// result += "for(item in caller[modelkey]) {";
-		result += "if(angularBeans.isIn(caller[modelkey],tab[value])){ found=true;}";
-		// result += "};";
+
+		result += "if(angularBeans.isIn(caller[modelkey],tab[value])>-1){ found=true;}";
+
 		result += "if(!(found)){  ";
 		result += "caller[modelkey].push(tab[value]);";
 		result += "}};"
@@ -126,8 +124,6 @@ public class ResponseHandlerService implements NGService {
 		result += ("\n  }");
 
 		result += ("\nlogger.log(msg.log);");
-
-		// -->
 
 		// result+="if(isRT){$rootScope.$apply();}";
 		result += "if(!isRPC){$rootScope.$digest();$rootScope.$apply();}";
