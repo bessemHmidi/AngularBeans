@@ -88,7 +88,7 @@ public class ClassRoomsService {
 			ModelQuery query = modelQueryFactory.get(
 					SingleClassRoomService.class).pushTo("users", user);
 
-			client.broadcast(query, true, false);
+			client.broadcast(query, true);
 
 			// or #1
 
@@ -112,7 +112,7 @@ public class ClassRoomsService {
 		virtualClassService.getClassRoomsMap().put(classRoom,
 				new HashSet<User>());
 
-		client.broadcast(modelQuery.pushTo("classRooms", classRoom), false,
+		client.broadcast(modelQuery.pushTo("classRooms", classRoom),
 				false);
 
 	}

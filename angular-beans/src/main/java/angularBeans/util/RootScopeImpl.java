@@ -15,24 +15,58 @@
  * for more details.
  *
  */
-
 package angularBeans.util;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Default;
 
 /**
  * 
  * @author bessem
- * an interface representing the $rootScope
+ * an object representing the $rootScope
  * when updated this give a server-> client way update only
  */
 
-public interface RootScope {
+@SuppressWarnings("serial")
+@Alternative
+public class RootScopeImpl implements RootScope,Serializable {
 
+	
+	private Map<String, Object> rootScopeMap = Collections.synchronizedMap(new HashMap<String, Object>());
+
+	
+	
 	/**
 	 * change the value of the model of the $rootScope
 	 * @param model
 	 * @param value
 	 */
-	void setProperty(String model, Object value);
+	
+	@Override
+	public void setProperty(String model, Object value) {
+		rootScopeMap.put(model, value);
 
+	}
+
+	public synchronized Object getProperty(String model) {
+
+		Object value=rootScopeMap.get(model);
+		rootScopeMap.remove(value);
+		return value;
+
+	}
+
+	public Set<String> getProperties() {
+		return rootScopeMap.keySet();
+	}
+
+	public synchronized Map<String, Object> getRootScopeMap() {
+		return rootScopeMap;
+	}
 }

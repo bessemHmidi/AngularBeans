@@ -28,9 +28,9 @@ public class NotificationsService implements Serializable {
 		
 	
 		if (message.isBroadcast()) {
-			client.broadcast("notificationChannel", rtMessage, false,false);
+			client.broadcast("notificationChannel", rtMessage,false);
 		} else {
-			client.publish("notificationChannel", rtMessage,false);
+			client.publish("notificationChannel", rtMessage);
 		}
 
 	}

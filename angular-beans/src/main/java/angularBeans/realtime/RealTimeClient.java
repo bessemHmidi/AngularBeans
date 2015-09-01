@@ -75,7 +75,18 @@ public class RealTimeClient implements Serializable {
 	@Inject
 	NGLogger logger;
 
+	private boolean async=false;
+	/**
+	 *  the Realtime client will use will use AsyncRemote of the websocket api 
+	 *            <p>
+	 *            usage: realTimeClient.async().*any-method()*.
+	 */
 	
+	public RealTimeClient async(){
+		
+		async=true;
+		return this;
+	}
 	
 	public void onSessionReady(
 			@Observes @RealTimeSessionReadyEvent RealTimeDataReceivedEvent event) {
@@ -141,11 +152,11 @@ public class RealTimeClient implements Serializable {
 	 * @param message
 	 *            : the RealTimeMessage to send
 	 */
-	public void publish(String channel, RealTimeMessage message, boolean async) {
+	public void publish(String channel, RealTimeMessage message) {
 
 		Map<String, Object> paramsToSend = prepareData(channel, message);
 
-		publish(paramsToSend, async);
+		publish(paramsToSend);
 
 	}
 
@@ -157,9 +168,9 @@ public class RealTimeClient implements Serializable {
 	 *            : the ModelQuery to send
 	 */
 
-	public void publish(ModelQuery query, boolean async) {
+	public void publish(ModelQuery query) {
 		Map<String, Object> paramsToSend = prepareData(query);
-		publish(paramsToSend, async);
+		publish(paramsToSend);
 
 	}
 
@@ -179,24 +190,14 @@ public class RealTimeClient implements Serializable {
 	 *            true: the current session client will not receive the message.
 	 *            <p>
 	 *            false: the current session client will also receive the
-	 *            message.
-	 * @param async
-	 *            : possible values:
-	 *            <p>
-	 *            true: the message (event) will be sent in asynchronous way
-	 *            (will use AsyncRemote)
-	 * 
-	 *            <p>
-	 *            false: the message will be sent in synchronous way (will use
-	 *            BasicRemote)
-	 */
+	 *            message. */
 
 	public void broadcast(String channel, RealTimeMessage message,
-			boolean withoutMe, boolean async) {
+			boolean withoutMe) {
 		
 		Map<String, Object> paramsToSend = prepareData(channel, message);
 
-		broadcast(channel,withoutMe, paramsToSend, async);
+		broadcast(channel,withoutMe, paramsToSend);
 
 	}
 
@@ -212,22 +213,13 @@ public class RealTimeClient implements Serializable {
 	 *            true: the current session client will not receive the query.
 	 *            <p>
 	 *            false: the current session client will also receive the query.
-	 * @param async
-	 *            : possible values:
-	 *            <p>
-	 *            true: the query will be sent in asynchronous way (will use
-	 *            AsyncRemote)
-	 * 
-	 *            <p>
-	 *            false: the query will be sent in synchronous way (will use
-	 *            BasicRemote)
 	 */
 
-	public void broadcast(ModelQuery query, boolean withoutMe, boolean async) {
+	public void broadcast(ModelQuery query, boolean withoutMe) {
 
 		Map<String, Object> paramsToSend = prepareData(query);
 
-		broadcast(query.getTargetServiceClass(),withoutMe, paramsToSend, async);
+		broadcast(query.getTargetServiceClass(),withoutMe, paramsToSend);
 
 	}
 
@@ -266,8 +258,7 @@ public class RealTimeClient implements Serializable {
 		return paramsToSend;
 	}
 
-	private void broadcast(String channel,boolean withoutMe, Map<String, Object> paramsToSend,
-			boolean async) {
+	private void broadcast(String channel,boolean withoutMe, Map<String, Object> paramsToSend) {
 		
 		
 		
@@ -289,12 +280,13 @@ public class RealTimeClient implements Serializable {
 				String objectMessage = util.getJson(paramsToSend);
 
 				connection.write(objectMessage, async);
+				async=false;
 
 			}
 		}
 	}
 
-	private void publish(Map<String, Object> paramsToSend, boolean async) {
+	private void publish(Map<String, Object> paramsToSend) {
 		for (SockJsConnection session : new HashSet<SockJsConnection>(sessions)) {
 
 			if (!session.getReadyState().equals(READY_STATE.OPEN)) {
@@ -302,6 +294,7 @@ public class RealTimeClient implements Serializable {
 			} else {
 
 				session.write(util.getJson(paramsToSend), async);
+				async=false;
 			}
 
 		}

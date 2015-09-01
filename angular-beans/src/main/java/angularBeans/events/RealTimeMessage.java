@@ -16,17 +16,15 @@
  *
  */
 
-
 package angularBeans.events;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * a RealTime message is a server to client message
- * translated to an angularJS event. (only with realTime context)
+ * a RealTime message is a server to client message translated to an angularJS
+ * event. (only with realTime context)
+ * 
  * @author Bessem Hmidi
  *
  */
@@ -39,34 +37,13 @@ public class RealTimeMessage {
 		return this;
 	}
 
-	
 	public Map<String, Object> build() {
 		return data;
 	}
-
-//	public RealTimeMessage pushToArray(String arrayName, Object value) {
-//		
-//		Map<String, Set<Object>> params=null;
-//		if(!data.containsKey("arrays")){
-//			data.put("arrays", new HashMap<String, Set<Object>>());
-//		}
-//		
-//		 params=(Map<String, Set<Object>>) data.get("arrays");
-//		 
-//		if(!params.containsKey(arrayName))
-//		{
-//			params.put(arrayName, new HashSet<Object>());
-//		}
-//		
-//		params.get(arrayName).add(value);
-//
-//		return this;
-//	}
-	
 
 	@Override
 	public String toString() {
 		return data.toString();
 	}
-	
+
 }

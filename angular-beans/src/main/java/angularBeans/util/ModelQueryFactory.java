@@ -41,7 +41,7 @@ public class ModelQueryFactory implements Serializable {// PassivationCapable {
 
 	private Map<Class, ModelQuery> allQueries = new HashMap<Class, ModelQuery>();
 
-	RootScope rootScope = new RootScope();
+	RootScope rootScope = new RootScopeImpl();
 
 	public ModelQuery get(Class clazz) {
 		if (allQueries.get(clazz) == null)
@@ -67,7 +67,7 @@ public class ModelQueryFactory implements Serializable {// PassivationCapable {
 	}
 
 	@Produces
-	public RootScope getRootScope() {
-		return rootScope;
+	public RootScopeImpl getRootScope() {
+		return (RootScopeImpl) rootScope;
 	}
 }

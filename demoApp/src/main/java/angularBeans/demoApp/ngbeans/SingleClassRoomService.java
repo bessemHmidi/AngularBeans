@@ -67,7 +67,7 @@ public class SingleClassRoomService implements Serializable {
 
 		ModelQuery query=  modelQuery.removeFrom("users", user);
 		
-		client.broadcast(query,false,true);
+		client.broadcast(query,false);
 		
 		virtualClassService.getClassRoomsMap().get(classRoom)
 				.remove(user);

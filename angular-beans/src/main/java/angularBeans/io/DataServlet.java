@@ -62,8 +62,8 @@ public class DataServlet extends HttpServlet {
 		response.setHeader("Access-Control-Allow-Origin", "*");
 
 		byte[] data = null;
-		OutputStream o;
-		try {
+	
+		try (OutputStream o=response.getOutputStream();){
 			if (cache.getCache().containsKey(resourceId)) {
 				Call call = cache.getCache().get(resourceId);
 				Method m = call.getMethod();
@@ -83,7 +83,7 @@ public class DataServlet extends HttpServlet {
 				}
 			}
 
-			o = response.getOutputStream();
+			
 			if (data == null) {
 				data = "default".getBytes();
 			}
