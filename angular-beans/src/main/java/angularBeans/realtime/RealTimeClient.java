@@ -45,7 +45,8 @@ import angularBeans.events.ServerEvent;
 import angularBeans.log.NGLogger;
 import angularBeans.remote.DataReceivedEvent;
 import angularBeans.remote.RealTimeDataReceivedEvent;
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
+import angularBeans.util.CommonUtils;
 import angularBeans.util.ModelQuery;
 import angularBeans.util.ModelQueryImpl;
 import angularBeans.util.NGBean;
@@ -70,7 +71,7 @@ public class RealTimeClient implements Serializable {
 	GlobalConnectionHolder connectionHolder;
 
 	@Inject
-	AngularBeansUtil util;
+	AngularBeansUtils util;
 
 	@Inject
 	NGLogger logger;
@@ -231,7 +232,7 @@ public class RealTimeClient implements Serializable {
 		ServerEvent ngEvent = new ServerEvent();
 
 		ngEvent.setName("modelQuery");
-		ngEvent.setData(util.getBeanName(modelQuery.getOwner()));
+		ngEvent.setData(CommonUtils.getBeanName(modelQuery.getOwner()));
 
 		paramsToSend.putAll(modelQuery.getData());
 		paramsToSend.put("ngEvent", ngEvent);

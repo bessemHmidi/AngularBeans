@@ -21,36 +21,37 @@
  */
 package angularBeans.context;
 
-
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.CommonUtils;
+
 /**
  * 
  * @author bessem
  *
  */
 @WebListener
-public class MainHTTPSessionListener implements HttpSessionListener{
+public class MainHTTPSessionListener implements HttpSessionListener {
 
-	
-	
 	@Override
 	public void sessionCreated(HttpSessionEvent se) {
-		
-		se.getSession().setAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME, se.getSession().getId());
-		
+
+		se.getSession().setAttribute(CommonUtils.NG_SESSION_ATTRIBUTE_NAME,
+				se.getSession().getId());
+
 	}
-/**
- * if the HTTP Session is destroyed, the NGSession 
- * will be destroyed too
- */
+
+	/**
+	 * if the HTTP Session is destroyed, the NGSession will be destroyed too
+	 */
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
-		GlobalNGSessionContextsMapHolder.destroySession(String.valueOf(se.getSession().getAttribute(AngularBeansUtil.NG_SESSION_ATTRIBUTE_NAME)));
-		SessionMapper.getSessionsMap().remove( se.getSession().getId());
+		GlobalNGSessionContextsMapHolder.destroySession(String.valueOf(se
+				.getSession().getAttribute(
+						CommonUtils.NG_SESSION_ATTRIBUTE_NAME)));
+		SessionMapper.getSessionsMap().remove(se.getSession().getId());
 	}
 
 }

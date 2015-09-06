@@ -38,9 +38,10 @@ import angularBeans.context.SessionMapper;
 import angularBeans.events.RealTimeErrorEvent;
 import angularBeans.events.RealTimeSessionCloseEvent;
 import angularBeans.events.RealTimeSessionReadyEvent;
-import angularBeans.realtime.AngularBeansServletContextListenerAnnotated;
+import angularBeans.realtime.AngularBeansServletContextListener;
 import angularBeans.realtime.GlobalConnectionHolder;
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
+import angularBeans.util.CommonUtils;
 
 import com.google.gson.JsonObject;
 
@@ -104,7 +105,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 
 	@Override
 	public void init() throws ServletException {
-		SockJsServer server = AngularBeansServletContextListenerAnnotated.sockJsServer;
+		SockJsServer server = AngularBeansServletContextListener.sockJsServer;
 		// Various options can be set on the server, such as:
 		// echoServer.options.responseLimit = 4 * 1024;
 
@@ -121,7 +122,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 					@Override
 					public void handle(String message) {
 
-						JsonObject jObj = AngularBeansUtil.parse(message)
+						JsonObject jObj = CommonUtils.parse(message)
 								.getAsJsonObject();
 						String UID = null;
 

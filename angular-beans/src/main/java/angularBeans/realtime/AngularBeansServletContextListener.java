@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,8 +45,8 @@ import org.projectodd.sockjs.servlet.SockJsEndpoint;
 import angularBeans.api.NGModules;
 import angularBeans.boot.BeanRegistry;
 import angularBeans.ngservices.NGService;
-import angularBeans.util.AngularBeansUtil;
 import angularBeans.util.ClosureCompiler;
+import angularBeans.util.CommonUtils;
 import angularBeans.util.StaticJsCache;
 
 /**
@@ -60,7 +61,7 @@ import angularBeans.util.StaticJsCache;
  */
 
 @WebListener
-public class AngularBeansServletContextListenerAnnotated implements
+public class AngularBeansServletContextListener implements
 		ServletContextListener {
 
 	public static SockJsServer sockJsServer;
@@ -186,7 +187,8 @@ public class AngularBeansServletContextListenerAnnotated implements
 				serverContainer.addEndpoint(sockJsConfig);
 				serverContainer.addEndpoint(rawWsConfig);
 
-				System.out.println("deployement of programmatic WS....end");
+				Logger.getLogger(this.getClass().getSimpleName()).info(
+						"deployement of programmatic Web socket EndPoint.");
 			} catch (DeploymentException ex) {
 				throw new ServletException(
 						"Error deploying websocket endpoint:", ex);
@@ -209,7 +211,7 @@ public class AngularBeansServletContextListenerAnnotated implements
 
 		if ((appName == null) || (appName.length() < 1)) {
 
-			appName = AngularBeansUtil.getBeanName(appClass);
+			appName = CommonUtils.getBeanName(appClass);
 		}
 
 		buffer.append(StaticJsCache.angularBeansMainObject);

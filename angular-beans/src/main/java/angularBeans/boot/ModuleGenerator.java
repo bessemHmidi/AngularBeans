@@ -46,8 +46,9 @@ import angularBeans.io.FileUpload;
 import angularBeans.io.FileUploadHandler;
 import angularBeans.io.LobWrapper;
 import angularBeans.realtime.RealTime;
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.ClosureCompiler;
+import angularBeans.util.CommonUtils;
 import angularBeans.util.CurrentNGSession;
 import angularBeans.util.NGBean;
 import angularBeans.util.StaticJsCache;
@@ -72,7 +73,7 @@ public class ModuleGenerator implements Serializable {
 	private String sessionID;
 
 	@Inject
-	AngularBeansUtil util;
+	AngularBeansUtils util;
 
 	public ModuleGenerator() {
 
@@ -184,7 +185,7 @@ public class ModuleGenerator implements Serializable {
 
 			String getter = get.getName();
 
-			String modelName = util.obtainFieldNameFromAccessor(getter);
+			String modelName = CommonUtils.obtainFieldNameFromAccessor(getter);
 
 			if (get.getReturnType().equals(LobWrapper.class)) {
 
@@ -286,7 +287,7 @@ public class ModuleGenerator implements Serializable {
 			if (isNative)
 				continue;
 
-			if ((!util.isSetter(m)) && (!util.isGetter(m))) {
+			if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))) {
 
 				// String csModel = null;
 				String[] csUpdates = null;
@@ -333,9 +334,9 @@ public class ModuleGenerator implements Serializable {
 
 							for (Method md : bean.getMethods()) {
 
-								if (util.isSetter(md)) {
+								if (CommonUtils.isSetter(md)) {
 									String methodName = md.getName();
-									String modelName = util
+									String modelName = CommonUtils
 											.obtainFieldNameFromAccessor(methodName);
 									if (modelName.equals(model)) {
 										setters.add(md);
@@ -441,7 +442,7 @@ public class ModuleGenerator implements Serializable {
 
 				cachedStaticPart.append("});");
 
-				if ((!util.isSetter(m)) && (!util.isGetter(m))) {
+				if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))) {
 					if (m.isAnnotationPresent(NGPostConstruct.class)) {
 
 						cachedStaticPart.append(bean.getName() + "."
@@ -461,7 +462,7 @@ public class ModuleGenerator implements Serializable {
 	private void pushScope(Method[] methods, Set<Method> setters) {
 		for (Method md : methods) {
 
-			if (util.isSetter(md)) {
+			if (CommonUtils.isSetter(md)) {
 				setters.add(md);
 			}
 		}
@@ -474,7 +475,7 @@ public class ModuleGenerator implements Serializable {
 
 		for (Method setter : setters) {
 
-			String name = util.obtainFieldNameFromAccessor(setter.getName());
+			String name = CommonUtils.obtainFieldNameFromAccessor(setter.getName());
 			sb.append("params['" + name + "']=" + bean.getName() + "." + name
 					+ ";");
 		}

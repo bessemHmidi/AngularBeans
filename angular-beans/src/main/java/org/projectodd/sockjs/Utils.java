@@ -5,7 +5,7 @@
 
 package org.projectodd.sockjs;
 
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -21,6 +21,9 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.boon.json.JsonFactory;
+import org.boon.json.ObjectMapper;
 
 public class Utils {
 
@@ -85,11 +88,13 @@ public class Utils {
     }
 
     public static String jsonStringify(String string) {
-        return gson.toJson(string);
+    	
+    	
+        return mapper.toJson(string);
     }
 
     public static <T> T parseJson(String json, Class<T> clazz) {
-        return gson.fromJson(json, clazz);
+        return mapper.fromJson(json, clazz);
     }
 
     private static final String RFC1123_PATTERN = "EEE, dd MMM yyyy HH:mm:ss z";
@@ -99,7 +104,7 @@ public class Utils {
     private static final Pattern ESCAPABLE = Pattern.compile("[\\x00-\\x1f\\ud800-\\udfff\\u200c-\\u200f\\u2028-\\u202f\\u2060-\\u206f\\ufff0-\\uffff]");
     private static final Map<String, String> escapableLookup = new HashMap<>();
 
-    private static final Gson gson = new Gson();
+    private static final ObjectMapper mapper = JsonFactory.create();
 
     static {
         StringBuilder chars = new StringBuilder();

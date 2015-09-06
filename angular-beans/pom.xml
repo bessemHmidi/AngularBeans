@@ -12,7 +12,11 @@
 		<!-- <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> -->
 	</properties>
 
-	<dependencies>  
+	<description>
+angularBeans framework
+</description>
+
+	<dependencies>
 
 		<dependency>
 			<groupId>javax</groupId>
@@ -20,23 +24,23 @@
 			<version>7.0</version>
 			<scope>provided</scope>
 		</dependency>
- 
- 
- 
 
 
-			<dependency>
-			
+
+
+
+		<dependency>
+
 			<groupId>com.google.javascript</groupId>
 			<artifactId>closure-compiler</artifactId>
 			<version>v20131014</version> <!-- good v20131014 -->
-			 
-		
-			
-		<!--between--><!-- v20131014 --><!-- and --> <!--  v20140508> -->
-		
+
+
+
+			<!--between --><!-- v20131014 --><!-- and --> <!-- v20140508> -->
+
 			<exclusions>
-			<exclusion>
+				<exclusion>
 					<groupId>args4j</groupId>
 					<artifactId>args4j</artifactId>
 				</exclusion>
@@ -56,17 +60,15 @@
 					<groupId>org.apache.ant</groupId>
 					<artifactId>ant</artifactId>
 				</exclusion>
-			<!-- 	<exclusion>
-					<groupId>org.json</groupId>
-					<artifactId>json</artifactId>
-				</exclusion>  -->
-				
-			  	 <exclusion>
-				      <groupId>com.google.guava</groupId>
-      				<artifactId>guava</artifactId>
-      
-				</exclusion>   
-				
+				<!-- <exclusion> <groupId>org.json</groupId> <artifactId>json</artifactId> 
+					</exclusion> -->
+
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+
+				</exclusion>
+
 			</exclusions>
 		</dependency>
 		<!-- <dependency> <groupId>javax.json</groupId> <artifactId>javax.json-api</artifactId> 
@@ -79,48 +81,120 @@
 
 		</dependency>
 
-		<!-- <dependency> <groupId>io.fastjson</groupId> <artifactId>boon</artifactId> 
-			<version>0.33</version> </dependency> -->
+		<dependency>
+			<groupId>io.fastjson</groupId>
+			<artifactId>boon</artifactId>
+			<version>0.32</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>13.0.1</version>
-	
+
 		</dependency>
 	</dependencies>
 	<url>http://bessemhmidi.github.io/AngularBeans</url>
-	<!-- <scm> <url>https://github.com/bessemHmidi/AngularBeans.git</url> </scm> 
-		<issueManagement> <system>jira</system> </issueManagement> -->
+	<scm>
+		<url>https://github.com/bessemHmidi/AngularBeans.git</url>
+	</scm>
+	<issueManagement>
+		<system>jira</system>
+	</issueManagement>
 
-	<!-- <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
-		<artifactId>maven-source-plugin</artifactId> <version>2.2.1</version> <executions> 
-		<execution> <id>attach-sources</id> <goals> <goal>jar-no-fork</goal> </goals> 
-		</execution> </executions> </plugin> <plugin> <groupId>org.apache.maven.plugins</groupId> 
-		<artifactId>maven-javadoc-plugin</artifactId> <version>2.9.1</version> <executions> 
-		<execution> <id>attach-javadocs</id> <goals> <goal>jar</goal> </goals> </execution> 
-		</executions> </plugin> <plugin> <groupId>org.apache.maven.plugins</groupId> 
-		<artifactId>maven-gpg-plugin</artifactId> <version>1.5</version> <configuration> 
-		</configuration> <executions> <execution> <id>sign-artifacts</id> <phase>verify</phase> 
-		<goals> <goal>sign</goal> </goals> </execution> </executions> </plugin> <plugin> 
-		<groupId>org.sonatype.plugins</groupId> <artifactId>nexus-staging-maven-plugin</artifactId> 
-		<version>1.6.3</version> <extensions>true</extensions> <configuration> <serverId>ossrh</serverId> 
-		<nexusUrl>https://oss.sonatype.org/</nexusUrl> <autoReleaseAfterClose>true</autoReleaseAfterClose> 
-		</configuration> </plugin> </plugins> </build> -->
-	<distributionManagement>
+	<licenses>
+		<license>
+			<name>LGPL</name>
+			<distribution>repo</distribution>
+			<url>http://www.gnu.org/licenses/lgpl-3.0.html</url>
+		</license>
+	</licenses>
 
-		<snapshotRepository>
-			<id>deploymentRepo</id>
-			<name>snapshots-repo</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
+	<developers>
+		<developer>
+			<name>Bessem Hmidi</name>
+			<email>bessem.hmidi.perso@gmail.com</email>
+		</developer>
 
-			<id>deploymentRepo</id>
-			<name>releases-repo</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+	</developers>
+	<profiles>
+		<profile>
+			<id>deployment</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.9.1</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.5</version>
 
-		</repository>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.3</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<distributionManagement>
 
-	</distributionManagement>
+				<snapshotRepository>
+					<id>deploymentRepo</id>
+					<name>snapshots-repo</name>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+				</snapshotRepository>
+				<repository>
+
+					<id>deploymentRepo</id>
+					<name>releases-repo</name>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+
+				</repository>
+
+			</distributionManagement>
+
+		</profile>
+
+
+	</profiles>
 </project>
