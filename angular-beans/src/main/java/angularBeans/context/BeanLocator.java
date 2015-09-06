@@ -31,7 +31,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
+import angularBeans.util.CommonUtils;
 
 /**
  * provide a lookup method to obtain an angularBean reference from an external
@@ -47,7 +48,7 @@ public class BeanLocator implements Serializable {
 	private BeanManager beanManager;
 
 	@Inject
-	AngularBeansUtil util;
+	AngularBeansUtils util;
 
 	public synchronized Object lookup(String beanName, String sessionID) {
 
@@ -56,7 +57,7 @@ public class BeanLocator implements Serializable {
 
 		Set<Bean<?>> beans = beanManager.getBeans(beanName);
 
-		Class beanClass = util.beanNamesHolder.get(beanName);
+		Class beanClass = CommonUtils.beanNamesHolder.get(beanName);
 		if (beans.size() == 0) {
 			beans = beanManager.getBeans(beanClass,
 					new AnnotationLiteral<Any>() {

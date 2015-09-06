@@ -12,7 +12,7 @@
 		<!-- <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> -->
 	</properties>
 
-	<dependencies>  
+	<dependencies>
 
 		<dependency>
 			<groupId>javax</groupId>
@@ -20,23 +20,23 @@
 			<version>7.0</version>
 			<scope>provided</scope>
 		</dependency>
- 
- 
- 
 
 
-			<dependency>
-			
+
+
+
+		<dependency>
+
 			<groupId>com.google.javascript</groupId>
 			<artifactId>closure-compiler</artifactId>
 			<version>v20131014</version> <!-- good v20131014 -->
-			 
-		
-			
-		<!--between--><!-- v20131014 --><!-- and --> <!--  v20140508> -->
-		
+
+
+
+			<!--between --><!-- v20131014 --><!-- and --> <!-- v20140508> -->
+
 			<exclusions>
-			<exclusion>
+				<exclusion>
 					<groupId>args4j</groupId>
 					<artifactId>args4j</artifactId>
 				</exclusion>
@@ -56,27 +56,31 @@
 					<groupId>org.apache.ant</groupId>
 					<artifactId>ant</artifactId>
 				</exclusion>
-			<!-- 	<exclusion>
-					<groupId>org.json</groupId>
-					<artifactId>json</artifactId>
-				</exclusion>  -->
-				
-			  	 <exclusion>
-				      <groupId>com.google.guava</groupId>
-      				<artifactId>guava</artifactId>
-      
-				</exclusion>   
-				
+				<!-- <exclusion> <groupId>org.json</groupId> <artifactId>json</artifactId> 
+					</exclusion> -->
+
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+
+				</exclusion>
+
 			</exclusions>
 		</dependency>
 		<!-- <dependency> <groupId>javax.json</groupId> <artifactId>javax.json-api</artifactId> 
 			<version>1.0-b06</version> </dependency> -->
 
-		<dependency>
+		 <dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.3</version>
 
+		</dependency> 
+
+		<dependency>
+			<groupId>io.fastjson</groupId>
+			<artifactId>boon</artifactId>
+			<version>0.32</version>
 		</dependency>
 
 		<!-- <dependency> <groupId>io.fastjson</groupId> <artifactId>boon</artifactId> 
@@ -86,7 +90,7 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>13.0.1</version>
-	
+
 		</dependency>
 	</dependencies>
 	<url>http://bessemhmidi.github.io/AngularBeans</url>

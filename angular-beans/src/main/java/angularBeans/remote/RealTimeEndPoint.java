@@ -40,7 +40,8 @@ import angularBeans.events.RealTimeSessionCloseEvent;
 import angularBeans.events.RealTimeSessionReadyEvent;
 import angularBeans.realtime.AngularBeansServletContextListenerAnnotated;
 import angularBeans.realtime.GlobalConnectionHolder;
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
+import angularBeans.util.CommonUtils;
 
 import com.google.gson.JsonObject;
 
@@ -121,7 +122,7 @@ public class RealTimeEndPoint extends SockJsServlet {
 					@Override
 					public void handle(String message) {
 
-						JsonObject jObj = AngularBeansUtil.parse(message)
+						JsonObject jObj = CommonUtils.parse(message)
 								.getAsJsonObject();
 						String UID = null;
 

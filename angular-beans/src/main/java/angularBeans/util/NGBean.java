@@ -61,16 +61,16 @@ public class NGBean implements Serializable {
 		return targetClass;
 	}
 
-	private Set<Method> setters = new HashSet<>();
+	//private Set<Method> setters = new HashSet<>();
 	private Set<Method> getters = new HashSet<>();
 	private Method[] methods;
 
 	public void scan() {
-		setName(AngularBeansUtil.getBeanName(targetClass));
+		setName(CommonUtils.getBeanName(targetClass));
 		methods = targetClass.getMethods();
 
 		for (Method m : methods) {
-			if (AngularBeansUtil.isGetter(m)) {
+			if (CommonUtils.isGetter(m)) {
 				if (m.isAnnotationPresent(NGModel.class)) {
 					getters.add(m);
 				}

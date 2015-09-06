@@ -33,7 +33,8 @@ import javax.servlet.http.HttpSession;
 
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
+import angularBeans.util.CommonUtils;
 
 import com.google.gson.JsonObject;
 
@@ -54,7 +55,7 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 	BeanLocator locator;
 
 	@Inject
-	AngularBeansUtil util;
+	AngularBeansUtils util;
 
 	@Inject
 	HttpSession session;
@@ -120,7 +121,7 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 			}
 		}
 
-		JsonObject paramsObj = util.parse(params).getAsJsonObject();
+		JsonObject paramsObj = CommonUtils.parse(params).getAsJsonObject();
 
 		String UID = session.getId();// (paramsObj.get("sessionUID")).getAsString();
 

@@ -26,7 +26,8 @@ import javax.ws.rs.POST;
 import angularBeans.api.AngularBean;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.realtime.RealTime;
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
+import angularBeans.util.CommonUtils;
 import angularBeans.util.CurrentNGSession;
 
 import com.google.gson.JsonElement;
@@ -49,7 +50,7 @@ public class RemoteEventBus {
 	Event<Object> ngEventBus;
 
 	@Inject
-	AngularBeansUtil util;
+	AngularBeansUtils util;
 
 	
 	@Inject
@@ -75,7 +76,7 @@ public class RemoteEventBus {
 	public void fire(NGEvent event) throws ClassNotFoundException {
 		Object o = null;
 
-		JsonElement element = util.parse(event.getData());
+		JsonElement element = CommonUtils.parse(event.getData());
 
 		JsonElement data = null;
 		Class javaClass = null;

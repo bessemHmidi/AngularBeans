@@ -44,7 +44,8 @@ import angularBeans.io.ByteArrayCache;
 import angularBeans.io.LobWrapper;
 import angularBeans.log.NGLogger;
 import angularBeans.log.NGLogger.Level;
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
+import angularBeans.util.CommonUtils;
 import angularBeans.util.ModelQueryFactory;
 import angularBeans.util.ModelQueryImpl;
 
@@ -69,7 +70,7 @@ public class InvocationHandler implements Serializable {
 	NGLogger logger;
 
 	@Inject
-	AngularBeansUtil util;
+	AngularBeansUtils util;
 
 	@Inject
 	BeanLocator locator;
@@ -216,7 +217,7 @@ public class InvocationHandler implements Serializable {
 							if (element.isJsonPrimitive()) {
 
 								String val = element.getAsString();
-								argsValues.add(util.convertFromString(val,
+								argsValues.add(CommonUtils.convertFromString(val,
 										typeClass));
 
 							} else if (element.isJsonArray()) {
@@ -237,7 +238,7 @@ public class InvocationHandler implements Serializable {
 
 						m = mt;
 
-						if (!util.isGetter(m)) {
+						if (!CommonUtils.isGetter(m)) {
 							// if(util.isSetter(m)){
 							update(service, params);
 							// }
@@ -269,7 +270,7 @@ public class InvocationHandler implements Serializable {
 
 			m = service.getClass().getMethod(methodName);
 
-			if (!util.isGetter(m)) {
+			if (!CommonUtils.isGetter(m)) {
 				// if(util.isSetter(m)){
 				update(service, params);
 				// }
@@ -340,7 +341,7 @@ public class InvocationHandler implements Serializable {
 				List<String> upd = new ArrayList<String>();
 				for (Method met : service.getClass().getDeclaredMethods()) {
 
-					if (util.isGetter(met)) {
+					if (CommonUtils.isGetter(met)) {
 
 						String fieldName = (met.getName()).substring(3);
 						String firstCar = fieldName.substring(0, 1);
@@ -426,7 +427,7 @@ public class InvocationHandler implements Serializable {
 
 					String getName;
 					try {
-						getName = util.obtainGetter(o.getClass()
+						getName = CommonUtils.obtainGetter(o.getClass()
 								.getDeclaredField(name));
 
 						Method getter = o.getClass().getMethod(getName);
@@ -448,7 +449,7 @@ public class InvocationHandler implements Serializable {
 				if (value.isJsonArray()) {
 
 					try {
-						String getter = util.obtainGetter(o.getClass()
+						String getter = CommonUtils.obtainGetter(o.getClass()
 								.getDeclaredField(name));
 
 						Method get = o.getClass().getDeclaredMethod(getter);
@@ -525,7 +526,7 @@ public class InvocationHandler implements Serializable {
 				if (value.isJsonPrimitive() && (!name.equals("setSessionUID"))) {
 					try {
 
-						if (!util.hasSetter(o.getClass(), name)) {
+						if (!CommonUtils.hasSetter(o.getClass(), name)) {
 							continue;
 						}
 						name = "set" + name.substring(0, 1).toUpperCase()
@@ -533,7 +534,7 @@ public class InvocationHandler implements Serializable {
 
 						Class type = null;
 						for (Method set : o.getClass().getDeclaredMethods()) {
-							if (util.isSetter(set)) {
+							if (CommonUtils.isSetter(set)) {
 								if (set.getName().equals(name)) {
 									Class<?>[] pType = set.getParameterTypes();
 
@@ -551,7 +552,7 @@ public class InvocationHandler implements Serializable {
 						Object param = null;
 						if ((params.entrySet().size() >= 1) && (type != null)) {
 
-							param = util.convertFromString(value.getAsString(),
+							param = CommonUtils.convertFromString(value.getAsString(),
 									type);
 
 						}

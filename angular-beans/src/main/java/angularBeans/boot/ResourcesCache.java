@@ -28,7 +28,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
 /**
  * 
  * The ResourcesCache is a cache for already requested resources (any 
@@ -44,7 +44,7 @@ public class ResourcesCache {
 
 	
 	@Inject
-	AngularBeansUtil util;
+	AngularBeansUtils util;
 	
   
 	private Map<String, String> cache=new HashMap<String, String>();

@@ -44,8 +44,9 @@ import org.projectodd.sockjs.servlet.SockJsEndpoint;
 import angularBeans.api.NGModules;
 import angularBeans.boot.BeanRegistry;
 import angularBeans.ngservices.NGService;
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.ClosureCompiler;
+import angularBeans.util.CommonUtils;
 import angularBeans.util.StaticJsCache;
 
 /**
@@ -209,7 +210,7 @@ public class AngularBeansServletContextListenerAnnotated implements
 
 		if ((appName == null) || (appName.length() < 1)) {
 
-			appName = AngularBeansUtil.getBeanName(appClass);
+			appName = CommonUtils.getBeanName(appClass);
 		}
 
 		buffer.append(StaticJsCache.angularBeansMainObject);

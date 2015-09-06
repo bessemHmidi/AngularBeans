@@ -39,8 +39,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import angularBeans.util.AngularBeansUtil;
+import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.ClosureCompiler;
+import angularBeans.util.CommonUtils;
 import angularBeans.util.StaticJsCache;
 
 /**
@@ -58,13 +59,13 @@ public class BeanValidationProcessor implements Serializable {
 	private Set<Class> validationAnnotations;
 
 	@Inject
-	AngularBeansUtil util;
+	AngularBeansUtils util;
 
 	private StringBuffer buffer = new StringBuffer();
 
 	public void processBeanValidationParsing(Method method) {
 
-		String modelName = AngularBeansUtil.obtainFieldNameFromAccessor(method
+		String modelName = CommonUtils.obtainFieldNameFromAccessor(method
 				.getName());
 		Annotation[] scannedAnnotations = method.getAnnotations();
 

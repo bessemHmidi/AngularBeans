@@ -16,23 +16,18 @@
  *
  */
 
-/**
- @author Bessem Hmidi
- */
 package angularBeans.util;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
@@ -44,7 +39,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
@@ -58,58 +52,12 @@ import com.google.gson.JsonSerializer;
 
 @SuppressWarnings("serial")
 @ApplicationScoped
-public class AngularBeansUtil implements Serializable {
-
-	public static final String NG_SESSION_ATTRIBUTE_NAME = "NG_SESSION_ID";
-
-	/**
-	 * used to obtain a bean java class from a bean name.
-	 */
-	public static Map<String, Class> beanNamesHolder = new HashMap<String, Class>();
-
-	@Inject
-	private CurrentNGSession currentSession;
-
-	public String getCurrentSessionId() {
-		return currentSession.getSessionId();
-	}
+public class AngularBeansUtils implements Serializable {
 
 	@Inject
 	ByteArrayCache cache;
 
-	public static String getBeanName(Class targetClass) {
-
-		if (targetClass.isAnnotationPresent(Named.class)) {
-			Named named = (Named) targetClass.getAnnotation(Named.class);
-			return (named.value());
-		}
-
-		String name = targetClass.getSimpleName();
-
-		String firstCar = name.substring(0, 1).toLowerCase();
-
-		name = firstCar + name.substring(1);
-
-		beanNamesHolder.put(name, targetClass);
-
-		return name;
-	}
-
-	public static String obtainGetter(Field field) {
-		String name = field.getName();
-		name = name.substring(0, 1).toUpperCase() + name.substring(1);
-		if (field.getType().equals(Boolean.class)
-				|| field.getType().equals(boolean.class))
-			return "is" + name;
-		return "get" + name;
-	}
-
-	public static String obtainSetter(Field field) {
-		String name = field.getName();
-		name = name.substring(0, 1).toUpperCase() + name.substring(1);
-
-		return "set" + name;
-	}
+	private Gson mainSerializer;
 
 	public void initJsonSerialiser() {
 
@@ -131,13 +79,12 @@ public class AngularBeansUtil implements Serializable {
 
 						return null;
 					}
+
 				});
 
 		mainSerializer = builder.create();
 
 	}
-
-	private Gson mainSerializer;
 
 	public String getJson(Object object) {
 
@@ -157,124 +104,6 @@ public class AngularBeansUtil implements Serializable {
 
 	}
 
-	public static String obtainFieldNameFromAccessor(String methodName) {
-		int index = 3;
-		if (methodName.startsWith("is"))
-			index = 2;
-		String fieldName = methodName.substring(index);
-
-		fieldName = fieldName.substring(0, 1).toLowerCase()
-				+ fieldName.substring(1);
-
-		return fieldName;
-	}
-
-	public static JsonElement parse(String message) {
-
-		JsonParser parser = new JsonParser();
-		JsonElement element = parser.parse(message);
-
-		return element;
-	}
-
-	public Object convertFromString(String value, Class type) {
-
-		Object param = null;
-
-		// NPE
-
-		if (type.equals(int.class) || type.equals(Integer.class)) {
-			param = Integer.parseInt(value);
-			return param;
-		}
-
-		if (type.equals(float.class) || type.equals(Float.class)) {
-			param = Float.parseFloat(value);
-			return param;
-		}
-
-		if (type.equals(boolean.class) || type.equals(Boolean.class)) {
-			param = Boolean.parseBoolean(value);
-			return param;
-		}
-
-		if (type.equals(double.class) || type.equals(Double.class)) {
-			param = Double.parseDouble(value);
-			return param;
-		}
-
-		if (type.equals(float.class) || type.equals(Float.class)) {
-			param = Float.parseFloat(value);
-			return param;
-		}
-
-		if (type.equals(byte.class) || type.equals(Byte.class)) {
-			param = Byte.parseByte(value);
-			return param;
-		}
-
-		if (type.equals(long.class) || type.equals(Long.class)) {
-			param = Long.parseLong(value);
-			return param;
-		}
-
-		if (type.equals(short.class) || type.equals(Short.class)) {
-			param = Short.parseShort(value);
-			return param;
-		}
-
-		if (type.equals(byte[].class) || type.equals(Byte[].class)) {
-			param = null;
-			return param;
-		}
-
-		else {
-
-			param = type.cast(value);
-		}
-		return param;
-
-	}
-
-	// public static List<Method> obtainSetters(Class clazz){
-	//
-	// //Method[] methods=clazz.getDeclaredMethods()
-	//
-	// }
-
-	public boolean isSetter(Method m) {
-
-		return m.getName().startsWith("set")
-				&& m.getReturnType().equals(void.class)
-				&& (m.getParameterTypes().length > 0 && m.getParameterTypes().length < 2);
-
-	}
-
-	public static boolean isGetter(Method m) {
-		return (
-
-		(m.getParameterTypes().length == 0) && ((m.getName().startsWith("get")) || (((m
-				.getReturnType().equals(boolean.class)) || (m.getReturnType()
-				.equals(Boolean.class))) && (m.getName().startsWith("is")))));
-
-	}
-
-	public boolean hasSetter(Class clazz, String name) {
-
-		String setterName = "set" + name.substring(0, 1).toUpperCase()
-				+ name.substring(1);
-		setterName = setterName.trim();
-
-		for (Method m : clazz.getDeclaredMethods()) {
-
-			if (m.getName().equals(setterName)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	private String contextPath;
 
 	public void setContextPath(String contextPath) {
@@ -285,6 +114,38 @@ public class AngularBeansUtil implements Serializable {
 	}
 
 	public Object deserialise(Class clazz, JsonElement element) {
+
+		Object o = mainSerializer.fromJson(element, clazz);
+		Field[] fields = clazz.getFields();
+
+		for (Field f : fields) {
+
+			if (f.getType() == LobWrapper.class) {
+
+				String setterName = CommonUtils.obtainSetter(f);
+
+				Method setterMethod;
+				try {
+					setterMethod = clazz
+							.getMethod(setterName, LobWrapper.class);
+					setterMethod.invoke(o, null);
+
+				} catch (NoSuchMethodException | SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		}
 
 		return mainSerializer.fromJson(element, clazz);
 	}
@@ -314,8 +175,8 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 
 			if (m.getName().startsWith("get") || m.getName().startsWith("is")) {
 				if (m.getReturnType().equals(LobWrapper.class)) {
-					String field = AngularBeansUtil
-							.obtainFieldNameFromAccessor(m.getName());
+					String field = CommonUtils.obtainFieldNameFromAccessor(m
+							.getName());
 
 					try {
 
