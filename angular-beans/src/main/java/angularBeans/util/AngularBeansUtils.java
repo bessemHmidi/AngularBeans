@@ -19,6 +19,7 @@
 package angularBeans.util;
 
 import java.io.Serializable;
+import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,6 +43,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.stream.JsonReader;
 
 /**
  * utility class for AngularBeans
@@ -82,6 +84,7 @@ public class AngularBeansUtils implements Serializable {
 
 				});
 
+		
 		mainSerializer = builder.create();
 
 	}
@@ -115,37 +118,39 @@ public class AngularBeansUtils implements Serializable {
 
 	public Object deserialise(Class clazz, JsonElement element) {
 
-		Object o = mainSerializer.fromJson(element, clazz);
-		Field[] fields = clazz.getFields();
-
-		for (Field f : fields) {
-
-			if (f.getType() == LobWrapper.class) {
-
-				String setterName = CommonUtils.obtainSetter(f);
-
-				Method setterMethod;
-				try {
-					setterMethod = clazz
-							.getMethod(setterName, LobWrapper.class);
-					setterMethod.invoke(o, null);
-
-				} catch (NoSuchMethodException | SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-		}
+		
+		//Userinfo userinfo1 = gson.fromJson(reader, Userinfo.class);
+		
+//		Object o = mainSerializer.fromJson(element, clazz);
+//		Field[] fields = clazz.getFields();
+//
+//		for (Field f : fields) {
+//
+//			if (f.getType() == LobWrapper.class) {
+//
+//				String setterName = CommonUtils.obtainSetter(f);
+//
+//				Method setterMethod;
+//				try {
+//					setterMethod = clazz
+//							.getMethod(setterName, LobWrapper.class);
+//					setterMethod.invoke(o, null);
+//
+//				} catch (NoSuchMethodException | SecurityException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IllegalAccessException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IllegalArgumentException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (InvocationTargetException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 
 		return mainSerializer.fromJson(element, clazz);
 	}

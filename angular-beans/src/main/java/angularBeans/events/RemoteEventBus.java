@@ -17,29 +17,25 @@
  */
 package angularBeans.events;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.POST;
 
 import angularBeans.api.AngularBean;
 import angularBeans.context.NGSessionScoped;
-import angularBeans.realtime.RealTime;
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.CommonUtils;
 import angularBeans.util.CurrentNGSession;
 
 import com.google.gson.JsonElement;
+
 /**
- * the RemoteEventBus is a service called by angularBeans
- * throw an angularJS service extend  angularJS event firing to the 
- * CDI container (server) side
+ * the RemoteEventBus is a service called by angularBeans throw an angularJS
+ * service extend angularJS event firing to the CDI container (server) side
  * 
  * @author hmidi bessem
  *
  */
-
 
 @AngularBean
 @NGSessionScoped
@@ -52,26 +48,25 @@ public class RemoteEventBus {
 	@Inject
 	AngularBeansUtils util;
 
-	
 	@Inject
 	CurrentNGSession session;
-	
+
 	@Inject
 	BroadcastManager broadcastManager;
-	
+
 	@POST
-	public void subscribe(String channel){
-		
-		broadcastManager.subscribe(session.getSessionId(),channel);
-		
+	public void subscribe(String channel) {
+
+		broadcastManager.subscribe(session.getSessionId(), channel);
+
 	}
-	
+
 	@POST
-	public void unsubscribe(String channel){
-		
-		broadcastManager.unsubscribe(session.getSessionId(),channel);
+	public void unsubscribe(String channel) {
+
+		broadcastManager.unsubscribe(session.getSessionId(), channel);
 	}
-	
+
 	@POST
 	public void fire(NGEvent event) throws ClassNotFoundException {
 		Object o = null;
@@ -93,8 +88,11 @@ public class RemoteEventBus {
 
 		}
 
-		o = (util.deserialise(javaClass, data));
-
+		if (javaClass.equals(String.class)) {
+			o = data.toString();
+		} else {
+			o = (util.deserialise(javaClass, data));
+		}
 		ngEventBus.fire(o);
 
 	}

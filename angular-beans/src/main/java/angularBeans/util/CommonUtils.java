@@ -18,15 +18,19 @@
 
 package angularBeans.util;
 
+import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Named;
+import javax.lang.model.element.Element;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.stream.JsonReader;
 
 /**
  * @author Bessem Hmidi
@@ -76,8 +80,18 @@ public abstract class CommonUtils {
 	}
 
 	public static JsonElement parse(String message) {
-
+		
+	
+		
+		if(!message.startsWith("{")){
+			return new JsonPrimitive(message);
+		}
+		
+		//JsonReader reader = new JsonReader(new StringReader(message));
+		//reader.setLenient(true);
+		
 		JsonParser parser = new JsonParser();
+		
 		JsonElement element = parser.parse(message);
 
 		return element;

@@ -11,7 +11,7 @@ import angularBeans.demoApp.domain.NotificationMessage;
 import angularBeans.events.RealTimeMessage;
 import angularBeans.realtime.RealTimeClient;
 
-@AngularBean
+@AngularBean 
 @NGSessionScoped
 public class NotificationsService implements Serializable {
 
