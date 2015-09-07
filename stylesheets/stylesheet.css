@@ -165,6 +165,10 @@ a.button span {
   margin-right: 0;
 }
 
+#java-doc span {
+  background: transparent url(../images/docs.png) 12px 50% no-repeat;
+}
+
 code, pre {
   margin-bottom: 30px;
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal;

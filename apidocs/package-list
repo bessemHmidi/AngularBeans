@@ -1,0 +1,14 @@
+angularBeans
+angularBeans.api
+angularBeans.boot
+angularBeans.context
+angularBeans.events
+angularBeans.io
+angularBeans.log
+angularBeans.ngservices
+angularBeans.realtime
+angularBeans.remote
+angularBeans.util
+angularBeans.validation
+org.projectodd.sockjs
+org.projectodd.sockjs.servlet
