@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen"> 
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Angularbeans by bessemHmidi</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+        <div align="center">
+        <img src="images/AngularBeans_logo_transparent.png" width="30%" height="30%"></img>
+          <h2>AngularBeans : Step By Step Tutorial</h2>
+          </div>
+        </header>
+        <hr>
+
+<section id="main_content">
+          
+<br/><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span>
+</a>
+<h2>STEP2: My first angular bean</h2>
+
+    create a new package <code>examples.angularbeans.beans</code> and a new class: <code>HelloBean</code>:
+    
+   <!-- HTML generated using hilite.me --><div style="background: #000000; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #cd00cd">package</span> <span style="color: #cccccc">examples</span><span style="color: #3399cc">.</span><span style="color: #cccccc">angularbeans</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.ws.rs.GET</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.AngularBean</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGModel</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGReturn</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGSubmit</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cccccc">@AngularBean</span>
+<span style="color: #00cd00">public</span> <span style="color: #00cd00">class</span> <span style="color: #00cdcd">HelloBean</span> <span style="color: #3399cc">{</span>
+
+	<span style="color: #00cd00">private</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">message</span><span style="color: #3399cc">;</span>
+	<span style="color: #00cd00">private</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;insert your name here&quot;</span><span style="color: #3399cc">;</span>
+
+	<span style="color: #cccccc">@GET</span>
+	<span style="color: #cccccc">@NGSubmit</span><span style="color: #3399cc">(</span><span style="color: #cccccc">backEndModels</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;name&quot;</span><span style="color: #3399cc">)</span>
+	<span style="color: #cccccc">@NGReturn</span><span style="color: #3399cc">(</span><span style="color: #cccccc">updates</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;message&quot;</span><span style="color: #3399cc">)</span>
+	<span style="color: #00cd00">public</span> <span style="color: #00cd00">void</span> <span style="color: #cccccc">sayHello</span><span style="color: #3399cc">()</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cccccc">message</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;Hello &quot;</span> <span style="color: #3399cc">+</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">+</span> <span style="color: #cd0000">&quot;from angularBeans !&quot;</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #cccccc">@NGModel</span>
+	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">getMessage</span><span style="color: #3399cc">()</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">return</span> <span style="color: #cccccc">message</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #00cd00">public</span> <span style="color: #00cd00">void</span> <span style="color: #cccccc">setMessage</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">message</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">message</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">message</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #cccccc">@NGModel</span>
+	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">getName</span><span style="color: #3399cc">()</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">return</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #00cd00">public</span> <span style="color: #00cd00">void</span> <span style="color: #cccccc">setName</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+<span style="color: #3399cc">}</span>
+</pre></td></tr></table></div>
+
+
+    
+and the <code>webapp/index.html</code> file:
+ <!-- HTML generated using hilite.me --><div style="background: #000000; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #000080">&lt;!DOCTYPE html&gt;</span>
+<span style="color: #cccccc">&lt;html</span> <span style="color: #cccccc">ng-app=</span><span style="color: #cd0000">&quot;myModule&quot;</span><span style="color: #cccccc">&gt;</span>
+<span style="color: #cccccc">&lt;head&gt;</span>
+<span style="color: #cccccc">&lt;meta</span> <span style="color: #cccccc">charset=</span><span style="color: #cd0000">&quot;ISO-8859-1&quot;</span><span style="color: #cccccc">&gt;</span>
+<span style="color: #cccccc">&lt;title&gt;</span>example1<span style="color: #cccccc">&lt;/title&gt;</span>
+<span style="color: #cccccc">&lt;script type=</span><span style="color: #cd0000">&quot;text/javascript&quot;</span>
+	<span style="color: #cccccc">src=</span><span style="color: #cd0000">&quot;bower_components/angular/angular.min.js&quot;</span><span style="color: #cccccc">&gt;&lt;/script&gt;</span>
+<span style="color: #cccccc">&lt;script type=</span><span style="color: #cd0000">&quot;text/javascript&quot;</span> <span style="color: #cccccc">src=</span><span style="color: #cd0000">&quot;angular-beans.js&quot;</span><span style="color: #cccccc">&gt;&lt;/script&gt;</span>
+
+<span style="color: #cccccc">&lt;script type=</span><span style="color: #cd0000">&quot;text/javascript&quot;</span><span style="color: #cccccc">&gt;</span>
+	<span style="color: #cccccc">angular.module(</span><span style="color: #cd0000">&quot;myModule&quot;</span><span style="color: #cccccc">,</span> <span style="color: #cccccc">[</span> <span style="color: #cd0000">&quot;angularBeans&quot;</span> <span style="color: #cccccc">]).controller(</span><span style="color: #cd0000">&quot;FirstCtrl&quot;</span><span style="color: #cccccc">,</span>
+			<span style="color: #00cd00">function</span><span style="color: #cccccc">($scope,</span> <span style="color: #cccccc">helloBean)</span> <span style="color: #cccccc">{</span>
+				<span style="color: #cccccc">$scope.helloBean</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">helloBean;</span>
+			<span style="color: #cccccc">});</span>
+<span style="color: #cccccc">&lt;/script&gt;</span>
+
+<span style="color: #cccccc">&lt;/head&gt;</span>
+<span style="color: #cccccc">&lt;body</span> <span style="color: #cccccc">ng-controller=</span><span style="color: #cd0000">&quot;FirstCtrl&quot;</span><span style="color: #cccccc">&gt;</span>
+
+	<span style="color: #cccccc">&lt;input</span> <span style="color: #cccccc">type=</span><span style="color: #cd0000">&quot;text&quot;</span> <span style="color: #cccccc">ng-model=</span><span style="color: #cd0000">&quot;helloBean.name&quot;</span><span style="color: #cccccc">&gt;</span>
+
+	<span style="color: #cccccc">&lt;label&gt;</span>Server Response:<span style="color: #cccccc">&lt;/label&gt;</span>
+	<span style="color: #cccccc">&lt;h2&gt;</span>{{helloBean.message}}<span style="color: #cccccc">&lt;/h2&gt;</span>
+
+	<span style="color: #cccccc">&lt;button</span> <span style="color: #cccccc">ng-click=</span><span style="color: #cd0000">&quot;helloBean.sayHello()&quot;</span><span style="color: #cccccc">&gt;</span>say hello<span style="color: #cccccc">&lt;/button&gt;</span>
+<span style="color: #cccccc">&lt;/body&gt;</span>
+<span style="color: #cccccc">&lt;/html&gt;</span>
+</pre></td></tr></table></div>
+
+deploy on your application server, and you should obtain something like:
+    
+    <img src="images/cap2.png">
+    
+<hr>  
+    <h2>what's happened?</h2>
+    let'start by explaing the Java CDI part:
+    the <code style="color:red">@AngularBean</code> annotation decalre a CDI bean 
+    acceccible remotely by a javascript proxy.
+   <br/> by default, an Angular Bean is a RequestSoped bean unless we annotate them as NGSessionScoped or ApplicationScoped (we will talk about scopes later..).
+
+    <br/>by remotely callabable we mean all the public methods declared within the class (excluding getters & setters). so what is the <code style="color:red">@GET</code> annotation?<br/>
+It's simply an explicite way to tell angularBeans that the annotated method will be remotely called by a HTTP GET method Request. This is the default behavioure so you can simply omit that if you want a GET method, but also it can be @POST,@DELETE,@PUT http request, you have just to add the specified annotation to the bean method,<br/> But anguarBeans came with a new annotaion: @RealTime, we will discuss this case later.
+
+    observe now the <code style="color:red">@NGModel</code> annotated getters, (and it should be on top of getters), those are properties that define equivalent  properties in the javascript proxy side.
+<br/> Now look at the field name, it's an initialized String with the value "insert your name here", the js proxy "helloBean" will have the same property "name" and this propertie will be initialized by this value (as shown in the browser snapshot);
+  
+<br/>We turn back to ower sayHello() method, there are 2 others annotations to describe : <br/>
+<strong style="color:blue">@NGSubmit: </strong><br/>
+    this annotation and its attribute backEndModels tooks an array (or single String) that list the <strong style="color:blue">@NGModel</strong> annotated properties to synchronize when the request is triggered. that give you a fine controle of data that will be send from browsers to the server.(if you omit this annotation none of all the @NGModel annotated properties will be synchronized).<br/>In the other hands if you use <strong style="color:blue">@NGSubmit(backEndModels="*")</strong> all the backend models will be updated with the javascript bean proxy state before the execution of the method.
+<br/>All  that is applicable for the <strong style="color:blue">@NGReturn</strong>
+    annotation but in the other way (server to client) and this synchronization will happen after the method execution.<br/>
+<h4>HTML/angularJS code:</h4>
+Most of the code is a regular angularjs application code except few points:
+    <br/>The <code>&ltscript type="text/javascript" src="angular-beans.js">&lt/script></code> call a server generated javascript, that include an angularJS module called "angularBeans".
+<br/>This module will be used as dependency on your angularJS application module(s) at line 11.
+<br/>After that (at line 12) we inject a generated angularJs service in the controller function: "helloBean". (pay attention at the lowerCase first caractere of the service name).
+<br/>At line 13 we affect the helloBean object reference to a property of the $scope, that allow us to use ower angular-bean inside the cotroller bound scope.
+<br/>
+    I think the rest of the code is easy to undrestand now :)
+    
+     <hr>
+   <h2> next step: </h2> 
+    
+    <a href="Step-by-Step-Tutorial-angularBeans-rpc-style.html"><h2 style= "color:green">&lt;STEP3: angularBean and RPC style></STEP2:></h2></a>
+   
+          <hr><hr><br>
+    <h3>
+
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+
+<p>Having trouble with Pages? Check out the documentation at <a href="https://help.github.com/pages">https://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+       
+   
+    
+        </section>
+
+        <footer>
+          Angularbeans is maintained by <a href="https://github.com/bessemHmidi">bessemHmidi</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>

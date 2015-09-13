@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen"> 
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Angularbeans by bessemHmidi</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+        <div align="center">
+        <img src="images/AngularBeans_logo_transparent.png" width="30%" height="30%"></img>
+          <h2>AngularBeans : Step By Step Tutorial</h2>
+          </div>
+        </header>
+        <hr>
+
+<section id="main_content">
+          
+<br/><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span>
+</a>
+<h2>STEP3: angularBean RPC style</h2>
+
+    we will now make changes on the previous HelloBean class:
+    
+by removing the "message" property ower class will look like:
+    <!-- HTML generated using hilite.me --><div style="background: #000000; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #cd00cd">package</span> <span style="color: #cccccc">examples</span><span style="color: #3399cc">.</span><span style="color: #cccccc">angularbeans</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.ws.rs.GET</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.AngularBean</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGModel</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGSubmit</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cccccc">@AngularBean</span>
+<span style="color: #00cd00">public</span> <span style="color: #00cd00">class</span> <span style="color: #00cdcd">HelloBean</span> <span style="color: #3399cc">{</span>
+
+	<span style="color: #00cd00">private</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;insert your name here&quot;</span><span style="color: #3399cc">;</span>
+
+	<span style="color: #cccccc">@GET</span>
+	<span style="color: #cccccc">@NGSubmit</span><span style="color: #3399cc">(</span><span style="color: #cccccc">backEndModels</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;name&quot;</span><span style="color: #3399cc">)</span>
+	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">sayHello</span><span style="color: #3399cc">()</span> <span style="color: #3399cc">{</span>
+
+		<span style="color: #cdcd00">return</span> <span style="color: #cd0000">&quot;Hello &quot;</span> <span style="color: #3399cc">+</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">+</span> <span style="color: #cd0000">&quot; from angularBeans !&quot;</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #cccccc">@NGModel</span>
+	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">getName</span><span style="color: #3399cc">()</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">return</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #00cd00">public</span> <span style="color: #00cd00">void</span> <span style="color: #cccccc">setName</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+<span style="color: #3399cc">}</span>
+</pre></td></tr></table></div>
+    <br/>
+    
+    and here is the changes on the "index.html" page:<br/>
+    
+    <!-- HTML generated using hilite.me --><div style="background: #000000; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #000080">&lt;!DOCTYPE html&gt;</span>
+<span style="color: #cccccc">&lt;html</span> <span style="color: #cccccc">data-ng-app=</span><span style="color: #cd0000">&quot;myModule&quot;</span><span style="color: #cccccc">&gt;</span>
+<span style="color: #cccccc">&lt;head&gt;</span>
+<span style="color: #cccccc">&lt;meta</span> <span style="color: #cccccc">charset=</span><span style="color: #cd0000">&quot;ISO-8859-1&quot;</span><span style="color: #cccccc">&gt;</span>
+<span style="color: #cccccc">&lt;title&gt;</span>example1<span style="color: #cccccc">&lt;/title&gt;</span>
+<span style="color: #cccccc">&lt;script type=</span><span style="color: #cd0000">&quot;text/javascript&quot;</span>
+	<span style="color: #cccccc">src=</span><span style="color: #cd0000">&quot;bower_components/angular/angular.min.js&quot;</span><span style="color: #cccccc">&gt;&lt;/script&gt;</span>
+<span style="color: #cccccc">&lt;script type=</span><span style="color: #cd0000">&quot;text/javascript&quot;</span> <span style="color: #cccccc">src=</span><span style="color: #cd0000">&quot;angular-beans.js&quot;</span><span style="color: #cccccc">&gt;&lt;/script&gt;</span>
+
+<span style="color: #cccccc">&lt;script type=</span><span style="color: #cd0000">&quot;text/javascript&quot;</span><span style="color: #cccccc">&gt;</span>
+	<span style="color: #cccccc">angular.module(</span><span style="color: #cd0000">&quot;myModule&quot;</span><span style="color: #cccccc">,</span> <span style="color: #cccccc">[</span> <span style="color: #cd0000">&quot;angularBeans&quot;</span> <span style="color: #cccccc">]).controller(</span><span style="color: #cd0000">&quot;FirstCtrl&quot;</span><span style="color: #cccccc">,</span>
+			<span style="color: #00cd00">function</span><span style="color: #cccccc">($scope,</span> <span style="color: #cccccc">helloBean)</span> <span style="color: #cccccc">{</span>
+				<span style="color: #cccccc">$scope.name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">helloBean.name;</span>
+				<span style="color: #cccccc">$scope.sayHello</span> <span style="color: #3399cc">=</span> <span style="color: #00cd00">function</span><span style="color: #cccccc">(name)</span> <span style="color: #cccccc">{</span>
+					<span style="color: #cccccc">helloBean.name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name;</span>
+					<span style="color: #cccccc">helloBean.sayHello().then(</span><span style="color: #00cd00">function</span><span style="color: #cccccc">(data)</span> <span style="color: #cccccc">{</span>
+						<span style="color: #cccccc">$scope.message</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">data;</span>
+					<span style="color: #cccccc">});</span>
+				<span style="color: #cccccc">}</span>
+			<span style="color: #cccccc">});</span>
+<span style="color: #cccccc">&lt;/script&gt;</span>
+
+<span style="color: #cccccc">&lt;/head&gt;</span>
+<span style="color: #cccccc">&lt;body</span> <span style="color: #cccccc">data-ng-controller=</span><span style="color: #cd0000">&quot;FirstCtrl&quot;</span><span style="color: #cccccc">&gt;</span>
+
+	<span style="color: #cccccc">&lt;input</span> <span style="color: #cccccc">type=</span><span style="color: #cd0000">&quot;text&quot;</span> <span style="color: #cccccc">data-ng-model=</span><span style="color: #cd0000">&quot;name&quot;</span><span style="color: #cccccc">&gt;</span>
+
+	<span style="color: #cccccc">&lt;label&gt;</span>Server Response:<span style="color: #cccccc">&lt;/label&gt;</span>
+	<span style="color: #cccccc">&lt;h2&gt;</span>{{message}}<span style="color: #cccccc">&lt;/h2&gt;</span>
+
+	<span style="color: #cccccc">&lt;button</span> <span style="color: #cccccc">data-ng-click=</span><span style="color: #cd0000">&quot;sayHello(name)&quot;</span><span style="color: #cccccc">&gt;</span>say hello<span style="color: #cccccc">&lt;/button&gt;</span>
+<span style="color: #cccccc">&lt;/body&gt;</span>
+<span style="color: #cccccc">&lt;/html&gt;</span>
+</pre></td></tr></table></div>
+
+    
+ 
+<hr>  
+    <h2>explanation:</h2>
+    With those changes we deal more with the angularJs controller
+"FirstCtrl", so in the mustache expressions we use properties from the scope, and we create a scoped function called sayHello(name){...}, this way we create an abstraction of ower angularBean for the "view" part of angularJs.
+    
+but we will have more (price-to-pay) js code:  initialising the $scope "name" model, and dealing with the return of ower HTTP call, but look, now the java sayHello() method of the bean is no more a no return (void) method, it return a String, that tell angularBean that the return value will be the promise data.
+and no more need to the NGReturn annotation.  
+<br/>
+Angular bean have another more RPC style for remotes calls :
+  
+    <!-- HTML generated using hilite.me --><div style="background: #000000; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #cd00cd">package</span> <span style="color: #cccccc">examples</span><span style="color: #3399cc">.</span><span style="color: #cccccc">angularbeans</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.ws.rs.GET</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.AngularBean</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGModel</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cccccc">@AngularBean</span>
+<span style="color: #00cd00">public</span> <span style="color: #00cd00">class</span> <span style="color: #00cdcd">HelloBean</span> <span style="color: #3399cc">{</span>
+
+	<span style="color: #00cd00">private</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;insert your name here&quot;</span><span style="color: #3399cc">;</span>
+
+	<span style="color: #cccccc">@GET</span>
+	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">sayHello</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+		<span style="color: #cdcd00">return</span> <span style="color: #cd0000">&quot;Hello &quot;</span> <span style="color: #3399cc">+</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">+</span> <span style="color: #cd0000">&quot; from angularBeans !&quot;</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #cccccc">@NGModel</span>
+	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">getName</span><span style="color: #3399cc">()</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">return</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #00cd00">public</span> <span style="color: #00cd00">void</span> <span style="color: #cccccc">setName</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+<span style="color: #3399cc">}</span>
+</pre></td></tr></table></div>
+
+    <br/>
+    that will give us the next html:
+    
+    <!-- HTML generated using hilite.me --><div style="background: #000000; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #3399cc">&lt;</span><span style="color: #cccccc">script</span> <span style="color: #cccccc">type</span><span style="color: #3399cc">=</span><span style="color: #cd0000">&quot;text/javascript&quot;</span><span style="color: #3399cc">&gt;</span>
+	<span style="color: #cccccc">angular.module(</span><span style="color: #cd0000">&quot;myModule&quot;</span><span style="color: #cccccc">,</span> <span style="color: #cccccc">[</span> <span style="color: #cd0000">&quot;angularBeans&quot;</span> <span style="color: #cccccc">]).controller(</span><span style="color: #cd0000">&quot;FirstCtrl&quot;</span><span style="color: #cccccc">,</span>
+			<span style="color: #00cd00">function</span><span style="color: #cccccc">($scope,</span> <span style="color: #cccccc">helloBean)</span> <span style="color: #cccccc">{</span>
+				<span style="color: #cccccc">$scope.name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">helloBean.name;</span>
+				<span style="color: #cccccc">$scope.sayHello</span> <span style="color: #3399cc">=</span> <span style="color: #00cd00">function</span><span style="color: #cccccc">(name)</span> <span style="color: #cccccc">{</span>
+					<span style="color: #000080">//	helloBean.name = name;   //no needs to that now</span>
+					<span style="color: #cccccc">helloBean.sayHello(name).then(</span><span style="color: #00cd00">function</span><span style="color: #cccccc">(data)</span> <span style="color: #cccccc">{</span>
+						<span style="color: #cccccc">$scope.message</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">data;</span>
+					<span style="color: #cccccc">});</span>
+				<span style="color: #cccccc">}</span>
+			<span style="color: #cccccc">});</span>
+<span style="color: #3399cc">&lt;</span><span style="color: #cccccc; border: 1px solid #FF0000">/script&gt;</span>
+</pre></td></tr></table></div>
+
+    <br/>
+    cool? and an angularBean method can took any java base type arguments,an array, any nomber of arguments, event java var args (as an array on the javaScript side).
+    they also support overloading (but you must change the arguments number).
+also you can pass as parametre a custom object. let's change the "sayHello" Method on both sides:
+    <br/>
+    
+    add the following java class:<br/>
+    <!-- HTML generated using hilite.me --><div style="background: #000000; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #cd00cd">package</span> <span style="color: #cccccc">examples</span><span style="color: #3399cc">.</span><span style="color: #cccccc">angularbeans</span><span style="color: #3399cc">;</span>
+
+<span style="color: #00cd00">public</span> <span style="color: #00cd00">class</span> <span style="color: #00cdcd">Language</span> <span style="color: #3399cc">{</span>
+
+	<span style="color: #00cd00">private</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">value</span><span style="color: #3399cc">;</span>
+
+	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">getValue</span><span style="color: #3399cc">()</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">return</span> <span style="color: #cccccc">value</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #00cd00">public</span> <span style="color: #00cd00">void</span> <span style="color: #cccccc">setValue</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">value</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">value</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">value</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+<span style="color: #3399cc">}</span>
+</pre></td></tr></table></div>
+  
+    <br/>now update the sayHello() method:<br/>
+    
+    <!-- HTML generated using hilite.me --><div style="background: #000000; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+2
+3
+4
+5
+6</pre></td><td><pre style="margin: 0; line-height: 125%">	<span style="color: #cccccc">@GET</span>
+	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">sayHello</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">,</span> <span style="color: #cccccc">Language</span> <span style="color: #cccccc">language</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+		<span style="color: #cdcd00">return</span> <span style="color: #cd0000">&quot;Hello &quot;</span> <span style="color: #3399cc">+</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">+</span> <span style="color: #cd0000">&quot; from angularBeans, your language is &quot;</span>
+				<span style="color: #3399cc">+</span> <span style="color: #cccccc">language</span><span style="color: #3399cc">.</span><span style="color: #cccccc">getValue</span><span style="color: #3399cc">();</span>
+	<span style="color: #3399cc">}</span>
+</pre></td></tr></table></div>
+
+    <br/>
+    and:
+    <br/>
+    <!-- HTML generated using hilite.me --><div style="background: #000000; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #3399cc">&lt;</span><span style="color: #cccccc">script</span> <span style="color: #cccccc">type</span><span style="color: #3399cc">=</span><span style="color: #cd0000">&quot;text/javascript&quot;</span><span style="color: #3399cc">&gt;</span>
+	<span style="color: #cccccc">angular.module(</span><span style="color: #cd0000">&quot;myModule&quot;</span><span style="color: #cccccc">,</span> <span style="color: #cccccc">[</span> <span style="color: #cd0000">&quot;angularBeans&quot;</span> <span style="color: #cccccc">]).controller(</span><span style="color: #cd0000">&quot;FirstCtrl&quot;</span><span style="color: #cccccc">,</span>
+			<span style="color: #00cd00">function</span><span style="color: #cccccc">($scope,</span> <span style="color: #cccccc">helloBean)</span> <span style="color: #cccccc">{</span>
+				<span style="color: #cccccc">$scope.name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">helloBean.name;</span>
+				<span style="color: #cccccc">$scope.sayHello</span> <span style="color: #3399cc">=</span> <span style="color: #00cd00">function</span><span style="color: #cccccc">(name)</span> <span style="color: #cccccc">{</span>
+					
+					<span style="color: #00cd00">var</span> <span style="color: #cccccc">language</span><span style="color: #3399cc">=</span><span style="color: #cccccc">{value</span><span style="color: #3399cc">:</span><span style="color: #cd0000">&quot;French&quot;</span><span style="color: #cccccc">};</span>
+					<span style="color: #000080">//	helloBean.name = name;   //no needs to that now</span>
+					<span style="color: #cccccc">helloBean.sayHello(name,language).then(</span><span style="color: #00cd00">function</span><span style="color: #cccccc">(data)</span> <span style="color: #cccccc">{</span>
+						<span style="color: #cccccc">$scope.message</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">data;</span>
+					<span style="color: #cccccc">});</span>
+				<span style="color: #cccccc">}</span>
+			<span style="color: #cccccc">});</span>
+<span style="color: #3399cc">&lt;</span><span style="color: #cccccc; border: 1px solid #FF0000">/script&gt;</span>
+</pre></td></tr></table></div>
+
+    <br/>And you will get:
+    <img src="images/cap3.png"/>
+    
+<br/>
+    
+     <hr>
+   <h2> next step: </h2> 
+    
+    <a href="Step-by-Step-Tutorial-angularBeans-bind.html"><h2 style= "color:green">&lt;STEP4: binding></STEP2:></h2></a>
+   
+          <hr><hr><br>
+    <h3>
+
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+
+<p>Having trouble with Pages? Check out the documentation at <a href="https://help.github.com/pages">https://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+       
+   
+    
+        </section>
+
+        <footer>
+          Angularbeans is maintained by <a href="https://github.com/bessemHmidi">bessemHmidi</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>

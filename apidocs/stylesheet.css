@@ -472,3 +472,11 @@ h1.hidden {
 .strong {
     font-weight:bold;
 }
+
+pre {
+    text-align: left;
+}
+
+td {
+    align-content: flex-start;
+}

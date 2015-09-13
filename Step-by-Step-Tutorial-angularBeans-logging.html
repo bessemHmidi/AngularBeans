@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen"> 
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Angularbeans by bessemHmidi</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+        <div align="center">
+        <img src="images/AngularBeans_logo_transparent.png" width="30%" height="30%"></img>
+          <h2>AngularBeans : Step By Step Tutorial</h2>
+          </div>
+        </header>
+        <hr>
+
+<section id="main_content">
+          
+<br/><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span>
+</a>
+<h2>STEP5: angularBean and NGLogger</h2>
+
+    
+   <br/>
+We will see now another cool feature of angularBeans: logging:<br/>
+     
+<!-- HTML generated using hilite.me --><div style="background: #000000; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #cd00cd">package</span> <span style="color: #cccccc">examples</span><span style="color: #3399cc">.</span><span style="color: #cccccc">angularbeans</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.inject.Inject</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.ws.rs.GET</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.AngularBean</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGModel</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGReturn</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.log.NGLogger</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.log.NGLogger.Level</span><span style="color: #3399cc">;</span>
+
+<span style="color: #cccccc">@AngularBean</span>
+<span style="color: #00cd00">public</span> <span style="color: #00cd00">class</span> <span style="color: #00cdcd">HelloBean</span> <span style="color: #3399cc">{</span>
+
+	<span style="color: #00cd00">private</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;insert your name here&quot;</span><span style="color: #3399cc">;</span>
+
+	<span style="color: #cccccc">@Inject</span>
+	<span style="color: #cccccc">NGLogger</span> <span style="color: #cccccc">logger</span><span style="color: #3399cc">;</span>
+
+	<span style="color: #cccccc">@GET</span>
+	<span style="color: #cccccc">@NGReturn</span><span style="color: #3399cc">(</span><span style="color: #cccccc">model</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;message&quot;</span><span style="color: #3399cc">)</span>
+	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">sayHello</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">,</span> <span style="color: #cccccc">Language</span> <span style="color: #cccccc">language</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+
+		<span style="color: #cccccc">logger</span><span style="color: #3399cc">.</span><span style="color: #cccccc">log</span><span style="color: #3399cc">(</span><span style="color: #cccccc">Level</span><span style="color: #3399cc">.</span><span style="color: #cccccc">DEBUG</span><span style="color: #3399cc">,</span> <span style="color: #cd0000">&quot;this is a DEBUG&quot;</span><span style="color: #3399cc">);</span>
+		<span style="color: #cccccc">logger</span><span style="color: #3399cc">.</span><span style="color: #cccccc">log</span><span style="color: #3399cc">(</span><span style="color: #cccccc">Level</span><span style="color: #3399cc">.</span><span style="color: #cccccc">WARN</span><span style="color: #3399cc">,</span> <span style="color: #cd0000">&quot;this is a warning %s&quot;</span><span style="color: #3399cc">,</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">);</span>
+
+		<span style="color: #cdcd00">return</span> <span style="color: #cd0000">&quot;Hello &quot;</span> <span style="color: #3399cc">+</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">+</span> <span style="color: #cd0000">&quot; from angularBeans! , your language is &quot;</span>
+				<span style="color: #3399cc">+</span> <span style="color: #cccccc">language</span><span style="color: #3399cc">.</span><span style="color: #cccccc">getValue</span><span style="color: #3399cc">();</span>
+
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #cccccc">@NGModel</span>
+	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">getName</span><span style="color: #3399cc">()</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">return</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+	<span style="color: #00cd00">public</span> <span style="color: #00cd00">void</span> <span style="color: #cccccc">setName</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
+		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
+	<span style="color: #3399cc">}</span>
+
+<span style="color: #3399cc">}</span>
+</pre></td></tr></table></div>
+
+
+        <br/>
+     Just open the browser console and rerun the example:
+    
+    <img src="images/cap4.png">
+    <br/>
+    
+     <hr>
+   <h2> next step: </h2> 
+    
+    <a href="Step-by-Step-Tutorial-angularBeans-modelQuery.html"><h2 style= "color:green">&lt;STEP6: ModelQuery></STEP2:></h2></a>
+   
+          <hr><hr><br>
+    <h3>
+
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+
+<p>Having trouble with Pages? Check out the documentation at <a href="https://help.github.com/pages">https://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+       
+   
+    
+        </section>
+
+        <footer>
+          Angularbeans is maintained by <a href="https://github.com/bessemHmidi">bessemHmidi</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>

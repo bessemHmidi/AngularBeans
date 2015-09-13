@@ -169,30 +169,30 @@ a.button span {
   background: transparent url(../images/docs.png) 12px 50% no-repeat;
 }
 
-code, pre {
+/*code, pre {
   margin-bottom: 30px;
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal;
   font-size: 14px;
   color: #222;
-}
+}*/
 
-code {
+/*code {
   padding: 0 3px;
-  background-color: #f2f2f2;
+ background-color: #f2f2f2;
   border: solid 1px #ddd;
-}
+}*/
 
 pre {
   padding: 20px;
   overflow: auto;
   color: #f2f2f2;
   text-shadow: none;
-  background: #303030;
+  background: black;
 }
 pre code {
   padding: 0;
   color: #f2f2f2;
-  background-color: #303030;
+  background-color: black;
   border: none;
 }
 
@@ -231,7 +231,7 @@ th {
 
 td {
   font-weight: 300;
-  text-align: center;
+  //text-align: center;
   border: 1px solid #ebebeb;
 }
 
@@ -375,3 +375,7 @@ footer a:hover {
 
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (max-width: 479px) { }
+
+pre {
+    align-self: auto;
+}
