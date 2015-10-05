@@ -171,7 +171,7 @@ public class AngularBeansUtils implements Serializable {
 		}
 
 		if (javaClass.equals(String.class)) {
-			o = data.toString();
+			o = data.toString().substring(1,data.toString().length()-1);
 		} else {
 			o = (deserialise(javaClass, data));
 		}
