@@ -37,6 +37,13 @@ public class StaticJsCache {
 	 * javascript api
 	 */
 	public final static String angularBeansMainObject = scriptDetection
+			+ "function AngularEvent(data,dataClass){"
+		
+		+"if(dataClass!='String' && dataClass){"
+		+ "this.dataClass=dataClass;this.data=JSON.stringify(data);"
+		+ "}"
+		+"else{this.data=data}"
+		+"};"
 			+ "var angularBeans={ "
 
 			// + "fire:function(eventName,data){"

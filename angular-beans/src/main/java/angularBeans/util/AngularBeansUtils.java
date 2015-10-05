@@ -19,9 +19,6 @@
 package angularBeans.util;
 
 import java.io.Serializable;
-import java.io.StringReader;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Calendar;
@@ -30,6 +27,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import angularBeans.events.NGEvent;
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
 import angularBeans.io.LobWrapper;
@@ -43,7 +41,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.stream.JsonReader;
 
 /**
  * utility class for AngularBeans
@@ -84,7 +81,6 @@ public class AngularBeansUtils implements Serializable {
 
 				});
 
-		
 		mainSerializer = builder.create();
 
 	}
@@ -118,41 +114,68 @@ public class AngularBeansUtils implements Serializable {
 
 	public Object deserialise(Class clazz, JsonElement element) {
 
-		
-		//Userinfo userinfo1 = gson.fromJson(reader, Userinfo.class);
-		
-//		Object o = mainSerializer.fromJson(element, clazz);
-//		Field[] fields = clazz.getFields();
-//
-//		for (Field f : fields) {
-//
-//			if (f.getType() == LobWrapper.class) {
-//
-//				String setterName = CommonUtils.obtainSetter(f);
-//
-//				Method setterMethod;
-//				try {
-//					setterMethod = clazz
-//							.getMethod(setterName, LobWrapper.class);
-//					setterMethod.invoke(o, null);
-//
-//				} catch (NoSuchMethodException | SecurityException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (IllegalAccessException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (IllegalArgumentException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (InvocationTargetException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//		}
+		// Userinfo userinfo1 = gson.fromJson(reader, Userinfo.class);
+
+		// Object o = mainSerializer.fromJson(element, clazz);
+		// Field[] fields = clazz.getFields();
+		//
+		// for (Field f : fields) {
+		//
+		// if (f.getType() == LobWrapper.class) {
+		//
+		// String setterName = CommonUtils.obtainSetter(f);
+		//
+		// Method setterMethod;
+		// try {
+		// setterMethod = clazz
+		// .getMethod(setterName, LobWrapper.class);
+		// setterMethod.invoke(o, null);
+		//
+		// } catch (NoSuchMethodException | SecurityException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (IllegalAccessException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (IllegalArgumentException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (InvocationTargetException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		// }
 
 		return mainSerializer.fromJson(element, clazz);
+	}
+
+	public Object convertEvent(NGEvent event) throws ClassNotFoundException {
+		Object o = null;
+
+		JsonElement element = CommonUtils.parse(event.getData());
+
+		JsonElement data = null;
+		Class javaClass = null;
+
+		try {
+			data = element.getAsJsonObject();
+
+			javaClass = Class.forName(event.getDataClass());
+		} catch (Exception e) {
+			data = element.getAsJsonPrimitive();
+			if (event.getDataClass() == null)
+				event.setDataClass("String");
+			javaClass = Class.forName("java.lang." + event.getDataClass());
+
+		}
+
+		if (javaClass.equals(String.class)) {
+			o = data.toString();
+		} else {
+			o = (deserialise(javaClass, data));
+		}
+		return o;
 	}
 
 }

@@ -17,18 +17,16 @@
  */
 package angularBeans.events;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.ws.rs.POST;
 
 import angularBeans.api.AngularBean;
 import angularBeans.context.NGSessionScoped;
-import angularBeans.util.AngularBeansUtils;
-import angularBeans.util.CurrentNGSession;
+import angularBeans.realtime.RealTime;
 
 /**
- * the RemoteEventBus is a service called by angularBeans throw an angularJS
- * service extend angularJS event firing to the CDI container (server) side
+ * the RealTimeRemoteEventBus is a service called by angularBeans throw an
+ * angularJS service extend angularJS event firing to the CDI container (server)
+ * side with RealTime protocoles (exp: WebSockets)
  * 
  * @author hmidi bessem
  *
@@ -36,39 +34,27 @@ import angularBeans.util.CurrentNGSession;
 
 @AngularBean
 @NGSessionScoped
-public class RemoteEventBus {
+public class RealTimeRemoteEventBus {
 
 	@Inject
-	@AngularEvent
-	Event<Object> ngEventBus;
+	@AngularBean
+	RemoteEventBus remoteEventBus;
 
-	@Inject
-	AngularBeansUtils util;
-
-	@Inject
-	CurrentNGSession session;
-
-	@Inject
-	BroadcastManager broadcastManager;
-
-	@POST
+	@RealTime
 	public void subscribe(String channel) {
-
-		broadcastManager.subscribe(session.getSessionId(), channel);
-
+		remoteEventBus.subscribe(channel);
 	}
 
-	@POST
+	@RealTime
 	public void unsubscribe(String channel) {
 
-		broadcastManager.unsubscribe(session.getSessionId(), channel);
+		remoteEventBus.unsubscribe(channel);
 	}
 
-	@POST
+	@RealTime
 	public void fire(NGEvent event) throws ClassNotFoundException {
 
-		Object eventObject = util.convertEvent(event);
-		ngEventBus.fire(eventObject);
+		remoteEventBus.fire(event);
 
 	}
 

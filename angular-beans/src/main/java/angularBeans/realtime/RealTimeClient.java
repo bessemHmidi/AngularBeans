@@ -116,11 +116,11 @@ public class RealTimeClient implements Serializable {
 		connectionHolder.getAllConnections().remove(event.getConnection());
 	}
 
-	public void onError(
-			@Observes @RealTimeErrorEvent RealTimeDataReceivedEvent event) {
-		
-		throw new RuntimeException(event.getData().toString());
-	}
+//	public void onError(
+//			@Observes @RealTimeErrorEvent RealTimeDataReceivedEvent event) {
+//		
+//		throw new RuntimeException(event.getData().toString());
+//	}
 
 	public void onData(
 			@Observes @DataReceivedEvent RealTimeDataReceivedEvent event) {

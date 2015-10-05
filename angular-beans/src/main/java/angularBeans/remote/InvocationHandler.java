@@ -217,8 +217,8 @@ public class InvocationHandler implements Serializable {
 							if (element.isJsonPrimitive()) {
 
 								String val = element.getAsString();
-								argsValues.add(CommonUtils.convertFromString(val,
-										typeClass));
+								argsValues.add(CommonUtils.convertFromString(
+										val, typeClass));
 
 							} else if (element.isJsonArray()) {
 
@@ -482,7 +482,7 @@ public class InvocationHandler implements Serializable {
 									elem = primitive.getAsString();
 								}
 								if (primitive.isNumber())
-									elem = primitive.getAsNumber();
+									elem = primitive.isNumber();
 
 							} else {
 
@@ -552,8 +552,8 @@ public class InvocationHandler implements Serializable {
 						Object param = null;
 						if ((params.entrySet().size() >= 1) && (type != null)) {
 
-							param = CommonUtils.convertFromString(value.getAsString(),
-									type);
+							param = CommonUtils.convertFromString(
+									value.getAsString(), type);
 
 						}
 

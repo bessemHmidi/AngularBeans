@@ -27,10 +27,12 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gson.JsonObject;
+
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
 
-import com.google.gson.JsonObject;
+
 
 /**
  * Realtime remote calls handler

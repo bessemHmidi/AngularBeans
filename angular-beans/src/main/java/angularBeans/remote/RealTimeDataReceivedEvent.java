@@ -25,9 +25,13 @@ import java.io.Serializable;
 
 import org.projectodd.sockjs.SockJsConnection;
 
+import com.google.gson.JsonObject;
+
 import angularBeans.realtime.RealTimeClient;
 
-import com.google.gson.JsonObject;
+
+
+
 
 /**
  * a RealTimeDataReceivedEvent concern data reception with the realtime sockjs

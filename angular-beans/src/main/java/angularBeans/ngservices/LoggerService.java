@@ -34,16 +34,16 @@ public class LoggerService implements NGService {
 	public String render() {
 		String result = "";
 
-		result += "	app.service('logger',[function(){";
+		result += "	app.service('logger',['$log',function($log){";
 		result += "		this.log=function(logMessages){";
 		result += "			for (var i in logMessages) ";
 		result += "			{";
 		result += "			var message=logMessages[i].message;";
 		result += "			var level=logMessages[i].level;";
-		result += "				if(level===\"info\"){console.info(message);};";
-		result += "				if(level===\"error\"){console.error(message);};";
-		result += "				if(level===\"warn\"){console.warn(message);};";
-		result += "				if(level===\"debug\"){console.debug(message);};";
+		result += "				if(level===\"info\"){$log.info(message);};";
+		result += "				if(level===\"error\"){$log.error(message);};";
+		result += "				if(level===\"warn\"){$log.warn(message);};";
+		result += "				if(level===\"debug\"){$log.debug(message);};";
 		result += "				}";
 		result += "			 }}]);";
 

@@ -31,12 +31,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.gson.JsonObject;
+
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
+
+
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.CommonUtils;
 
-import com.google.gson.JsonObject;
+
 
 /**
  * The HalfDuplexEndPoint servlet is a standard HTTP protocol endpoint

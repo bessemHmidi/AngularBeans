@@ -33,6 +33,8 @@ import org.projectodd.sockjs.SockJsConnection;
 import org.projectodd.sockjs.SockJsServer;
 import org.projectodd.sockjs.servlet.SockJsServlet;
 
+import com.google.gson.JsonObject;
+
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.context.SessionMapper;
 import angularBeans.events.RealTimeErrorEvent;
@@ -43,7 +45,6 @@ import angularBeans.realtime.GlobalConnectionHolder;
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.CommonUtils;
 
-import com.google.gson.JsonObject;
 
 /**
  * The RealTimeEndPoint servlet is the realtime sockjs protocol endpoint
