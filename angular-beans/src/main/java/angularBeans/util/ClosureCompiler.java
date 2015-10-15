@@ -95,7 +95,7 @@ public class ClosureCompiler {
 		}
 
 		// compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
-		return compiled;
+		return compiled.replace("delete_to_replace_by_just_delete", "delete");
 	}
 
 	public String compile(String code) {

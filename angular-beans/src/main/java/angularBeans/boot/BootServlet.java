@@ -28,6 +28,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import angularBeans.context.SessionMapper;
+import angularBeans.realtime.GlobalConnectionHolder;
+
 /**
  * This Servlet will return the "angularBeans" angularJS module as generated
  * javascript via the ModuleGenerator
@@ -49,12 +52,19 @@ public class BootServlet extends HttpServlet {
 	@Inject
 	Logger log;
 
+	@Inject
+	GlobalConnectionHolder globalConnectionHolder;
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
 		long startTime = System.currentTimeMillis();
 
+		
+		globalConnectionHolder.removeConnection(req.getSession().getId());
+	
+		
 		generator.setContextPath(req.getScheme() + "://" + req.getServerName()
 				+ ":" + req.getServerPort()
 				+ req.getServletContext().getContextPath() + "/");

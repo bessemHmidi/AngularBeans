@@ -8,6 +8,9 @@ package org.projectodd.sockjs;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.Response.StatusType;
+
 public class SockJsConnection {
 
     public SockJsConnection(Session session) {
@@ -36,7 +39,7 @@ public class SockJsConnection {
      * Asks the remote client to disconnect with default 'code' and 'reason' values.
      */
     public void end() {
-        end();
+        session.close(0,"REFRESHING TAB");
     }
 
     /**

@@ -173,6 +173,8 @@ public class RealTimeEndPoint extends SockJsServlet {
 				});
 			}
 		});
+		
+		server.options.websocket=true;
 
 		setServer(server);
 

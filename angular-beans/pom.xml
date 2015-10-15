@@ -174,7 +174,7 @@ angularBeans framework
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.3</version>
+						<version>1.6.4</version>
 						<extensions>true</extensions>
 						<configuration>
 							<serverId>ossrh</serverId>
@@ -187,17 +187,17 @@ angularBeans framework
 			<distributionManagement>
 
 				<snapshotRepository>
-					<id>deploymentRepo</id>
+					<id>ossrh</id>
 					<name>snapshots-repo</name>
 					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 				</snapshotRepository>
-				<repository>
+			 	<repository>
 
-					<id>deploymentRepo</id>
+					<id>ossrh</id>
 					<name>releases-repo</name>
 					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 
-				</repository>
+				</repository> 
 
 			</distributionManagement>
 

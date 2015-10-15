@@ -88,10 +88,12 @@ public class InvocationHandler implements Serializable {
 		builtInMap.put("long", Long.TYPE);
 		builtInMap.put("double", Double.TYPE);
 		builtInMap.put("float", Float.TYPE);
-		builtInMap.put("bool", Boolean.TYPE);
+		builtInMap.put("boolean", Boolean.TYPE);
 		builtInMap.put("char", Character.TYPE);
 		builtInMap.put("byte", Byte.TYPE);
-		// builtInMap("void", Void.TYPE );
+		
+		
+		
 		builtInMap.put("short", Short.TYPE);
 
 		arrayTypesMap.put("[I", int[].class);
@@ -200,7 +202,17 @@ public class InvocationHandler implements Serializable {
 
 							String typeString = ((parameters[i]).toString());
 
-							if (typeString.startsWith("class")) {
+							
+							if (typeString.startsWith("interface")) {
+								typeString = typeString.substring(10);
+
+								typeClass = Class.forName(typeString);
+								
+							
+								
+
+							}else {
+				            if (typeString.startsWith("class")) {
 								typeString = typeString.substring(6);
 
 								typeClass = Class.forName(typeString);
@@ -209,17 +221,24 @@ public class InvocationHandler implements Serializable {
 
 							else {
 
+							
 								typeClass = builtInMap.get(typeString);
 							}
-
+							}
+							
 							JsonElement element = args.get(i);
 
 							if (element.isJsonPrimitive()) {
 
 								String val = element.getAsString();
+								
+							
+								
 								argsValues.add(CommonUtils.convertFromString(
 										val, typeClass));
 
+								
+								
 							} else if (element.isJsonArray()) {
 
 								JsonArray arr = element.getAsJsonArray();

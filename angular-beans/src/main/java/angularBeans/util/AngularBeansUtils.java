@@ -147,6 +147,8 @@ public class AngularBeansUtils implements Serializable {
 		// }
 		// }
 
+		
+		
 		return mainSerializer.fromJson(element, clazz);
 	}
 

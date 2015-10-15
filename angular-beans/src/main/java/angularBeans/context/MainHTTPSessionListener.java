@@ -54,6 +54,7 @@ public class MainHTTPSessionListener implements HttpSessionListener {
 				.getSession().getAttribute(
 						CommonUtils.NG_SESSION_ATTRIBUTE_NAME)));
 		SessionMapper.getSessionsMap().remove(se.getSession().getId());
+		
 
 	}
 }

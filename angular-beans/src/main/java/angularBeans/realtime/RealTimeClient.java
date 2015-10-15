@@ -263,6 +263,8 @@ public class RealTimeClient implements Serializable {
 		
 		
 		
+		System.out.println(connectionHolder.getAllConnections());
+		
 		for (SockJsConnection connection : connectionHolder.getAllConnections()) {
 
 			

@@ -33,21 +33,38 @@ public class SockJsRpcService implements NGService {
 
 		String result = "";
 
-		result += "app.factory('RTSrvc',function RTSrvc(logger,$rootScope,$http,responseHandler,$q,$injector){\n";
 
-		// result +=
-		// "app.service('RTSrvc',['logger','$rootScope','$http','responseHandler','$q',function(logger,$rootScope,$http,responseHandler,$q){\n";
+		
+		result += "app.provider('RTSrvc',function RTSrvc(){\n";
 
+//********************		
+//		var options = {
+//		        protocols_whitelist : [ "websocket", "xhr-streaming", "xdr-streaming", "xhr-polling", "xdr-polling", "iframe-htmlfile", "iframe-eventsource", "iframe-xhr-polling" ],
+//		        debug : false
+//		    };
+//***********************
+		
+		result+="var self=this;";
+		result+="self.options={debug : false};";
+		
+		
+		result+="self.setOptions=function(options){self.options=options;};";
+		result+="self.webSocketEnabled=function(enabled){if(!enabled){WebSocket = undefined;}};";
+		result+="self.$get=function($log,logger,$rootScope,$http,responseHandler,$q,$injector){";
+		
 		result += "var wsuri =sript_origin.replace('http:','ws:') +'rt-service/websocket';";
 
 		result += "var sjsuri = sript_origin +'rt-service/';";
-
+		
 		result += "var ws={};";
+		
+		
+		result+="if (('WebSocket' in window) && (WebSocket!=undefined)){ws = new WebSocket(wsuri);}else{";
 		result += "if (!((typeof SockJS !=='undefined')&&(angular.isDefined(SockJS.constructor)))){"
 
-				+ "ws = new WebSocket(wsuri);}";
+				+ "console.warn('websocket not supported, use sockJs client to polyfill...');}";
 
-		result += "else{ws = new SockJS(sjsuri, undefined, {debug: false});}";
+		result += "else{ws = new SockJS(sjsuri, undefined, self.options);}};";
 
 		result += "var rt={};";
 
@@ -56,7 +73,7 @@ public class SockJsRpcService implements NGService {
 		result += "\nvar callbacks={};";
 		result += "\nvar caller='';";
 		result += "\nws.onopen = function (evt)";
-		result += "\n{ console.log('>> ANGULAR-BEANS SESSION READY...');";
+		result += "\n{ $log.info('>> ANGULAR-BEANS SESSION READY...');";
 
 		result += "\nvar message = {";
 		result += "\n'reqId':0,";
@@ -110,8 +127,8 @@ public class SockJsRpcService implements NGService {
 		result += "\n'params': params";
 		result += "\n};";
 		result += "\nreturn rt.sendAsync(message);";
-		result += "\n}; return rt; });";
-
+		//result += "\n}; return rt; };}));";
+		result += "\n}; return rt; };});";
 		return result;
 	}
 

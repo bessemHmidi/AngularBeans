@@ -34,8 +34,8 @@ public class LoggerService implements NGService {
 	public String render() {
 		String result = "";
 
-		result += "	app.service('logger',['$log',function($log){";
-		result += "		this.log=function(logMessages){";
+		result += "	app.service('logger',['$log',function($log){ var self=this;";
+		result += "		self.log=function(logMessages){";
 		result += "			for (var i in logMessages) ";
 		result += "			{";
 		result += "			var message=logMessages[i].message;";

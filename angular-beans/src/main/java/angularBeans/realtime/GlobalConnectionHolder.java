@@ -24,6 +24,8 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.projectodd.sockjs.SockJsConnection;
 
+import angularBeans.context.SessionMapper;
+
 /**
  * this is a holder for all sockJs opened sessions
  * 
@@ -38,6 +40,20 @@ public class GlobalConnectionHolder {
 
 	public Set<SockJsConnection> getAllConnections() {
 		return allConnections;
+	}
+
+	public void removeConnection(String id) {
+		
+		
+		for(SockJsConnection connection:new HashSet<>(allConnections)){
+			if(SessionMapper.getHTTPSessionID(connection.id).equals(id)){
+			SessionMapper.getSessionsMap().remove(id);
+			connection.destroy();
+			allConnections.remove(connection);
+			}
+		}
+		
+		
 	}
 
 }

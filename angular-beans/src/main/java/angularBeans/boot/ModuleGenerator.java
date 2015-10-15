@@ -35,6 +35,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
+import angularBeans.api.CORS;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
@@ -278,6 +279,7 @@ public class ModuleGenerator implements Serializable {
 
 		for (Method m : bean.getMethods()) {
 
+			boolean corsEnabled=false;
 			boolean isNative = false;
 			for (Method nativeMethod : nativesMethods) {
 				if (nativeMethod.equals(m))
@@ -295,6 +297,10 @@ public class ModuleGenerator implements Serializable {
 
 				String httpMethod = "get";
 
+				
+				
+				if(m.isAnnotationPresent(CORS.class)){corsEnabled=true;}
+				
 				if (m.isAnnotationPresent(GET.class)) {
 					httpMethod = "get";
 				}
@@ -304,7 +310,7 @@ public class ModuleGenerator implements Serializable {
 				}
 
 				if (m.isAnnotationPresent(DELETE.class)) {
-					httpMethod = "delete";
+					httpMethod = "delete_to_replace_by_just_delete";
 				}
 
 				if (m.isAnnotationPresent(PUT.class)) {
@@ -410,9 +416,17 @@ public class ModuleGenerator implements Serializable {
 				} else {
 
 					cachedStaticPart.append("\n  return $http." + httpMethod
-							+ "(rpath+'" + bean.getName() + "/" + m.getName()
-							+ "/json");
+							+ "(rpath+'" + bean.getName() + "/" + m.getName());
+							
 
+					if (corsEnabled){
+						cachedStaticPart.append("/CORS");
+						corsEnabled=false;
+					}else{
+						cachedStaticPart.append("/JSON");
+					}
+					
+					
 					if (httpMethod.equals("post")) {
 						cachedStaticPart.append("',params");
 					} else {

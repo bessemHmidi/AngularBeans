@@ -15,38 +15,26 @@
  * for more details.
  *
  */
-package angularBeans.context;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
- *  map a group of sockJS sessions to the current HTTP session.
- * @author Bessem Hmidi
- *
+ @author Bessem Hmidi
  */
-public class SessionMapper {
+package angularBeans.api;
 
-	private static Map<String, Set<String>> sessionsMap=new HashMap<String, Set<String>>();
-	 
-	
-	
-	
-    public static Map<String, Set<String>> getSessionsMap() {
-	return sessionsMap;	
-}
-	
-	public static String getHTTPSessionID(String sockJSSessionID){
-		
-		for(String httpSession:sessionsMap.keySet()){
-			
-			if(sessionsMap.get(httpSession).contains(sockJSSessionID))return httpSession;
-			
-		}
-		
-		
-		return null;
-	}
-    
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+/**  
+ * enable CORS remote method calls (for cordova/ ionic / GitHub's Electron framework.. for example)
+* <strong>work only with HTTP methods call's annotated properties
+* 
+* @author bessem hmidi
+**/
+
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface CORS {
+
 }

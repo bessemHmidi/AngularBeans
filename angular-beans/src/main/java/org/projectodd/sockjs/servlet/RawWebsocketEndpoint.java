@@ -28,6 +28,9 @@ public class RawWebsocketEndpoint extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig config) {
+    	
+
+    	
         log.log(Level.FINER, "onOpen for session {0}", session.getId());
       
         
@@ -39,6 +42,8 @@ public class RawWebsocketEndpoint extends Endpoint {
     public void onClose(Session session, CloseReason closeReason) {
         log.log(Level.FINER, "onClose {0} for session {1}", new Object[] {closeReason, session.getId()});
         RawWebsocketSessionReceiver receiver = receivers.get(session.getId());
+       
+  
         if (receiver != null) {
             receiver.didClose();
         }
