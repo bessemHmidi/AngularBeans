@@ -20,6 +20,7 @@ package angularBeans.events;
 import javax.inject.Inject;
 
 import angularBeans.api.AngularBean;
+import angularBeans.api.Eval;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.realtime.RealTime;
 
@@ -36,6 +37,15 @@ import angularBeans.realtime.RealTime;
 @NGSessionScoped
 public class RealTimeRemoteEventBus {
 
+	
+	@Eval
+	 public String addOnReadyCallback(){
+		
+		String script="realTimeRemoteEventBus.onReadyState=function(fn){RTSrvc.onReadyState(fn);};";
+		
+		return script;
+	} 
+	
 	@Inject
 	@AngularBean
 	RemoteEventBus remoteEventBus;

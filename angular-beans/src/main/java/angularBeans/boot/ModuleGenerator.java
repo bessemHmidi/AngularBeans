@@ -36,11 +36,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
 import angularBeans.api.CORS;
+import angularBeans.api.Eval;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
+import angularBeans.events.Callback;
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
@@ -113,6 +115,8 @@ public class ModuleGenerator implements Serializable {
 	@Inject
 	transient CurrentNGSession ngSession;
 
+	
+
 	/**
 	 * this method generate the angular-beans.js content and write it to the <br>
 	 * jsBuffer used by BootServlet
@@ -157,6 +161,8 @@ public class ModuleGenerator implements Serializable {
 	 */
 	public StringBuffer generateBean(NGBean bean) {
 
+		Object reference = locator.lookup(bean.getName(), sessionID);
+		
 		StringBuffer buffer = new StringBuffer();
 		Class<? extends Object> clazz = bean.getTargetClass();
 
@@ -179,7 +185,42 @@ public class ModuleGenerator implements Serializable {
 		buffer.append("\nvar rpath=$rootScope.baseUrl+'" // + contextPath
 				+ "http/invoke/service/';\n");
 
-		Object reference = locator.lookup(bean.getName(), sessionID);
+		
+for(Method m:bean.getMethods()){
+	
+	if(m.isAnnotationPresent(Eval.class)){
+		
+		
+		Callback callback=m.getAnnotation(Eval.class).value();
+		
+		if (callback==Callback.BEFORE){
+			
+			try {
+				
+				String js="RTSrvc.onReadyState(function(){";
+				
+				js += (String) m.invoke(reference);
+			js+="});";
+				buffer.append(js);
+			
+			}catch (ClassCastException e){
+				
+				throw new RuntimeException("for bean name: "+bean.getName() +" --> an @Eval bloc must return a String");
+			
+			} catch (IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
+	}
+	
+	
+}
+		
 
 		for (Method get : bean.getters()) {
 			Object result = null;
@@ -238,6 +279,8 @@ public class ModuleGenerator implements Serializable {
 		}
 
 		for (Method m : bean.getMethods()) {
+			
+
 			if (m.isAnnotationPresent(FileUpload.class)) {
 
 				String uploadPath = m.getAnnotation(FileUpload.class).path();
@@ -298,6 +341,9 @@ public class ModuleGenerator implements Serializable {
 				String httpMethod = "get";
 
 				
+				
+	
+				if(m.isAnnotationPresent(Eval.class)) continue;
 				
 				if(m.isAnnotationPresent(CORS.class)){corsEnabled=true;}
 				
@@ -459,8 +505,12 @@ public class ModuleGenerator implements Serializable {
 				if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))) {
 					if (m.isAnnotationPresent(NGPostConstruct.class)) {
 
+						
+						cachedStaticPart.append("RTSrvc.onReadyState(function(){");
 						cachedStaticPart.append(bean.getName() + "."
 								+ m.getName() + "();\n");
+						
+						cachedStaticPart.append("});");
 					}
 				}
 			}
