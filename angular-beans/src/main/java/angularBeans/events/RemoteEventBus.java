@@ -87,14 +87,12 @@ public class RemoteEventBus {
 	
 	@CORS
 	public void broadcast(String channel,Map<String,Object> data,boolean withoutMe){
-				
 		
 		RealTimeMessage realTimeMessage=new RealTimeMessage();
 		
 		for(Map.Entry<String, Object> entry:data.entrySet()){	
 		realTimeMessage.set(entry.getKey(), entry.getValue());
 		}		
-		
 		
 		client.broadcast(channel, realTimeMessage, withoutMe);
 		

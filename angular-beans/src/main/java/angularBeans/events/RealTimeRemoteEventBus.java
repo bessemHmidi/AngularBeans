@@ -17,9 +17,12 @@
  */
 package angularBeans.events;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import angularBeans.api.AngularBean;
+import angularBeans.api.Eval;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.realtime.RealTime;
 
@@ -36,6 +39,15 @@ import angularBeans.realtime.RealTime;
 @NGSessionScoped
 public class RealTimeRemoteEventBus {
 
+	
+	@Eval(Callback.BEFORE_SESSION_READY)
+	 public String addOnReadyCallback(){
+		
+		String script="realTimeRemoteEventBus.onReadyState=function(fn){RTSrvc.onReadyState(fn);};";
+		
+		return script;
+	} 
+	
 	@Inject
 	@AngularBean
 	RemoteEventBus remoteEventBus;
@@ -56,6 +68,13 @@ public class RealTimeRemoteEventBus {
 
 		remoteEventBus.fire(event);
 
+	}
+	
+	@RealTime
+	public void broadcast(String channel,Map<String,Object> data,boolean withoutMe){
+		
+		remoteEventBus.broadcast(channel, data, withoutMe);
+		
 	}
 
 }

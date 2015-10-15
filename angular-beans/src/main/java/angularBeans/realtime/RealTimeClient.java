@@ -261,6 +261,8 @@ public class RealTimeClient implements Serializable {
 
 	private void broadcast(String channel,boolean withoutMe, Map<String, Object> paramsToSend) {
 		
+		
+		
 		for (SockJsConnection connection : connectionHolder.getAllConnections()) {
 
 			

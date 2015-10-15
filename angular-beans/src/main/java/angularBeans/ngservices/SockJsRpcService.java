@@ -66,14 +66,28 @@ public class SockJsRpcService implements NGService {
 
 		result += "else{ws = new SockJS(sjsuri, undefined, self.options);}};";
 
-		result += "var rt={};";
+		result += "var rt={ready:false,onReadyState:function(fn){"
+				
+		+"setTimeout(listen,500);"
+
+		+"function listen(){"
+		 +"   if(ws.readyState==1){"
+		 + "rt.ready=true;"
+		       +"fn();"
+		 +"   }"
+		 +"   else"
+		  +"      setTimeout(listen,500);"
+		+"}"
+
+		
+				+ "}};";
 
 		result += "\nrt.rootScope=$rootScope;";
 		result += "\nvar reqId=0;";
 		result += "\nvar callbacks={};";
 		result += "\nvar caller='';";
 		result += "\nws.onopen = function (evt)";
-		result += "\n{ $log.info('>> ANGULAR-BEANS SESSION READY...');";
+		result += "\n{ $log.info('>> CONNECTING...');";
 
 		result += "\nvar message = {";
 		result += "\n'reqId':0,";
@@ -128,7 +142,7 @@ public class SockJsRpcService implements NGService {
 		result += "\n};";
 		result += "\nreturn rt.sendAsync(message);";
 		//result += "\n}; return rt; };}));";
-		result += "\n}; return rt; };});";
+		result += "\n}; rt.onReadyState(function(){$log.info('>> REALTIME SESSION READY...');}) ;return rt; };});";
 		return result;
 	}
 
