@@ -164,8 +164,7 @@ public class AngularBeansServletContextListener implements
 		sockJsServer.init();
 
 		if (sockJsServer.options.websocket) {
-			
-			
+
 			// Make sure we listen on all possible mappings of the servlet
 			// for (String mapping :
 			// getServletContext().getServletRegistration(context.getServletName()).getMappings())
@@ -179,10 +178,7 @@ public class AngularBeansServletContextListener implements
 					.configurator(configuratorFor(commonPrefix, false)).build();
 			// rt-service/websocket
 			String rawWebsocketPath = commonPrefix + "/websocket";
-			
-//			System.out.println("HEEEEEEEEEEEERRRRRRRRRRRREEEEEEEEEEEEEE....  "+rawWebsocketPath);
-			
-			
+
 			ServerEndpointConfig rawWsConfig = ServerEndpointConfig.Builder
 					.create(RawWebsocketEndpoint.class, rawWebsocketPath)
 					.configurator(configuratorFor(commonPrefix, true)).build();
@@ -194,7 +190,8 @@ public class AngularBeansServletContextListener implements
 				serverContainer.addEndpoint(rawWsConfig);
 
 				Logger.getLogger(this.getClass().getSimpleName()).info(
-						"deployement of programmatic Web socket EndPoint :"+rawWebsocketPath);
+						"deployement of programmatic Web socket EndPoint :"
+								+ rawWebsocketPath);
 			} catch (DeploymentException ex) {
 				throw new ServletException(
 						"Error deploying websocket endpoint:", ex);

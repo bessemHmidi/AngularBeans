@@ -124,7 +124,7 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 				}
 
 				params = buffer.toString();
-				// System.out.println(params);
+			
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
@@ -141,7 +141,7 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID),
 				method, paramsObj, UID);
 
-		// System.out.println(util.getJson(result));
+
 
 		return util.getJson(result);
 	}

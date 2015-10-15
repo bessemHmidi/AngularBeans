@@ -512,7 +512,7 @@ public class ModuleGenerator implements Serializable {
 	}
 
 	public String getContextPath() {
-		System.out.println("from util :" + contextPath);
+		
 
 		return contextPath;
 	}
