@@ -11,6 +11,8 @@ import angularBeans.events.Callback;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Eval {
 
+
 	Callback value() default Callback.AFTER_SESSION_READY;
+
 
 }

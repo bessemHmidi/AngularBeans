@@ -115,6 +115,8 @@ public class ModuleGenerator implements Serializable {
 	@Inject
 	transient CurrentNGSession ngSession;
 
+	
+
 	/**
 	 * this method generate the angular-beans.js content and write it to the <br>
 	 * jsBuffer used by BootServlet
@@ -183,6 +185,7 @@ public class ModuleGenerator implements Serializable {
 		buffer.append("\nvar rpath=$rootScope.baseUrl+'" // + contextPath
 				+ "http/invoke/service/';\n");
 
+
 		for (Method m : bean.getMethods()) {
 
 			if (m.isAnnotationPresent(Eval.class)) {
@@ -236,6 +239,7 @@ public class ModuleGenerator implements Serializable {
 			}
 
 		}
+
 
 		for (Method get : bean.getters()) {
 			Object result = null;
@@ -295,6 +299,7 @@ public class ModuleGenerator implements Serializable {
 
 		for (Method m : bean.getMethods()) {
 
+
 			if (m.isAnnotationPresent(FileUpload.class)) {
 
 				String uploadPath = m.getAnnotation(FileUpload.class).path();
@@ -353,6 +358,7 @@ public class ModuleGenerator implements Serializable {
 				Set<Method> setters = new HashSet<Method>();
 
 				String httpMethod = "get";
+
 
 				if (m.isAnnotationPresent(Eval.class))
 					continue;
@@ -503,8 +509,10 @@ public class ModuleGenerator implements Serializable {
 				if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))) {
 					if (m.isAnnotationPresent(NGPostConstruct.class)) {
 
+
 						cachedStaticPart
 								.append("RTSrvc.onReadyState(function(){");
+
 						cachedStaticPart.append(bean.getName() + "."
 								+ m.getName() + "();\n");
 

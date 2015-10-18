@@ -40,7 +40,9 @@ import angularBeans.realtime.RealTime;
 public class RealTimeRemoteEventBus {
 
 	
+
 	@Eval(Callback.BEFORE_SESSION_READY)
+
 	 public String addOnReadyCallback(){
 		
 		String script="realTimeRemoteEventBus.onReadyState=function(fn){RTSrvc.onReadyState(fn);};";

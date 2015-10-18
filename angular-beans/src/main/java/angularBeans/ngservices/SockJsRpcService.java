@@ -66,6 +66,7 @@ public class SockJsRpcService implements NGService {
 
 		result += "else{ws = new SockJS(sjsuri, undefined, self.options);}};";
 
+ 
 		result += "var rt={ready:false,onReadyState:function(fn){"
 				
 		+"setTimeout(listen,500);"
@@ -73,6 +74,7 @@ public class SockJsRpcService implements NGService {
 		+"function listen(){"
 		 +"   if(ws.readyState==1){"
 		 + "rt.ready=true;"
+
 		       +"fn();"
 		 +"   }"
 		 +"   else"
