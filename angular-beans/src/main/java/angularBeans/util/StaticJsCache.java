@@ -44,7 +44,8 @@ public class StaticJsCache {
 		+ "}"
 		+"else{this.data=data}"
 		+"};"
-			+ "var angularBeans={ "
+		
+		+ "var angularBeans={ "
 
 			// + "fire:function(eventName,data){"
 			// + "scope[service.serviceID]=service;"

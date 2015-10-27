@@ -46,10 +46,13 @@ public class GlobalConnectionHolder {
 		
 		
 		for(SockJsConnection connection:new HashSet<>(allConnections)){
-			if(SessionMapper.getHTTPSessionID(connection.id).equals(id)){
+			String httpSessionId=SessionMapper.getHTTPSessionID(connection.id);
+			if(httpSessionId!=null){
+			if(httpSessionId.equals(id)){
 			SessionMapper.getSessionsMap().remove(id);
 			connection.destroy();
 			allConnections.remove(connection);
+			}
 			}
 		}
 		

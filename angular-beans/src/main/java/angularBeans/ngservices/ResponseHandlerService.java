@@ -40,11 +40,14 @@ public class ResponseHandlerService implements NGService {
 		result += ("\nthis.handleResponse=function(msg,caller,isRPC){");
 
 		// result +="console.log(angular.toJson(msg));";
-		// result +="console.log('--'+JSON.stringify(msg));";
+	//	 result +="console.log('--'+JSON.stringify(msg));";
 
 		result += "var mainReturn={};";
 
 		result += ("\nfor (var key in msg) {");
+		
+		
+		
 		result += ("\nif(key==='rootScope'){");
 
 		result += ("\nfor(var model in msg[key]){");
@@ -54,7 +57,7 @@ public class ResponseHandlerService implements NGService {
 		result += ("\n}");
 		result += ("}");
 
-		result += ("\nif((key==='add')||(key==='rm')){");
+		result += ("\nif((key==='add')||(key==='rm')||(key==='rm-k')){");
 
 		result += "var equalsKey='--';";
 
@@ -70,27 +73,30 @@ public class ResponseHandlerService implements NGService {
 
 		result += "if (typeof tab[value] == 'string' || tab[value] instanceof String){";
 
-		result += "if(tab[value].indexOf('equalsKey:') > -1){equalsKey=tab[value].replace('equalsKey:','');break;}}}";
+		result += "if(tab[value].indexOf('equalsKey:') > -1){equalsKey=tab[value].replace('equalsKey:',''); ;}}}";
 
 		//
 		result += "for (var value in tab){";
 
-		result += "if(key==='rm'){";
-
+		result += "if((key==='rm')||(key==='rm-k')){";
 		result += "if(equalsKey=='NAN'){";
 		result += "if(tab[value]==='equalsKey:NAN'){continue;}";
 
 		result += "var index=angularBeans.isIn(caller[modelkey],tab[value]);";
-		result += "if(index>-1){caller[modelkey].splice(index, 1);return;}";
+		result += "if(index>-1){caller[modelkey].splice(index, 1);break;}";
 		result += "}"
 
 		+ "else{";
+	
 		result += "var criteria={};";
-		result += "criteria[equalsKey]='!'+tab[value][equalsKey];";
+		result += "criteria[equalsKey]='!'+tab[value];";
+		
+		// result +="console.log(JSON.stringify(tab[value]));";
+		 
 		result += "caller[modelkey] = $filter('filter')(caller[modelkey], criteria);";
-		result += "}}";
+		result += "}};";
 
-		result += "if(key==='add'){";
+		result += "if(key==='add'){ ";
 		result += "\n var found=false; ";
 
 		result += "if(angularBeans.isIn(caller[modelkey],tab[value])>-1){ found=true;}";

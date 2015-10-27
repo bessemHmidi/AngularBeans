@@ -45,7 +45,7 @@ public class RealTimeRemoteEventBus {
 
 	 public String addOnReadyCallback(){
 		
-		String script="realTimeRemoteEventBus.onReadyState=function(fn){RTSrvc.onReadyState(fn);};";
+		String script="realTimeRemoteEventBus.onReadyState=function(fn){realtimeManager.onReadyState(fn);};";
 		
 		return script;
 	} 

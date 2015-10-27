@@ -35,7 +35,7 @@ public class SockJsRpcService implements NGService {
 
 
 		
-		result += "app.provider('RTSrvc',function RTSrvc(){\n";
+		result += "app.provider('realtimeManager',function RTSrvc(){\n";
 
 //********************		
 //		var options = {
@@ -70,7 +70,6 @@ public class SockJsRpcService implements NGService {
 		result += "var rt={ready:false,onReadyState:function(fn){"
 				
 		+"setTimeout(listen,500);"
-
 		+"function listen(){"
 		 +"   if(ws.readyState==1){"
 		 + "rt.ready=true;"
@@ -80,8 +79,6 @@ public class SockJsRpcService implements NGService {
 		 +"   else"
 		  +"      setTimeout(listen,500);"
 		+"}"
-
-		
 				+ "}};";
 
 		result += "\nrt.rootScope=$rootScope;";
@@ -122,16 +119,27 @@ public class SockJsRpcService implements NGService {
 		result += " } }";
 		result += "\n }; ";
 
-		result += "\nrt.sendAsync = function(message) {";
-		result += "\nws.send(angular.toJson(message));";
-
+		result += "\nrt.sendAsync = function(message) {"
+		
+		+"setTimeout(listen,500);"
+		+"function listen(){"
+		 +"   if(ws.readyState==1){"
+		+"\nws.send(angular.toJson(message));"
+		 +"   }"
+		 +"   else"
+		  +"      setTimeout(listen,500);"
+		+"}";
+		
+		
 		result += "var deferred = $q.defer();";
 		result += "callbacks[message.reqId] = deferred;";
 		result += "return deferred.promise;";
 		result += "\n};";
 
 		result += "\nrt.send = function(message) {";
+
 		result += "\nws.send(angular.toJson(message));";
+
 		result += "\n};";
 
 		result += "\nrt.call=function(caller,invockation,params){";
@@ -143,7 +151,7 @@ public class SockJsRpcService implements NGService {
 		result += "\n'params': params";
 		result += "\n};";
 		result += "\nreturn rt.sendAsync(message);";
-		//result += "\n}; return rt; };}));";
+	
 		result += "\n}; rt.onReadyState(function(){$log.info('>> REALTIME SESSION READY...');}) ;return rt; };});";
 		return result;
 	}

@@ -82,12 +82,23 @@ public class ModelQueryImpl implements ModelQuery ,Serializable{
 	public ModelQuery removeFrom(String objectName, Object value, String key) {
 
 		Map<String, Set<Object>> params = null;
+		
+		
+		if(key.equals("NAN")){
 		if (!data.containsKey("rm")) {
 			data.put("rm", new HashMap<String, Set<Object>>());
 		}
-
-		params = (Map<String, Set<Object>>) data.get("rm");
-
+        params = (Map<String, Set<Object>>) data.get("rm");
+		}else{
+			if (!data.containsKey("rm-k")) {
+				data.put("rm-k", new HashMap<String, Set<Object>>());
+			}
+	        params = (Map<String, Set<Object>>) data.get("rm-k");
+			
+		}
+		
+		
+		
 		if (!params.containsKey(objectName)) {
 			params.put(objectName, new HashSet<Object>());
 		}

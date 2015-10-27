@@ -171,11 +171,11 @@ public class ModuleGenerator implements Serializable {
 		buffer.append(";app.factory('" + bean.getName() + "',function "
 				+ bean.getName() + "(");
 
-		// writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','RTSrvc',function");
+		// writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','realtimeManager'',function");
 
 		buffer.append("$rootScope, $http, $location,logger,responseHandler,$q");
 
-		buffer.append(",RTSrvc");
+		buffer.append(",realtimeManager");
 		buffer.append("){\n");
 
 		// writer.write("var deffered = $q.defer();");
@@ -204,7 +204,7 @@ public class ModuleGenerator implements Serializable {
 						
 			js="setTimeout(listen,500);"
             +"function listen(){"
-		    +"   if(RTSrvc.ready){"
+		    +"   if(realtimeManager.ready){"
             
 		    +execution
 		    
@@ -351,7 +351,11 @@ public class ModuleGenerator implements Serializable {
 			if (isNative)
 				continue;
 
-			if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))) {
+			if ((!CommonUtils.isSetter(m)) 
+					&&
+			(!CommonUtils.isGetter(m))
+			
+			) {
 
 				// String csModel = null;
 				String[] csUpdates = null;
@@ -451,7 +455,7 @@ public class ModuleGenerator implements Serializable {
 
 				if (m.isAnnotationPresent(RealTime.class)) {
 
-					cachedStaticPart.append("return RTSrvc.call("
+					cachedStaticPart.append("return realtimeManager.call("
 							+ bean.getName() + ",'" + bean.getName() + "."
 							+ m.getName() + "',params");
 
@@ -511,7 +515,7 @@ public class ModuleGenerator implements Serializable {
 
 
 						cachedStaticPart
-								.append("RTSrvc.onReadyState(function(){");
+								.append("realtimeManager.onReadyState(function(){");
 
 						cachedStaticPart.append(bean.getName() + "."
 								+ m.getName() + "();\n");
