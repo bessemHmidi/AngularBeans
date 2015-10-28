@@ -39,7 +39,7 @@ public class ResponseHandlerService implements NGService {
 
 		result += ("\nthis.handleResponse=function(msg,caller,isRPC){");
 
-		// result +="console.log(angular.toJson(msg));";
+	//	result +="console.log(angular.toJson(msg));";
 	//	 result +="console.log('--'+JSON.stringify(msg));";
 
 		result += "var mainReturn={};";
@@ -131,7 +131,7 @@ public class ResponseHandlerService implements NGService {
 			
 		result+="if(!$rootScope.$$phase) {$rootScope. $digest ;$rootScope.$apply();}";
 	    result += "if(!isRPC){$rootScope. $digest ;$rootScope.$apply();}";
-
+        result+="if(msg.log){logger.log(msg.log);}";
 		result += ("return mainReturn;");
 
 		result += ("};");
