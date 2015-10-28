@@ -128,11 +128,9 @@ public class ResponseHandlerService implements NGService {
 				+ "mainReturn=msg[key];}}";
 
 		result += ("\n  }");
-
-		result += ("\nlogger.log(msg.log);");
-
-		// result+="if(isRT){$rootScope.$apply();}";
-		result += "if(!isRPC){$rootScope.$digest();$rootScope.$apply();}";
+			
+		result+="if(!$rootScope.$$phase) {$rootScope. $digest ;$rootScope.$apply();}";
+	    result += "if(!isRPC){$rootScope. $digest ;$rootScope.$apply();}";
 
 		result += ("return mainReturn;");
 

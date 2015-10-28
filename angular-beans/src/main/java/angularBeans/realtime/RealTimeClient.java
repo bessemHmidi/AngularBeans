@@ -37,7 +37,6 @@ import angularBeans.boot.BeanRegistry;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.context.SessionMapper;
 import angularBeans.events.BroadcastManager;
-import angularBeans.events.RealTimeErrorEvent;
 import angularBeans.events.RealTimeMessage;
 import angularBeans.events.RealTimeSessionCloseEvent;
 import angularBeans.events.RealTimeSessionReadyEvent;
@@ -65,8 +64,9 @@ public class RealTimeClient implements Serializable {
 
 	private Set<SockJsConnection> sessions = new HashSet<SockJsConnection>();
 
-	@Inject BroadcastManager  broadcastManager;
-	
+	@Inject
+	BroadcastManager broadcastManager;
+
 	@Inject
 	GlobalConnectionHolder connectionHolder;
 
@@ -76,37 +76,37 @@ public class RealTimeClient implements Serializable {
 	@Inject
 	NGLogger logger;
 
-	private boolean async=false;
+	private boolean async = false;
+
 	/**
-	 *  the Realtime client will use will use AsyncRemote of the websocket api 
-	 *            <p>
-	 *            usage: realTimeClient.async().*any-method()*.
+	 * the Realtime client will use will use AsyncRemote of the websocket api
+	 * <p>
+	 * usage: realTimeClient.async().*any-method()*.
 	 */
-	
-	public RealTimeClient async(){
-		
-		async=true;
+
+	public RealTimeClient async() {
+
+		async = true;
 		return this;
 	}
-	
+
 	public void onSessionReady(
 			@Observes @RealTimeSessionReadyEvent RealTimeDataReceivedEvent event) {
 
 		connectionHolder.getAllConnections().add(event.getConnection());
 		sessions.add(event.getConnection());
 
-		Set<NGBean> angularBeans=BeanRegistry.getInstance().getAngularBeans();
-		
-		for(NGBean bean:angularBeans){
-			
-			String httpSessionId=SessionMapper
-					.getHTTPSessionID(event.getConnection().id);
-			
-			broadcastManager.subscribe(httpSessionId,bean.getTargetClass().getSimpleName());
+		Set<NGBean> angularBeans = BeanRegistry.getInstance().getAngularBeans();
+
+		for (NGBean bean : angularBeans) {
+
+			String httpSessionId = SessionMapper.getHTTPSessionID(event
+					.getConnection().id);
+
+			broadcastManager.subscribe(httpSessionId, bean.getTargetClass()
+					.getSimpleName());
 		}
-		
-		
-		
+
 		event.setClient(this);
 
 	}
@@ -116,11 +116,11 @@ public class RealTimeClient implements Serializable {
 		connectionHolder.getAllConnections().remove(event.getConnection());
 	}
 
-//	public void onError(
-//			@Observes @RealTimeErrorEvent RealTimeDataReceivedEvent event) {
-//		
-//		throw new RuntimeException(event.getData().toString());
-//	}
+	// public void onError(
+	// @Observes @RealTimeErrorEvent RealTimeDataReceivedEvent event) {
+	//
+	// throw new RuntimeException(event.getData().toString());
+	// }
 
 	public void onData(
 			@Observes @DataReceivedEvent RealTimeDataReceivedEvent event) {
@@ -191,14 +191,15 @@ public class RealTimeClient implements Serializable {
 	 *            true: the current session client will not receive the message.
 	 *            <p>
 	 *            false: the current session client will also receive the
-	 *            message. */
+	 *            message.
+	 */
 
 	public void broadcast(String channel, RealTimeMessage message,
 			boolean withoutMe) {
-		
+
 		Map<String, Object> paramsToSend = prepareData(channel, message);
 
-		broadcast(channel,withoutMe, paramsToSend);
+		broadcast(channel, withoutMe, paramsToSend);
 
 	}
 
@@ -220,7 +221,7 @@ public class RealTimeClient implements Serializable {
 
 		Map<String, Object> paramsToSend = prepareData(query);
 
-		broadcast(query.getTargetServiceClass(),withoutMe, paramsToSend);
+		broadcast(query.getTargetServiceClass(), withoutMe, paramsToSend);
 
 	}
 
@@ -259,17 +260,15 @@ public class RealTimeClient implements Serializable {
 		return paramsToSend;
 	}
 
-	private void broadcast(String channel,boolean withoutMe, Map<String, Object> paramsToSend) {
-		
-		
-		
+	private void broadcast(String channel, boolean withoutMe,
+			Map<String, Object> paramsToSend) {
+
 		for (SockJsConnection connection : connectionHolder.getAllConnections()) {
 
-			
-			if(!broadcastManager.isSubscribed(connection.id,channel)){
+			if (!broadcastManager.isSubscribed(connection.id, channel)) {
 				continue;
 			}
-			
+
 			if (withoutMe) {
 				if (sessions.contains(connection)) {
 					continue;
@@ -281,7 +280,8 @@ public class RealTimeClient implements Serializable {
 				String objectMessage = util.getJson(paramsToSend);
 
 				connection.write(objectMessage, async);
-				async=false;
+
+				async = false;
 
 			}
 		}
@@ -295,7 +295,7 @@ public class RealTimeClient implements Serializable {
 			} else {
 
 				session.write(util.getJson(paramsToSend), async);
-				async=false;
+				async = false;
 			}
 
 		}

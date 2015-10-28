@@ -50,7 +50,15 @@ public class GlobalConnectionHolder {
 			if(httpSessionId!=null){
 			if(httpSessionId.equals(id)){
 			SessionMapper.getSessionsMap().remove(id);
-			connection.destroy();
+			
+			try {
+				connection.destroy();
+			} catch (Exception e) {
+			
+			}
+		
+			
+			
 			allConnections.remove(connection);
 			}
 			}

@@ -55,9 +55,7 @@ public class SockJsRpcService implements NGService {
 		result += "var wsuri =sript_origin.replace('http:','ws:') +'rt-service/websocket';";
 
 		result += "var sjsuri = sript_origin +'rt-service/';";
-		
 		result += "var ws={};";
-		
 		
 		result+="if (('WebSocket' in window) && (WebSocket!=undefined)){ws = new WebSocket(wsuri);}else{";
 		result += "if (!((typeof SockJS !=='undefined')&&(angular.isDefined(SockJS.constructor)))){"
@@ -116,8 +114,10 @@ public class SockJsRpcService implements NGService {
 				+ "responseHandler.handleResponse(msg,caller,false);}"
 				+ "else{";
 		result += "$rootScope.$broadcast(msg.ngEvent.name,msg.ngEvent.data);";
-		result += " } }";
-		result += "\n }; ";
+	
+		result += " }";
+		result+="if(!$rootScope.$$phase) {$rootScope. $digest ;$rootScope.$apply();}";
+		result += "} }; ";
 
 		result += "\nrt.sendAsync = function(message) {"
 		

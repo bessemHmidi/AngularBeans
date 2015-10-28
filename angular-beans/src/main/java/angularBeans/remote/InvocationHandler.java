@@ -319,6 +319,8 @@ public class InvocationHandler implements Serializable {
 
 		returns.putAll(scMap);
 
+		
+		
 		(qImpl).getData().clear();
 
 		if (!modelQueryFactory.getRootScope().getRootScopeMap().isEmpty()) {
@@ -333,7 +335,12 @@ public class InvocationHandler implements Serializable {
 		// || (m.isAnnotationPresent(NGPostConstruct.class))
 		// ) {
 
+	//	if((returns.size()>0)&& (mainReturn==null))mainReturn="";
+		
 		if (m.isAnnotationPresent(NGReturn.class)) {
+			
+			if(mainReturn==null)mainReturn="";
+
 			NGReturn ngReturn = m.getAnnotation(NGReturn.class);
 			updates = ngReturn.updates();
 
