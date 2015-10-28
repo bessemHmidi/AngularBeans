@@ -176,11 +176,14 @@ public abstract class CommonUtils {
 	public static boolean isGetter(Method m) {
 		return (
 
-		((m.getParameterTypes().length == 0) && ((m.getName().startsWith("get"))
+		(
+				(m.getParameterTypes().length == 0) && ((m.getName().startsWith("get"))
 				|| (((m.getReturnType().equals(boolean.class)) || (m.getReturnType().equals(Boolean.class)))
-						&& (m.getName().startsWith("is")))))
+						&& (m.getName().startsWith("is"))))
+						)
 				&& (!(
 
+						m.getReturnType().equals(Void.class) ||
 		m.isAnnotationPresent(RealTime.class) || m.isAnnotationPresent(GET.class) || m.isAnnotationPresent(POST.class)
 				|| m.isAnnotationPresent(PUT.class) || m.isAnnotationPresent(DELETE.class)
 				|| m.isAnnotationPresent(OPTIONS.class) || m.isAnnotationPresent(HEAD.class)

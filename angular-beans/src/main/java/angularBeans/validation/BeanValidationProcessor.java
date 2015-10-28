@@ -170,10 +170,10 @@ public class BeanValidationProcessor implements Serializable {
 		stringBuilder.append("\nmatchingElements.push(allElements[i]);");
 		stringBuilder.append("\n}}");
 		stringBuilder.append("\nreturn matchingElements;}");
-		stringBuilder.append("\nvar entries = (getAllInputModel('ng-model'));");
+		stringBuilder.append("\nvar entries = (getAllInputModel('name'));");
 		stringBuilder.append("\nfor (e in entries) {");
 		stringBuilder
-				.append("\nvar modelName = (entries[e].getAttribute('ng-model'));");
+				.append("\nvar modelName = (entries[e].getAttribute('name'));");
 
 		stringBuilder.append(buffer);
 
