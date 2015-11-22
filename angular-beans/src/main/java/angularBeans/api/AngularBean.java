@@ -50,8 +50,8 @@ import javax.inject.Qualifier;
 @Target({TYPE, FIELD,PARAMETER })
 @Qualifier
 @Documented
-@RequestScoped
-@Stereotype
+//@RequestScoped
+//@Stereotype
 public @interface AngularBean {
 
 }

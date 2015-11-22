@@ -183,7 +183,7 @@ public abstract class CommonUtils {
 						)
 				&& (!(
 
-						m.getReturnType().equals(Void.class) ||
+						m.getReturnType().equals(Void.class) ||(m.getReturnType().equals(void.class) )||
 		m.isAnnotationPresent(RealTime.class) || m.isAnnotationPresent(GET.class) || m.isAnnotationPresent(POST.class)
 				|| m.isAnnotationPresent(PUT.class) || m.isAnnotationPresent(DELETE.class)
 				|| m.isAnnotationPresent(OPTIONS.class) || m.isAnnotationPresent(HEAD.class)

@@ -50,7 +50,7 @@ public class BeanLocator implements Serializable {
 	@Inject
 	AngularBeansUtils util;
 
-	public synchronized Object lookup(String beanName, String sessionID) {
+	public  Object lookup(String beanName, String sessionID) {
 
 		NGSessionScopeContext.setCurrentContext(sessionID);
 		Object reference = null;
@@ -71,7 +71,9 @@ public class BeanLocator implements Serializable {
 		Class scopeAnnotationClass = bean.getScope();
 
 		if (scopeAnnotationClass.equals(RequestScoped.class)) {
-			return bean.create(beanManager.createCreationalContext(bean));
+			context = beanManager.getContext(scopeAnnotationClass);
+			if (context==null)
+		return bean.create(beanManager.createCreationalContext(bean));
 
 		} else {
 
@@ -86,6 +88,11 @@ public class BeanLocator implements Serializable {
 				.createCreationalContext(bean);
 		reference = context.get(bean, creationalContext);
 
+		
+//		if(reference==null && scopeAnnotationClass.equals(RequestScoped.class)){
+//			reference= bean.create(beanManager.createCreationalContext(bean));
+//		}
+		
 		return reference;
 	}
 

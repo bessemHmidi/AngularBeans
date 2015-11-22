@@ -36,6 +36,11 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
 import angularBeans.context.BeanLocator;
@@ -48,11 +53,6 @@ import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.CommonUtils;
 import angularBeans.util.ModelQueryFactory;
 import angularBeans.util.ModelQueryImpl;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
 /**
  * 
@@ -91,9 +91,7 @@ public class InvocationHandler implements Serializable {
 		builtInMap.put("boolean", Boolean.TYPE);
 		builtInMap.put("char", Character.TYPE);
 		builtInMap.put("byte", Byte.TYPE);
-		
-		
-		
+
 		builtInMap.put("short", Short.TYPE);
 
 		arrayTypesMap.put("[I", int[].class);
@@ -116,9 +114,8 @@ public class InvocationHandler implements Serializable {
 		arrayTypesMap.put("[Ljava.lang.String;", String[].class);
 	}
 
-	public void realTimeInvoke(Object ServiceToInvoque, String methodName,
-			JsonObject params, RealTimeDataReceivedEvent event, long reqID,
-			String UID) {
+	public void realTimeInvoke(Object ServiceToInvoque, String methodName, JsonObject params,
+			RealTimeDataReceivedEvent event, long reqID, String UID) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
@@ -128,15 +125,13 @@ public class InvocationHandler implements Serializable {
 		returns.put("isRT", true);
 
 		try {
-			genericInvoke(ServiceToInvoque, methodName, params, returns, reqID,
-					UID);
+			genericInvoke(ServiceToInvoque, methodName, params, returns, reqID, UID);
 
 			if (returns.get("mainReturn") != null) {
 
 				event.getConnection().write(util.getJson(returns), false);
 			}
-		} catch (SecurityException | ClassNotFoundException
-				| IllegalAccessException | IllegalArgumentException
+		} catch (SecurityException | ClassNotFoundException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException e) {
 
 			e.printStackTrace();
@@ -163,13 +158,11 @@ public class InvocationHandler implements Serializable {
 		return returns;
 	}
 
-	private void genericInvoke(Object service, String methodName,
-			JsonObject params, Map<String, Object> returns, long reqID,
-			String UID)
+	private void genericInvoke(Object service, String methodName, JsonObject params, Map<String, Object> returns,
+			long reqID, String UID)
 
-	throws SecurityException, ClassNotFoundException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException {
+					throws SecurityException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException,
+					InvocationTargetException, NoSuchMethodException {
 
 		Object mainReturn = null;
 
@@ -202,54 +195,42 @@ public class InvocationHandler implements Serializable {
 
 							String typeString = ((parameters[i]).toString());
 
-							
 							if (typeString.startsWith("interface")) {
 								typeString = typeString.substring(10);
 
 								typeClass = Class.forName(typeString);
-								
-							
-								
 
-							}else {
-				            if (typeString.startsWith("class")) {
-								typeString = typeString.substring(6);
+							} else {
+								if (typeString.startsWith("class")) {
+									typeString = typeString.substring(6);
 
-								typeClass = Class.forName(typeString);
+									typeClass = Class.forName(typeString);
 
+								}
+
+								else {
+
+									typeClass = builtInMap.get(typeString);
+								}
 							}
 
-							else {
-
-							
-								typeClass = builtInMap.get(typeString);
-							}
-							}
-							
 							JsonElement element = args.get(i);
 
 							if (element.isJsonPrimitive()) {
 
 								String val = element.getAsString();
-								
-							
-								
-								argsValues.add(CommonUtils.convertFromString(
-										val, typeClass));
 
-								
-								
+								argsValues.add(CommonUtils.convertFromString(val, typeClass));
+
 							} else if (element.isJsonArray()) {
 
 								JsonArray arr = element.getAsJsonArray();
 
-								argsValues.add(util.deserialise(
-										arrayTypesMap.get(typeString), arr));
+								argsValues.add(util.deserialise(arrayTypesMap.get(typeString), arr));
 
 							} else {
 
-								argsValues.add(util.deserialise(typeClass,
-										element));
+								argsValues.add(util.deserialise(typeClass, element));
 
 							}
 
@@ -267,8 +248,7 @@ public class InvocationHandler implements Serializable {
 						String exceptionString = "";
 						try {
 
-							mainReturn = m
-									.invoke(service, argsValues.toArray());
+							mainReturn = m.invoke(service, argsValues.toArray());
 
 						} catch (Exception e) {
 							handleException(m, e);
@@ -311,21 +291,16 @@ public class InvocationHandler implements Serializable {
 		// modelQueryFactory=(ModelQueryFactory)
 		// locator.lookup("ModelQueryFactory",UID );
 
-		ModelQueryImpl qImpl = (ModelQueryImpl) modelQueryFactory.get(service
-				.getClass());
+		ModelQueryImpl qImpl = (ModelQueryImpl) modelQueryFactory.get(service.getClass());
 
-		Map<String, Object> scMap = new HashMap<String, Object>(
-				(qImpl).getData());
+		Map<String, Object> scMap = new HashMap<String, Object>((qImpl).getData());
 
 		returns.putAll(scMap);
 
-		
-		
 		(qImpl).getData().clear();
 
 		if (!modelQueryFactory.getRootScope().getRootScopeMap().isEmpty()) {
-			returns.put("rootScope", new HashMap<String, Object>(
-					modelQueryFactory.getRootScope().getRootScopeMap()));
+			returns.put("rootScope", new HashMap<String, Object>(modelQueryFactory.getRootScope().getRootScopeMap()));
 			modelQueryFactory.getRootScope().getRootScopeMap().clear();
 		}
 
@@ -335,11 +310,12 @@ public class InvocationHandler implements Serializable {
 		// || (m.isAnnotationPresent(NGPostConstruct.class))
 		// ) {
 
-	//	if((returns.size()>0)&& (mainReturn==null))mainReturn="";
-		
+		// if((returns.size()>0)&& (mainReturn==null))mainReturn="";
+
 		if (m.isAnnotationPresent(NGReturn.class)) {
-			
-			if(mainReturn==null)mainReturn="";
+
+			if (mainReturn == null)
+				mainReturn = "";
 
 			NGReturn ngReturn = m.getAnnotation(NGReturn.class);
 			updates = ngReturn.updates();
@@ -355,8 +331,7 @@ public class InvocationHandler implements Serializable {
 		}
 
 		if (m.isAnnotationPresent(NGPostConstruct.class)) {
-			NGPostConstruct ngPostConstruct = m
-					.getAnnotation(NGPostConstruct.class);
+			NGPostConstruct ngPostConstruct = m.getAnnotation(NGPostConstruct.class);
 			updates = ngPostConstruct.updates();
 
 		}
@@ -371,8 +346,7 @@ public class InvocationHandler implements Serializable {
 
 						String fieldName = (met.getName()).substring(3);
 						String firstCar = fieldName.substring(0, 1);
-						upd.add((firstCar.toLowerCase() + fieldName
-								.substring(1)));
+						upd.add((firstCar.toLowerCase() + fieldName.substring(1)));
 
 					}
 				}
@@ -389,14 +363,12 @@ public class InvocationHandler implements Serializable {
 		if (updates != null) {
 			for (String up : updates) {
 
-				String getterName = "get" + up.substring(0, 1).toUpperCase()
-						+ up.substring(1);
+				String getterName = "get" + up.substring(0, 1).toUpperCase() + up.substring(1);
 				Method getter = null;
 				try {
 					getter = service.getClass().getMethod(getterName);
 				} catch (NoSuchMethodException e) {
-					getter = service.getClass().getMethod(
-							(getterName.replace("get", "is")));
+					getter = service.getClass().getMethod((getterName.replace("get", "is")));
 				}
 
 				Object result = getter.invoke(service);
@@ -423,8 +395,7 @@ public class InvocationHandler implements Serializable {
 	private void handleException(Method m, Exception e) {
 		Throwable cause = e.getCause();
 
-		String exceptionString = m.getName() + " -->"
-				+ cause.getClass().getName();
+		String exceptionString = m.getName() + " -->" + cause.getClass().getName();
 
 		if (cause.getMessage() != null) {
 			exceptionString += " " + cause.getMessage();
@@ -453,8 +424,7 @@ public class InvocationHandler implements Serializable {
 
 					String getName;
 					try {
-						getName = CommonUtils.obtainGetter(o.getClass()
-								.getDeclaredField(name));
+						getName = CommonUtils.obtainGetter(o.getClass().getDeclaredField(name));
 
 						Method getter = o.getClass().getMethod(getName);
 
@@ -463,9 +433,8 @@ public class InvocationHandler implements Serializable {
 						// logger.log(Level.INFO, "#entring sub object "+name);
 						update(subObj, value.getAsJsonObject());
 
-					} catch (NoSuchFieldException | SecurityException
-							| IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException | NoSuchMethodException e) {
+					} catch (NoSuchFieldException | SecurityException | IllegalAccessException
+							| IllegalArgumentException | InvocationTargetException | NoSuchMethodException e) {
 
 						e.printStackTrace();
 					}
@@ -475,8 +444,7 @@ public class InvocationHandler implements Serializable {
 				if (value.isJsonArray()) {
 
 					try {
-						String getter = CommonUtils.obtainGetter(o.getClass()
-								.getDeclaredField(name));
+						String getter = CommonUtils.obtainGetter(o.getClass().getDeclaredField(name));
 
 						Method get = o.getClass().getDeclaredMethod(getter);
 
@@ -488,8 +456,7 @@ public class InvocationHandler implements Serializable {
 
 						String className = actType.toString();
 
-						className = className.substring(className
-								.indexOf("class") + 6);
+						className = className.substring(className.indexOf("class") + 6);
 						Class clazz = Class.forName(className);
 
 						JsonArray array = value.getAsJsonArray();
@@ -498,8 +465,7 @@ public class InvocationHandler implements Serializable {
 						Object elem = null;
 						for (JsonElement element : array) {
 							if (element.isJsonPrimitive()) {
-								JsonPrimitive primitive = element
-										.getAsJsonPrimitive();
+								JsonPrimitive primitive = element.getAsJsonPrimitive();
 
 								elem = element;
 								if (primitive.isBoolean())
@@ -533,10 +499,8 @@ public class InvocationHandler implements Serializable {
 
 								collection.add(elem);
 							} catch (UnsupportedOperationException e) {
-								Logger.getLogger("AngularBeans").log(
-										java.util.logging.Level.WARNING,
-										"trying to modify an immutable collection : "
-												+ name);
+								Logger.getLogger("AngularBeans").log(java.util.logging.Level.WARNING,
+										"trying to modify an immutable collection : " + name);
 							}
 
 						}
@@ -555,8 +519,7 @@ public class InvocationHandler implements Serializable {
 						if (!CommonUtils.hasSetter(o.getClass(), name)) {
 							continue;
 						}
-						name = "set" + name.substring(0, 1).toUpperCase()
-								+ name.substring(1);
+						name = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
 
 						Class type = null;
 						for (Method set : o.getClass().getDeclaredMethods()) {
@@ -578,8 +541,7 @@ public class InvocationHandler implements Serializable {
 						Object param = null;
 						if ((params.entrySet().size() >= 1) && (type != null)) {
 
-							param = CommonUtils.convertFromString(
-									value.getAsString(), type);
+							param = CommonUtils.convertFromString(value.getAsString(), type);
 
 						}
 
