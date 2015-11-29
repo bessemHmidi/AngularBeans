@@ -65,7 +65,7 @@ by removing the "message" property ower class will look like:
 29
 30</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #cd00cd">package</span> <span style="color: #cccccc">examples</span><span style="color: #3399cc">.</span><span style="color: #cccccc">angularbeans</span><span style="color: #3399cc">;</span>
 
-<span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.ws.rs.GET</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.Get</span><span style="color: #3399cc">;</span>
 
 <span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.AngularBean</span><span style="color: #3399cc">;</span>
 <span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGModel</span><span style="color: #3399cc">;</span>
@@ -76,7 +76,7 @@ by removing the "message" property ower class will look like:
 
 	<span style="color: #00cd00">private</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;insert your name here&quot;</span><span style="color: #3399cc">;</span>
 
-	<span style="color: #cccccc">@GET</span>
+	<span style="color: #cccccc">@Get</span>
 	<span style="color: #cccccc">@NGSubmit</span><span style="color: #3399cc">(</span><span style="color: #cccccc">backEndModels</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;name&quot;</span><span style="color: #3399cc">)</span>
 	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">sayHello</span><span style="color: #3399cc">()</span> <span style="color: #3399cc">{</span>
 
@@ -206,7 +206,7 @@ Angular bean have another more RPC style for remotes calls :
 27
 28</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #cd00cd">package</span> <span style="color: #cccccc">examples</span><span style="color: #3399cc">.</span><span style="color: #cccccc">angularbeans</span><span style="color: #3399cc">;</span>
 
-<span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.ws.rs.GET</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.http.Get</span><span style="color: #3399cc">;</span>
 
 <span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.AngularBean</span><span style="color: #3399cc">;</span>
 <span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGModel</span><span style="color: #3399cc">;</span>
@@ -216,7 +216,7 @@ Angular bean have another more RPC style for remotes calls :
 
 	<span style="color: #00cd00">private</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;insert your name here&quot;</span><span style="color: #3399cc">;</span>
 
-	<span style="color: #cccccc">@GET</span>
+	<span style="color: #cccccc">@Get</span>
 	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">sayHello</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
 		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
 		<span style="color: #cdcd00">return</span> <span style="color: #cd0000">&quot;Hello &quot;</span> <span style="color: #3399cc">+</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">+</span> <span style="color: #cd0000">&quot; from angularBeans !&quot;</span><span style="color: #3399cc">;</span>
@@ -307,7 +307,7 @@ also you can pass as parametre a custom object. let's change the "sayHello" Meth
 3
 4
 5
-6</pre></td><td><pre style="margin: 0; line-height: 125%">	<span style="color: #cccccc">@GET</span>
+6</pre></td><td><pre style="margin: 0; line-height: 125%">	<span style="color: #cccccc">@Get</span>
 	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">sayHello</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">,</span> <span style="color: #cccccc">Language</span> <span style="color: #cccccc">language</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
 		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
 		<span style="color: #cdcd00">return</span> <span style="color: #cd0000">&quot;Hello &quot;</span> <span style="color: #3399cc">+</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">+</span> <span style="color: #cd0000">&quot; from angularBeans, your language is &quot;</span>

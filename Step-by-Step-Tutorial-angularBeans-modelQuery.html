@@ -86,8 +86,8 @@ Consider the following class:
 
 <span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.inject.Inject</span><span style="color: #3399cc">;</span>
 <span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.inject.Named</span><span style="color: #3399cc">;</span>
-<span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.ws.rs.POST</span><span style="color: #3399cc">;</span>
-<span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.ws.rs.PUT</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.http.Post</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.http.Put</span><span style="color: #3399cc">;</span>
 
 <span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.AngularBean</span><span style="color: #3399cc">;</span>
 <span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.util.ModelQuery</span><span style="color: #3399cc">;</span>
@@ -106,14 +106,14 @@ Consider the following class:
 						<span style="color: #cdcd00">new</span> <span style="color: #cccccc">SimpleDateFormat</span><span style="color: #3399cc">(</span><span style="color: #cd0000">&quot;hh:mm:ss&quot;</span><span style="color: #3399cc">).</span><span style="color: #cccccc">format</span><span style="color: #3399cc">(</span><span style="color: #cdcd00">new</span> <span style="color: #cccccc">Date</span><span style="color: #3399cc">()));</span>
 	<span style="color: #3399cc">}</span>
 
-	<span style="color: #cccccc">@PUT</span>
+	<span style="color: #cccccc">@Put</span>
 	<span style="color: #00cd00">public</span> <span style="color: #00cd00">void</span> <span style="color: #cccccc">addTask</span><span style="color: #3399cc">(</span><span style="color: #cccccc">Task</span> <span style="color: #cccccc">task</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
 		<span style="color: #000080">// business logic here</span>
 		<span style="color: #cccccc">model</span><span style="color: #3399cc">.</span><span style="color: #cccccc">pushTo</span><span style="color: #3399cc">(</span><span style="color: #cd0000">&quot;tasks&quot;</span><span style="color: #3399cc">,</span> <span style="color: #cccccc">task</span><span style="color: #3399cc">).</span><span style="color: #cccccc">setProperty</span><span style="color: #3399cc">(</span><span style="color: #cd0000">&quot;taskToAdd&quot;</span><span style="color: #3399cc">,</span> <span style="color: #cd0000">&quot;&quot;</span><span style="color: #3399cc">);</span>
 
 	<span style="color: #3399cc">}</span>
 
-	<span style="color: #cccccc">@POST</span>
+	<span style="color: #cccccc">@Post</span>
 	<span style="color: #00cd00">public</span> <span style="color: #00cd00">void</span> <span style="color: #cccccc">deleteTask</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
 		<span style="color: #000080">// Retrieved from data base by name (for example).</span>
 		<span style="color: #cccccc">Task</span> <span style="color: #cccccc">task</span> <span style="color: #3399cc">=</span> <span style="color: #cdcd00">new</span> <span style="color: #cccccc">Task</span><span style="color: #3399cc">();</span>

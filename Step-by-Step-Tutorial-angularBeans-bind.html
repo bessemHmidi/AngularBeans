@@ -70,7 +70,7 @@
 30
 31</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #cd00cd">package</span> <span style="color: #cccccc">examples</span><span style="color: #3399cc">.</span><span style="color: #cccccc">angularbeans</span><span style="color: #3399cc">;</span>
 
-<span style="color: #cd00cd">import</span> <span style="color: #cccccc">javax.ws.rs.GET</span><span style="color: #3399cc">;</span>
+<span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.Get</span><span style="color: #3399cc">;</span>
 
 <span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.AngularBean</span><span style="color: #3399cc">;</span>
 <span style="color: #cd00cd">import</span> <span style="color: #cccccc">angularBeans.api.NGModel</span><span style="color: #3399cc">;</span>
@@ -81,7 +81,7 @@
 
 	<span style="color: #00cd00">private</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;insert your name here&quot;</span><span style="color: #3399cc">;</span>
 
-	<span style="color: #cccccc">@GET</span>
+	<span style="color: #cccccc">@Get</span>
 	<span style="color: #cccccc">@NGReturn</span><span style="color: #3399cc">(</span><span style="color: #cccccc">model</span> <span style="color: #3399cc">=</span> <span style="color: #cd0000">&quot;message&quot;</span><span style="color: #3399cc">)</span>
 	<span style="color: #00cd00">public</span> <span style="color: #cccccc">String</span> <span style="color: #cccccc">sayHello</span><span style="color: #3399cc">(</span><span style="color: #cccccc">String</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">,</span> <span style="color: #cccccc">Language</span> <span style="color: #cccccc">language</span><span style="color: #3399cc">)</span> <span style="color: #3399cc">{</span>
 		<span style="color: #cdcd00">this</span><span style="color: #3399cc">.</span><span style="color: #cccccc">name</span> <span style="color: #3399cc">=</span> <span style="color: #cccccc">name</span><span style="color: #3399cc">;</span>
