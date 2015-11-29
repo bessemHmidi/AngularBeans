@@ -24,18 +24,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Named;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import angularBeans.api.CORS;
+import angularBeans.api.http.Delete;
+import angularBeans.api.http.Get;
+import angularBeans.api.http.Post;
+import angularBeans.api.http.Put;
 import angularBeans.realtime.RealTime;
 
 /**
@@ -176,17 +174,17 @@ public abstract class CommonUtils {
 	public static boolean isGetter(Method m) {
 		return (
 
-		(
-				(m.getParameterTypes().length == 0) && ((m.getName().startsWith("get"))
+		((m.getParameterTypes().length == 0) && ((m.getName().startsWith("get"))
 				|| (((m.getReturnType().equals(boolean.class)) || (m.getReturnType().equals(Boolean.class)))
-						&& (m.getName().startsWith("is"))))
-						)
+						&& (m.getName().startsWith("is")))))
 				&& (!(
 
-						m.getReturnType().equals(Void.class) ||(m.getReturnType().equals(void.class) )||
-		m.isAnnotationPresent(RealTime.class) || m.isAnnotationPresent(GET.class) || m.isAnnotationPresent(POST.class)
-				|| m.isAnnotationPresent(PUT.class) || m.isAnnotationPresent(DELETE.class)
-				|| m.isAnnotationPresent(OPTIONS.class) || m.isAnnotationPresent(HEAD.class)
+		m.getReturnType().equals(Void.class) || (m.getReturnType().equals(void.class))
+				|| m.isAnnotationPresent(RealTime.class) || m.isAnnotationPresent(Get.class)
+				|| m.isAnnotationPresent(Post.class) || m.isAnnotationPresent(Put.class)
+				|| m.isAnnotationPresent(Delete.class)
+				// || m.isAnnotationPresent(OPTIONS.class) ||
+				// m.isAnnotationPresent(HEAD.class)
 				|| m.isAnnotationPresent(CORS.class)
 
 		))

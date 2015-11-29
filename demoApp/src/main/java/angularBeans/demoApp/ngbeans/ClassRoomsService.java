@@ -5,10 +5,10 @@ import java.util.Set;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.ws.rs.PUT;
 
 import angularBeans.api.AngularBean;
 import angularBeans.api.NGModel;
+import angularBeans.api.http.Put;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.demoApp.domain.ClassRoom;
 import angularBeans.demoApp.domain.NotificationMessage;
@@ -66,7 +66,7 @@ public class ClassRoomsService {
 
 	}
 
-	@PUT
+	@Put
 	public String join(ClassRoom classRoom) {
 
 		// singleClassRoomsCtrl.setActualClassRoom(classRoom);
@@ -75,7 +75,7 @@ public class ClassRoomsService {
 
 		if (!virtualClassService.getClassRoomsMap().get(classRoom)
 				.contains(user))
-			
+
 		{
 			virtualClassService.getClassRoomsMap().get(classRoom).add(user);
 
@@ -112,8 +112,7 @@ public class ClassRoomsService {
 		virtualClassService.getClassRoomsMap().put(classRoom,
 				new HashSet<User>());
 
-		client.broadcast(modelQuery.pushTo("classRooms", classRoom),
-				false);
+		client.broadcast(modelQuery.pushTo("classRooms", classRoom), false);
 
 	}
 

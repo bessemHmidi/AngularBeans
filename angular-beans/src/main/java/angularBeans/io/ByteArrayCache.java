@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
@@ -41,7 +40,6 @@ public class ByteArrayCache implements Serializable {
 	private Map<String, Call> cache = new HashMap<String, Call>();
 
 	private Map<String, byte[]> tempCache = new HashMap<String, byte[]>();
-
 
 	public Map<String, Call> getCache() {
 		return cache;

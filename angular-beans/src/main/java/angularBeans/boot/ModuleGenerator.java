@@ -30,16 +30,15 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-
 import angularBeans.api.CORS;
 import angularBeans.api.Eval;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
+import angularBeans.api.http.Delete;
+import angularBeans.api.http.Get;
+import angularBeans.api.http.Post;
+import angularBeans.api.http.Put;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
 import angularBeans.events.Callback;
@@ -371,19 +370,19 @@ public class ModuleGenerator implements Serializable {
 					corsEnabled = true;
 				}
 
-				if (m.isAnnotationPresent(GET.class)) {
+				if (m.isAnnotationPresent(Get.class)) {
 					httpMethod = "get";
 				}
 
-				if (m.isAnnotationPresent(POST.class)) {
+				if (m.isAnnotationPresent(Post.class)) {
 					httpMethod = "post";
 				}
 
-				if (m.isAnnotationPresent(DELETE.class)) {
+				if (m.isAnnotationPresent(Delete.class)) {
 					httpMethod = "delete_to_replace_by_just_delete";
 				}
 
-				if (m.isAnnotationPresent(PUT.class)) {
+				if (m.isAnnotationPresent(Put.class)) {
 					httpMethod = "put";
 				}
 

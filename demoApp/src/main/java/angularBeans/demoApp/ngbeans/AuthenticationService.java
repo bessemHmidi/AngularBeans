@@ -8,13 +8,13 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.ws.rs.PUT;
 
 import angularBeans.api.AngularBean;
 import angularBeans.api.NGModel;
 import angularBeans.api.NGPostConstruct;
 import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
+import angularBeans.api.http.Put;
 import angularBeans.context.NGSessionScoped;
 import angularBeans.demoApp.domain.NotificationMessage;
 import angularBeans.demoApp.domain.User;
@@ -28,7 +28,6 @@ import angularBeans.log.NGLogger.Level;
 import angularBeans.realtime.RealTime;
 import angularBeans.realtime.RealTimeClient;
 import angularBeans.util.ModelQuery;
-import angularBeans.util.ModelQueryFactory;
 import angularBeans.util.RootScope;
 
 @AngularBean
@@ -37,8 +36,8 @@ public class AuthenticationService implements Serializable {
 
 	@Inject
 	@AngularBean
-	RemoteEventBus  remoteEventBus;
-	
+	RemoteEventBus remoteEventBus;
+
 	@Inject
 	VirtualClassService virtualClassService;
 
@@ -48,8 +47,9 @@ public class AuthenticationService implements Serializable {
 	@Inject
 	ModelQuery modelQuery;
 
-	@Inject RootScope rootScope;
-	
+	@Inject
+	RootScope rootScope;
+
 	@Inject
 	RealTimeClient client;
 
@@ -74,7 +74,7 @@ public class AuthenticationService implements Serializable {
 
 	}
 
-	@PUT
+	@Put
 	public void newAccount(User user) {
 		virtualClassService.createAccount(user);
 		user.setPhoto(new LobWrapper(avatar.getData(), user));
@@ -92,20 +92,17 @@ public class AuthenticationService implements Serializable {
 
 		avatar = new LobWrapper(uploads.get(0).getAsByteArray(), this);
 
-		client.publish(modelQuery.setProperty(
-				"avatar", avatar));
+		client.publish(modelQuery.setProperty("avatar", avatar));
 
 	}
 
-	
-	
 	@RealTime
 	@NGSubmit(backEndModels = "*")
 	@NGReturn(model = "users", updates = "*")
 	public String authenticate() {
 
 		remoteEventBus.subscribe("notificationChannel");
-		
+
 		User user = new User(login, password);
 
 		if (virtualClassService.getUsers().contains(user)) {
@@ -113,11 +110,10 @@ public class AuthenticationService implements Serializable {
 			connectedUser = virtualClassService.getUsers().get(
 					virtualClassService.getUsers().indexOf(user));
 
-			rootScope.setProperty("connectedUser",
-					connectedUser);
+			rootScope.setProperty("connectedUser", connectedUser);
 
 			rootScope.setProperty("GRANT_LOGIN", true);
-			
+
 			login = "";
 			password = "";
 
@@ -133,8 +129,7 @@ public class AuthenticationService implements Serializable {
 
 		notificationBus.fire(new NotificationMessage("danger", "SECURITY",
 				"UNAUTHORIZED !!", false));
-		modelQuery.setProperty(
-				"message", "incorrect login or password !!");
+		modelQuery.setProperty("message", "incorrect login or password !!");
 
 		return "/";
 

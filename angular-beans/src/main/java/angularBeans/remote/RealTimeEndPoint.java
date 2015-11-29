@@ -42,9 +42,7 @@ import angularBeans.events.RealTimeSessionCloseEvent;
 import angularBeans.events.RealTimeSessionReadyEvent;
 import angularBeans.realtime.AngularBeansServletContextListener;
 import angularBeans.realtime.GlobalConnectionHolder;
-import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.CommonUtils;
-
 
 /**
  * The RealTimeEndPoint servlet is the realtime sockjs protocol endpoint
@@ -123,23 +121,19 @@ public class RealTimeEndPoint extends SockJsServlet {
 					@Override
 					public void handle(String message) {
 
-						JsonObject jObj = CommonUtils.parse(message)
-								.getAsJsonObject();
+						JsonObject jObj = CommonUtils.parse(message).getAsJsonObject();
 						String UID = null;
 
 						if (jObj.get("session") == null) {
 							UID = SessionMapper.getHTTPSessionID(connection.id);
 						} else {
 							UID = jObj.get("session").getAsString();
-							SessionMapper.getSessionsMap().put(UID,
-									new HashSet<String>());
+							SessionMapper.getSessionsMap().put(UID, new HashSet<String>());
 
 						}
-						SessionMapper.getSessionsMap().get(UID)
-								.add(connection.id);
+						SessionMapper.getSessionsMap().get(UID).add(connection.id);
 
-						RealTimeDataReceivedEvent ev = new RealTimeDataReceivedEvent(
-								connection, jObj);
+						RealTimeDataReceivedEvent ev = new RealTimeDataReceivedEvent(connection, jObj);
 
 						ev.setConnection(connection);
 						ev.setSessionId(UID);
@@ -167,14 +161,13 @@ public class RealTimeEndPoint extends SockJsServlet {
 					@Override
 					public void handle() {
 
-						getServletContext().log(
-								"Realtime client disconnected..");
+						getServletContext().log("Realtime client disconnected..");
 					}
 				});
 			}
 		});
-		
-		server.options.websocket=true;
+
+		server.options.websocket = true;
 
 		setServer(server);
 

@@ -53,6 +53,7 @@ public class GlobalConnectionHolder {
 			
 			try {
 				connection.destroy();
+				
 			} catch (Exception e) {
 			
 			}

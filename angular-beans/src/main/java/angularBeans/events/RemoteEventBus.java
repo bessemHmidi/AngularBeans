@@ -18,12 +18,9 @@
 package angularBeans.events;
 
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.ws.rs.POST;
 
 import angularBeans.api.AngularBean;
 import angularBeans.api.CORS;
@@ -57,19 +54,15 @@ public class RemoteEventBus {
 	@Inject
 	BroadcastManager broadcastManager;
 
-	
-	@Inject RealTimeClient client;
-	
+	@Inject
+	RealTimeClient client;
+
 	@CORS
 	public void subscribe(String channel) {
 
 		broadcastManager.subscribe(session.getSessionId(), channel);
 
-		
 	}
-	
-	
-
 
 	@CORS
 	public void unsubscribe(String channel) {
@@ -84,21 +77,18 @@ public class RemoteEventBus {
 		ngEventBus.fire(eventObject);
 
 	}
-	
+
 	@CORS
-	public void broadcast(String channel,Map<String,Object> data,boolean withoutMe){
-		
-		RealTimeMessage realTimeMessage=new RealTimeMessage();
-		
-		for(Map.Entry<String, Object> entry:data.entrySet()){	
-		realTimeMessage.set(entry.getKey(), entry.getValue());
-		}		
-		
+	public void broadcast(String channel, Map<String, Object> data, boolean withoutMe) {
+
+		RealTimeMessage realTimeMessage = new RealTimeMessage();
+
+		for (Map.Entry<String, Object> entry : data.entrySet()) {
+			realTimeMessage.set(entry.getKey(), entry.getValue());
+		}
+
 		client.broadcast(channel, realTimeMessage, withoutMe);
-		
+
 	}
-	
-	
-	
 
 }

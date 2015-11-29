@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import angularBeans.context.SessionMapper;
 import angularBeans.realtime.GlobalConnectionHolder;
 
 /**
@@ -54,19 +53,15 @@ public class BootServlet extends HttpServlet {
 
 	@Inject
 	GlobalConnectionHolder globalConnectionHolder;
-	
+
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		long startTime = System.currentTimeMillis();
 
-		
 		globalConnectionHolder.removeConnection(req.getSession().getId());
-	
-		
-		generator.setContextPath(req.getScheme() + "://" + req.getServerName()
-				+ ":" + req.getServerPort()
+
+		generator.setContextPath(req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
 				+ req.getServletContext().getContextPath() + "/");
 
 		resp.setContentType("text/javascript");
@@ -75,8 +70,7 @@ public class BootServlet extends HttpServlet {
 
 		long endTime = System.currentTimeMillis();
 
-		log.info("Module generated successfully in " + (endTime - startTime)
-				+ " ms");
+		log.info("Module generated successfully in " + (endTime - startTime) + " ms");
 
 		resp.getWriter().write(stringBuffer.toString());
 

@@ -20,10 +20,12 @@ package angularBeans.remote;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -49,7 +51,7 @@ import angularBeans.util.CommonUtils;
  *
  */
 @SuppressWarnings("serial")
-@WebServlet(asyncSupported = false, urlPatterns = "/http/invoke/*")
+@WebServlet(asyncSupported = true, urlPatterns = "/http/invoke/*")
 public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 
 	@Inject
@@ -71,25 +73,25 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.getWriter().write(process(req, resp).toString());
+		process(req, resp);
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.getWriter().write(process(req, resp).toString());
+		process(req, resp);
 	}
 
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.getWriter().write(process(req, resp).toString());
+		process(req, resp);
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.getWriter().write(process(req, resp).toString());
+		process(req, resp);
 	}
 
 	
@@ -99,8 +101,10 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 		process(request, response);
 		
 	}
-	private Object process(HttpServletRequest request, HttpServletResponse resp) {
+	private void process(HttpServletRequest request, HttpServletResponse resp) {
 
+		AsyncContext asyncContext=request.startAsync();
+		
 		if(request.getRequestURL().toString().endsWith("/CORS")){
 			resp.addHeader("Access-Control-Allow-Origin", "*");
 			resp.addHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
@@ -110,7 +114,7 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 		 // Just ACCEPT and REPLY OK if OPTIONS
 	    if ( request.getMethod().equals("OPTIONS") ) {
 	        resp.setStatus(HttpServletResponse.SC_OK);
-	      return null;
+
 	    }
 		
 		String fullPath = request.getRequestURI();
@@ -156,7 +160,15 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 
 
 
-		return util.getJson(result);
+		try {
+			PrintWriter writer=asyncContext.getResponse().getWriter();
+			writer.write( util.getJson(result));
+			writer.flush();
+			asyncContext.complete();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
