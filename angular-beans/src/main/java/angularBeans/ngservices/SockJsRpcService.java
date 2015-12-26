@@ -84,7 +84,7 @@ public class SockJsRpcService implements NGService {
 		result += "\nvar callbacks={};";
 		result += "\nvar caller='';";
 		result += "\nws.onopen = function (evt)";
-		result += "\n{ $log.info('>> CONNECTING...');";
+		result += "\n{ $log.log('%c>> CONNECTING...','color:blue;font-weight: bold');";
 
 		result += "\nvar message = {";
 		result += "\n'reqId':0,";
@@ -152,7 +152,7 @@ public class SockJsRpcService implements NGService {
 		result += "\n};";
 		result += "\nreturn rt.sendAsync(message);";
 	
-		result += "\n}; rt.onReadyState(function(){$log.info('>> REALTIME SESSION READY...');}) ;return rt; };});";
+		result += "\n}; rt.onReadyState(function(){$log.log('%c>> REALTIME SESSION READY...','color:green;font-weight: bold');}) ;return rt; };});";
 		return result;
 	}
 
