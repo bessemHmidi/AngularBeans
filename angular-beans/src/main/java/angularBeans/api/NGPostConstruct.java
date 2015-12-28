@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 * 
 
 * <strong>method annotated with @NGPostConstruct must
-* be : public void and with no args
+* be a public void and with no args</strong>
 * 
 * <p>
 * Attention! when used with RequestScoped Bean : this will trigger the creation of 

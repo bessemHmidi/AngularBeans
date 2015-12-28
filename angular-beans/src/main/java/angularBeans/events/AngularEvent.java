@@ -34,7 +34,7 @@ import javax.enterprise.inject.Stereotype;
 import javax.inject.Qualifier;
 /**
  * CDI qualifier to qualify a CDI event triggered from
- * an angularJS event --> CDI event conversion.
+ * an angularJS event to CDI event conversion.
  * @author Bessem Hmidi
  */
 @Target({ TYPE, METHOD, FIELD, PARAMETER })

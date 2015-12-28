@@ -39,9 +39,9 @@ import javax.inject.Qualifier;
 * this stereotype define by default a RequestScoped CDI Bean
 * <p>
 * compatibles scopes :
-* <li> javax.enterprise.context.RequestScoped
-* <li> javax.enterprise.context.ApplicationScoped
-* <li> javax.enterprise.context.NGSessionScoped
+* <br> javax.enterprise.context.RequestScoped
+* <br> javax.enterprise.context.ApplicationScoped
+* <br> javax.enterprise.context.NGSessionScoped
 * 
 * @author bessem hmidi
 **/ 

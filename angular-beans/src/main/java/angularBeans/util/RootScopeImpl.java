@@ -28,7 +28,7 @@ import javax.enterprise.inject.Alternative;
 /**
  * 
  * @author bessem an object representing the $rootScope when updated this give a
- *         server-> client way update only
+ *         server to client way update only
  */
 
 @SuppressWarnings("serial")

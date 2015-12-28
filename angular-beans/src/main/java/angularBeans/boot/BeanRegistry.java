@@ -17,9 +17,9 @@ import angularBeans.util.NGBean;
  * (pre generated and compressed js)
  *<p>
  *it will store specific CDI beans definitions: 
- *@AngularBeans (as wrapped NGBean)
+ *'@AngularBeans' (as wrapped NGBean)
  *, angularBeans built-in angularJs services (NGService)
- *, the @NGApp definition
+ *, the '@NGApp' definition
  *<p>
  *combined with specific beans dependent javascript part's (related to RPC methods call)
  *will produce the final "angular-beans.js" script.

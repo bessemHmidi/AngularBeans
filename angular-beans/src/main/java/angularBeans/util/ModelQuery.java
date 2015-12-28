@@ -64,7 +64,7 @@ public interface ModelQuery {
 	 * @param value
 	 *            : the value to push to the array
 	 * @return the current ModelQuery object to set another query.
-	 * @key : represent the name of the property used to an equal() like test on
+	 * 'key' : represent the name of the property used to an equal() like test on
 	 *      the JS side to remove a specific object from the array :
 	 *      service.object.keyName.value===objectSentonTheRequest.keyName.
 	 */

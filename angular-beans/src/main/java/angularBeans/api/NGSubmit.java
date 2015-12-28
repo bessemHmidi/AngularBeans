@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 * that all the @NGModel annotated properties
 * of the back end bean will be updated.
 * <p>
-* <strong>work only with @NGModel annotated properties
+* <strong>work only with @NGModel annotated properties</strong>
 * @author bessem hmidi
 **/
 

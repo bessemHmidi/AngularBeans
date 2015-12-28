@@ -38,7 +38,7 @@ import javax.inject.Scope;
 * webSocket session   
 * <strong>can be an @AngularBean or just a
 * CDI NGSessionScoped component to use 
-* (without generating the angularJS service)
+* (without generating the angularJS service)</strong>
 **/
 
 

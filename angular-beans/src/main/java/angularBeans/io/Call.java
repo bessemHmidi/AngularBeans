@@ -22,8 +22,8 @@ import java.lang.reflect.Method;
  * 
  * Wrapper for a method invocation
  * stored in a cache 
- * --> ByteArrayCache <p>
- * --> FileUploadHandler<p>
+ * - ByteArrayCache <p>
+ * - FileUploadHandler<p>
  * invoked when the DataServlet is requested.
  * that help to get a binary content in a lazy loading 
  * manner.

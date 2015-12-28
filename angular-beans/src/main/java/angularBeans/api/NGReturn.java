@@ -27,7 +27,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 /**  
 * Specify main return mapped name
-* and models to update (back->front)
+* and models to update (back to front)
 * 
 * <p>
 * usage: { @NGReturn(model="",updates="")}
@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
 * back ends models at the end of the method call
 * (with ' updates={"*"} ' all models will be updated)
 * 
-* <strong>work only with @NGModel annotated properties
+* <strong>work only with @NGModel annotated properties</strong>
 * 
 * @author bessem hmidi
 **/

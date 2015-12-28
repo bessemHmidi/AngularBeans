@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 *  names (ofc they need to be also added as 
 * js dependencies).
 * <strong>used only with @NGAPP annotation
-* and kept for possible future extensions
+* and kept for possible future extensions</strong>
 * 
 * @author bessem hmidi
 **/
