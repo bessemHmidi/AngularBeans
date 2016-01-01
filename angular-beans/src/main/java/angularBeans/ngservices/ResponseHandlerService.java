@@ -57,7 +57,7 @@ public class ResponseHandlerService implements NGService {
 		result += ("\n}");
 		result += ("}");
 
-		result += ("\nif((key==='add')||(key==='rm')||(key==='rm-k')){");
+		result += ("\nif((key==='zadd')||(key==='rm')||(key==='rm-k')){");
 
 		result += "var equalsKey='--';";
 
@@ -83,7 +83,7 @@ public class ResponseHandlerService implements NGService {
 		result += "if(tab[value]==='equalsKey:NAN'){continue;}";
 
 		result += "var index=angularBeans.isIn(caller[modelkey],tab[value]);";
-		result += "if(index>-1){caller[modelkey].splice(index, 1);break;}";
+		result += "if(index>-1){caller[modelkey].splice(index, 1);continue;}";
 		result += "}"
 
 		+ "else{";
@@ -96,7 +96,7 @@ public class ResponseHandlerService implements NGService {
 		result += "caller[modelkey] = $filter('filter')(caller[modelkey], criteria);";
 		result += "}};";
 
-		result += "if(key==='add'){ ";
+		result += "if(key==='zadd'){ ";
 		result += "\n var found=false; ";
 
 		result += "if(angularBeans.isIn(caller[modelkey],tab[value])>-1){ found=true;}";
@@ -113,12 +113,12 @@ public class ResponseHandlerService implements NGService {
 
 		// --------------------------------------------------------------------
 
-		result += ("if(!(key in ['rootScope','add','mainReturn','rm'])){");
+		result += ("if(!(key in ['rootScope','zadd','mainReturn','rm','rm-k'])){");
 
 		result += ("\ncaller[key]=msg[key];");
 
 		result += ("\n  }");
-
+ 
 		result += "if ((key==='mainReturn')&&(msg[key])){"
 				+ "if(msg[key].hasOwnProperty('boundTo')){"
 				+ "mainReturn=msg[msg[key].boundTo];"

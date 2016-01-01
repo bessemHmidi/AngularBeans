@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.github.bessemHmidi</groupId>
             <artifactId>angularBeans</artifactId>
-            <version>1.0.2-RC2</version>
+            <version>1.0.2-RELEASE</version>
         </dependency>
     </dependencies>
 

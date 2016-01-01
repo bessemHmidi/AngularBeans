@@ -55,11 +55,11 @@ public class ModelQueryImpl implements ModelQuery ,Serializable{
 	public ModelQuery pushTo(String objectName, Object value) {
 
 		Map<String, Set<Object>> params = null;
-		if (!data.containsKey("add")) {
-			data.put("add", new HashMap<String, Set<Object>>());
+		if (!data.containsKey("zadd")) {
+			data.put("zadd", new HashMap<String, Set<Object>>());
 		}
 
-		params = (Map<String, Set<Object>>) data.get("add");
+		params = (Map<String, Set<Object>>) data.get("zadd");
 
 		if (!params.containsKey(objectName)) {
 			params.put(objectName, new HashSet<Object>());
