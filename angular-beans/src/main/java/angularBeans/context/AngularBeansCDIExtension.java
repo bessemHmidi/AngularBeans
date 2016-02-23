@@ -19,14 +19,17 @@
 
 package angularBeans.context;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.enterprise.inject.spi.WithAnnotations;
 
 import angularBeans.api.AngularBean;
 import angularBeans.api.NGApp;
@@ -35,78 +38,72 @@ import angularBeans.ngservices.NGExtension;
 import angularBeans.ngservices.NGService;
 
 /**
- * AngularBeans CDI Extension implementation
- * to observe application deployment and components scan 
-@author Bessem Hmidi
+ * <p>
+ * Scans and registers all components annotated with @AngluarBeans, @NGExtension and @NGApp
+ * during application deployment.
+ * </p>
+ * 
+ * @see javax.enterprise.inject.spi.Extension
+ * @see <a href="https://docs.jboss.org/weld/reference/latest/en-US/html/extend.html">https://docs.jboss.org/weld/reference/latest/en-US/html/extend.html</a>
+ * @author Bessem Hmidi
+ * @author Aymen Naili
 */
 public class AngularBeansCDIExtension implements Extension {
 
 	/**
-	 * Observe the ProcessAnnotatedType event and register scanned angularBeans specific
-	 * CDI beans (applications (ng module), extensions and angularBeans beans) to the
-	 * BeanRegistry that will be used in the angularBeans script (js) generation
+	 * Observes the ProcessAnnotatedType event and register scanned angularBeans specific
+	 * CDI beans to the BeanRegistry.
+	 * 
+	 * @see BeanRegistry
 	 * @param processAnnotatedType
 	 */
-	
 	public <T> void processAnnotatedType(
-			@Observes ProcessAnnotatedType<T> processAnnotatedType) {
+			@Observes
+			@WithAnnotations(value = { AngularBean.class, NGExtension.class, NGApp.class })
+			ProcessAnnotatedType<T> processAnnotatedType) {
 
-		AnnotatedType<T> annotatedType = processAnnotatedType
-				.getAnnotatedType();
+		AnnotatedType<T> annotatedType = processAnnotatedType.getAnnotatedType();
+		Class<T> typeClass = annotatedType.getJavaClass();
+		
+		Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Registering "+annotatedType.getJavaClass().getName());
+		
+		//Handle @AngluarBeans annotated components
+		if (annotatedType.isAnnotationPresent(AngularBean.class)){
+			BeanRegistry.getInstance().registerBean(typeClass);
+		};
 
-		if (annotatedType.isAnnotationPresent(AngularBean.class)) {
-			{
-				BeanRegistry.getInstance().registerBean(
-						annotatedType.getJavaClass());
+		//Handle @NGExtension annotated components
+		if (annotatedType.isAnnotationPresent(NGExtension.class)){
+			try {
+				BeanRegistry.getInstance().registerExtention(
+						(NGService) annotatedType.getJavaClass()
+								.newInstance());
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
 			}
-			;
+		};
 
-		}
-
-		if (annotatedType.isAnnotationPresent(NGExtension.class)) {
-			{
-				try {
-
-					BeanRegistry.getInstance().registerExtention(
-							(NGService) annotatedType.getJavaClass()
-									.newInstance());
-				} catch (InstantiationException | IllegalAccessException e) {
-
-					e.printStackTrace();
-				}
-			}
-			;
-
-		}
-
+		//Handle @NGApp annotated components
 		if (annotatedType.isAnnotationPresent(NGApp.class)) {
-
-			BeanRegistry.getInstance()
-					.registerApp(annotatedType.getJavaClass());
-
+			BeanRegistry.getInstance().registerApp(typeClass);
 		}
 
 	}
 
-//	public void addScopes(@Observes final BeforeBeanDiscovery event) {
-//
-//		 event.addScope(NGSessionScoped.class, false, false);
-//	}
-
 	/**
-	 * auto called method that observe the beans discovery at deployment, register
+	 * <p>
+	 * Invoked by the container once all the annotated types has bean discovered, then registers
 	 * the NGSessionScopeContext (and the NGSessionScoped custom CDI scope)
-	 * @param event
-	 * @param manager
+	 * </p>
 	 * 
+	 * @see javax.enterprise.inject.spi.AfterBeanDiscovery
+	 * @see javax.enterprise.inject.spi.BeanManager
+	 * @see angularBeans.context.NGSessionScoped
+	 * @see angularBeans.context.NGSessionScopeContext
 	 */
-	public void registerContext(@Observes final AfterBeanDiscovery event,
-			BeanManager manager) {
-
+	public void registerContext(@Observes final AfterBeanDiscovery event, BeanManager manager) {
 		Context context = NGSessionScopeContext.getINSTANCE();
-		//
 		event.addContext(context);
-
 	}
 
 }

@@ -11,7 +11,6 @@ import angularBeans.util.NGBean;
  * <p>-AngularBeansServletContextListenerAnnotated
  * <p>-ModuleGenerator
  * <p>-AngularBeansCDIExtention
- * <p>
  * The BeanRegistry is used to store CDI beans info detected at deployment
  * time to boost javascript generation performances later on the ModuleGenerator
  * (pre generated and compressed js)
@@ -24,36 +23,39 @@ import angularBeans.util.NGBean;
  *combined with specific beans dependent javascript part's (related to RPC methods call)
  *will produce the final "angular-beans.js" script.
  * @author bessem hmidi
- *
  */
-
-
 public class BeanRegistry {
 
-	private static BeanRegistry instance = new BeanRegistry();
-
-	private Set<NGBean> angularBeans = new HashSet<>();
-
-	private Set<NGService> extentions = new HashSet<>();
-
+	private static BeanRegistry instance;
+	
+	private Set<NGBean> angularBeans;
+	private Set<NGService> extentions;
+	
 	private Class<? extends Object> appClass;
 
-	/**
-	 * AngularBeansCDIExtention wi
-	 * @param appClass
-	 */
-	public void registerApp(Class appClass) {
+	public static synchronized BeanRegistry getInstance() {
+		if(instance == null) instance = new BeanRegistry();
+		return instance;
+	}
+	
+	private BeanRegistry(){
+		if(angularBeans == null) angularBeans = new HashSet<>();
+		if(extentions == null) extentions = new HashSet<>();
+	}
+	
+	public void registerApp(Class<? extends Object> appClass) {
 		this.appClass = appClass;
-
 	}
 
+	/**
+	 * Registers the given @AngularBean for script generation. 
+	 * @param targetClass
+	 */
 	public void registerBean(Class targetClass) {
 		angularBeans.add(new NGBean(targetClass));
-
 	}
 
 	public void registerExtention(NGService extention) {
-
 		extentions.add(extention);
 	}
 
@@ -61,18 +63,11 @@ public class BeanRegistry {
 		return angularBeans;
 	}
 
-	public static synchronized BeanRegistry getInstance() {
-
-		return instance;
-	}
-
 	public Set<NGService> getExtentions() {
-		
 		return extentions;
 	}
 
 	public Class<? extends Object> getAppClass() {
-		
 		return appClass;
 	}
 
