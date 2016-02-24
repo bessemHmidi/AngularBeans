@@ -70,14 +70,15 @@ public class AngularBeansCDIExtension implements Extension {
 		//Handle @AngluarBeans annotated components
 		if (annotatedType.isAnnotationPresent(AngularBean.class)){
 			BeanRegistry.getInstance().registerBean(typeClass);
+			return;
 		};
 
 		//Handle @NGExtension annotated components
 		if (annotatedType.isAnnotationPresent(NGExtension.class)){
 			try {
 				BeanRegistry.getInstance().registerExtention(
-						(NGService) annotatedType.getJavaClass()
-								.newInstance());
+						(NGService) annotatedType.getJavaClass().newInstance());
+				return;
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -86,6 +87,7 @@ public class AngularBeansCDIExtension implements Extension {
 		//Handle @NGApp annotated components
 		if (annotatedType.isAnnotationPresent(NGApp.class)) {
 			BeanRegistry.getInstance().registerApp(typeClass);
+			return;
 		}
 
 	}

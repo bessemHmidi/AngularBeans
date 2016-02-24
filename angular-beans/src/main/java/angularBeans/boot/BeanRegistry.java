@@ -7,22 +7,18 @@ import angularBeans.ngservices.NGService;
 import angularBeans.util.NGBean;
 
 /**
- * used by:
- * <p>-AngularBeansServletContextListenerAnnotated
- * <p>-ModuleGenerator
- * <p>-AngularBeansCDIExtention
- * The BeanRegistry is used to store CDI beans info detected at deployment
- * time to boost javascript generation performances later on the ModuleGenerator
- * (pre generated and compressed js)
- *<p>
- *it will store specific CDI beans definitions: 
- *'@AngularBeans' (as wrapped NGBean)
- *, angularBeans built-in angularJs services (NGService)
- *, the '@NGApp' definition
- *<p>
- *combined with specific beans dependent javascript part's (related to RPC methods call)
- *will produce the final "angular-beans.js" script.
- * @author bessem hmidi
+ * <p>
+ * A singleton that holds all the detected components (annotated by @AngularBean, @NGApp, @NGExtension) at deployment time
+ * for javascript generation.
+ * </p>
+ *
+ * @author Bessem Hmidi
+ * @author Aymen Naili
+ * @see angularBeans.context.AngularBeansCDIExtension
+ * @see angularBeans.boot.ModuleGenerator
+ * @see angularBeans.api.AngularBean
+ * @see angularBeans.api.NGApp
+ * @see angularBeans.ngservices.NGExtension
  */
 public class BeanRegistry {
 
@@ -34,7 +30,8 @@ public class BeanRegistry {
 	private Class<? extends Object> appClass;
 
 	public static synchronized BeanRegistry getInstance() {
-		if(instance == null) instance = new BeanRegistry();
+		if(instance == null)
+			instance = new BeanRegistry();
 		return instance;
 	}
 	

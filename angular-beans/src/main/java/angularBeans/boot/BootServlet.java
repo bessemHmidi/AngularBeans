@@ -31,19 +31,15 @@ import javax.servlet.http.HttpServletResponse;
 import angularBeans.realtime.GlobalConnectionHolder;
 
 /**
- * This Servlet will return the "angularBeans" angularJS module as generated
- * javascript via the ModuleGenerator
+ * Returns a generated script for resource named "angularBeans.js". Using the ModuleGenerator,
+ * the script will be lazily generated when accessing this resource. 
  * 
  * @author Bessem Hmidi
+ * @author Aymen Naili
  */
 
 @WebServlet(urlPatterns = "/angular-beans.js")
 public class BootServlet extends HttpServlet {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7758329463070440974L;
 
 	@Inject
 	ModuleGenerator generator;
@@ -57,24 +53,27 @@ public class BootServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		long startTime = System.currentTimeMillis();
-
 		globalConnectionHolder.removeConnection(req.getSession().getId());
-
-		generator.setContextPath(req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
-				+ req.getServletContext().getContextPath() + "/");
-
-		resp.setContentType("text/javascript");
+		
+		StringBuffer contextPathBuffer = new StringBuffer(req.getScheme());
 		StringBuffer stringBuffer = new StringBuffer();
+		
+		contextPathBuffer.append("://");
+		contextPathBuffer.append(req.getServerName());
+		contextPathBuffer.append(":");
+		contextPathBuffer.append(req.getServerPort());
+		contextPathBuffer.append(req.getServletContext().getContextPath());
+		contextPathBuffer.append("/");
+		
+		generator.setContextPath(contextPathBuffer.toString());
 		generator.getScript(stringBuffer);
-
-		long endTime = System.currentTimeMillis();
-
-		log.info("Module generated successfully in " + (endTime - startTime) + " ms");
-
+		
+		resp.setContentType("text/javascript");
 		resp.getWriter().write(stringBuffer.toString());
-
 		resp.getWriter().flush();
 	}
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7758329463070440974L;
 }
