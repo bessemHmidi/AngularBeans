@@ -184,8 +184,7 @@ public class BeanValidationProcessor implements Serializable {
 		stringBuilder.append("\nelem.append($compile(old)(scope));");
 		stringBuilder.append("\n;};}};});");
 
-		StaticJsCache.VALIDATION_SCRIPT.append(ClosureCompiler.getINSTANCE()
-				.getCompressedJavaScript(stringBuilder.toString()));
+		StaticJsCache.VALIDATION_SCRIPT.append(new ClosureCompiler().getCompressedJavaScript(stringBuilder.toString()));
 	}
 
 }
