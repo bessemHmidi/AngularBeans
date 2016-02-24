@@ -132,7 +132,7 @@ public class ModuleGenerator implements Serializable {
 		jsBuffer.append(StaticJsCache.CORE_SCRIPT);
 
 		StringBuffer beansBuffer = new StringBuffer();
-		for (NGBean mb : BeanRegistry.getInstance().getAngularBeans()) {
+		for (NGBean mb : BeanRegistry.INSTANCE.getAngularBeans()) {
 			beansBuffer.append(generateBean(mb));
 		}
 
