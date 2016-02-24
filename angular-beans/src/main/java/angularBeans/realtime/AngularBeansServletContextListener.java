@@ -207,7 +207,7 @@ public class AngularBeansServletContextListener implements
 		String appName = null;
 		Class<? extends Object> appClass = null;
 
-		appClass = BeanRegistry.getInstance().getAppClass();
+		appClass = BeanRegistry.INSTANCE.getAppClass();
 		if (appClass.isAnnotationPresent(Named.class)) {
 			appName = appClass.getAnnotation(Named.class).value();
 		}
@@ -247,7 +247,7 @@ public class AngularBeansServletContextListener implements
 
 	private void generateExtentions() {
 		StringBuffer buffer = new StringBuffer();
-		for (NGService extention : BeanRegistry.getInstance().getExtentions()) {
+		for (NGService extention : BeanRegistry.INSTANCE.getExtentions()) {
 
 			Method m;
 			try {

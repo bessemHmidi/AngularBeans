@@ -24,20 +24,15 @@ import angularBeans.util.NGBean;
  *will produce the final "angular-beans.js" script.
  * @author bessem hmidi
  */
-public class BeanRegistry {
+public enum BeanRegistry {
 
-	private static BeanRegistry instance;
+	INSTANCE;
 	
 	private Set<NGBean> angularBeans;
 	private Set<NGService> extentions;
 	
 	private Class<? extends Object> appClass;
 
-	public static synchronized BeanRegistry getInstance() {
-		if(instance == null) instance = new BeanRegistry();
-		return instance;
-	}
-	
 	private BeanRegistry(){
 		if(angularBeans == null) angularBeans = new HashSet<>();
 		if(extentions == null) extentions = new HashSet<>();

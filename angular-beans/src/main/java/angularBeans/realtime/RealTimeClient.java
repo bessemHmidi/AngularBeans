@@ -96,7 +96,7 @@ public class RealTimeClient implements Serializable {
 		connectionHolder.getAllConnections().add(event.getConnection());
 		sessions.add(event.getConnection());
 
-		Set<NGBean> angularBeans = BeanRegistry.getInstance().getAngularBeans();
+		Set<NGBean> angularBeans = BeanRegistry.INSTANCE.getAngularBeans();
 
 		for (NGBean bean : angularBeans) {
 
