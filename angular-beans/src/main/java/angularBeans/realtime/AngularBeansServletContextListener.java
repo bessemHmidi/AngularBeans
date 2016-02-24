@@ -61,17 +61,15 @@ import angularBeans.util.StaticJsCache;
  */
 
 @WebListener
-public class AngularBeansServletContextListener implements
-		ServletContextListener {
+public class AngularBeansServletContextListener implements ServletContextListener {
 
 	public static SockJsServer sockJsServer;
-
-	ClosureCompiler compiler = ClosureCompiler.getINSTANCE();
-
+	private static final Pattern SESSION_PATTERN = Pattern.compile(".*/.+/(.+)/websocket$");
+	
+	ClosureCompiler compiler = new ClosureCompiler();
 	ServletContext context;
 
-	private static final Pattern SESSION_PATTERN = Pattern
-			.compile(".*/.+/(.+)/websocket$");
+	
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {

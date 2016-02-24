@@ -32,66 +32,43 @@ import com.google.javascript.jscomp.VariableRenamingPolicy;
  * generated angular-beans.js script
  * 
  * @author Bassem Hmidi
+ * @author Aymen Naili
  *
  */
-public class ClosureCompiler {
+public final class ClosureCompiler {
 
-	Logger logger = Logger.getLogger(ClosureCompiler.class.getSimpleName());
+	
+	private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
+	private CompilerOptions options;
+	
+	private static final Object lock = new Object();
 
-	CompilerOptions options;
-
-	private ClosureCompiler() {
-
-		options = new CompilerOptions();
-
-		CompilationLevel.WHITESPACE_ONLY.setOptionsForCompilationLevel(options);
-
-		// options.inlineConstantVars=true;
-		// options.aggressiveVarCheck=CheckLevel.WARNING;
-		// options.checkUnreachableCode=CheckLevel.WARNING;
-		// options.aliasAllStrings=true;
-		// options.foldConstants=true;
-		// options.deadAssignmentElimination=true;
-		// options.inlineLocalFunctions=true;
-		// options.coalesceVariableNames=true;
-		// options.aliasKeywords=true;
-		// options.convertToDottedProperties=true;
-		// options.setShadowVariables(true);
-		// options.setChainCalls(true);
-		// options.setConvertToDottedProperties(true);
-		// options.setFoldConstants(true);
-		// options.setAggressiveRenaming(true);
-		//
-		// options.optimizeArgumentsArray=true;
-		// options.optimizeCalls=true;
-		// options.optimizeParameters=true;
-		// options.optimizeReturns=true;
-		//
-		// options.setMoveFunctionDeclarations(true);
-		// options.setManageClosureDependencies(true);
-		//
-		// options.setDevirtualizePrototypeMethods(true);
-
-		options.setVariableRenaming(VariableRenamingPolicy.OFF);
-		options.setAngularPass(true);
-		options.setTightenTypes(false);
-		options.prettyPrint = false;
-
+	public ClosureCompiler() {
+		//We have to ensure a safe concurrency as ModuleGenerator is session-scoped and
+		//multiple sessions can generate the script at the same time.
+		synchronized (lock) {
+			this.options = new CompilerOptions();
+			CompilationLevel.WHITESPACE_ONLY.setOptionsForCompilationLevel(options);
+			options.setVariableRenaming(VariableRenamingPolicy.OFF);
+			options.setAngularPass(true);
+			options.setTightenTypes(false);
+			options.prettyPrint = false;
+		}
+	}
+	
+	public ClosureCompiler(CompilerOptions options) {
+		this.options = options;
 	}
 
 	public String getCompressedJavaScript(String jsContent) {
-
 		String compiled = jsContent;
-
 		try {
 			compiled = compile(jsContent);
 		} catch (Exception e) {
 			logger.log(
 					Level.WARNING,
 					"could not compress JS, compression disabled, check for error or your guava library version");
-
 			e.printStackTrace();
-
 		}
 
 		// compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
@@ -99,22 +76,40 @@ public class ClosureCompiler {
 	}
 
 	public String compile(String code) {
-
 		Compiler compiler = new Compiler();
 		compiler.disableThreads();
-
-		SourceFile extern = SourceFile.fromCode("externs.js",
-				"function alert(x) {}");
+		
+		SourceFile extern = SourceFile.fromCode("externs.js","function alert(x) {}");
 		SourceFile input = SourceFile.fromCode("input.js", code);
-		Result result = compiler.compile(extern, input, options);
-
+		
+		compiler.compile(extern, input, options);
 		return compiler.toSource();
 	}
-
-	private static ClosureCompiler INSTANCE = new ClosureCompiler();
-
-	public static ClosureCompiler getINSTANCE() {
-		return INSTANCE;
-	}
+	
+	// options.inlineConstantVars=true;
+	// options.aggressiveVarCheck=CheckLevel.WARNING;
+	// options.checkUnreachableCode=CheckLevel.WARNING;
+	// options.aliasAllStrings=true;
+	// options.foldConstants=true;
+	// options.deadAssignmentElimination=true;
+	// options.inlineLocalFunctions=true;
+	// options.coalesceVariableNames=true;
+	// options.aliasKeywords=true;
+	// options.convertToDottedProperties=true;
+	// options.setShadowVariables(true);
+	// options.setChainCalls(true);
+	// options.setConvertToDottedProperties(true);
+	// options.setFoldConstants(true);
+	// options.setAggressiveRenaming(true);
+	//
+	// options.optimizeArgumentsArray=true;
+	// options.optimizeCalls=true;
+	// options.optimizeParameters=true;
+	// options.optimizeReturns=true;
+	//
+	// options.setMoveFunctionDeclarations(true);
+	// options.setManageClosureDependencies(true);
+	//
+	// options.setDevirtualizePrototypeMethods(true);
 
 }

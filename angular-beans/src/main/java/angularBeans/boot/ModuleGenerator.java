@@ -68,10 +68,9 @@ import angularBeans.validation.BeanValidationProcessor;
 @SessionScoped
 public class ModuleGenerator implements Serializable {
 
-	ClosureCompiler compiler = ClosureCompiler.getINSTANCE();
+	ClosureCompiler compiler = new ClosureCompiler();
 
 	private String contextPath;
-
 	private String sessionID;  
 
 	@Inject
@@ -137,7 +136,7 @@ public class ModuleGenerator implements Serializable {
 			beansBuffer.append(generateBean(mb));
 		}
 
-		jsBuffer.append(ClosureCompiler.getINSTANCE().getCompressedJavaScript(
+		jsBuffer.append(compiler.getCompressedJavaScript(
 				beansBuffer.toString()));
 
 		if (StaticJsCache.VALIDATION_SCRIPT.length() == 0) {
