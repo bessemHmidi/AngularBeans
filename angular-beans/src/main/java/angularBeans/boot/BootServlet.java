@@ -31,15 +31,16 @@ import javax.servlet.http.HttpServletResponse;
 import angularBeans.realtime.GlobalConnectionHolder;
 
 /**
- * Returns a generated script for resource named "angularBeans.js". Using the ModuleGenerator,
- * the script will be lazily generated when accessing this resource. 
+ * Returns a generated script for resource "/angularBeans.js". 
+ * the script will be lazily generated based 
+ * on the registered beans in the {@link BeanRegistry} class.
  * 
  * @author Bessem Hmidi
  * @author Aymen Naili
  */
 
 @WebServlet(urlPatterns = "/angular-beans.js")
-public class BootServlet extends HttpServlet {
+public final class BootServlet extends HttpServlet {
 
 	@Inject
 	ModuleGenerator generator;
@@ -53,11 +54,8 @@ public class BootServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		globalConnectionHolder.removeConnection(req.getSession().getId());
-		
+		String sessionId = req.getSession().getId();
 		StringBuffer contextPathBuffer = new StringBuffer(req.getScheme());
-		StringBuffer stringBuffer = new StringBuffer();
-		
 		contextPathBuffer.append("://");
 		contextPathBuffer.append(req.getServerName());
 		contextPathBuffer.append(":");
@@ -65,13 +63,16 @@ public class BootServlet extends HttpServlet {
 		contextPathBuffer.append(req.getServletContext().getContextPath());
 		contextPathBuffer.append("/");
 		
+		globalConnectionHolder.removeConnection(sessionId);
+		
 		generator.setContextPath(contextPathBuffer.toString());
-		generator.getScript(stringBuffer);
+		StringBuffer scriptBuffer = generator.generateScript();
 		
 		resp.setContentType("text/javascript");
-		resp.getWriter().write(stringBuffer.toString());
+		resp.getWriter().write(scriptBuffer.toString());
 		resp.getWriter().flush();
 	}
+	
 	/**
 	 * 
 	 */

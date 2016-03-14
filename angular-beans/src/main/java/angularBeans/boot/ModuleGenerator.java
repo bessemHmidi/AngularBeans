@@ -57,24 +57,46 @@ import angularBeans.util.StaticJsCache;
 import angularBeans.validation.BeanValidationProcessor;
 
 /**
- * 
- * The ModuleGenerator is the main component in the angularBean javaScript
- * generation used by BootServlet
- * 
- * 
- @author Bessem Hmidi
+ * <p>
+ * ModuleGenerator is the main component for javascript generation. This class is a session scoped CDI
+ * component. This class uses the registered beans in BeanRegistry during application deployment to generate
+ * a minified script.
+ * </p>
+ *
+ *@see BeanRegistry
+ *@author Bessem Hmidi
+ *@author Aymen Naili
  */
 @SuppressWarnings("serial")
 @SessionScoped
 public class ModuleGenerator implements Serializable {
+
+	@Inject
+	ByteArrayCache cache;
+
+	@Inject
+	BeanLocator locator;
+
+	@Inject
+	HttpSession httpSession;
+
+	@Inject
+	BeanValidationProcessor validationAdapter;
+	
+	@Inject
+	AngularBeansUtils util;
+
+	@Inject
+	transient FileUploadHandler uploadHandler;
+	
+	@Inject
+	transient CurrentNGSession ngSession;
 
 	ClosureCompiler compiler = new ClosureCompiler();
 
 	private String contextPath;
 	private String sessionID;  
 
-	@Inject
-	AngularBeansUtils util;
 
 	public ModuleGenerator() {
 
@@ -95,24 +117,7 @@ public class ModuleGenerator implements Serializable {
 		return sessionID;
 	}
 
-	@Inject
-	ByteArrayCache cache;
-
-	@Inject
-	BeanLocator locator;
-
-	@Inject
-	HttpSession httpSession;
-
-	@Inject
-	transient FileUploadHandler uploadHandler;
-
-	@Inject
-	BeanValidationProcessor validationAdapter;
-
-	@Inject
-	transient CurrentNGSession ngSession;
-
+	
 	
 
 	/**
@@ -121,32 +126,26 @@ public class ModuleGenerator implements Serializable {
 	 * 
 	 * @param jsBuffer
 	 */
-	public void getScript(StringBuffer jsBuffer) {
+	public StringBuffer generateScript() {
 
-		String sessionPart = "var sessionId=\"" + sessionID + "\";";
-
+		StringBuffer jsBuffer = new StringBuffer();
+		String sessionPart = String.format("var sessionId=\"%s\";", sessionID);
 		// sessionPart="var sessionId = /SESS\\w*ID=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;";
 
 		jsBuffer.append(sessionPart);
-
 		jsBuffer.append(StaticJsCache.CORE_SCRIPT);
-
 		StringBuffer beansBuffer = new StringBuffer();
 		for (NGBean mb : BeanRegistry.getInstance().getAngularBeans()) {
 			beansBuffer.append(generateBean(mb));
 		}
-
-		jsBuffer.append(compiler.getCompressedJavaScript(
-				beansBuffer.toString()));
-
+		jsBuffer.append(compiler.getCompressedJavaScript(beansBuffer.toString()));
 		if (StaticJsCache.VALIDATION_SCRIPT.length() == 0) {
 			validationAdapter.build();
 		}
-
 		jsBuffer.append(StaticJsCache.VALIDATION_SCRIPT);
-
 		jsBuffer.append(StaticJsCache.EXTENTIONS_SCRIPT.toString());
-
+		
+		return jsBuffer;
 	}
 
 	/**
