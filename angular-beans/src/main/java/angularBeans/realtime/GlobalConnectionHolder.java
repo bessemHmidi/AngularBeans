@@ -36,36 +36,36 @@ import angularBeans.context.SessionMapper;
 @ApplicationScoped
 public class GlobalConnectionHolder {
 
-	Set<SockJsConnection> allConnections = new HashSet<SockJsConnection>();
+	private Set<SockJsConnection> allConnections;
+	private static final Object lock = new Object();
+
+	public GlobalConnectionHolder() {
+		allConnections = new HashSet<>();
+	}
 
 	public Set<SockJsConnection> getAllConnections() {
 		return allConnections;
 	}
 
 	public void removeConnection(String id) {
-		
-		
-		for(SockJsConnection connection:new HashSet<>(allConnections)){
-			String httpSessionId=SessionMapper.getHTTPSessionID(connection.id);
-			if(httpSessionId!=null){
-			if(httpSessionId.equals(id)){
-			SessionMapper.getSessionsMap().remove(id);
+		for (SockJsConnection connection : allConnections) {
 			
-			try {
-				connection.destroy();
-				
-			} catch (Exception e) {
-			
+			synchronized (lock) {
+				String httpSessionId = SessionMapper.getHTTPSessionID(connection.id);
+				if (httpSessionId != null) {
+					if (httpSessionId.equals(id)) {
+						SessionMapper.getSessionsMap().remove(id);
+						try {
+							connection.destroy();
+						} catch (Exception e) {
+
+						}
+						allConnections.remove(connection);
+					}
+				}
 			}
-		
 			
-			
-			allConnections.remove(connection);
-			}
-			}
 		}
-		
-		
 	}
 
 }
