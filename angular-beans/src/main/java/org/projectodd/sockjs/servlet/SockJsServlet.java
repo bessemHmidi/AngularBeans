@@ -35,12 +35,6 @@ public class SockJsServlet extends HttpServlet {
     	
     }
 
-//    public SockJsServlet(SockJsServer sockJsServer) {
-//        this.sockJsServer = sockJsServer;
-//        
-//        
-//    }
-
     public void setServer(SockJsServer sockJsServer) {
         this.sockJsServer = sockJsServer;
     }

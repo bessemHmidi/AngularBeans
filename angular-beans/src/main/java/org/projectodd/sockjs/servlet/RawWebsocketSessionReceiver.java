@@ -5,17 +5,21 @@
 
 package org.projectodd.sockjs.servlet;
 
+import static angularBeans.enums.ReadyState.CLOSED;
+import static angularBeans.enums.ReadyState.CLOSING;
+import static angularBeans.enums.ReadyState.OPEN;
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.websocket.CloseReason;
+import javax.websocket.MessageHandler;
+
 import org.projectodd.sockjs.GenericReceiver;
 import org.projectodd.sockjs.Session;
 import org.projectodd.sockjs.SockJsRequest;
 import org.projectodd.sockjs.SockJsServer;
-import org.projectodd.sockjs.Transport;
-
-import javax.websocket.CloseReason;
-import javax.websocket.MessageHandler;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * RawWebsocketSessionReceiver logic from sockjs-node's trans-websocket.coffee
@@ -32,7 +36,7 @@ public class RawWebsocketSessionReceiver extends Session {
             }
         });
 
-        readyState = Transport.READY_STATE.OPEN;
+        readyState = OPEN;
         recv = new GenericReceiver() {
             {
                 protocol = "websocket-raw";
@@ -52,7 +56,7 @@ public class RawWebsocketSessionReceiver extends Session {
 
     @Override
     public void didMessage(String payload) {
-        if (readyState == Transport.READY_STATE.OPEN) {
+        if (readyState.equals(OPEN)) {
             connection.emitData(payload);
         }
     }
@@ -61,7 +65,7 @@ public class RawWebsocketSessionReceiver extends Session {
     public boolean send(String payload,boolean async) {
     	
     	
-        if (readyState != Transport.READY_STATE.OPEN) {
+        if (!readyState.equals(OPEN)) {
             return false;
         }
         try {
@@ -83,10 +87,10 @@ public class RawWebsocketSessionReceiver extends Session {
 
     @Override
     public boolean close(int status, String reason) {
-        if (readyState != Transport.READY_STATE.OPEN) {
+        if (!readyState.equals(OPEN)) {
             return false;
         }
-        readyState = Transport.READY_STATE.CLOSING;
+        readyState = CLOSING;
         try {
             ws.close(new CloseReason(CloseReason.CloseCodes.getCloseCode(status), reason));
         } catch (IOException ex) {
@@ -106,7 +110,7 @@ public class RawWebsocketSessionReceiver extends Session {
         }
         ws = null;
 
-        readyState = Transport.READY_STATE.CLOSED;
+        readyState = CLOSED;
         connection.emitClose();
         connection = null;
     }

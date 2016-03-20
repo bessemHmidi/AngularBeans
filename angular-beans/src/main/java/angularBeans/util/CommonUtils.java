@@ -18,6 +18,9 @@
 
 package angularBeans.util;
 
+import static angularBeans.util.Constants.THREE;
+import static angularBeans.util.Constants.TWO;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -41,8 +44,6 @@ import angularBeans.realtime.RealTime;
  */
 
 public abstract class CommonUtils {
-
-	public static final String NG_SESSION_ATTRIBUTE_NAME = "NG_SESSION_ID";
 
 	/**
 	 * used to obtain a bean java class from a bean name.
@@ -173,7 +174,7 @@ public abstract class CommonUtils {
 
 	public static boolean isGetter(Method m) {
 		return (
-
+		//TODO clean up dirty boolean
 		((m.getParameterTypes().length == 0) && ((m.getName().startsWith("get"))
 				|| (((m.getReturnType().equals(boolean.class)) || (m.getReturnType().equals(Boolean.class)))
 						&& (m.getName().startsWith("is")))))
@@ -183,37 +184,34 @@ public abstract class CommonUtils {
 				|| m.isAnnotationPresent(RealTime.class) || m.isAnnotationPresent(Get.class)
 				|| m.isAnnotationPresent(Post.class) || m.isAnnotationPresent(Put.class)
 				|| m.isAnnotationPresent(Delete.class)
-				// || m.isAnnotationPresent(OPTIONS.class) ||
-				// m.isAnnotationPresent(HEAD.class)
 				|| m.isAnnotationPresent(CORS.class)
-
 		))
 
 		);
-
 	}
 
 	public static boolean hasSetter(Class clazz, String name) {
 
-		String setterName = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
+		String setterName = "set" 
+				+ name.substring(0, 1).toUpperCase()
+				+ name.substring(1);
+		
 		setterName = setterName.trim();
-
 		for (Method m : clazz.getDeclaredMethods()) {
 
 			if (m.getName().equals(setterName) && (isSetter(m))) {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
 	public static String obtainFieldNameFromAccessor(String getterName) {
-		int index = 3;
+		int index = THREE;		
 		if (getterName.startsWith("is"))
-			index = 2;
+			index = TWO;
+		
 		String fieldName = getterName.substring(index);
-
 		fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
 
 		return fieldName;

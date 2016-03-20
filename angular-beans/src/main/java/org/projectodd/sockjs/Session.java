@@ -5,6 +5,12 @@
 
 package org.projectodd.sockjs;
 
+import static angularBeans.enums.ReadyState.CLOSED;
+import static angularBeans.enums.ReadyState.CLOSING;
+import static angularBeans.enums.ReadyState.CONNECTING;
+import static angularBeans.enums.ReadyState.OPEN;
+import static org.projectodd.sockjs.Transport.closeFrame;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import angularBeans.enums.ReadyState;
 
 public class Session {
 
@@ -21,9 +29,9 @@ public class Session {
         heartbeatDelay = server.options.heartbeatDelay;
         disconnectDelay = server.options.disconnectDelay;
         sendBuffer = new ArrayList<>();
-        readyState = Transport.READY_STATE.CONNECTING;
+        readyState = CONNECTING;
         if (sessionId != null && sessionId.length() > 0) {
-            log.log(Level.FINE, "Adding session {0}", sessionId);
+            log.fine("Adding session " + sessionId);
             sessions.put(sessionId, this);
         }
         timeoutCb = new Runnable() {
@@ -47,7 +55,7 @@ public class Session {
         if (this.recv != null) {
             this.recv.checkAlive();
             if (this.recv != null) {
-                recv.doSendFrame(Transport.closeFrame(2010, "Another connection still open"));
+                recv.doSendFrame(closeFrame(2010, "Another connection still open"));
                 recv.didClose();
                 return;
             } else {
@@ -62,7 +70,7 @@ public class Session {
             server.clearTimeout(toTref);
             toTref = null;
         }
-        if (readyState == Transport.READY_STATE.CLOSING) {
+        if (readyState.equals(CLOSING)) {
             flushToRecv(recv);
             recv.doSendFrame(closeFrame);
             recv.didClose();
@@ -74,9 +82,9 @@ public class Session {
 
         decorateConnection(req);
 
-        if (readyState == Transport.READY_STATE.CONNECTING) {
+        if (readyState.equals(CONNECTING)) {
             recv.doSendFrame("o");
-            readyState = Transport.READY_STATE.OPEN;
+            readyState = OPEN;
             // TODO: sockjs-node does this on process.nextTick
             emitOpen.run();
         }
@@ -149,9 +157,8 @@ public class Session {
             server.clearTimeout(toTref);
             toTref = null;
         }
-        if (readyState != Transport.READY_STATE.CONNECTING &&
-                readyState != Transport.READY_STATE.OPEN&&
-                readyState != Transport.READY_STATE.CLOSING) {
+        if (!(readyState.equals(CONNECTING) && readyState.equals(OPEN)
+        		&& readyState.equals(CLOSING))) {
             // TODO: Use some other exception class
             throw new RuntimeException("INVALID_STATE_ERR");
         }
@@ -159,25 +166,25 @@ public class Session {
             // TODO: Use some other exception class
             throw new RuntimeException("RECV_STILL_THERE");
         }
-        readyState = Transport.READY_STATE.CLOSED;
+        readyState = CLOSED;
         connection.emitClose();
         connection = null;
         if (sessionId != null) {
-            log.log(Level.FINE, "Removing session {0}", sessionId);
+            log.fine("Removing session " + sessionId);
             sessions.remove(sessionId);
             sessionId = null;
         }
     }
 
     public void didMessage(String payload) {
-        log.log(Level.FINER, "didMessage {0}", payload);
-        if (readyState == Transport.READY_STATE.OPEN) {
+        log.finer("didMessage " + payload);
+        if (readyState.equals(OPEN)) {
             connection.emitData(payload);
         }
     }
 
     public boolean send(String payload,boolean async) {
-        if (readyState != Transport.READY_STATE.OPEN) {
+        if (!readyState.equals(OPEN)) {
             return false;
         }
         sendBuffer.add(payload);
@@ -192,11 +199,11 @@ public class Session {
     }
 
     public boolean close(int status, String reason) {
-        if (readyState != Transport.READY_STATE.OPEN) {
+        if (!readyState.equals(OPEN)) {
             return false;
         }
-        readyState = Transport.READY_STATE.CLOSING;
-        closeFrame = Transport.closeFrame(status, reason);
+        readyState = CLOSING;
+        closeFrame = closeFrame(status, reason);
         if (recv != null) {
             recv.doSendFrame(closeFrame);
             if (recv != null) {
@@ -221,7 +228,7 @@ public class Session {
     private int disconnectDelay;
     private int heartbeatDelay;
     private List<String> sendBuffer;
-    protected Transport.READY_STATE readyState;
+    protected ReadyState readyState;
     private Runnable timeoutCb;
     private ScheduledFuture toTref;
     protected SockJsConnection connection;
