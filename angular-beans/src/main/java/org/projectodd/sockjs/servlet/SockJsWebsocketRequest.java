@@ -2,7 +2,12 @@ package org.projectodd.sockjs.servlet;
 
 import org.projectodd.sockjs.SockJsRequest;
 
+import angularBeans.util.Constants;
+
 import javax.websocket.Session;
+
+import static angularBeans.util.Constants.GET;
+
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +23,7 @@ public class SockJsWebsocketRequest extends SockJsRequest {
     @Override
     public String getMethod() {
         // Let's just pretend they're all GETs
-        return "GET";
+        return GET;
     }
 
     @Override
