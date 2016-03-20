@@ -27,7 +27,6 @@ import java.util.Map;
  * @author bassem Hmidi
  *
  */
-
 public class StaticJsCache {
 
 	final static String scriptDetection = "var sript_origin=((document.scripts[document.scripts.length-1].src).replace('angular-beans.js',''));";
@@ -36,20 +35,17 @@ public class StaticJsCache {
 	 * the angularBeansMainObject is the angularBeans object in the angularBeans
 	 * javascript api
 	 */
+	//TODO externalize
 	public final static String angularBeansMainObject = scriptDetection
 			+ "function AngularEvent(data,dataClass){"
 		
-		+"if(dataClass!='String' && dataClass){"
-		+ "this.dataClass=dataClass;this.data=JSON.stringify(data);"
-		+ "}"
-		+"else{this.data=data}"
-		+"};"
-		
-		+ "var angularBeans={ "
-
-			// + "fire:function(eventName,data){"
-			// + "scope[service.serviceID]=service;"
-			// + "},"
+			+"if(dataClass!='String' && dataClass){"
+			+ "this.dataClass=dataClass;this.data=JSON.stringify(data);"
+			+ "}"
+			+"else{this.data=data}"
+			+"};"
+			
+			+ "var angularBeans={ "
 
 			+ "bind:function(scope,service,modelsName){"
 
@@ -93,7 +89,6 @@ public class StaticJsCache {
 
 			+ "}"
  
-			// *
 			+ ",isIn:function(array,elem){var found=false;"
 			+ "for(item in array){"
 			+ "if(this.isSame(array[item],elem)){found =true;return item;}"
@@ -108,8 +103,8 @@ public class StaticJsCache {
 			+ "for(prop in item1){"
 
 			+ "if(prop=='$$hashKey'){continue;}"
+			
 			+ "if (item1[prop] instanceof String){if(item1[prop].startsWith('lob/')){continue;}}"
-			// typeof item1[prop] == 'string' ||
 
 			+ "if(!(angular.toJson(item1[prop])===angular.toJson(item2[prop]))){"
 			
@@ -120,7 +115,7 @@ public class StaticJsCache {
 			+ "return same;}"
 
 			+ " };";
-
+	//TODO clean up dirty naming
 	public static StringBuilder CORE_SCRIPT = new StringBuilder();
 	public static Map<Class, StringBuffer> CACHED_BEAN_STATIC_PART = new HashMap<Class, StringBuffer>();
 	public static StringBuilder EXTENTIONS_SCRIPT = new StringBuilder();

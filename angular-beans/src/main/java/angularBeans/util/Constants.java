@@ -26,8 +26,43 @@ public class Constants {
 	public static final int THREE = Integer.valueOf(3);
 	
 	/**
-	 * the identifier of NG_SESSION.
+	 * The NG_SESSION identifier.
 	 */
 	public static final String NG_SESSION_ATTRIBUTE_NAME = "NG_SESSION_ID";
+	
+	/**
+	 * Boolean getter method prefix.
+	 */
+	public static final String IS = "is";
+	/**
+	 * Setter method prefix.
+	 */
+	public static final String SET ="set";
+	/**
+	 * Getter method prefix.
+	 * <b>or</b>
+	 * Http GET method.
+	 */
+	public static final String GET = "get";
+	
+	/**
+	 * Http POST method.
+	 */
+	public static final String POST = "post";
+	
+	/**
+	 * Http PUT method.
+	 */
+	public static final String PUT = "put";
+	
+	/**
+	 * Http DELETE method.
+	 */
+	public static final String DELETE = "delete";
+	
+	/**
+	 * Http DELETE_TO_REPLACE_BY_JUST_DELETE method.
+	 */
+	public static final String DELETE_TO_REPLACE = "delete_to_replace_by_just_delete";
 
 }
