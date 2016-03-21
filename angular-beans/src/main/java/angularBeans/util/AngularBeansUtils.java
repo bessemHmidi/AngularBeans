@@ -18,6 +18,8 @@
 
 package angularBeans.util;
 
+import static angularBeans.util.Constants.GET;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -87,20 +89,10 @@ public class AngularBeansUtils implements Serializable {
 
 	public String getJson(Object object) {
 
-		if (mainSerializer == null) {
-			// if (object instanceof Properties) {
-			// return new Gson().toJson(object);
-			// }
-
-			if (object == null) {
+		if (mainSerializer == null && object == null) {
 				mainSerializer.toJson(null);
-
-			}
-
 		}
-
 		return mainSerializer.toJson(object);
-
 	}
 
 	private String contextPath;
@@ -113,41 +105,6 @@ public class AngularBeansUtils implements Serializable {
 	}
 
 	public Object deserialise(Class clazz, JsonElement element) {
-
-		// Userinfo userinfo1 = gson.fromJson(reader, Userinfo.class);
-
-		// Object o = mainSerializer.fromJson(element, clazz);
-		// Field[] fields = clazz.getFields();
-		//
-		// for (Field f : fields) {
-		//
-		// if (f.getType() == LobWrapper.class) {
-		//
-		// String setterName = CommonUtils.obtainSetter(f);
-		//
-		// Method setterMethod;
-		// try {
-		// setterMethod = clazz
-		// .getMethod(setterName, LobWrapper.class);
-		// setterMethod.invoke(o, null);
-		//
-		// } catch (NoSuchMethodException | SecurityException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (IllegalAccessException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (IllegalArgumentException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (InvocationTargetException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// }
-
-		
 		
 		return mainSerializer.fromJson(element, clazz);
 	}
@@ -203,7 +160,7 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 
 		for (Method m : clazz.getMethods()) {
 
-			if (m.getName().startsWith("get") || m.getName().startsWith("is")) {
+			if (m.getName().startsWith(GET) || m.getName().startsWith("is")) {
 				if (m.getReturnType().equals(LobWrapper.class)) {
 					String field = CommonUtils.obtainFieldNameFromAccessor(m
 							.getName());
@@ -220,39 +177,25 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 								Call ls = cache.getCache().get(idf);
 								if (ls.equals(lobSource)) {
 									id = idf;
-									// cache.getCache().remove(idf);
-									// id = String.valueOf(UUID.randomUUID());
-									// cache.getCache().put(id, lobSource);
-
 									break;
 								}
 							}
 							continue;
 						}
-
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-
-					// else{
-					// return context.serialize(src);
-					// }
-
 				}
 			}
-
 		}
-
 		return new JsonPrimitive("lob/" + id + "?"
 				+ Calendar.getInstance().getTimeInMillis());
 	}
-
 }
 
 class ByteArrayJsonAdapter implements JsonSerializer<byte[]> {
 
 	ByteArrayCache cache;
-
 	String contextPath;
 
 	public ByteArrayJsonAdapter(ByteArrayCache cache, String contextPath) {
