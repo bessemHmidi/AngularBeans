@@ -1,0 +1,2 @@
+language: java
+script: cd angular-beans && mvn clean && mvn compile
