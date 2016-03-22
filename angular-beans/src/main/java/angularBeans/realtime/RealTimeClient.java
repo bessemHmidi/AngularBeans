@@ -21,6 +21,8 @@
  */
 package angularBeans.realtime;
 
+import static angularBeans.enums.ReadyState.OPEN;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +33,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.projectodd.sockjs.SockJsConnection;
-import org.projectodd.sockjs.Transport.READY_STATE;
 
 import angularBeans.boot.BeanRegistry;
 import angularBeans.context.NGSessionScoped;
@@ -231,15 +232,14 @@ public class RealTimeClient implements Serializable {
 		ModelQueryImpl modelQuery = (ModelQueryImpl) query;
 
 		ServerEvent ngEvent = new ServerEvent();
-
 		ngEvent.setName("modelQuery");
 		ngEvent.setData(CommonUtils.getBeanName(modelQuery.getOwner()));
 
 		paramsToSend.putAll(modelQuery.getData());
 		paramsToSend.put("ngEvent", ngEvent);
-
 		paramsToSend.put("log", logger.getLogPool());
 		paramsToSend.put("isRT", true);
+		
 		return paramsToSend;
 	}
 
@@ -249,14 +249,13 @@ public class RealTimeClient implements Serializable {
 				message.build());
 
 		ServerEvent ngEvent = new ServerEvent();
-
 		ngEvent.setName(eventName);
 		ngEvent.setData(message.build());
 
 		paramsToSend.put("ngEvent", ngEvent);
-
 		paramsToSend.put("log", logger.getLogPool());
 		paramsToSend.put("isRT", true);
+	
 		return paramsToSend;
 	}
 
@@ -268,21 +267,16 @@ public class RealTimeClient implements Serializable {
 			if (!broadcastManager.isSubscribed(connection.id, channel)) {
 				continue;
 			}
-
 			if (withoutMe) {
 				if (sessions.contains(connection)) {
 					continue;
 				}
 			}
-
-			if (connection.getReadyState().equals(READY_STATE.OPEN)) {
+			if (connection.getReadyState().equals(OPEN)) {
 
 				String objectMessage = util.getJson(paramsToSend);
-
 				connection.write(objectMessage, async);
-
 				async = false;
-
 			}
 		}
 	}
@@ -290,15 +284,13 @@ public class RealTimeClient implements Serializable {
 	private void publish(Map<String, Object> paramsToSend) {
 		for (SockJsConnection session : new HashSet<SockJsConnection>(sessions)) {
 
-			if (!session.getReadyState().equals(READY_STATE.OPEN)) {
+			if (!session.getReadyState().equals(OPEN)) {
 				sessions.remove(session);
 			} else {
 
 				session.write(util.getJson(paramsToSend), async);
 				async = false;
 			}
-
 		}
 	}
-
 }

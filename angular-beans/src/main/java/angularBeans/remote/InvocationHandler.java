@@ -21,6 +21,8 @@
  */
 package angularBeans.remote;
 
+import static angularBeans.util.Constants.GET;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -51,6 +53,7 @@ import angularBeans.log.NGLogger;
 import angularBeans.log.NGLogger.Level;
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.CommonUtils;
+import angularBeans.util.Constants;
 import angularBeans.util.ModelQueryFactory;
 import angularBeans.util.ModelQueryImpl;
 
@@ -363,12 +366,12 @@ public class InvocationHandler implements Serializable {
 		if (updates != null) {
 			for (String up : updates) {
 
-				String getterName = "get" + up.substring(0, 1).toUpperCase() + up.substring(1);
+				String getterName = GET + up.substring(0, 1).toUpperCase() + up.substring(1);
 				Method getter = null;
 				try {
 					getter = service.getClass().getMethod(getterName);
 				} catch (NoSuchMethodException e) {
-					getter = service.getClass().getMethod((getterName.replace("get", "is")));
+					getter = service.getClass().getMethod((getterName.replace(GET, "is")));
 				}
 
 				Object result = getter.invoke(service);

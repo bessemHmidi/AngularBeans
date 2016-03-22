@@ -19,6 +19,13 @@
 
 package angularBeans.boot;
 
+import static angularBeans.enums.Callback.AFTER_SESSION_READY;
+import static angularBeans.enums.Callback.BEFORE_SESSION_READY;
+import static angularBeans.util.Constants.DELETE_TO_REPLACE;
+import static angularBeans.util.Constants.GET;
+import static angularBeans.util.Constants.POST;
+import static angularBeans.util.Constants.PUT;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,6 +38,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
+
 import angularBeans.api.CORS;
 import angularBeans.api.Eval;
 import angularBeans.api.NGPostConstruct;
@@ -42,7 +50,7 @@ import angularBeans.api.http.Post;
 import angularBeans.api.http.Put;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
-import angularBeans.events.Callback;
+import angularBeans.enums.Callback;
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
@@ -195,10 +203,10 @@ public class ModuleGenerator implements Serializable {
 						String execution=(String) m.invoke(reference);
 
 						String js="";
-						if (callback == Callback.BEFORE_SESSION_READY) {
+						if (callback.equals(BEFORE_SESSION_READY)) {
 							js=execution;
 						}
-						if (callback == Callback.AFTER_SESSION_READY){
+						if (callback.equals(AFTER_SESSION_READY)){
 						
 			js="setTimeout(listen,500);"
             +"function listen(){"
@@ -209,15 +217,8 @@ public class ModuleGenerator implements Serializable {
 		    +"   }"
 		    +"   else"
 		    +"      setTimeout(listen,500);"
-		    +"}";
-						
-						//js = "RTSrvc.onReadyState(function(){";
-
-						
-						
-						
+		    +"}";	
 					}
-						//js += "});";
 						buffer.append(js);
 
 					} catch (ClassCastException e) {
@@ -231,11 +232,7 @@ public class ModuleGenerator implements Serializable {
 
 						e.printStackTrace();
 					}
-
-				
-
 			}
-
 		}
 
 
@@ -290,13 +287,10 @@ public class ModuleGenerator implements Serializable {
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
-
 			buffer.append(bean.getName() + "." + modelName + "=" + result + ";");
-
 		}
 
 		for (Method m : bean.getMethods()) {
-
 
 			if (m.isAnnotationPresent(FileUpload.class)) {
 
@@ -355,11 +349,10 @@ public class ModuleGenerator implements Serializable {
 			
 			) {
 
-				// String csModel = null;
 				String[] csUpdates = null;
 				Set<Method> setters = new HashSet<Method>();
 
-				String httpMethod = "get";
+				String httpMethod = GET;
 
 
 				if (m.isAnnotationPresent(Eval.class))
@@ -370,21 +363,18 @@ public class ModuleGenerator implements Serializable {
 				}
 
 				if (m.isAnnotationPresent(Get.class)) {
-					httpMethod = "get";
+					httpMethod = GET;
 				}
-
 				if (m.isAnnotationPresent(Post.class)) {
-					httpMethod = "post";
+					httpMethod = POST;
 				}
-
 				if (m.isAnnotationPresent(Delete.class)) {
-					httpMethod = "delete_to_replace_by_just_delete";
+					httpMethod = DELETE_TO_REPLACE;
 				}
-
 				if (m.isAnnotationPresent(Put.class)) {
-					httpMethod = "put";
+					httpMethod = PUT;
 				}
-
+				
 				if (m.isAnnotationPresent(NGReturn.class)) {
 					NGReturn returns = m.getAnnotation(NGReturn.class);
 					csUpdates = returns.updates();
@@ -412,9 +402,7 @@ public class ModuleGenerator implements Serializable {
 									if (modelName.equals(model)) {
 										setters.add(md);
 									}
-
 								}
-
 							}
 						}
 					}
@@ -424,7 +412,6 @@ public class ModuleGenerator implements Serializable {
 						+ bean.getName() + ",'" + m.getName() + "',function(");
 
 				// ---------------------------------------------
-
 				// Handle args
 				// ---------------------------------------------
 				Type[] args = m.getParameterTypes();
@@ -482,7 +469,7 @@ public class ModuleGenerator implements Serializable {
 						cachedStaticPart.append("/JSON");
 					}
 
-					if (httpMethod.equals("post")) {
+					if (httpMethod.equals(POST)) {
 						cachedStaticPart.append("',params");
 					} else {
 						// encodeURI
