@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/anaili/AngularBeans.svg?branch=master)](https://travis-ci.org/anaili/AngularBeans)
-
+[![Build Status](https://travis-ci.org/bessemHmidi/AngularBeans.svg?branch=master)](https://travis-ci.org/bessemHmidi/AngularBeans)
 
 # AngularBeans
 
