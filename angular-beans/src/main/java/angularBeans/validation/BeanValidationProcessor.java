@@ -15,9 +15,8 @@
  * for more details.
  *
  */
-
 /**
- @author Bessem Hmidi
+ * @author Bessem Hmidi
  */
 package angularBeans.validation;
 
@@ -45,13 +44,12 @@ import angularBeans.util.CommonUtils;
 import angularBeans.util.StaticJsCache;
 
 /**
- * the bean validation processor generate the HTML5 validation attributes from
- * java bean validation annotations.
- * 
+ * The bean validation processor generates the HTML5 validation attributes from
+ * Bean Validation annotations.
+ *
  * @author Bessem Hmidi
  *
  */
-
 @SuppressWarnings("serial")
 @ApplicationScoped
 public class BeanValidationProcessor implements Serializable {
@@ -61,7 +59,7 @@ public class BeanValidationProcessor implements Serializable {
 	@Inject
 	AngularBeansUtils util;
 
-	private StringBuffer buffer = new StringBuffer();
+	private final StringBuffer buffer = new StringBuffer();
 
 	public void processBeanValidationParsing(Method method) {
 
@@ -79,63 +77,73 @@ public class BeanValidationProcessor implements Serializable {
 			String name = (a.annotationType().getName());
 
 			switch (name) {
-			case "javax.validation.constraints.NotNull":
-				buffer.append("\nentries[e].setAttribute('required', 'true');");
-				break;
+				case "javax.validation.constraints.NotNull":
+					buffer.append("\nentries[e].setAttribute('required', 'true');");
+					break;
 
-			case "org.hibernate.validator.constraints.Email":
-				buffer.append("\nentries[e].setAttribute('type', 'email');");
-				break;
+				case "org.hibernate.validator.constraints.Email":
+					buffer.append("\nentries[e].setAttribute('type', 'email');");
+					break;
 
-			case "javax.validation.constraints.Pattern":
-				String regex = ((Pattern) a).regexp();
-				buffer.append("\nentries[e].setAttribute('ng-pattern', '")
-						.append(regex).append("');");
-				break;
+				case "javax.validation.constraints.Pattern":
+					String regex = ((Pattern) a).regexp();
+					buffer.append("\nentries[e].setAttribute('ng-pattern', '")
+							.append(regex).append("');");
+					break;
 
-			case "javax.validation.constraints.Size":
-				buffer.append("\nentries[e].setAttribute('required', 'true');");
-				Size sizeAnno = (Size) a;
+				case "javax.validation.constraints.Size":
+					buffer.append("\nentries[e].setAttribute('required', 'true');");
+					Size sizeConstraint = (Size) a;
 
-				int maxLength = sizeAnno.max();
-				int minLength = sizeAnno.min();
+					int maxLength = sizeConstraint.max();
+					int minLength = sizeConstraint.min();
 
-				if (!(minLength <= Integer.MIN_VALUE))
-					buffer.append("\nentries[e].setAttribute('ng-minlength', '")
-							.append(minLength).append("');");
+					if (minLength < 0) {
+						throw new IllegalArgumentException("The min parameter cannot be negative.");
+					}
 
-				if (!(maxLength >= Integer.MAX_VALUE))
-					buffer.append("\nentries[e].setAttribute('ng-maxlength', '")
-							.append(maxLength).append("');");
+					if (maxLength < 0) {
+						throw new IllegalArgumentException("The max parameter cannot be negative.");
+					}
 
-				break;
+					if (minLength > 0) {
+						buffer.append("\nentries[e].setAttribute('ng-minlength', '")
+								.append(minLength).append("');");
+					}
 
-			case "javax.validation.constraints.DecimalMin":
-				String dMin = ((DecimalMin) a).value();
-				buffer.append("\nentries[e].setAttribute('min', '")
-						.append(dMin).append("');");
-				break;
+					if (maxLength < Integer.MAX_VALUE) {
+						buffer.append("\nentries[e].setAttribute('ng-maxlength', '")
+								.append(maxLength).append("');");
+					}
 
-			case "javax.validation.constraints.DecimalMax":
-				String dMax = ((DecimalMax) a).value();
-				buffer.append("\nentries[e].setAttribute('max', '")
-						.append(dMax).append("');");
-				break;
+					break;
 
-			case "javax.validation.constraints.Min":
-				long min = ((Min) a).value();
-				buffer.append("\nentries[e].setAttribute('min', '").append(min)
-						.append("');");
-				break;
+				case "javax.validation.constraints.DecimalMin":
+					String dMin = ((DecimalMin) a).value();
+					buffer.append("\nentries[e].setAttribute('min', '")
+							.append(dMin).append("');");
+					break;
 
-			case "javax.validation.constraints.Max":
-				long max = ((Max) a).value();
-				buffer.append("\nentries[e].setAttribute('max', '").append(max)
-						.append("');");
-				break;
+				case "javax.validation.constraints.DecimalMax":
+					String dMax = ((DecimalMax) a).value();
+					buffer.append("\nentries[e].setAttribute('max', '")
+							.append(dMax).append("');");
+					break;
 
-			default:
-				break;
+				case "javax.validation.constraints.Min":
+					long min = ((Min) a).value();
+					buffer.append("\nentries[e].setAttribute('min', '").append(min)
+							.append("');");
+					break;
+
+				case "javax.validation.constraints.Max":
+					long max = ((Max) a).value();
+					buffer.append("\nentries[e].setAttribute('max', '").append(max)
+							.append("');");
+					break;
+
+				default:
+					break;
 			}
 		}
 
