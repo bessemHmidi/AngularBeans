@@ -15,7 +15,6 @@
  * for more details.
  *
  */
-
 package angularBeans.api;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -28,26 +27,24 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Stereotype;
 import javax.inject.Qualifier;
 
-/**  
-* Declare a class as an AngularBean that will be proxied via an auto generated
-* AngularJS service.
-* <p>
-* this stereotype define by default a RequestScoped CDI Bean
-* <p>
-* compatibles scopes :
-* <br> javax.enterprise.context.RequestScoped
-* <br> javax.enterprise.context.ApplicationScoped
-* <br> javax.enterprise.context.NGSessionScoped
-* 
-* @author bessem hmidi
-**/ 
-
+/**
+ * Declare a class as an AngularBean that will be proxied via an auto generated
+ * AngularJS service.
+ * <p>
+ * this stereotype define by default a RequestScoped CDI Bean
+ * <p>
+ * compatibles scopes :
+ * <br> javax.enterprise.context.RequestScoped
+ * <br> javax.enterprise.context.ApplicationScoped
+ * <br> javax.enterprise.context.NGSessionScoped
+ *
+ * @author bessem hmidi
+ *
+ */
 @Retention(RUNTIME)
-@Target({TYPE, FIELD,PARAMETER })
+@Target({METHOD, FIELD, PARAMETER, TYPE})
 @Qualifier
 @Documented
 //@RequestScoped

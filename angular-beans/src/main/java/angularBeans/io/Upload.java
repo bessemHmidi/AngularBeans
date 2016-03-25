@@ -25,13 +25,14 @@ import javax.servlet.http.Part;
 
 /**
  * wrap a javax.servlet.http.Part in an upload action
+ *
  * @author Bessem Hmidi
  *
  */
-
 public class Upload {
-	private Part part;
-	private String id;
+
+	private final Part part;
+	private final String id;
 
 	public Upload(Part part, String id) {
 		super();
@@ -46,17 +47,15 @@ public class Upload {
 	public byte[] getAsByteArray() {
 		try {
 			InputStream in = part.getInputStream();
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			byte[] buffer = new byte[0xFFFF];
-
-			for (int len; (len = in.read(buffer)) != -1;)
-				os.write(buffer, 0, len);
-
-			os.flush();
-
-			byte[] result = os.toByteArray();
-			os.close();
-			return result;
+			try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+				byte[] buffer = new byte[0xFFFF];
+				int len;
+				while ((len = in.read(buffer)) != -1) {
+					os.write(buffer, 0, len);
+				}
+				os.flush();
+				return os.toByteArray();
+			}
 		} catch (IOException e) {
 			return null;
 		}

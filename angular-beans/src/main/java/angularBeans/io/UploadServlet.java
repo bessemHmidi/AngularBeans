@@ -86,7 +86,7 @@ public class UploadServlet extends HttpServlet {
 		response.setContentType(MediaType.APPLICATION_JSON);
 		try (PrintWriter out = response.getWriter()) {
 
-			List<Upload> uploads = new ArrayList<Upload>();
+			List<Upload> uploads = new ArrayList<>();
 
 			for (Part part : request.getParts()) {
 				Upload event = new Upload(part, param);

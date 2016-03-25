@@ -37,9 +37,9 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class ByteArrayCache implements Serializable {
 
-	private Map<String, Call> cache = new HashMap<String, Call>();
+	private final Map<String, Call> cache = new HashMap<>();
 
-	private Map<String, byte[]> tempCache = new HashMap<String, byte[]>();
+	private final Map<String, byte[]> tempCache = new HashMap<>();
 
 	public Map<String, Call> getCache() {
 		return cache;
