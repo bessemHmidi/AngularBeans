@@ -25,18 +25,19 @@ import javax.enterprise.context.ApplicationScoped;
 import org.projectodd.sockjs.SockJsConnection;
 
 import angularBeans.context.SessionMapper;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * this is a holder for all sockJs opened sessions
- * 
+ *
  * @author Bassem Hmidi
  *
  */
-
 @ApplicationScoped
 public class GlobalConnectionHolder {
 
-	private Set<SockJsConnection> allConnections;
+	private final Set<SockJsConnection> allConnections;
 	private static final Object lock = new Object();
 
 	public GlobalConnectionHolder() {
@@ -49,23 +50,21 @@ public class GlobalConnectionHolder {
 
 	public void removeConnection(String id) {
 		for (SockJsConnection connection : allConnections) {
-			
+
 			synchronized (lock) {
 				String httpSessionId = SessionMapper.getHTTPSessionID(connection.id);
-				if (httpSessionId != null) {
-					if (httpSessionId.equals(id)) {
-						SessionMapper.getSessionsMap().remove(id);
-						try {
-							connection.destroy();
-						} catch (Exception e) {
-
-						}
-						allConnections.remove(connection);
+				if (httpSessionId != null && httpSessionId.equals(id)) {
+					SessionMapper.getSessionsMap().remove(id);
+					try {
+						connection.destroy();
+					} catch (Exception ex) {
+						Logger.getLogger(GlobalConnectionHolder.class.getName())
+								.log(Level.WARNING, "error closing connection", ex);
 					}
+					allConnections.remove(connection);
 				}
 			}
-			
 		}
-	}
 
+	}
 }

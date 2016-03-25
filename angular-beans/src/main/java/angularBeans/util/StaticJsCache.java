@@ -117,7 +117,7 @@ public class StaticJsCache {
 			+ " };";
 	//TODO clean up dirty naming
 	public static StringBuilder CORE_SCRIPT = new StringBuilder();
-	public static Map<Class, StringBuffer> CACHED_BEAN_STATIC_PART = new HashMap<Class, StringBuffer>();
+	public static Map<Class, StringBuffer> CACHED_BEAN_STATIC_PART = new HashMap<>();
 	public static StringBuilder EXTENTIONS_SCRIPT = new StringBuilder();
 	public static StringBuilder VALIDATION_SCRIPT = new StringBuilder();
 

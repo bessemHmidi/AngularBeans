@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import angularBeans.api.AngularBean;
 import angularBeans.api.Eval;
 import angularBeans.context.NGSessionScoped;
-import angularBeans.enums.Callback;
 import angularBeans.realtime.RealTime;
 
 /**

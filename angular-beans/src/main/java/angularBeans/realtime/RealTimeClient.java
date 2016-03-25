@@ -63,7 +63,7 @@ import angularBeans.util.NGBean;
 @NGSessionScoped
 public class RealTimeClient implements Serializable {
 
-	private Set<SockJsConnection> sessions = new HashSet<SockJsConnection>();
+	private final Set<SockJsConnection> sessions = new HashSet<>();
 
 	@Inject
 	BroadcastManager broadcastManager;

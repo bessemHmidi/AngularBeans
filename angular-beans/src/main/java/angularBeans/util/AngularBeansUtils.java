@@ -15,7 +15,6 @@
  * for more details.
  *
  */
-
 package angularBeans.util;
 
 import static angularBeans.util.Constants.GET;
@@ -46,11 +45,10 @@ import com.google.gson.JsonSerializer;
 
 /**
  * utility class for AngularBeans
- * 
+ *
  * @author Bassem Hmidi
  *
  */
-
 @SuppressWarnings("serial")
 @ApplicationScoped
 public class AngularBeansUtils implements Serializable {
@@ -73,15 +71,15 @@ public class AngularBeansUtils implements Serializable {
 		builder.registerTypeAdapter(LobWrapper.class,
 				new JsonDeserializer<LobWrapper>() {
 
-					@Override
-					public LobWrapper deserialize(JsonElement json,
-							Type typeOfT, JsonDeserializationContext context)
-							throws JsonParseException {
+			@Override
+			public LobWrapper deserialize(JsonElement json,
+					Type typeOfT, JsonDeserializationContext context)
+					throws JsonParseException {
 
-						return null;
-					}
+				return null;
+			}
 
-				});
+		});
 
 		mainSerializer = builder.create();
 
@@ -90,7 +88,7 @@ public class AngularBeansUtils implements Serializable {
 	public String getJson(Object object) {
 
 		if (mainSerializer == null && object == null) {
-				mainSerializer.toJson(null);
+			mainSerializer.toJson(null);
 		}
 		return mainSerializer.toJson(object);
 	}
@@ -105,17 +103,16 @@ public class AngularBeansUtils implements Serializable {
 	}
 
 	public Object deserialise(Class clazz, JsonElement element) {
-		
+
 		return mainSerializer.fromJson(element, clazz);
 	}
 
 	public Object convertEvent(NGEvent event) throws ClassNotFoundException {
-		Object o = null;
 
 		JsonElement element = CommonUtils.parse(event.getData());
 
-		JsonElement data = null;
-		Class javaClass = null;
+		JsonElement data;
+		Class javaClass;
 
 		try {
 			data = element.getAsJsonObject();
@@ -123,14 +120,16 @@ public class AngularBeansUtils implements Serializable {
 			javaClass = Class.forName(event.getDataClass());
 		} catch (Exception e) {
 			data = element.getAsJsonPrimitive();
-			if (event.getDataClass() == null)
+			if (event.getDataClass() == null) {
 				event.setDataClass("String");
+			}
 			javaClass = Class.forName("java.lang." + event.getDataClass());
 
 		}
 
+		Object o;
 		if (javaClass.equals(String.class)) {
-			o = data.toString().substring(1,data.toString().length()-1);
+			o = data.toString().substring(1, data.toString().length() - 1);
 		} else {
 			o = (deserialise(javaClass, data));
 		}
@@ -149,6 +148,7 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 		this.cache = cache;
 	}
 
+	@Override
 	public JsonElement serialize(LobWrapper src, Type typeOfSrc,
 			JsonSerializationContext context) {
 
@@ -180,7 +180,6 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 									break;
 								}
 							}
-							continue;
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -203,6 +202,7 @@ class ByteArrayJsonAdapter implements JsonSerializer<byte[]> {
 		this.cache = cache;
 	}
 
+	@Override
 	public JsonElement serialize(byte[] src, Type typeOfSrc,
 			JsonSerializationContext context) {
 
