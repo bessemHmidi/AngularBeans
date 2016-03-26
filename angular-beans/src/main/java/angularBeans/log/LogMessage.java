@@ -15,51 +15,36 @@
  * for more details.
  *
  */
-
-/**
- @author Bessem Hmidi
- */
 package angularBeans.log;
 
 /**
- * 
+ *
  * @author bessem
  *
- *a class internally used by angular beans to
- *send log messages to the front end
- *(with NGLogger)
+ * a class internally used by angular beans to send log messages to the front
+ * end (with NGLogger)
  */
-
 public class LogMessage {
 
-	private String level;
-	private String message;
+    private final String level;
+    private final String message;
 
-	public String getLevel() {
-		return level;
-	}
+    public String getLevel() {
+        return level;
+    }
 
-	public void setLevel(String level) {
-		this.level = level;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public LogMessage(String level, String message) {
+        this.level = level;
+        this.message = message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public LogMessage(String level, String message) {
-		super();
-		this.level = level;
-		this.message = message;
-	}
-
-	@Override
-	public String toString() {
-		return "LEVEL: " + getLevel() + " MESSAGE: " + getMessage();
-	}
+    @Override
+    public String toString() {
+        return "LEVEL: " + getLevel() + " MESSAGE: " + getMessage();
+    }
 
 }

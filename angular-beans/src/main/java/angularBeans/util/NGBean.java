@@ -62,7 +62,7 @@ public class NGBean implements Serializable {
 	}
 
 	//private Set<Method> setters = new HashSet<>();
-	private Set<Method> getters = new HashSet<>();
+	private final Set<Method> getters = new HashSet<>();
 	private Method[] methods;
 
 	public void scan() {

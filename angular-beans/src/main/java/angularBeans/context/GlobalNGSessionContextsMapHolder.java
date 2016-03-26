@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class GlobalNGSessionContextsMapHolder {
 
-	private static Map<String, NGSessionContextHolder> map = new HashMap<String, NGSessionContextHolder>();
+	private static final Map<String, NGSessionContextHolder> map = new HashMap<>();
 
 	public static synchronized void destroySession(String holderId) {
 

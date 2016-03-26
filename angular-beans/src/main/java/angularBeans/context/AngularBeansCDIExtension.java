@@ -72,7 +72,7 @@ public class AngularBeansCDIExtension implements Extension {
 		if (annotatedType.isAnnotationPresent(AngularBean.class)){
 			BeanRegistry.INSTANCE.registerBean(typeClass);
 			return;
-		};
+		}
 
 		//Handle @NGExtension annotated components
 		if (annotatedType.isAnnotationPresent(NGExtension.class)){
@@ -83,12 +83,11 @@ public class AngularBeansCDIExtension implements Extension {
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
-		};
+		}
 
 		//Handle @NGApp annotated components
 		if (annotatedType.isAnnotationPresent(NGApp.class)) {
 			BeanRegistry.INSTANCE.registerApp(typeClass);
-			return;
 		}
 
 	}

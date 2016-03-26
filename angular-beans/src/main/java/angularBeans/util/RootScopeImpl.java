@@ -35,7 +35,8 @@ import javax.enterprise.inject.Alternative;
 @Alternative
 public class RootScopeImpl implements RootScope, Serializable {
 
-	private Map<String, Object> rootScopeMap = Collections.synchronizedMap(new HashMap<String, Object>());
+	private final Map<String, Object> rootScopeMap
+			= Collections.synchronizedMap(new HashMap<String, Object>());
 
 	/**
 	 * change the value of the model of the $rootScope

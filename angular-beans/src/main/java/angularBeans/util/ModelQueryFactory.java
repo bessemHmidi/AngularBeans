@@ -39,7 +39,7 @@ public class ModelQueryFactory implements Serializable {// PassivationCapable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Map<Class, ModelQuery> allQueries = new HashMap<Class, ModelQuery>();
+	private final Map<Class, ModelQuery> allQueries = new HashMap<>();
 
 	RootScope rootScope = new RootScopeImpl();
 

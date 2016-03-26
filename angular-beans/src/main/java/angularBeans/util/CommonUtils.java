@@ -53,7 +53,7 @@ public abstract class CommonUtils {
 	/**
 	 * used to obtain a bean java class from a bean name.
 	 */
-	public final static Map<String, Class> beanNamesHolder = new HashMap<String, Class>();
+	public final static Map<String, Class> beanNamesHolder = new HashMap<>();
 
 	public static String getBeanName(Class targetClass) {
 
@@ -104,7 +104,7 @@ public abstract class CommonUtils {
 		if (value == null){
 			return null;
 		}
-		Object param = null;
+		Object param;
 		
 		if (type.equals(int.class) || type.equals(Integer.class)) {
 			param = Integer.parseInt(value);
