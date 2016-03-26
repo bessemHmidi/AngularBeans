@@ -47,7 +47,7 @@ public class ResourcesCache {
 	AngularBeansUtils util;
 	
   
-	private Map<String, String> cache=new HashMap<String, String>();
+	private final Map<String, String> cache=new HashMap<>();
 	
 	public String get(String resourceName,ServletContext servletContext) {
 		

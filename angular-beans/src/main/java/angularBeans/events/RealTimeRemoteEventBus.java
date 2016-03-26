@@ -17,6 +17,8 @@
  */
 package angularBeans.events;
 
+import static angularBeans.enums.Callback.BEFORE_SESSION_READY;
+
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -41,7 +43,7 @@ public class RealTimeRemoteEventBus {
 
 	
 
-	@Eval(Callback.BEFORE_SESSION_READY)
+	@Eval(BEFORE_SESSION_READY)
 
 	 public String addOnReadyCallback(){
 		

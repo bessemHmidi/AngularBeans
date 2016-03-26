@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
-import com.google.javascript.jscomp.Result;
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.VariableRenamingPolicy;
 
@@ -38,8 +37,8 @@ import com.google.javascript.jscomp.VariableRenamingPolicy;
 public final class ClosureCompiler {
 
 	
-	private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
-	private CompilerOptions options;
+	private final Logger logger = Logger.getLogger(this.getClass().getSimpleName());
+	private final CompilerOptions options;
 	
 	private static final Object lock = new Object();
 

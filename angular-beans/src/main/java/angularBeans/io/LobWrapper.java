@@ -29,9 +29,9 @@ import java.util.Arrays;
 public class LobWrapper {
 
 	//the angularBean reference to make the call on
-	private Object owner;
+	private final Object owner;
 	
-	private byte[] data;
+	private final byte[] data;
 
 	public LobWrapper(byte[] data, Object owner) {
 

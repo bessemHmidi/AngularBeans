@@ -18,13 +18,23 @@
 
 package angularBeans.util;
 
+import static angularBeans.util.Constants.GET;
+import static angularBeans.util.Constants.IS;
+import static angularBeans.util.Constants.SET;
+import static angularBeans.util.Constants.THREE;
+import static angularBeans.util.Constants.TWO;
+import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.EMPTY_MAP;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Named;
 
+import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -42,12 +52,10 @@ import angularBeans.realtime.RealTime;
 
 public abstract class CommonUtils {
 
-	public static final String NG_SESSION_ATTRIBUTE_NAME = "NG_SESSION_ID";
-
 	/**
 	 * used to obtain a bean java class from a bean name.
 	 */
-	public final static Map<String, Class> beanNamesHolder = new HashMap<String, Class>();
+	public final static Map<String, Class> beanNamesHolder = new HashMap<>();
 
 	public static String getBeanName(Class targetClass) {
 
@@ -71,15 +79,15 @@ public abstract class CommonUtils {
 		String name = field.getName();
 		name = name.substring(0, 1).toUpperCase() + name.substring(1);
 		if (field.getType().equals(Boolean.class) || field.getType().equals(boolean.class))
-			return "is" + name;
-		return "get" + name;
+			return IS + name;
+		return GET + name;
 	}
 
 	public static String obtainSetter(Field field) {
 		String name = field.getName();
 		name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
-		return "set" + name;
+		return SET + name;
 	}
 
 	public static JsonElement parse(String message) {
@@ -87,12 +95,7 @@ public abstract class CommonUtils {
 		if (!message.startsWith("{")) {
 			return new JsonPrimitive(message);
 		}
-
-		// JsonReader reader = new JsonReader(new StringReader(message));
-		// reader.setLenient(true);
-
 		JsonParser parser = new JsonParser();
-
 		JsonElement element = parser.parse(message);
 
 		return element;
@@ -100,10 +103,11 @@ public abstract class CommonUtils {
 
 	public static Object convertFromString(String value, Class type) {
 
-		Object param = null;
-
-		// NPE
-
+		if (value == null){
+			return null;
+		}
+		Object param;
+		
 		if (type.equals(int.class) || type.equals(Integer.class)) {
 			param = Integer.parseInt(value);
 			return param;
@@ -157,66 +161,74 @@ public abstract class CommonUtils {
 		return param;
 
 	}
-
-	// public static List<Method> obtainSetters(Class clazz){
-	//
-	// //Method[] methods=clazz.getDeclaredMethods()
-	//
-	// }
-
+	
 	public static boolean isSetter(Method m) {
 
-		return m.getName().startsWith("set") && m.getReturnType().equals(void.class)
+		return m.getName().startsWith(SET) && m.getReturnType().equals(void.class)
 				&& (m.getParameterTypes().length > 0 && m.getParameterTypes().length < 2);
 
 	}
 
 	public static boolean isGetter(Method m) {
 		return (
-
-		((m.getParameterTypes().length == 0) && ((m.getName().startsWith("get"))
+		//TODO clean up dirty boolean
+		((m.getParameterTypes().length == 0) && ((m.getName().startsWith(GET))
 				|| (((m.getReturnType().equals(boolean.class)) || (m.getReturnType().equals(Boolean.class)))
-						&& (m.getName().startsWith("is")))))
+						&& (m.getName().startsWith(IS)))))
 				&& (!(
 
 		m.getReturnType().equals(Void.class) || (m.getReturnType().equals(void.class))
 				|| m.isAnnotationPresent(RealTime.class) || m.isAnnotationPresent(Get.class)
 				|| m.isAnnotationPresent(Post.class) || m.isAnnotationPresent(Put.class)
 				|| m.isAnnotationPresent(Delete.class)
-				// || m.isAnnotationPresent(OPTIONS.class) ||
-				// m.isAnnotationPresent(HEAD.class)
 				|| m.isAnnotationPresent(CORS.class)
-
 		))
 
 		);
-
 	}
 
 	public static boolean hasSetter(Class clazz, String name) {
 
-		String setterName = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
+		String setterName = SET
+				+ name.substring(0, 1).toUpperCase()
+				+ name.substring(1);
+		
 		setterName = setterName.trim();
-
 		for (Method m : clazz.getDeclaredMethods()) {
 
 			if (m.getName().equals(setterName) && (isSetter(m))) {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
 	public static String obtainFieldNameFromAccessor(String getterName) {
-		int index = 3;
-		if (getterName.startsWith("is"))
-			index = 2;
+		int index = THREE;		
+		if (getterName.startsWith(IS))
+			index = TWO;
+		
 		String fieldName = getterName.substring(index);
-
 		fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
 
 		return fieldName;
+	}
+	
+	public static boolean isNullOrEmpty(Object o){
+		//TODO gotta complete this dammy method
+		if (o == null){
+			return true;
+		}
+		if (o instanceof String){
+			return Strings.isNullOrEmpty((String) o);
+		}
+		if (o instanceof Collections){
+			return ((Collections) o).equals(EMPTY_LIST)
+					|| ((Collections) o).equals(EMPTY_MAP)
+					|| ((Collections) o).equals(Collections.EMPTY_SET);
+		}
+		return false;
+		
 	}
 
 }

@@ -34,7 +34,7 @@ import angularBeans.context.NGSessionScoped;
 @NGSessionScoped
 public class FileUploadHandler implements Serializable {
 
-	private Map<String, Call> uploadsActions = new HashMap<String, Call>();
+	private final Map<String, Call> uploadsActions = new HashMap<>();
 
 	public Map<String, Call> getUploadsActions() {
 		return uploadsActions;

@@ -37,7 +37,7 @@ import angularBeans.context.SessionMapper;
 @ApplicationScoped
 public class BroadcastManager {
 
-	private Map<String, Set<String>> subscriptions = new HashMap<String, Set<String>>();
+	private final Map<String, Set<String>> subscriptions = new HashMap<>();
 
 	/**
 	 * check if a specific sockJs session is subscribed or not to 
@@ -60,10 +60,7 @@ public class BroadcastManager {
 			subscriptions.put(channel, new HashSet<String>());
 		}
 
-		if (subscriptions.get(channel).contains(httpSessionId))
-			return true;
-
-		return false;
+		return subscriptions.get(channel).contains(httpSessionId);
 	}
 
 	public void subscribe(String httpSessionID, String channel) {

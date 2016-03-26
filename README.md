@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bessemHmidi/AngularBeans.svg?branch=master)](https://travis-ci.org/bessemHmidi/AngularBeans)
+
 # AngularBeans
 
 ![AngularBeans_Logo](https://cloud.githubusercontent.com/assets/1442690/8021018/e493e554-0c87-11e5-81ab-4dc894897044.png "AngularBeans Logo")

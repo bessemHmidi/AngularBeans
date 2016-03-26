@@ -31,6 +31,7 @@ package angularBeans.ngservices;
 @NGExtension
 public class LoggerService implements NGService {
 
+	@Override
 	public String render() {
 		String result = "";
 

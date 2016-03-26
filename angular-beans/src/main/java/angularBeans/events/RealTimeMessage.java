@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class RealTimeMessage {
 
-	private Map<String, Object> data = new HashMap<String, Object>();
+	private final Map<String, Object> data = new HashMap<>();
 
 	public RealTimeMessage set(String modelName, Object value) {
 		data.put(modelName, value);
