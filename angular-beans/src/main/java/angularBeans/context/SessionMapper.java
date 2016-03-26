@@ -22,31 +22,30 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *  map a group of sockJS sessions to the current HTTP session.
+ * map a group of sockJS sessions to the current HTTP session.
+ *
  * @author Bessem Hmidi
  *
  */
 public class SessionMapper {
 
-	private static Map<String, Set<String>> sessionsMap=new HashMap<String, Set<String>>();
-	 
-	
-	
-	
-    public static Map<String, Set<String>> getSessionsMap() {
-	return sessionsMap;	
-}
-	
-	public static String getHTTPSessionID(String sockJSSessionID){
-		
-		for(String httpSession:sessionsMap.keySet()){
-			
-			if(sessionsMap.get(httpSession).contains(sockJSSessionID))return httpSession;
-			
+	private static final Map<String, Set<String>> sessionsMap = new HashMap<>();
+
+	public static Map<String, Set<String>> getSessionsMap() {
+		return sessionsMap;
+	}
+
+	public static String getHTTPSessionID(String sockJSSessionID) {
+
+		for (String httpSession : sessionsMap.keySet()) {
+
+			if (sessionsMap.get(httpSession).contains(sockJSSessionID)) {
+				return httpSession;
+			}
+
 		}
-		
-		
+
 		return null;
 	}
-    
+
 }

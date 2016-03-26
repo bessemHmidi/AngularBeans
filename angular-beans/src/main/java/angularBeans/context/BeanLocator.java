@@ -53,12 +53,11 @@ public class BeanLocator implements Serializable {
 	public  Object lookup(String beanName, String sessionID) {
 
 		NGSessionScopeContext.setCurrentContext(sessionID);
-		Object reference = null;
 
 		Set<Bean<?>> beans = beanManager.getBeans(beanName);
 
 		Class beanClass = CommonUtils.beanNamesHolder.get(beanName);
-		if (beans.size() == 0) {
+		if (beans.isEmpty()) {
 			beans = beanManager.getBeans(beanClass,
 					new AnnotationLiteral<Any>() {
 					});
@@ -66,9 +65,9 @@ public class BeanLocator implements Serializable {
 
 		Bean bean = (Bean) beanManager.resolve(beans);
 
-		Context context = null;
 
 		Class scopeAnnotationClass = bean.getScope();
+		Context context;
 
 		if (scopeAnnotationClass.equals(RequestScoped.class)) {
 			context = beanManager.getContext(scopeAnnotationClass);
@@ -86,7 +85,7 @@ public class BeanLocator implements Serializable {
 		}
 		CreationalContext creationalContext = beanManager
 				.createCreationalContext(bean);
-		reference = context.get(bean, creationalContext);
+		Object reference = context.get(bean, creationalContext);
 
 		
 //		if(reference==null && scopeAnnotationClass.equals(RequestScoped.class)){

@@ -350,7 +350,7 @@ public class ModuleGenerator implements Serializable {
 			) {
 
 				String[] csUpdates = null;
-				Set<Method> setters = new HashSet<Method>();
+				Set<Method> setters = new HashSet<>();
 
 				String httpMethod = GET;
 

@@ -38,7 +38,7 @@ import javax.enterprise.inject.spi.Bean;
 public class NGSessionContextHolder implements Serializable {
 
 	// private static NGSessionContextHolder INSTANCE;
-	private Map<Class, NGSessionScopeInstance> beans;// we will have only one
+	private final Map<Class, NGSessionScopeInstance> beans;// we will have only one
 													// instance of a type so the
 													// key is a class
  

@@ -28,16 +28,11 @@ import static java.util.Collections.EMPTY_MAP;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Named;
-import javax.lang.model.type.ReferenceType;
-import javax.swing.plaf.TextUI;
 
 import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
@@ -60,7 +55,7 @@ public abstract class CommonUtils {
 	/**
 	 * used to obtain a bean java class from a bean name.
 	 */
-	public final static Map<String, Class> beanNamesHolder = new HashMap<String, Class>();
+	public final static Map<String, Class> beanNamesHolder = new HashMap<>();
 
 	public static String getBeanName(Class targetClass) {
 
@@ -111,7 +106,7 @@ public abstract class CommonUtils {
 		if (value == null){
 			return null;
 		}
-		Object param = null;
+		Object param;
 		
 		if (type.equals(int.class) || type.equals(Integer.class)) {
 			param = Integer.parseInt(value);
