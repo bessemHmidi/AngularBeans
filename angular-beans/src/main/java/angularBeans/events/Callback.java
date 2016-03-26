@@ -1,4 +1,4 @@
-package angularBeans.enums;
+package angularBeans.events;
 
 /**
  * Class enum of Callbaks.

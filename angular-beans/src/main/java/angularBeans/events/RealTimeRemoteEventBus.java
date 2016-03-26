@@ -17,7 +17,7 @@
  */
 package angularBeans.events;
 
-import static angularBeans.enums.Callback.BEFORE_SESSION_READY;
+import static angularBeans.events.Callback.BEFORE_SESSION_READY;
 
 import java.util.Map;
 

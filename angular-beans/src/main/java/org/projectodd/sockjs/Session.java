@@ -5,10 +5,10 @@
 
 package org.projectodd.sockjs;
 
-import static angularBeans.enums.ReadyState.CLOSED;
-import static angularBeans.enums.ReadyState.CLOSING;
-import static angularBeans.enums.ReadyState.CONNECTING;
-import static angularBeans.enums.ReadyState.OPEN;
+import static org.projectodd.sockjs.ReadyState.CLOSED;
+import static org.projectodd.sockjs.ReadyState.CLOSING;
+import static org.projectodd.sockjs.ReadyState.CONNECTING;
+import static org.projectodd.sockjs.ReadyState.OPEN;
 import static org.projectodd.sockjs.Transport.closeFrame;
 
 import java.util.ArrayList;
@@ -18,8 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import angularBeans.enums.ReadyState;
 
 public class Session {
 

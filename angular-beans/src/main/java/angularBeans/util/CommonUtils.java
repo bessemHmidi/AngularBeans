@@ -23,18 +23,16 @@ import static angularBeans.util.Constants.IS;
 import static angularBeans.util.Constants.SET;
 import static angularBeans.util.Constants.THREE;
 import static angularBeans.util.Constants.TWO;
-import static java.util.Collections.EMPTY_LIST;
-import static java.util.Collections.EMPTY_MAP;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Named;
 
-import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -55,13 +53,13 @@ public abstract class CommonUtils {
 	/**
 	 * used to obtain a bean java class from a bean name.
 	 */
-	public final static Map<String, Class> beanNamesHolder = new HashMap<>();
+	public static final Map<String, Class> beanNamesHolder = new HashMap<>();
 
 	public static String getBeanName(Class targetClass) {
 
 		if (targetClass.isAnnotationPresent(Named.class)) {
 			Named named = (Named) targetClass.getAnnotation(Named.class);
-			return (named.value());
+			return named.value();
 		}
 
 		String name = targetClass.getSimpleName();
@@ -96,81 +94,48 @@ public abstract class CommonUtils {
 			return new JsonPrimitive(message);
 		}
 		JsonParser parser = new JsonParser();
-		JsonElement element = parser.parse(message);
-
-		return element;
+		return parser.parse(message);
 	}
 
 	public static Object convertFromString(String value, Class type) {
 
-		if (value == null){
+		if (isNullOrEmpty(value) || type.equals(byte[].class) || type.equals(Byte[].class)){
 			return null;
-		}
-		Object param;
-		
+		}		
 		if (type.equals(int.class) || type.equals(Integer.class)) {
-			param = Integer.parseInt(value);
-			return param;
+			return Integer.parseInt(value);
 		}
-
 		if (type.equals(float.class) || type.equals(Float.class)) {
-			param = Float.parseFloat(value);
-			return param;
+			return Float.parseFloat(value);
 		}
-
 		if (type.equals(boolean.class) || type.equals(Boolean.class)) {
-			param = Boolean.parseBoolean(value);
-			return param;
+			return Boolean.parseBoolean(value);
 		}
-
 		if (type.equals(double.class) || type.equals(Double.class)) {
-			param = Double.parseDouble(value);
-			return param;
+			return Double.parseDouble(value);
 		}
-
-		if (type.equals(float.class) || type.equals(Float.class)) {
-			param = Float.parseFloat(value);
-			return param;
-		}
-
 		if (type.equals(byte.class) || type.equals(Byte.class)) {
-			param = Byte.parseByte(value);
-			return param;
+			return Byte.parseByte(value);
 		}
-
 		if (type.equals(long.class) || type.equals(Long.class)) {
-			param = Long.parseLong(value);
-			return param;
+			return Long.parseLong(value);
 		}
-
 		if (type.equals(short.class) || type.equals(Short.class)) {
-			param = Short.parseShort(value);
-			return param;
+			return Short.parseShort(value);
 		}
-
-		if (type.equals(byte[].class) || type.equals(Byte[].class)) {
-			param = null;
-			return param;
-		}
-
-		else {
-
-			param = type.cast(value);
-
-		}
-		return param;
-
+		
+		return type.cast(value);
 	}
 	
 	public static boolean isSetter(Method m) {
 
 		return m.getName().startsWith(SET) && m.getReturnType().equals(void.class)
-				&& (m.getParameterTypes().length > 0 && m.getParameterTypes().length < 2);
+				&& (m.getParameterTypes().length > 0 && m.getParameterTypes().length < TWO);
 
 	}
 
 	public static boolean isGetter(Method m) {
-		return (
+		return 
 		//TODO clean up dirty boolean
 		((m.getParameterTypes().length == 0) && ((m.getName().startsWith(GET))
 				|| (((m.getReturnType().equals(boolean.class)) || (m.getReturnType().equals(Boolean.class)))
@@ -182,9 +147,7 @@ public abstract class CommonUtils {
 				|| m.isAnnotationPresent(Post.class) || m.isAnnotationPresent(Put.class)
 				|| m.isAnnotationPresent(Delete.class)
 				|| m.isAnnotationPresent(CORS.class)
-		))
-
-		);
+		));
 	}
 
 	public static boolean hasSetter(Class clazz, String name) {
@@ -214,21 +177,42 @@ public abstract class CommonUtils {
 		return fieldName;
 	}
 	
-	public static boolean isNullOrEmpty(Object o){
-		//TODO gotta complete this dammy method
-		if (o == null){
+	/**
+	 * check is the parameter is null or empty.
+	 * 
+	 * @param <T>
+	 *            class type of tested objects.
+	 * @param o
+	 *            parameter to check.
+	 * @return true is the parameter is null or empty, false otherwise.
+	 */
+	public static <T> Boolean isNullOrEmpty(final T o) {
+		if (o == null) {
 			return true;
 		}
-		if (o instanceof String){
-			return Strings.isNullOrEmpty((String) o);
+		if (o instanceof String) {
+			return "".equals(((String) o).trim());
 		}
-		if (o instanceof Collections){
-			return ((Collections) o).equals(EMPTY_LIST)
-					|| ((Collections) o).equals(EMPTY_MAP)
-					|| ((Collections) o).equals(Collections.EMPTY_SET);
+		if (o.getClass().isArray()) {
+			return Arrays.asList((Object[]) o).isEmpty();
+		}
+		if (o instanceof Collection<?>) {
+			return ((Collection<?>) o).isEmpty();
 		}
 		return false;
-		
 	}
 
+	/**
+	 * check is the parameter (byte array) is null or empty.
+	 * 
+	 * @param o
+	 *            byte[] parameter to check.
+	 * @return true is the parameter is null or empty, false otherwise.
+	 */
+	public static Boolean isNullOrEmpty(final byte[] o) {
+		if (o == null) {
+			return true;
+		}
+		return o.length == 0;
+	}
 }
