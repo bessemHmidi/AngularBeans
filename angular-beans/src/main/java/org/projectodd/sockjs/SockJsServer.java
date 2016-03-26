@@ -162,6 +162,7 @@ public class SockJsServer {
          * disables streaming and will make streaming transports to behave
          * like polling transports. The default value is 128K.
          */
+        // TODO externalize
         public int responseLimit = 128 * 1024;
 
         /**

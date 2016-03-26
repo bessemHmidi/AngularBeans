@@ -32,7 +32,7 @@ import com.google.gson.JsonObject;
 @SuppressWarnings("serial")
 public class HalfDuplexDataReceivedEvent implements DataReceived, Serializable {
 
-	private JsonObject data;
+	private final JsonObject data;
 
 	@Override
 	public JsonObject getData() {

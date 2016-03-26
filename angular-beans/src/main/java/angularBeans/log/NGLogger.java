@@ -40,7 +40,7 @@ public class NGLogger implements Serializable {
 	public enum Level {
 		LOG("log"), INFO("info"), WARN("warn"), ERROR("error"), DEBUG("debug");
 
-		private String level;
+		private final String level;
 
 		private Level(String level) {
 			this.level = level;
@@ -51,7 +51,7 @@ public class NGLogger implements Serializable {
 		}
 	}
 
-	private LinkedList<LogMessage> logPool = new LinkedList<LogMessage>();
+	private final LinkedList<LogMessage> logPool = new LinkedList<>();
 
 	// private String UID;
 	//

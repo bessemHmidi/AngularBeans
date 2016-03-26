@@ -26,14 +26,15 @@ import javax.enterprise.inject.spi.InjectionPoint;
  * <p>
  * Produces a CDI injectable Logger class
  * </p>
- * 
+ *
  * @author Aymen Naili
  */
 public class LoggerProducer {
-	
-	@Produces
-	public Logger produce(InjectionPoint injectionPoint){
-		return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getSimpleName());
-	}
-	
+
+    @Produces
+    public Logger produce(InjectionPoint injectionPoint) {
+        final Class<?> declaringClass = injectionPoint.getMember().getDeclaringClass();
+        return Logger.getLogger(declaringClass.getName());
+    }
+
 }

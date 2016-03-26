@@ -204,9 +204,7 @@ public class AngularBeansServletContextListener implements ServletContextListene
 		StringBuffer buffer = new StringBuffer();
 
 		String appName = null;
-		Class<? extends Object> appClass = null;
-
-		appClass = BeanRegistry.INSTANCE.getAppClass();
+		Class<? extends Object> appClass = BeanRegistry.INSTANCE.getAppClass();
 		if (appClass.isAnnotationPresent(Named.class)) {
 			appName = appClass.getAnnotation(Named.class).value();
 		}

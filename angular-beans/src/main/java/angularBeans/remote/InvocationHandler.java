@@ -21,6 +21,8 @@
  */
 package angularBeans.remote;
 
+import static angularBeans.util.Constants.GET;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -51,6 +53,7 @@ import angularBeans.log.NGLogger;
 import angularBeans.log.NGLogger.Level;
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.CommonUtils;
+import angularBeans.util.Constants;
 import angularBeans.util.ModelQueryFactory;
 import angularBeans.util.ModelQueryImpl;
 
@@ -78,9 +81,9 @@ public class InvocationHandler implements Serializable {
 	@Inject
 	ModelQueryFactory modelQueryFactory;
 
-	static Map<String, Class> builtInMap = new HashMap<String, Class>();
+	static final Map<String, Class> builtInMap = new HashMap<>();
 
-	static Map<String, Class> arrayTypesMap = new HashMap<>();
+	static final Map<String, Class> arrayTypesMap = new HashMap<>();
 
 	static {
 
@@ -119,7 +122,7 @@ public class InvocationHandler implements Serializable {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
-		Map<String, Object> returns = new HashMap<String, Object>();
+		Map<String, Object> returns = new HashMap<>();
 		// Object mainReturn = null;
 
 		returns.put("isRT", true);
@@ -143,7 +146,7 @@ public class InvocationHandler implements Serializable {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
-		Map<String, Object> returns = new HashMap<String, Object>();
+		Map<String, Object> returns = new HashMap<>();
 
 		try {
 
@@ -187,11 +190,11 @@ public class InvocationHandler implements Serializable {
 
 					if (parameters.length == args.size()) {
 
-						List<Object> argsValues = new ArrayList<Object>();
+						List<Object> argsValues = new ArrayList<>();
 
 						for (int i = 0; i < parameters.length; i++) {
 
-							Class typeClass = null;
+							Class typeClass;
 
 							String typeString = ((parameters[i]).toString());
 
@@ -293,14 +296,14 @@ public class InvocationHandler implements Serializable {
 
 		ModelQueryImpl qImpl = (ModelQueryImpl) modelQueryFactory.get(service.getClass());
 
-		Map<String, Object> scMap = new HashMap<String, Object>((qImpl).getData());
+		Map<String, Object> scMap = new HashMap<>(qImpl.getData());
 
 		returns.putAll(scMap);
 
-		(qImpl).getData().clear();
+		qImpl.getData().clear();
 
 		if (!modelQueryFactory.getRootScope().getRootScopeMap().isEmpty()) {
-			returns.put("rootScope", new HashMap<String, Object>(modelQueryFactory.getRootScope().getRootScopeMap()));
+			returns.put("rootScope", new HashMap<>(modelQueryFactory.getRootScope().getRootScopeMap()));
 			modelQueryFactory.getRootScope().getRootScopeMap().clear();
 		}
 
@@ -322,7 +325,7 @@ public class InvocationHandler implements Serializable {
 
 			if (ngReturn.model().length() > 0) {
 				returns.put(ngReturn.model(), mainReturn);
-				Map<String, String> binding = new HashMap<String, String>();
+				Map<String, String> binding = new HashMap<>();
 
 				binding.put("boundTo", ngReturn.model());
 
@@ -339,7 +342,7 @@ public class InvocationHandler implements Serializable {
 		if (updates != null) {
 			if ((updates.length == 1) && (updates[0].equals("*"))) {
 
-				List<String> upd = new ArrayList<String>();
+				List<String> upd = new ArrayList<>();
 				for (Method met : service.getClass().getDeclaredMethods()) {
 
 					if (CommonUtils.isGetter(met)) {
@@ -363,12 +366,12 @@ public class InvocationHandler implements Serializable {
 		if (updates != null) {
 			for (String up : updates) {
 
-				String getterName = "get" + up.substring(0, 1).toUpperCase() + up.substring(1);
-				Method getter = null;
+				String getterName = GET + up.substring(0, 1).toUpperCase() + up.substring(1);
+				Method getter;
 				try {
 					getter = service.getClass().getMethod(getterName);
 				} catch (NoSuchMethodException e) {
-					getter = service.getClass().getMethod((getterName.replace("get", "is")));
+					getter = service.getClass().getMethod((getterName.replace(GET, "is")));
 				}
 
 				Object result = getter.invoke(service);
@@ -462,7 +465,7 @@ public class InvocationHandler implements Serializable {
 						JsonArray array = value.getAsJsonArray();
 
 						Collection collection = (Collection) get.invoke(o);
-						Object elem = null;
+						Object elem;
 						for (JsonElement element : array) {
 							if (element.isJsonPrimitive()) {
 								JsonPrimitive primitive = element.getAsJsonPrimitive();

@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.Response.StatusType;
 
+import angularBeans.enums.ReadyState;
+
 public class SockJsConnection {
 
     public SockJsConnection(Session session) {
@@ -163,7 +165,7 @@ public class SockJsConnection {
     /**
      * Current state of the connection
      */
-    public Transport.READY_STATE getReadyState() {
+    public ReadyState getReadyState() {
         return session.readyState;
     }
 
