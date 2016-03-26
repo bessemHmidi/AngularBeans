@@ -53,13 +53,13 @@ public abstract class CommonUtils {
 	/**
 	 * used to obtain a bean java class from a bean name.
 	 */
-	public final static Map<String, Class> beanNamesHolder = new HashMap<>();
+	public static final Map<String, Class> beanNamesHolder = new HashMap<>();
 
 	public static String getBeanName(Class targetClass) {
 
 		if (targetClass.isAnnotationPresent(Named.class)) {
 			Named named = (Named) targetClass.getAnnotation(Named.class);
-			return (named.value());
+			return named.value();
 		}
 
 		String name = targetClass.getSimpleName();
@@ -94,81 +94,48 @@ public abstract class CommonUtils {
 			return new JsonPrimitive(message);
 		}
 		JsonParser parser = new JsonParser();
-		JsonElement element = parser.parse(message);
-
-		return element;
+		return parser.parse(message);
 	}
 
 	public static Object convertFromString(String value, Class type) {
 
-		if (value == null){
+		if (isNullOrEmpty(value) || type.equals(byte[].class) || type.equals(Byte[].class)){
 			return null;
-		}
-		Object param;
-		
+		}		
 		if (type.equals(int.class) || type.equals(Integer.class)) {
-			param = Integer.parseInt(value);
-			return param;
+			return Integer.parseInt(value);
 		}
-
 		if (type.equals(float.class) || type.equals(Float.class)) {
-			param = Float.parseFloat(value);
-			return param;
+			return Float.parseFloat(value);
 		}
-
 		if (type.equals(boolean.class) || type.equals(Boolean.class)) {
-			param = Boolean.parseBoolean(value);
-			return param;
+			return Boolean.parseBoolean(value);
 		}
-
 		if (type.equals(double.class) || type.equals(Double.class)) {
-			param = Double.parseDouble(value);
-			return param;
+			return Double.parseDouble(value);
 		}
-
-		if (type.equals(float.class) || type.equals(Float.class)) {
-			param = Float.parseFloat(value);
-			return param;
-		}
-
 		if (type.equals(byte.class) || type.equals(Byte.class)) {
-			param = Byte.parseByte(value);
-			return param;
+			return Byte.parseByte(value);
 		}
-
 		if (type.equals(long.class) || type.equals(Long.class)) {
-			param = Long.parseLong(value);
-			return param;
+			return Long.parseLong(value);
 		}
-
 		if (type.equals(short.class) || type.equals(Short.class)) {
-			param = Short.parseShort(value);
-			return param;
+			return Short.parseShort(value);
 		}
-
-		if (type.equals(byte[].class) || type.equals(Byte[].class)) {
-			param = null;
-			return param;
-		}
-
-		else {
-
-			param = type.cast(value);
-
-		}
-		return param;
-
+		
+		return type.cast(value);
 	}
 	
 	public static boolean isSetter(Method m) {
 
 		return m.getName().startsWith(SET) && m.getReturnType().equals(void.class)
-				&& (m.getParameterTypes().length > 0 && m.getParameterTypes().length < 2);
+				&& (m.getParameterTypes().length > 0 && m.getParameterTypes().length < TWO);
 
 	}
 
 	public static boolean isGetter(Method m) {
-		return (
+		return 
 		//TODO clean up dirty boolean
 		((m.getParameterTypes().length == 0) && ((m.getName().startsWith(GET))
 				|| (((m.getReturnType().equals(boolean.class)) || (m.getReturnType().equals(Boolean.class)))
@@ -180,9 +147,7 @@ public abstract class CommonUtils {
 				|| m.isAnnotationPresent(Post.class) || m.isAnnotationPresent(Put.class)
 				|| m.isAnnotationPresent(Delete.class)
 				|| m.isAnnotationPresent(CORS.class)
-		))
-
-		);
+		));
 	}
 
 	public static boolean hasSetter(Class clazz, String name) {
@@ -212,7 +177,6 @@ public abstract class CommonUtils {
 		return fieldName;
 	}
 	
-	// TODO use following methods into the code.
 	/**
 	 * check is the parameter is null or empty.
 	 * 
