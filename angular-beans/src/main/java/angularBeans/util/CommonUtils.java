@@ -23,23 +23,16 @@ import static angularBeans.util.Constants.IS;
 import static angularBeans.util.Constants.SET;
 import static angularBeans.util.Constants.THREE;
 import static angularBeans.util.Constants.TWO;
-import static java.util.Collections.EMPTY_LIST;
-import static java.util.Collections.EMPTY_MAP;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Named;
-import javax.lang.model.type.ReferenceType;
-import javax.swing.plaf.TextUI;
 
-import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -219,21 +212,43 @@ public abstract class CommonUtils {
 		return fieldName;
 	}
 	
-	public static boolean isNullOrEmpty(Object o){
-		//TODO gotta complete this dammy method
-		if (o == null){
+	// TODO use following methods into the code.
+	/**
+	 * check is the parameter is null or empty.
+	 * 
+	 * @param <T>
+	 *            class type of tested objects.
+	 * @param o
+	 *            parameter to check.
+	 * @return true is the parameter is null or empty, false otherwise.
+	 */
+	public static <T> Boolean isNullOrEmpty(final T o) {
+		if (o == null) {
 			return true;
 		}
-		if (o instanceof String){
-			return Strings.isNullOrEmpty((String) o);
+		if (o instanceof String) {
+			return "".equals(((String) o).trim());
 		}
-		if (o instanceof Collections){
-			return ((Collections) o).equals(EMPTY_LIST)
-					|| ((Collections) o).equals(EMPTY_MAP)
-					|| ((Collections) o).equals(Collections.EMPTY_SET);
+		if (o.getClass().isArray()) {
+			return Arrays.asList((Object[]) o).isEmpty();
+		}
+		if (o instanceof Collection<?>) {
+			return ((Collection<?>) o).isEmpty();
 		}
 		return false;
-		
 	}
 
+	/**
+	 * check is the parameter (byte array) is null or empty.
+	 * 
+	 * @param o
+	 *            byte[] parameter to check.
+	 * @return true is the parameter is null or empty, false otherwise.
+	 */
+	public static Boolean isNullOrEmpty(final byte[] o) {
+		if (o == null) {
+			return true;
+		}
+		return o.length == 0;
+	}
 }

@@ -19,8 +19,8 @@
 
 package angularBeans.boot;
 
-import static angularBeans.enums.Callback.AFTER_SESSION_READY;
-import static angularBeans.enums.Callback.BEFORE_SESSION_READY;
+import static angularBeans.events.Callback.AFTER_SESSION_READY;
+import static angularBeans.events.Callback.BEFORE_SESSION_READY;
 import static angularBeans.util.Constants.DELETE_TO_REPLACE;
 import static angularBeans.util.Constants.GET;
 import static angularBeans.util.Constants.POST;
@@ -50,7 +50,7 @@ import angularBeans.api.http.Post;
 import angularBeans.api.http.Put;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
-import angularBeans.enums.Callback;
+import angularBeans.events.Callback;
 import angularBeans.io.ByteArrayCache;
 import angularBeans.io.Call;
 import angularBeans.io.FileUpload;

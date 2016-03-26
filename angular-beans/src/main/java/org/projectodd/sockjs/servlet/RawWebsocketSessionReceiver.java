@@ -5,9 +5,9 @@
 
 package org.projectodd.sockjs.servlet;
 
-import static angularBeans.enums.ReadyState.CLOSED;
-import static angularBeans.enums.ReadyState.CLOSING;
-import static angularBeans.enums.ReadyState.OPEN;
+import static org.projectodd.sockjs.ReadyState.CLOSED;
+import static org.projectodd.sockjs.ReadyState.CLOSING;
+import static org.projectodd.sockjs.ReadyState.OPEN;
 
 import java.io.IOException;
 import java.util.logging.Level;

@@ -11,8 +11,6 @@ import java.util.Map;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.Response.StatusType;
 
-import angularBeans.enums.ReadyState;
-
 public class SockJsConnection {
 
     public SockJsConnection(Session session) {

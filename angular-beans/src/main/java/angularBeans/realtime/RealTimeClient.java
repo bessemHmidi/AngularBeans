@@ -21,7 +21,7 @@
  */
 package angularBeans.realtime;
 
-import static angularBeans.enums.ReadyState.OPEN;
+import static org.projectodd.sockjs.ReadyState.OPEN;
 
 import java.io.Serializable;
 import java.util.HashMap;

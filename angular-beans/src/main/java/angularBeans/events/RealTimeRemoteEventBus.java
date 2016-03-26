@@ -17,7 +17,7 @@
  */
 package angularBeans.events;
 
-import static angularBeans.enums.Callback.BEFORE_SESSION_READY;
+import static angularBeans.events.Callback.BEFORE_SESSION_READY;
 
 import java.util.Map;
 
@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import angularBeans.api.AngularBean;
 import angularBeans.api.Eval;
 import angularBeans.context.NGSessionScoped;
-import angularBeans.enums.Callback;
 import angularBeans.realtime.RealTime;
 
 /**
