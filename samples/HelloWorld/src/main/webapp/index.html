@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html data-ng-app="myApp">
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Hello AngularBeans</title>
+	
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+	<script type="text/javascript" src="bower_components/angularjs/angular.min.js"></script>
+	<script type="text/javascript" src="bower_components/sockjs/sockjs.min.js"></script>
+	<script type="text/javascript" src="angular-beans.js"></script>
+	<script type="text/javascript" src="js/filters.js"></script>
+	<script type="text/javascript" src="js/services.js"></script>
+	<script type="text/javascript" src="js/controllers.js"></script>
+	<script type="text/javascript" src="js/directives.js"></script>
+	<script type="text/javascript" src="js/module.js"></script>
+</head>
+
+<body ng-app="myApp">
+
+	<div class="container">
+		<div class="row top-buffer">
+			<div class="col-xs-8 col-xs-offset-2">
+
+				<div ng-controller="MyCtrl as vm">
+					<div class="form-group">
+						<fieldset>
+							<label>Your name: </label> <input ng-model="vm.name"
+								class="form-control">
+						</fieldset>
+					</div>
+
+					<button ng-click="vm.helloAngularBeans.sayHello(vm.name)"
+						class="btn btn-primary">click me</button>
+
+					<span style="color: blue" ng-if="vm.helloAngularBeans.message">message:
+						{{vm.helloAngularBeans.message}}</span>
+
+					<button ng-click="vm.helloAngularBeans.getSomeUsers()">test</button>
+
+					<ul>
+						<li ng-repeat="user in vm.helloAngularBeans.users">{{user.name}}
+							<button ng-click="vm.helloAngularBeans.remove(user)">remove</button>
+						</li>
+					</ul>		
+					
+					<h4>{{vm.helloAngularBeans.counter}}</h4>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
