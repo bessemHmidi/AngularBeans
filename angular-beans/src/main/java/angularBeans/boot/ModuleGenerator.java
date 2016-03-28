@@ -126,9 +126,6 @@ public class ModuleGenerator implements Serializable {
 		return sessionID;
 	}
 
-	
-	
-
 	/**
 	 * this method generate the angular-beans.js content and write it to the <br>
 	 * jsBuffer used by BootServlet
@@ -139,7 +136,6 @@ public class ModuleGenerator implements Serializable {
 
 		StringBuffer jsBuffer = new StringBuffer();
 		String sessionPart = String.format("var sessionId=\"%s\";", sessionID);
-		// sessionPart="var sessionId = /SESS\\w*ID=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;";
 
 		jsBuffer.append(sessionPart);
 		jsBuffer.append(StaticJsCache.CORE_SCRIPT);

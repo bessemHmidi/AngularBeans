@@ -5,22 +5,34 @@
 	<artifactId>angularBeans</artifactId>
 	<version>1.0.3-SNAPSHOT</version>
 	<name>AngularBeans</name>
+	<description>AngularBeans Framework</description>
+	<url>http://bessemhmidi.github.io/AngularBeans</url>
+	
+	<scm>
+		<url>https://github.com/bessemHmidi/AngularBeans.git</url>
+	</scm>
+	
+	<licenses>
+		<license>
+			<name>LGPL</name>
+			<distribution>repo</distribution>
+			<url>http://www.gnu.org/licenses/lgpl-3.0.html</url>
+		</license>
+	</licenses>
+	
+	<developers>
+		<developer>
+			<name>Bessem Hmidi</name>
+			<email>bessem.hmidi.perso@gmail.com</email>
+		</developer>
+	</developers>
 
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
-
-		<!-- <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> -->
 	</properties>
 
-
-	<description>
-AngularBeans framework
-</description>
-
-
 	<dependencies>
-
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-web-api</artifactId>
@@ -28,20 +40,10 @@ AngularBeans framework
 			<scope>provided</scope>
 		</dependency>
 
-
-
-
-
 		<dependency>
-
 			<groupId>com.google.javascript</groupId>
 			<artifactId>closure-compiler</artifactId>
-			<version>v20131014</version> <!-- good v20131014 -->
-
-
-
-			<!--between --><!-- v20131014 --><!-- and --> <!-- v20140508> -->
-
+			<version>v20131014</version>
 			<exclusions>
 				<exclusion>
 					<groupId>args4j</groupId>
@@ -63,25 +65,17 @@ AngularBeans framework
 					<groupId>org.apache.ant</groupId>
 					<artifactId>ant</artifactId>
 				</exclusion>
-				<!-- <exclusion> <groupId>org.json</groupId> <artifactId>json</artifactId> 
-					</exclusion> -->
-
 				<exclusion>
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
-
 				</exclusion>
-
 			</exclusions>
 		</dependency>
-		<!-- <dependency> <groupId>javax.json</groupId> <artifactId>javax.json-api</artifactId> 
-			<version>1.0-b06</version> </dependency> -->
 
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.3</version>
-
 		</dependency>
 
 		<dependency>
@@ -94,32 +88,9 @@ AngularBeans framework
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>13.0.1</version>
-
 		</dependency>
 	</dependencies>
-	<url>http://bessemhmidi.github.io/AngularBeans</url>
-	<scm>
-		<url>https://github.com/bessemHmidi/AngularBeans.git</url>
-	</scm>
-	<issueManagement>
-		<system>jira</system>
-	</issueManagement>
-
-	<licenses>
-		<license>
-			<name>LGPL</name>
-			<distribution>repo</distribution>
-			<url>http://www.gnu.org/licenses/lgpl-3.0.html</url>
-		</license>
-	</licenses>
-
-	<developers>
-		<developer>
-			<name>Bessem Hmidi</name>
-			<email>bessem.hmidi.perso@gmail.com</email>
-		</developer>
-
-	</developers>
+	
 	<profiles>
 		<profile>
 			<id>deployment</id>
@@ -179,25 +150,20 @@ AngularBeans framework
 					</plugin>
 				</plugins>
 			</build>
+			
 			<distributionManagement>
-
 				<snapshotRepository>
 					<id>ossrh</id>
 					<name>snapshots-repo</name>
 					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 				</snapshotRepository>
 				<repository>
-
 					<id>ossrh</id>
 					<name>releases-repo</name>
 					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-
 				</repository>
-
 			</distributionManagement>
 
 		</profile>
-
-
 	</profiles>
 </project>
