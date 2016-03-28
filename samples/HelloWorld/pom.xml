@@ -20,8 +20,8 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.angularbeans</groupId>
-			<artifactId>angular-beans</artifactId>
+			<groupId>com.github.bessemHmidi</groupId>
+			<artifactId>angularBeans</artifactId>
 			<version>1.0.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
