@@ -38,7 +38,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
@@ -55,8 +54,11 @@ public class AngularBeansUtils implements Serializable {
 
 	@Inject
 	ByteArrayCache cache;
+	
+	
+	private transient Gson mainSerializer;
+	private String contextPath;
 
-	private Gson mainSerializer;
 
 	public void initJsonSerialiser() {
 
@@ -73,8 +75,7 @@ public class AngularBeansUtils implements Serializable {
 
 			@Override
 			public LobWrapper deserialize(JsonElement json,
-					Type typeOfT, JsonDeserializationContext context)
-					throws JsonParseException {
+					Type typeOfT, JsonDeserializationContext context){
 
 				return null;
 			}
@@ -87,13 +88,11 @@ public class AngularBeansUtils implements Serializable {
 
 	public String getJson(Object object) {
 
-		if (mainSerializer == null && object == null) {
-			mainSerializer.toJson(null);
+		if (mainSerializer == null || object == null) {
+			return null; 
 		}
 		return mainSerializer.toJson(object);
 	}
-
-	private String contextPath;
 
 	public void setContextPath(String contextPath) {
 
@@ -131,7 +130,7 @@ public class AngularBeansUtils implements Serializable {
 		if (javaClass.equals(String.class)) {
 			o = data.toString().substring(1, data.toString().length() - 1);
 		} else {
-			o = (deserialise(javaClass, data));
+			o = deserialise(javaClass, data);
 		}
 		return o;
 	}
@@ -152,19 +151,16 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 	public JsonElement serialize(LobWrapper src, Type typeOfSrc,
 			JsonSerializationContext context) {
 
-		LobWrapper lobWrapper = (LobWrapper) src;
+		LobWrapper lobWrapper = src;
 
 		container = lobWrapper.getOwner();
 		String id = "";
 		Class clazz = container.getClass();
 
 		for (Method m : clazz.getMethods()) {
-
-			if (m.getName().startsWith(GET) || m.getName().startsWith("is")) {
-				if (m.getReturnType().equals(LobWrapper.class)) {
-					String field = CommonUtils.obtainFieldNameFromAccessor(m
-							.getName());
-
+			//TODO to many nested statement
+			if ((m.getName().startsWith(GET) || m.getName().startsWith("is"))
+					&& m.getReturnType().equals(LobWrapper.class)) {
 					try {
 
 						Call lobSource = new Call(container, m);
@@ -173,7 +169,7 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 							id = String.valueOf(UUID.randomUUID());
 							cache.getCache().put(id, lobSource);
 						} else {
-							for (String idf : (cache.getCache().keySet())) {
+							for (String idf : cache.getCache().keySet()) {
 								Call ls = cache.getCache().get(idf);
 								if (ls.equals(lobSource)) {
 									id = idf;
@@ -185,7 +181,6 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 						e.printStackTrace();
 					}
 				}
-			}
 		}
 		return new JsonPrimitive("lob/" + id + "?"
 				+ Calendar.getInstance().getTimeInMillis());
