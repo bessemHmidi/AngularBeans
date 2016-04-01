@@ -48,7 +48,7 @@ import angularBeans.boot.BeanRegistry;
 import angularBeans.ngservices.NGService;
 import angularBeans.util.ClosureCompiler;
 import angularBeans.util.CommonUtils;
-import angularBeans.util.StaticJsCache;
+import angularBeans.js.StaticJsCache;
 
 /**
  * this listener:
@@ -234,7 +234,7 @@ public class AngularBeansServletContextListener implements ServletContextListene
 		buffer.append("])");
 
 		buffer.append(".run(function($rootScope) {$rootScope.sessionUID = sessionId;");
-		buffer.append("$rootScope.baseUrl=sript_origin;");
+		buffer.append("$rootScope.baseUrl=sript_origin;");	// TODO: really "sript"??
 		buffer.append("});");
 
 		StaticJsCache.CORE_SCRIPT.append(compiler

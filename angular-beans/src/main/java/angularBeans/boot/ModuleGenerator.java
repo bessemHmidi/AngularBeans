@@ -62,7 +62,7 @@ import angularBeans.util.ClosureCompiler;
 import angularBeans.util.CommonUtils;
 import angularBeans.util.CurrentNGSession;
 import angularBeans.util.NGBean;
-import angularBeans.util.StaticJsCache;
+import angularBeans.js.StaticJsCache;
 import angularBeans.validation.BeanValidationProcessor;
 
 /**
