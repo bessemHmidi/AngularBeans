@@ -18,6 +18,7 @@ class FileLoader {
 	 * @param fileName File to read
 	 * @return File Content as a single line
 	 * @throws IOException If an I/O error occurs
+	 * @throws NullPointerException If file doesn't exist or can't be found
 	 */
 	public String readFile(String fileName) throws IOException {
 
