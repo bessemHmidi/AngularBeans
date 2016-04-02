@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -115,7 +116,7 @@ public class InvocationHandler implements Serializable {
 		returns.put("isRT", true);
 
 		try {
-			genericInvoke(ServiceToInvoque, methodName, params, returns, reqID, UID);
+			genericInvoke(ServiceToInvoque, methodName, params, returns, reqID, UID,null);
 
 			if (returns.get("mainReturn") != null) {
 
@@ -129,7 +130,7 @@ public class InvocationHandler implements Serializable {
 
 	}
 
-	public Object invoke(Object o, String method, JsonObject params, String UID) {
+	public Object invoke(Object o, String method, JsonObject params, String UID,HttpServletRequest request) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
@@ -138,7 +139,7 @@ public class InvocationHandler implements Serializable {
 		try {
 
 			returns.put("isRT", false);
-			genericInvoke(o, method, params, returns, 0, UID);
+			genericInvoke(o, method, params, returns, 0, UID,request);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -147,7 +148,7 @@ public class InvocationHandler implements Serializable {
 	}
 
 	private void genericInvoke(Object service, String methodName, JsonObject params, Map<String, Object> returns,
-			long reqID, String UID)
+			long reqID, String UID,HttpServletRequest request)
 
 					throws SecurityException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException,
 					InvocationTargetException, NoSuchMethodException {
@@ -163,6 +164,7 @@ public class InvocationHandler implements Serializable {
 
 			JsonArray args = params.get("args").getAsJsonArray();
 
+			
 			for (Method mt : service.getClass().getMethods()) {
 
 				if (mt.getName().equals(methodName)) {
@@ -212,28 +214,54 @@ public class InvocationHandler implements Serializable {
 								argsValues.add(util.deserialise(typeClass, element));
 							}
 						}
-						m = mt;
-
-						if (!CommonUtils.isGetter(m)) {
+						
+						if (!CommonUtils.isGetter(mt)) {
 							update(service, params);
 						}
 
-						String exceptionString = "";
+						
 						try {
-							mainReturn = m.invoke(service, argsValues.toArray());
+							mainReturn = mt.invoke(service, argsValues.toArray());
 						} catch (Exception e) {
-							handleException(m, e);
+							handleException(mt, e);
 							e.printStackTrace();
 						}
 					}
 				}
 			}
 		} else {
-			m = service.getClass().getMethod(methodName);
-			if (!CommonUtils.isGetter(m)) {
-				update(service, params);
-			}
-			mainReturn = m.invoke(service);
+			
+			
+			for (Method mt : service.getClass().getMethods()) {
+
+				if (mt.getName().equals(methodName)) {
+
+					Type[] parameters = mt.getParameterTypes();
+
+					// handling methods that took HttpServletRequest as parameter
+					
+					if(parameters.length==1){
+							
+						 if(mt.getParameters()[0].getType()==HttpServletRequest.class)	
+						  {
+							 System.out.println("hehe...");
+							 mt.invoke(service, request);
+						
+						  }
+					
+						
+						
+					}
+					 else{
+						 if (!CommonUtils.isGetter(m)) {
+								update(service, params);
+							}
+							mainReturn = mt.invoke(service);
+					 }
+			
+				}}
+			
+			
 		}
 
 		ModelQueryImpl qImpl = (ModelQueryImpl) modelQueryFactory.get(service.getClass());

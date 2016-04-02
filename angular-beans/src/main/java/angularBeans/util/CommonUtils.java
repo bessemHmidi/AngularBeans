@@ -91,6 +91,11 @@ public abstract class CommonUtils {
 		if (isNullOrEmpty(value) || type.equals(byte[].class) || type.equals(Byte[].class)) {
 			return null;
 		}
+		
+		if(String.class.equals(type)){
+			return value;
+		}
+		
 		if (type.equals(int.class) || type.equals(Integer.class)) {
 			return Integer.parseInt(value);
 		}
@@ -113,7 +118,7 @@ public abstract class CommonUtils {
 			return Short.parseShort(value);
 		}
 
-		return type.cast(value);
+	throw new IllegalArgumentException("unknown primitive type :"+type.getCanonicalName());
 	}
 
 	public static boolean isSetter(Method m) {

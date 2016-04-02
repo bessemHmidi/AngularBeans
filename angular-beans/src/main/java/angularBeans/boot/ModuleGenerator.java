@@ -26,6 +26,7 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import angularBeans.api.CORS;
@@ -46,13 +47,13 @@ import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
 import angularBeans.io.FileUploadHandler;
 import angularBeans.io.LobWrapper;
+import angularBeans.js.cache.StaticJsCache;
 import angularBeans.realtime.RealTime;
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.ClosureCompiler;
 import angularBeans.util.CommonUtils;
 import angularBeans.util.CurrentNGSession;
 import angularBeans.util.NGBean;
-import angularBeans.js.StaticJsCache;
 import angularBeans.validation.BeanValidationProcessor;
 
 /**
@@ -375,19 +376,24 @@ public class ModuleGenerator implements Serializable {
 				// ---------------------------------------------
 				// Handle args
 				// ---------------------------------------------
-				Type[] args = m.getParameterTypes();
+				Type[] parameters = m.getParameterTypes();
 
-				if (!m.isAnnotationPresent(FileUpload.class)) {
+				
+				
+				if ((!m.isAnnotationPresent(FileUpload.class))&&(!(parameters.length==1&&(m.getParameters()[0].getType()==HttpServletRequest.class)))) {
 
-					if (args.length > 0) {
+					
+					
+					if (parameters.length > 0) {
 						String argsString = "";
-						for (int i = 0; i < args.length; i++) {
+						for (int i = 0; i < parameters.length; i++) {
 
 							argsString += ("arg" + i + ",");
 
 						}
-
+                       
 						cachedStaticPart.append(argsString.substring(0, argsString.length() - 1));
+                        
 
 					}
 				}
@@ -396,7 +402,11 @@ public class ModuleGenerator implements Serializable {
 
 						.append("var mainReturn={data:{}};").append("var params={};");// sessionUID:$rootScope.sessionUID
 
-				cachedStaticPart.append(addParams(bean, setters, m, args));
+				
+				if(!(parameters.length==1&&(m.getParameters()[0].getType()==HttpServletRequest.class))){
+				cachedStaticPart.append(addParams(bean, setters, m, parameters));
+				}
+				
 
 				if (m.isAnnotationPresent(RealTime.class)) {
 

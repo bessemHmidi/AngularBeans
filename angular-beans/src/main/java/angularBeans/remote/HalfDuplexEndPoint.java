@@ -153,10 +153,12 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 
 		NGSessionScopeContext.setCurrentContext(UID);
 
+		
+		
 		receiveEvents.fire(new HalfDuplexDataReceivedEvent(paramsObj));
 
 		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID),
-				method, paramsObj, UID);
+				method, paramsObj, UID,request);
 
 
 

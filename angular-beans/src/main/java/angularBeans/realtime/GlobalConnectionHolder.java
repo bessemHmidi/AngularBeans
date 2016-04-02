@@ -49,9 +49,10 @@ public class GlobalConnectionHolder {
 	}
 
 	public void removeConnection(String id) {
-		for (SockJsConnection connection : allConnections) {
+		
 
 			synchronized (lock) {
+				for (SockJsConnection connection : allConnections) {
 				String httpSessionId = SessionMapper.getHTTPSessionID(connection.id);
 				if (httpSessionId != null && httpSessionId.equals(id)) {
 					SessionMapper.getSessionsMap().remove(id);

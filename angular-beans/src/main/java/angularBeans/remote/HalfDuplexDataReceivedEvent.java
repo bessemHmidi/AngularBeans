@@ -19,6 +19,8 @@ package angularBeans.remote;
 
 import java.io.Serializable;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.gson.JsonObject;
 
 /**
