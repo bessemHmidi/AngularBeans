@@ -41,7 +41,7 @@ import javax.validation.constraints.Size;
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.ClosureCompiler;
 import angularBeans.util.CommonUtils;
-import angularBeans.util.StaticJsCache;
+import angularBeans.js.StaticJsCache;
 
 /**
  * The bean validation processor generates the HTML5 validation attributes from
