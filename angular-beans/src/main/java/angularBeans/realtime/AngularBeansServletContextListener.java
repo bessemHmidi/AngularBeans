@@ -1,21 +1,10 @@
 
-/*
- * AngularBeans, CDI-AngularJS bridge 
- *
- * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
- * indicated by the @author tags or express copyright attribution
- * statements applied by the authors.
- *
- * This copyrighted material is made available to anyone wishing to use, modify,
- * copy, or redistribute it subject to the terms and conditions of the GNU
- * Lesser General Public License, as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
- *
- */
+/* AngularBeans, CDI-AngularJS bridge Copyright (c) 2014, Bessem Hmidi. or third-party contributors as indicated by
+ * the @author tags or express copyright attribution statements applied by the authors. This copyrighted material is
+ * made available to anyone wishing to use, modify, copy, or redistribute it subject to the terms and conditions of the
+ * GNU Lesser General Public License, as published by the Free Software Foundation. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
 package angularBeans.realtime;
 
 import java.lang.reflect.Method;
@@ -55,8 +44,7 @@ import angularBeans.util.StaticJsCache;
  * <p>
  * initialize the sockJs server end point
  * <p>
- * generate and store the CORE and the EXTENTIONS code of the angular-beans
- * script.
+ * generate and store the CORE and the EXTENTIONS code of the angular-beans script.
  * 
  * @author Bessem Hmidi
  */
@@ -66,11 +54,9 @@ public class AngularBeansServletContextListener implements ServletContextListene
 
 	public static SockJsServer sockJsServer;
 	private static final Pattern SESSION_PATTERN = Pattern.compile(".*/.+/(.+)/websocket$");
-	
+
 	ClosureCompiler compiler = new ClosureCompiler();
 	ServletContext context;
-
-	
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -94,6 +80,7 @@ public class AngularBeansServletContextListener implements ServletContextListene
 
 	@Override
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
+		//
 	}
 
 	private String extractPrefixFromMapping(String mapping) {
@@ -106,24 +93,22 @@ public class AngularBeansServletContextListener implements ServletContextListene
 		return mapping;
 	}
 
-	private ServerEndpointConfig.Configurator configuratorFor(
-			final String prefix, final boolean isRaw) {
+	private ServerEndpointConfig.Configurator configuratorFor(final String prefix, final boolean isRaw) {
 		return new ServerEndpointConfig.Configurator() {
+
 			@Override
-			public <T> T getEndpointInstance(Class<T> endpointClass)
-					throws InstantiationException {
+			public <T> T getEndpointInstance(Class<T> endpointClass) throws InstantiationException {
 				try {
-					return endpointClass.getConstructor(SockJsServer.class,
-							String.class, String.class).newInstance(
-							sockJsServer, context.getContextPath(), prefix);
+					return endpointClass.getConstructor(SockJsServer.class, String.class, String.class)
+							.newInstance(sockJsServer, context.getContextPath(), prefix);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
 
 			@Override
-			public void modifyHandshake(ServerEndpointConfig sec,
-					HandshakeRequest request, HandshakeResponse response) {
+			public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request,
+					HandshakeResponse response) {
 				if (isRaw) {
 					// We have no reliable key (like session id) to save
 					// headers with for raw websocket requests
@@ -140,8 +125,9 @@ public class AngularBeansServletContextListener implements ServletContextListene
 	}
 
 	private static final int MAX_INFLIGHT_HEADERS = 100;
-	private static final Map<String, Map<String, List<String>>> savedHeaders = Collections
-			.synchronizedMap(new LinkedHashMap<String, Map<String, List<String>>>() {
+	private static final Map<String, Map<String, List<String>>> savedHeaders =
+			Collections.synchronizedMap(new LinkedHashMap<String, Map<String, List<String>>>() {
+
 				@Override
 				protected boolean removeEldestEntry(Map.Entry eldest) {
 					return size() > MAX_INFLIGHT_HEADERS;
@@ -170,30 +156,26 @@ public class AngularBeansServletContextListener implements ServletContextListene
 			// {
 			final String commonPrefix = extractPrefixFromMapping("/rt-service/*");
 
-			String websocketPath = commonPrefix
-					+ "/{server}/{session}/websocket";//
-			ServerEndpointConfig sockJsConfig = ServerEndpointConfig.Builder
-					.create(SockJsEndpoint.class, websocketPath)
+			String websocketPath = commonPrefix + "/{server}/{session}/websocket";//
+			ServerEndpointConfig sockJsConfig = ServerEndpointConfig.Builder.create(SockJsEndpoint.class, websocketPath)
 					.configurator(configuratorFor(commonPrefix, false)).build();
 			// rt-service/websocket
 			String rawWebsocketPath = commonPrefix + "/websocket";
 
-			ServerEndpointConfig rawWsConfig = ServerEndpointConfig.Builder
-					.create(RawWebsocketEndpoint.class, rawWebsocketPath)
-					.configurator(configuratorFor(commonPrefix, true)).build();
+			ServerEndpointConfig rawWsConfig =
+					ServerEndpointConfig.Builder.create(RawWebsocketEndpoint.class, rawWebsocketPath)
+							.configurator(configuratorFor(commonPrefix, true)).build();
 
-			ServerContainer serverContainer = (ServerContainer) context
-					.getAttribute("javax.websocket.server.ServerContainer");
+			ServerContainer serverContainer =
+					(ServerContainer) context.getAttribute("javax.websocket.server.ServerContainer");
 			try {
 				serverContainer.addEndpoint(sockJsConfig);
 				serverContainer.addEndpoint(rawWsConfig);
 
-				Logger.getLogger(this.getClass().getSimpleName()).info(
-						"deployement of programmatic Web socket EndPoint :"
-								+ rawWebsocketPath);
+				Logger.getLogger(this.getClass().getSimpleName())
+						.info("deployement of programmatic Web socket EndPoint :" + rawWebsocketPath);
 			} catch (DeploymentException ex) {
-				throw new ServletException(
-						"Error deploying websocket endpoint:", ex);
+				throw new ServletException("Error deploying websocket endpoint:", ex);
 			}
 
 		}
@@ -237,8 +219,7 @@ public class AngularBeansServletContextListener implements ServletContextListene
 		buffer.append("$rootScope.baseUrl=sript_origin;");
 		buffer.append("});");
 
-		StaticJsCache.CORE_SCRIPT.append(compiler
-				.getCompressedJavaScript(buffer.toString()));
+		StaticJsCache.CORE_SCRIPT.append(compiler.getCompressedJavaScript(buffer.toString()));
 
 	}
 
@@ -255,8 +236,7 @@ public class AngularBeansServletContextListener implements ServletContextListene
 			}
 
 		}
-		StaticJsCache.EXTENTIONS_SCRIPT.append(compiler
-				.getCompressedJavaScript(buffer.toString()));
+		StaticJsCache.EXTENTIONS_SCRIPT.append(compiler.getCompressedJavaScript(buffer.toString()));
 	}
 
 }

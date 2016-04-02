@@ -17,7 +17,6 @@
  */
 package angularBeans.util;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.javascript.jscomp.CompilationLevel;
@@ -64,13 +63,9 @@ public final class ClosureCompiler {
 		try {
 			compiled = compile(jsContent);
 		} catch (Exception e) {
-			logger.log(
-					Level.WARNING,
-					"could not compress JS, compression disabled, check for error or your guava library version");
-			e.printStackTrace();
+			logger.warning("could not compress JS, compression disabled, check for error or your guava library version. Cause:" + e.getMessage());
 		}
 
-		// compiled=compile(compiled, CompilationLevel.SIMPLE_OPTIMIZATIONS);
 		return compiled.replace("delete_to_replace_by_just_delete", "delete");
 	}
 
@@ -84,31 +79,4 @@ public final class ClosureCompiler {
 		compiler.compile(extern, input, options);
 		return compiler.toSource();
 	}
-	
-	// options.inlineConstantVars=true;
-	// options.aggressiveVarCheck=CheckLevel.WARNING;
-	// options.checkUnreachableCode=CheckLevel.WARNING;
-	// options.aliasAllStrings=true;
-	// options.foldConstants=true;
-	// options.deadAssignmentElimination=true;
-	// options.inlineLocalFunctions=true;
-	// options.coalesceVariableNames=true;
-	// options.aliasKeywords=true;
-	// options.convertToDottedProperties=true;
-	// options.setShadowVariables(true);
-	// options.setChainCalls(true);
-	// options.setConvertToDottedProperties(true);
-	// options.setFoldConstants(true);
-	// options.setAggressiveRenaming(true);
-	//
-	// options.optimizeArgumentsArray=true;
-	// options.optimizeCalls=true;
-	// options.optimizeParameters=true;
-	// options.optimizeReturns=true;
-	//
-	// options.setMoveFunctionDeclarations(true);
-	// options.setManageClosureDependencies(true);
-	//
-	// options.setDevirtualizePrototypeMethods(true);
-
 }

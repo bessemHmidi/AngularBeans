@@ -1,27 +1,17 @@
-/*
- * AngularBeans, CDI-AngularJS bridge 
- *
- * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
- * indicated by the @author tags or express copyright attribution
- * statements applied by the authors.
- *
- * This copyrighted material is made available to anyone wishing to use, modify,
- * copy, or redistribute it subject to the terms and conditions of the GNU
- * Lesser General Public License, as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
- *
- */
+/* AngularBeans, CDI-AngularJS bridge Copyright (c) 2014, Bessem Hmidi. or third-party contributors as indicated by
+ * the @author tags or express copyright attribution statements applied by the authors. This copyrighted material is
+ * made available to anyone wishing to use, modify, copy, or redistribute it subject to the terms and conditions of the
+ * GNU Lesser General Public License, as published by the Free Software Foundation. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
 
 /**
- @author Bessem Hmidi
+ * @author Bessem Hmidi
  */
 package angularBeans.remote;
 
-import static angularBeans.util.Constants.GET;
+import static angularBeans.util.Accessor.GET;
+import static angularBeans.util.Accessor.IS;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -53,13 +43,13 @@ import angularBeans.log.NGLogger;
 import angularBeans.log.NGLogger.Level;
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.CommonUtils;
-import angularBeans.util.Constants;
 import angularBeans.util.ModelQueryFactory;
 import angularBeans.util.ModelQueryImpl;
 
 /**
+ * AngularBeans RPC main handler.
  * 
- * @author Bassem Hmidi This is the AngularBeans RPC main handler
+ * @author Bassem Hmidi
  */
 
 @SuppressWarnings("serial")
@@ -121,10 +111,7 @@ public class InvocationHandler implements Serializable {
 			RealTimeDataReceivedEvent event, long reqID, String UID) {
 
 		NGSessionScopeContext.setCurrentContext(UID);
-
 		Map<String, Object> returns = new HashMap<>();
-		// Object mainReturn = null;
-
 		returns.put("isRT", true);
 
 		try {
@@ -154,10 +141,8 @@ public class InvocationHandler implements Serializable {
 			genericInvoke(o, method, params, returns, 0, UID);
 
 		} catch (Exception e) {
-			// fire(e);
 			e.printStackTrace();
 		}
-
 		return returns;
 	}
 
@@ -168,12 +153,8 @@ public class InvocationHandler implements Serializable {
 					InvocationTargetException, NoSuchMethodException {
 
 		Object mainReturn = null;
-
 		Method m = null;
-
 		JsonElement argsElem = params.get("args");
-
-		// returns.put("isRT", false);
 
 		if (reqID > 0) {
 			returns.put("reqId", reqID);
@@ -199,20 +180,15 @@ public class InvocationHandler implements Serializable {
 							String typeString = ((parameters[i]).toString());
 
 							if (typeString.startsWith("interface")) {
+
 								typeString = typeString.substring(10);
-
 								typeClass = Class.forName(typeString);
-
 							} else {
 								if (typeString.startsWith("class")) {
+
 									typeString = typeString.substring(6);
-
 									typeClass = Class.forName(typeString);
-
-								}
-
-								else {
-
+								} else {
 									typeClass = builtInMap.get(typeString);
 								}
 							}
@@ -234,65 +210,31 @@ public class InvocationHandler implements Serializable {
 							} else {
 
 								argsValues.add(util.deserialise(typeClass, element));
-
 							}
-
 						}
-
 						m = mt;
 
 						if (!CommonUtils.isGetter(m)) {
-							// if(util.isSetter(m)){
 							update(service, params);
-							// }
-
 						}
 
 						String exceptionString = "";
 						try {
-
 							mainReturn = m.invoke(service, argsValues.toArray());
-
 						} catch (Exception e) {
 							handleException(m, e);
-
 							e.printStackTrace();
 						}
-
 					}
-
 				}
-
 			}
-
-		}
-		// --------------------------------------------------
-
-		else {
-
+		} else {
 			m = service.getClass().getMethod(methodName);
-
 			if (!CommonUtils.isGetter(m)) {
-				// if(util.isSetter(m)){
 				update(service, params);
-				// }
-
-			}
-
-			try {
-
-			} catch (Exception e) {
-				handleException(m, e);
-				e.printStackTrace();
 			}
 			mainReturn = m.invoke(service);
-
 		}
-
-		// 1
-
-		// modelQueryFactory=(ModelQueryFactory)
-		// locator.lookup("ModelQueryFactory",UID );
 
 		ModelQueryImpl qImpl = (ModelQueryImpl) modelQueryFactory.get(service.getClass());
 
@@ -308,12 +250,6 @@ public class InvocationHandler implements Serializable {
 		}
 
 		String[] updates = null;
-
-		// if ((m.isAnnotationPresent(NGReturn.class))
-		// || (m.isAnnotationPresent(NGPostConstruct.class))
-		// ) {
-
-		// if((returns.size()>0)&& (mainReturn==null))mainReturn="";
 
 		if (m.isAnnotationPresent(NGReturn.class)) {
 
@@ -359,19 +295,18 @@ public class InvocationHandler implements Serializable {
 				for (int i = 0; i < upd.size(); i++) {
 					updates[i] = upd.get(i);
 				}
-
 			}
 		}
 
 		if (updates != null) {
 			for (String up : updates) {
 
-				String getterName = GET + up.substring(0, 1).toUpperCase() + up.substring(1);
+				String getterName = GET.prefix() + up.substring(0, 1).toUpperCase() + up.substring(1);
 				Method getter;
 				try {
 					getter = service.getClass().getMethod(getterName);
 				} catch (NoSuchMethodException e) {
-					getter = service.getClass().getMethod((getterName.replace(GET, "is")));
+					getter = service.getClass().getMethod((getterName.replace(GET.prefix(), IS.prefix())));
 				}
 
 				Object result = getter.invoke(service);
@@ -380,19 +315,12 @@ public class InvocationHandler implements Serializable {
 			}
 		}
 
-		// }
-
-		// if (m.isAnnotationPresent(NGReturn.class)) {
-
 		returns.put("mainReturn", mainReturn);
 
 		if (!logger.getLogPool().isEmpty()) {
 			returns.put("log", logger.getLogPool().toArray());
 			logger.getLogPool().clear();
 		}
-
-		// }
-
 	}
 
 	private void handleException(Method m, Exception e) {
@@ -455,8 +383,6 @@ public class InvocationHandler implements Serializable {
 						ParameterizedType pt = (ParameterizedType) type;
 						Type actType = pt.getActualTypeArguments()[0];
 
-						// Class collectionClazz = get.getReturnType();
-
 						String className = actType.toString();
 
 						className = className.substring(className.indexOf("class") + 6);
@@ -482,15 +408,7 @@ public class InvocationHandler implements Serializable {
 							} else {
 
 								elem = util.deserialise(clazz, element);
-
 							}
-
-							// if (collection instanceof AbstractCollection) {
-							//
-							// ArrayList list=new ArrayList();
-							// list.addAll(collection);
-							// collection=list;
-							// }
 
 							try {
 
@@ -551,7 +469,6 @@ public class InvocationHandler implements Serializable {
 						o.getClass().getMethod(name, type).invoke(o, param);
 
 					} catch (Exception e) {
-						// fire(e);
 						e.printStackTrace();
 
 					}

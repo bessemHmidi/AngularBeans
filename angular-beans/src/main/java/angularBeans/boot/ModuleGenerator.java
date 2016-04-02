@@ -1,30 +1,19 @@
 
-/*
- * AngularBeans, CDI-AngularJS bridge 
- *
- * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
- * indicated by the @author tags or express copyright attribution
- * statements applied by the authors.
- *
- * This copyrighted material is made available to anyone wishing to use, modify,
- * copy, or redistribute it subject to the terms and conditions of the GNU
- * Lesser General Public License, as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
- *
- */
+/* AngularBeans, CDI-AngularJS bridge Copyright (c) 2014, Bessem Hmidi. or third-party contributors as indicated by
+ * the @author tags or express copyright attribution statements applied by the authors. This copyrighted material is
+ * made available to anyone wishing to use, modify, copy, or redistribute it subject to the terms and conditions of the
+ * GNU Lesser General Public License, as published by the Free Software Foundation. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
 
 package angularBeans.boot;
 
+import static angularBeans.api.http.HttpMethod.DELETE_TO_REPLACE;
+import static angularBeans.api.http.HttpMethod.GET;
+import static angularBeans.api.http.HttpMethod.POST;
+import static angularBeans.api.http.HttpMethod.PUT;
 import static angularBeans.events.Callback.AFTER_SESSION_READY;
 import static angularBeans.events.Callback.BEFORE_SESSION_READY;
-import static angularBeans.util.Constants.DELETE_TO_REPLACE;
-import static angularBeans.util.Constants.GET;
-import static angularBeans.util.Constants.POST;
-import static angularBeans.util.Constants.PUT;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -46,6 +35,7 @@ import angularBeans.api.NGReturn;
 import angularBeans.api.NGSubmit;
 import angularBeans.api.http.Delete;
 import angularBeans.api.http.Get;
+import angularBeans.api.http.HttpMethod;
 import angularBeans.api.http.Post;
 import angularBeans.api.http.Put;
 import angularBeans.context.BeanLocator;
@@ -67,14 +57,13 @@ import angularBeans.validation.BeanValidationProcessor;
 
 /**
  * <p>
- * ModuleGenerator is the main component for javascript generation. This class is a session scoped CDI
- * component. This class uses the registered beans in BeanRegistry during application deployment to generate
- * a minified script.
+ * ModuleGenerator is the main component for javascript generation. This class is a session scoped CDI component. This
+ * class uses the registered beans in BeanRegistry during application deployment to generate a minified script.
  * </p>
  *
- *@see BeanRegistry
- *@author Bessem Hmidi
- *@author Aymen Naili
+ * @see BeanRegistry
+ * @author Bessem Hmidi
+ * @author Aymen Naili
  */
 @SuppressWarnings("serial")
 @SessionScoped
@@ -91,29 +80,28 @@ public class ModuleGenerator implements Serializable {
 
 	@Inject
 	BeanValidationProcessor validationAdapter;
-	
+
 	@Inject
 	AngularBeansUtils util;
 
 	@Inject
 	transient FileUploadHandler uploadHandler;
-	
+
 	@Inject
 	transient CurrentNGSession ngSession;
 
 	ClosureCompiler compiler = new ClosureCompiler();
 
 	private String contextPath;
-	private String sessionID;  
-
+	private String sessionID;
 
 	public ModuleGenerator() {
 
 	}
 
 	/**
-	 * since the NGSession scope lifecycle is the same as the current HTTP
-	 * session a unique sessionId by http session, we use the same session id
+	 * since the NGSession scope lifecycle is the same as the current HTTP session a unique sessionId by http session,
+	 * we use the same session id
 	 */
 	@PostConstruct
 	public void init() {
@@ -149,13 +137,12 @@ public class ModuleGenerator implements Serializable {
 		}
 		jsBuffer.append(StaticJsCache.VALIDATION_SCRIPT);
 		jsBuffer.append(StaticJsCache.EXTENTIONS_SCRIPT.toString());
-		
+
 		return jsBuffer;
 	}
 
 	/**
-	 * this method concern is the generation of the AngularJS service from the @AngularBean
-	 * CDI bean.
+	 * this method concern is the generation of the AngularJS service from the @AngularBean CDI bean.
 	 * 
 	 * @param bean
 	 *            the bean wrapper for an @AngularBean CDI bean.
@@ -170,8 +157,7 @@ public class ModuleGenerator implements Serializable {
 
 		Method[] methods = bean.getMethods();
 
-		buffer.append(";app.factory('" + bean.getName() + "',function "
-				+ bean.getName() + "(");
+		buffer.append(";app.factory('" + bean.getName() + "',function " + bean.getName() + "(");
 
 		// writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','realtimeManager'',function");
 
@@ -181,12 +167,10 @@ public class ModuleGenerator implements Serializable {
 		buffer.append("){\n");
 
 		// writer.write("var deffered = $q.defer();");
-		buffer.append("var " + bean.getName() + "={serviceID:'"
-				+ bean.getName() + "'};");// ,scopes:[]};");
+		buffer.append("var " + bean.getName() + "={serviceID:'" + bean.getName() + "'};");// ,scopes:[]};");
 
 		buffer.append("\nvar rpath=$rootScope.baseUrl+'" // + contextPath
 				+ "http/invoke/service/';\n");
-
 
 		for (Method m : bean.getMethods()) {
 
@@ -194,43 +178,34 @@ public class ModuleGenerator implements Serializable {
 
 				Callback callback = m.getAnnotation(Eval.class).value();
 
+				try {
+					String execution = (String) m.invoke(reference);
 
-					try {
-						String execution=(String) m.invoke(reference);
-
-						String js="";
-						if (callback.equals(BEFORE_SESSION_READY)) {
-							js=execution;
-						}
-						if (callback.equals(AFTER_SESSION_READY)){
-						
-			js="setTimeout(listen,500);"
-            +"function listen(){"
-		    +"   if(realtimeManager.ready){"
-            
-		    +execution
-		    
-		    +"   }"
-		    +"   else"
-		    +"      setTimeout(listen,500);"
-		    +"}";	
+					String js = "";
+					if (callback.equals(BEFORE_SESSION_READY)) {
+						js = execution;
 					}
-						buffer.append(js);
+					if (callback.equals(AFTER_SESSION_READY)) {
 
-					} catch (ClassCastException e) {
+						js = "setTimeout(listen,500);" + "function listen(){" + "   if(realtimeManager.ready){"
 
-						throw new RuntimeException("for bean name: "
-								+ bean.getName()
-								+ " --> an @Eval bloc must return a String");
+								+ execution
 
-					} catch (IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException e) {
-
-						e.printStackTrace();
+								+ "   }" + "   else" + "      setTimeout(listen,500);" + "}";
 					}
+					buffer.append(js);
+
+				} catch (ClassCastException e) {
+
+					throw new RuntimeException(
+							"for bean name: " + bean.getName() + " --> an @Eval bloc must return a String");
+
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+
+					e.printStackTrace();
+				}
 			}
 		}
-
 
 		for (Method get : bean.getters()) {
 			Object result = null;
@@ -246,8 +221,7 @@ public class ModuleGenerator implements Serializable {
 
 				result = contextPath + "lob/" + uid;
 
-				buffer.append(bean.getName() + "." + modelName + "='" + result
-						+ "';");
+				buffer.append(bean.getName() + "." + modelName + "='" + result + "';");
 				continue;
 
 			}
@@ -309,20 +283,16 @@ public class ModuleGenerator implements Serializable {
 	 * 
 	 * @param bean
 	 *            the CDI bean wrapper
-	 * @return StringBuffer containing the javaScript code of the static (non
-	 *         properties values dependent) code. by static parts we mean the JS
-	 *         code that can be generated from the java class of the bean (to
-	 *         initialize the angularJs service we need to call getters on the
-	 *         CDI bean instance and that is considered as the dynamic part of
-	 *         the angularBean javascript generation)
+	 * @return StringBuffer containing the javaScript code of the static (non properties values dependent) code. by
+	 *         static parts we mean the JS code that can be generated from the java class of the bean (to initialize the
+	 *         angularJs service we need to call getters on the CDI bean instance and that is considered as the dynamic
+	 *         part of the angularBean javascript generation)
 	 */
 	private StringBuffer generateStaticPart(NGBean bean) {
 
 		StringBuffer cachedStaticPart = new StringBuffer();
-		if (StaticJsCache.CACHED_BEAN_STATIC_PART.containsKey(bean
-				.getTargetClass())) {
-			return StaticJsCache.CACHED_BEAN_STATIC_PART.get(bean
-					.getTargetClass());
+		if (StaticJsCache.CACHED_BEAN_STATIC_PART.containsKey(bean.getTargetClass())) {
+			return StaticJsCache.CACHED_BEAN_STATIC_PART.get(bean.getTargetClass());
 		}
 
 		Method[] nativesMethods = Object.class.getMethods();
@@ -339,17 +309,14 @@ public class ModuleGenerator implements Serializable {
 			if (isNative)
 				continue;
 
-			if ((!CommonUtils.isSetter(m)) 
-					&&
-			(!CommonUtils.isGetter(m))
-			
+			if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))
+
 			) {
 
 				String[] csUpdates = null;
 				Set<Method> setters = new HashSet<>();
 
-				String httpMethod = GET;
-
+				HttpMethod httpMethod = GET;
 
 				if (m.isAnnotationPresent(Eval.class))
 					continue;
@@ -370,7 +337,7 @@ public class ModuleGenerator implements Serializable {
 				if (m.isAnnotationPresent(Put.class)) {
 					httpMethod = PUT;
 				}
-				
+
 				if (m.isAnnotationPresent(NGReturn.class)) {
 					NGReturn returns = m.getAnnotation(NGReturn.class);
 					csUpdates = returns.updates();
@@ -378,8 +345,7 @@ public class ModuleGenerator implements Serializable {
 
 				if (m.isAnnotationPresent(NGSubmit.class)) {
 
-					String[] models = m.getAnnotation(NGSubmit.class)
-							.backEndModels();
+					String[] models = m.getAnnotation(NGSubmit.class).backEndModels();
 
 					if (models.length == 1 && models[0].equals("*")) {
 
@@ -393,8 +359,7 @@ public class ModuleGenerator implements Serializable {
 
 								if (CommonUtils.isSetter(md)) {
 									String methodName = md.getName();
-									String modelName = CommonUtils
-											.obtainFieldNameFromAccessor(methodName);
+									String modelName = CommonUtils.obtainFieldNameFromAccessor(methodName);
 									if (modelName.equals(model)) {
 										setters.add(md);
 									}
@@ -404,8 +369,8 @@ public class ModuleGenerator implements Serializable {
 					}
 				}
 
-				cachedStaticPart.append("angularBeans.addMethod("
-						+ bean.getName() + ",'" + m.getName() + "',function(");
+				cachedStaticPart
+						.append("angularBeans.addMethod(" + bean.getName() + ",'" + m.getName() + "',function(");
 
 				// ---------------------------------------------
 				// Handle args
@@ -422,41 +387,37 @@ public class ModuleGenerator implements Serializable {
 
 						}
 
-						cachedStaticPart.append(argsString.substring(0,
-								argsString.length() - 1));
+						cachedStaticPart.append(argsString.substring(0, argsString.length() - 1));
 
 					}
 				}
 
 				cachedStaticPart.append(") {")
 
-				.append("var mainReturn={data:{}};").append("var params={};");// sessionUID:$rootScope.sessionUID
+						.append("var mainReturn={data:{}};").append("var params={};");// sessionUID:$rootScope.sessionUID
 
 				cachedStaticPart.append(addParams(bean, setters, m, args));
 
 				if (m.isAnnotationPresent(RealTime.class)) {
 
-					cachedStaticPart.append("return realtimeManager.call("
-							+ bean.getName() + ",'" + bean.getName() + "."
-							+ m.getName() + "',params");
+					cachedStaticPart.append("return realtimeManager.call(" + bean.getName() + ",'" + bean.getName()
+							+ "." + m.getName() + "',params");
 
 					cachedStaticPart.append(").then(function(response) {\n");
 
 					cachedStaticPart.append("var msg=(response);");
 
-					cachedStaticPart
-							.append("mainReturn.data= responseHandler.handleResponse(msg,"
-									+ bean.getName() + ",true);");
+					cachedStaticPart.append(
+							"mainReturn.data= responseHandler.handleResponse(msg," + bean.getName() + ",true);");
 
 					cachedStaticPart.append("return mainReturn.data;"); // }");
 
-					cachedStaticPart
-							.append("} ,function(response){return $q.reject(response.data);});");
+					cachedStaticPart.append("} ,function(response){return $q.reject(response.data);});");
 
 				} else {
 
-					cachedStaticPart.append("\n  return $http." + httpMethod
-							+ "(rpath+'" + bean.getName() + "/" + m.getName());
+					cachedStaticPart.append("\n  return $http." + httpMethod.method() + "(rpath+'" + bean.getName()
+							+ "/" + m.getName());
 
 					if (corsEnabled) {
 						cachedStaticPart.append("/CORS");
@@ -478,14 +439,12 @@ public class ModuleGenerator implements Serializable {
 
 					cachedStaticPart.append("var msg=response.data;");
 
-					cachedStaticPart
-							.append("mainReturn.data= responseHandler.handleResponse(msg,"
-									+ bean.getName() + ",true);");
+					cachedStaticPart.append(
+							"mainReturn.data= responseHandler.handleResponse(msg," + bean.getName() + ",true);");
 
 					cachedStaticPart.append("return mainReturn.data;");
 
-					cachedStaticPart
-							.append("} ,function(response){return $q.reject(response.data);});");
+					cachedStaticPart.append("} ,function(response){return $q.reject(response.data);});");
 
 				}
 
@@ -494,12 +453,9 @@ public class ModuleGenerator implements Serializable {
 				if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))) {
 					if (m.isAnnotationPresent(NGPostConstruct.class)) {
 
+						cachedStaticPart.append("realtimeManager.onReadyState(function(){");
 
-						cachedStaticPart
-								.append("realtimeManager.onReadyState(function(){");
-
-						cachedStaticPart.append(bean.getName() + "."
-								+ m.getName() + "();\n");
+						cachedStaticPart.append(bean.getName() + "." + m.getName() + "();\n");
 
 						cachedStaticPart.append("});");
 					}
@@ -508,8 +464,7 @@ public class ModuleGenerator implements Serializable {
 		}
 
 		cachedStaticPart.append("return " + bean.getName() + ";} \n");
-		StaticJsCache.CACHED_BEAN_STATIC_PART.put(bean.getClass(),
-				cachedStaticPart);
+		StaticJsCache.CACHED_BEAN_STATIC_PART.put(bean.getClass(), cachedStaticPart);
 		return cachedStaticPart;
 
 	}
@@ -523,17 +478,14 @@ public class ModuleGenerator implements Serializable {
 		}
 	}
 
-	private StringBuffer addParams(NGBean bean, Set<Method> setters, Method m,
-			Type[] args) {
+	private StringBuffer addParams(NGBean bean, Set<Method> setters, Method m, Type[] args) {
 
 		StringBuffer sb = new StringBuffer();
 
 		for (Method setter : setters) {
 
-			String name = CommonUtils.obtainFieldNameFromAccessor(setter
-					.getName());
-			sb.append("params['" + name + "']=" + bean.getName() + "." + name
-					+ ";");
+			String name = CommonUtils.obtainFieldNameFromAccessor(setter.getName());
+			sb.append("params['" + name + "']=" + bean.getName() + "." + name + ";");
 		}
 
 		if (args.length > 0) {
