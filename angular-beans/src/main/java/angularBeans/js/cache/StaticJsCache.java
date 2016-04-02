@@ -15,22 +15,27 @@
  * for more details.
  *
  */
-package angularBeans.js;
+package angularBeans.js.cache;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import angularBeans.util.ClosureCompiler;
 
 /**
- *
+ * <p>
  * A cache for the static (non beans instances dependent) angular-beans.js code
+ * The content of this cache can be loaded by an implementation of a {@link StaticJsLoader}.
+ * <b>It's mandatory to first load the content of this class before any bean generation. </b>
+ * </p>
  *
  * @author bassem Hmidi
  * @author Michael Kulla <info@michael-kulla.com>
- * @see angularBeans.js.FileLoader
- *
+ * @author Aymen Naili
+ * 
+ * @see angularBeans.js.cache.StaticJsLoader
+ * @see angularBeans.js.cache.StaticJsCacheFactory
+ * @see angularBeans.js.cache.DefaultStaticJsCacheLoader
  */
 public class StaticJsCache {
 
@@ -38,19 +43,28 @@ public class StaticJsCache {
 	 * the angularBeansMainObject is the angularBeans object in the angularBeans
 	 * javascript api
 	 */
-	public static String angularBeansMainObject;
-
-	static {
-		try {
-			final FileLoader loader = new FileLoader();
-			final String scriptDetection = loader.readFile("/js/script-detection.js");
-			angularBeansMainObject = scriptDetection + loader.readFile("/js/angular-beans-main-object.js");
-		} catch (IOException ex) {
-			Logger.getLogger(StaticJsCache.class.getName()).log(Level.SEVERE, null, ex);
-			throw new RuntimeException(ex);
-		}
-
+	
+	public static void appendToCore(String str){
+		CORE_SCRIPT.append(str);
 	}
+	
+	public static void appendToExtensions(String str){
+		EXTENTIONS_SCRIPT.append(str);
+	}
+	
+	public static void appendToValidation(String str){
+		VALIDATION_SCRIPT.append(str);
+	}
+	
+	public static void Compress(){
+		String compressedCoreScript = new ClosureCompiler().getCompressedJavaScript(CORE_SCRIPT.toString());
+		String compressedExtensions = new ClosureCompiler().getCompressedJavaScript(EXTENTIONS_SCRIPT.toString());
+		String compressedValidation = new ClosureCompiler().getCompressedJavaScript(VALIDATION_SCRIPT.toString());
+		CORE_SCRIPT = new StringBuilder(compressedCoreScript);
+		EXTENTIONS_SCRIPT = new StringBuilder(compressedExtensions);
+		VALIDATION_SCRIPT = new StringBuilder(compressedValidation);
+	}
+
 
 	//TODO clean up dirty naming
 	public static StringBuilder CORE_SCRIPT = new StringBuilder();

@@ -7,7 +7,6 @@
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
 package angularBeans.realtime;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -32,19 +30,15 @@ import org.projectodd.sockjs.SockJsServer;
 import org.projectodd.sockjs.servlet.RawWebsocketEndpoint;
 import org.projectodd.sockjs.servlet.SockJsEndpoint;
 
-import angularBeans.api.NGModules;
-import angularBeans.boot.BeanRegistry;
-import angularBeans.ngservices.NGService;
+import angularBeans.js.cache.DefaultStaticJsCacheLoader;
+import angularBeans.js.cache.StaticJsCacheFactory;
 import angularBeans.util.ClosureCompiler;
-import angularBeans.util.CommonUtils;
-import angularBeans.js.StaticJsCache;
 
 /**
  * this listener:
  * <p>
  * initialize the sockJs server end point
  * <p>
- * generate and store the CORE and the EXTENTIONS code of the angular-beans script.
  * 
  * @author Bessem Hmidi
  */
@@ -65,23 +59,17 @@ public class AngularBeansServletContextListener implements ServletContextListene
 		try {
 			if (sockJsServer == null) {
 				initJSR356();
-
 			}
-
 		} catch (ServletException e) {
-
 			e.printStackTrace();
 		}
 
-		generateModule();
-		generateExtentions();
-
+		StaticJsCacheFactory jsCacheFactory = new StaticJsCacheFactory(DefaultStaticJsCacheLoader.class);
+		jsCacheFactory.BuildStaticJsCache();
 	}
 
 	@Override
-	public void contextDestroyed(ServletContextEvent servletContextEvent) {
-		//
-	}
+	public void contextDestroyed(ServletContextEvent servletContextEvent) { }
 
 	private String extractPrefixFromMapping(String mapping) {
 		if (mapping.endsWith("*")) {
@@ -143,9 +131,7 @@ public class AngularBeansServletContextListener implements ServletContextListene
 	}
 
 	public void initJSR356() throws ServletException {
-
 		sockJsServer = new SockJsServer();
-
 		sockJsServer.init();
 
 		if (sockJsServer.options.websocket) {
@@ -180,63 +166,4 @@ public class AngularBeansServletContextListener implements ServletContextListene
 
 		}
 	}
-
-	public void generateModule() {
-
-		StringBuffer buffer = new StringBuffer();
-
-		String appName = null;
-		Class<? extends Object> appClass = BeanRegistry.INSTANCE.getAppClass();
-		if (appClass.isAnnotationPresent(Named.class)) {
-			appName = appClass.getAnnotation(Named.class).value();
-		}
-
-		if ((appName == null) || (appName.length() < 1)) {
-
-			appName = CommonUtils.getBeanName(appClass);
-		}
-
-		buffer.append(StaticJsCache.angularBeansMainObject);
-
-		buffer.append("var app=angular.module('" + appName + "', [");
-
-		if (appClass.isAnnotationPresent(NGModules.class)) {
-
-			NGModules ngModAnno = appClass.getAnnotation(NGModules.class);
-			String[] modules = ngModAnno.value();
-			String modulesPart = "";
-			for (String module : modules) {
-				modulesPart += ("'" + module + "',");
-			}
-			modulesPart = modulesPart.substring(0, modulesPart.length() - 1);
-
-			buffer.append(modulesPart);
-		}
-
-		buffer.append("])");
-
-		buffer.append(".run(function($rootScope) {$rootScope.sessionUID = sessionId;");
-		buffer.append("$rootScope.baseUrl=sript_origin;");	// TODO: really "sript"??
-		buffer.append("});");
-
-		StaticJsCache.CORE_SCRIPT.append(compiler.getCompressedJavaScript(buffer.toString()));
-
-	}
-
-	private void generateExtentions() {
-		StringBuffer buffer = new StringBuffer();
-		for (NGService extention : BeanRegistry.INSTANCE.getExtentions()) {
-
-			Method m;
-			try {
-				m = extention.getClass().getMethod("render");
-				buffer.append(m.invoke(extention) + ";");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		}
-		StaticJsCache.EXTENTIONS_SCRIPT.append(compiler.getCompressedJavaScript(buffer.toString()));
-	}
-
 }

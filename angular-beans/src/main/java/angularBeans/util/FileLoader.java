@@ -1,4 +1,4 @@
-package angularBeans.js;
+package angularBeans.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
  *
  * @author Michael Kulla <info@michael-kulla.com>
  */
-class FileLoader {
+public class FileLoader {
 
 	/**
 	 * Reads a text file and returns the content in a single line
@@ -20,13 +20,12 @@ class FileLoader {
 	 * @throws IOException If an I/O error occurs
 	 * @throws NullPointerException If file doesn't exist or can't be found
 	 */
-	public String readFile(String fileName) throws IOException {
-
+	public static String readFile(String fileName) throws IOException {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		StringBuilder content = new StringBuilder();
-		try (InputStream fileStream = getClass().getResourceAsStream(fileName);
+		try (InputStream fileStream = classLoader.getResourceAsStream(fileName);
 				InputStreamReader fileReader = new InputStreamReader(fileStream);
 				BufferedReader in = new BufferedReader(fileReader)) {
-
 			String line;
 			while ((line = in.readLine()) != null) {
 				content.append(line);

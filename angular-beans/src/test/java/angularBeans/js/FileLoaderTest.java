@@ -11,6 +11,8 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
+import angularBeans.util.FileLoader;
+
 /**
  *
  * @author Michael Kulla <info@michael-kulla.com>

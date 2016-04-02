@@ -38,10 +38,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import angularBeans.js.cache.StaticJsCache;
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.ClosureCompiler;
 import angularBeans.util.CommonUtils;
-import angularBeans.js.StaticJsCache;
 
 /**
  * The bean validation processor generates the HTML5 validation attributes from
