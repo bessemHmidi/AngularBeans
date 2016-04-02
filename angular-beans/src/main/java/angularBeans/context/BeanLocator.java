@@ -1,20 +1,9 @@
-/*
- * AngularBeans, CDI-AngularJS bridge 
- *
- * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
- * indicated by the @author tags or express copyright attribution
- * statements applied by the authors.
- *
- * This copyrighted material is made available to anyone wishing to use, modify,
- * copy, or redistribute it subject to the terms and conditions of the GNU
- * Lesser General Public License, as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
- *
- */
+/* AngularBeans, CDI-AngularJS bridge Copyright (c) 2014, Bessem Hmidi. or third-party contributors as indicated by
+ * the @author tags or express copyright attribution statements applied by the authors. This copyrighted material is
+ * made available to anyone wishing to use, modify, copy, or redistribute it subject to the terms and conditions of the
+ * GNU Lesser General Public License, as published by the Free Software Foundation. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
 
 package angularBeans.context;
 
@@ -35,8 +24,8 @@ import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.CommonUtils;
 
 /**
- * provide a lookup method to obtain an angularBean reference from an external
- * context to the HTTP Session context (useful with realTime methods calls)
+ * provide a lookup method to obtain an angularBean reference from an external context to the HTTP Session context
+ * (useful with realTime methods calls)
  * 
  * @author Bessem Hmidi
  */
@@ -50,7 +39,7 @@ public class BeanLocator implements Serializable {
 	@Inject
 	AngularBeansUtils util;
 
-	public  Object lookup(String beanName, String sessionID) {
+	public Object lookup(String beanName, String sessionID) {
 
 		NGSessionScopeContext.setCurrentContext(sessionID);
 
@@ -58,21 +47,19 @@ public class BeanLocator implements Serializable {
 
 		Class beanClass = CommonUtils.beanNamesHolder.get(beanName);
 		if (beans.isEmpty()) {
-			beans = beanManager.getBeans(beanClass,
-					new AnnotationLiteral<Any>() {
-					});
+			beans = beanManager.getBeans(beanClass, new AnnotationLiteral<Any>() { //
+			});
 		}
 
-		Bean bean = (Bean) beanManager.resolve(beans);
-
+		Bean bean = beanManager.resolve(beans);
 
 		Class scopeAnnotationClass = bean.getScope();
 		Context context;
 
 		if (scopeAnnotationClass.equals(RequestScoped.class)) {
 			context = beanManager.getContext(scopeAnnotationClass);
-			if (context==null)
-		return bean.create(beanManager.createCreationalContext(bean));
+			if (context == null)
+				return bean.create(beanManager.createCreationalContext(bean));
 
 		} else {
 
@@ -83,15 +70,13 @@ public class BeanLocator implements Serializable {
 			}
 
 		}
-		CreationalContext creationalContext = beanManager
-				.createCreationalContext(bean);
+		CreationalContext creationalContext = beanManager.createCreationalContext(bean);
 		Object reference = context.get(bean, creationalContext);
 
-		
-//		if(reference==null && scopeAnnotationClass.equals(RequestScoped.class)){
-//			reference= bean.create(beanManager.createCreationalContext(bean));
-//		}
-		
+		// if(reference==null && scopeAnnotationClass.equals(RequestScoped.class)){
+		// reference= bean.create(beanManager.createCreationalContext(bean));
+		// }
+
 		return reference;
 	}
 

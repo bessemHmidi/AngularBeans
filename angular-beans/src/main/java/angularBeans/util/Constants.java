@@ -21,19 +21,4 @@ public final class Constants {
 	 * Int value of 3.
 	 */
 	public static final int THREE = 3;
-
-	/**
-	 * The NG_SESSION identifier.
-	 */
-	public static final String NG_SESSION_ATTRIBUTE_NAME = "NG_SESSION_ID";
-
-	/**
-	 * Boolean getter method prefix.
-	 */
-	public static final String IS = "is";
-	/**
-	 * Setter method prefix.
-	 */
-	public static final String SET = "set";
-
 }

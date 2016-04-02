@@ -1,26 +1,15 @@
-/*
- * AngularBeans, CDI-AngularJS bridge 
- *
- * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
- * indicated by the @author tags or express copyright attribution
- * statements applied by the authors.
- *
- * This copyrighted material is made available to anyone wishing to use, modify,
- * copy, or redistribute it subject to the terms and conditions of the GNU
- * Lesser General Public License, as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
- *
- */
+/* AngularBeans, CDI-AngularJS bridge Copyright (c) 2014, Bessem Hmidi. or third-party contributors as indicated by
+ * the @author tags or express copyright attribution statements applied by the authors. This copyrighted material is
+ * made available to anyone wishing to use, modify, copy, or redistribute it subject to the terms and conditions of the
+ * GNU Lesser General Public License, as published by the Free Software Foundation. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
 
 package angularBeans.util;
 
-import static angularBeans.util.Constants.GET;
-import static angularBeans.util.Constants.IS;
-import static angularBeans.util.Constants.SET;
+import static angularBeans.util.Accessor.GET;
+import static angularBeans.util.Accessor.IS;
+import static angularBeans.util.Accessor.SET;
 import static angularBeans.util.Constants.THREE;
 import static angularBeans.util.Constants.TWO;
 
@@ -77,15 +66,15 @@ public abstract class CommonUtils {
 		String name = field.getName();
 		name = name.substring(0, 1).toUpperCase() + name.substring(1);
 		if (field.getType().equals(Boolean.class) || field.getType().equals(boolean.class))
-			return IS + name;
-		return GET + name;
+			return IS.prefix() + name;
+		return GET.prefix() + name;
 	}
 
 	public static String obtainSetter(Field field) {
 		String name = field.getName();
 		name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
-		return SET + name;
+		return SET.prefix() + name;
 	}
 
 	public static JsonElement parse(String message) {
@@ -99,9 +88,9 @@ public abstract class CommonUtils {
 
 	public static Object convertFromString(String value, Class type) {
 
-		if (isNullOrEmpty(value) || type.equals(byte[].class) || type.equals(Byte[].class)){
+		if (isNullOrEmpty(value) || type.equals(byte[].class) || type.equals(Byte[].class)) {
 			return null;
-		}		
+		}
 		if (type.equals(int.class) || type.equals(Integer.class)) {
 			return Integer.parseInt(value);
 		}
@@ -123,39 +112,35 @@ public abstract class CommonUtils {
 		if (type.equals(short.class) || type.equals(Short.class)) {
 			return Short.parseShort(value);
 		}
-		
+
 		return type.cast(value);
 	}
-	
+
 	public static boolean isSetter(Method m) {
 
-		return m.getName().startsWith(SET) && m.getReturnType().equals(void.class)
+		return m.getName().startsWith(SET.prefix()) && m.getReturnType().equals(void.class)
 				&& (m.getParameterTypes().length > 0 && m.getParameterTypes().length < TWO);
 
 	}
 
 	public static boolean isGetter(Method m) {
-		return 
-		//TODO clean up dirty boolean
-		((m.getParameterTypes().length == 0) && ((m.getName().startsWith(GET))
+		return
+		// TODO clean up dirty boolean
+		((m.getParameterTypes().length == 0) && ((m.getName().startsWith(GET.prefix()))
 				|| (((m.getReturnType().equals(boolean.class)) || (m.getReturnType().equals(Boolean.class)))
-						&& (m.getName().startsWith(IS)))))
+						&& (m.getName().startsWith(IS.prefix())))))
 				&& (!(
 
 		m.getReturnType().equals(Void.class) || (m.getReturnType().equals(void.class))
 				|| m.isAnnotationPresent(RealTime.class) || m.isAnnotationPresent(Get.class)
 				|| m.isAnnotationPresent(Post.class) || m.isAnnotationPresent(Put.class)
-				|| m.isAnnotationPresent(Delete.class)
-				|| m.isAnnotationPresent(CORS.class)
-		));
+				|| m.isAnnotationPresent(Delete.class) || m.isAnnotationPresent(CORS.class)));
 	}
 
 	public static boolean hasSetter(Class clazz, String name) {
 
-		String setterName = SET
-				+ name.substring(0, 1).toUpperCase()
-				+ name.substring(1);
-		
+		String setterName = SET.prefix() + name.substring(0, 1).toUpperCase() + name.substring(1);
+
 		setterName = setterName.trim();
 		for (Method m : clazz.getDeclaredMethods()) {
 
@@ -167,16 +152,16 @@ public abstract class CommonUtils {
 	}
 
 	public static String obtainFieldNameFromAccessor(String getterName) {
-		int index = THREE;		
-		if (getterName.startsWith(IS))
+		int index = THREE;
+		if (getterName.startsWith(IS.prefix()))
 			index = TWO;
-		
+
 		String fieldName = getterName.substring(index);
 		fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
 
 		return fieldName;
 	}
-	
+
 	/**
 	 * check is the parameter is null or empty.
 	 * 

@@ -1,23 +1,13 @@
-/*
- * AngularBeans, CDI-AngularJS bridge 
- *
- * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
- * indicated by the @author tags or express copyright attribution
- * statements applied by the authors.
- *
- * This copyrighted material is made available to anyone wishing to use, modify,
- * copy, or redistribute it subject to the terms and conditions of the GNU
- * Lesser General Public License, as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
- *
- */
+/* AngularBeans, CDI-AngularJS bridge Copyright (c) 2014, Bessem Hmidi. or third-party contributors as indicated by
+ * the @author tags or express copyright attribution statements applied by the authors. This copyrighted material is
+ * made available to anyone wishing to use, modify, copy, or redistribute it subject to the terms and conditions of the
+ * GNU Lesser General Public License, as published by the Free Software Foundation. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
 package angularBeans.util;
 
-import static angularBeans.util.Constants.GET;
+import static angularBeans.util.Accessor.GET;
+import static angularBeans.util.Accessor.IS;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -28,11 +18,6 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import angularBeans.events.NGEvent;
-import angularBeans.io.ByteArrayCache;
-import angularBeans.io.Call;
-import angularBeans.io.LobWrapper;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -41,6 +26,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+
+import angularBeans.events.NGEvent;
+import angularBeans.io.ByteArrayCache;
+import angularBeans.io.Call;
+import angularBeans.io.LobWrapper;
 
 /**
  * utility class for AngularBeans
@@ -54,28 +44,22 @@ public class AngularBeansUtils implements Serializable {
 
 	@Inject
 	ByteArrayCache cache;
-	
-	
+
 	private transient Gson mainSerializer;
 	private String contextPath;
-
 
 	public void initJsonSerialiser() {
 
 		GsonBuilder builder = new GsonBuilder().serializeNulls();
 
-		builder.registerTypeAdapter(LobWrapper.class,
-				new LobWrapperJsonAdapter(cache));
+		builder.registerTypeAdapter(LobWrapper.class, new LobWrapperJsonAdapter(cache));
 
-		builder.registerTypeAdapter(byte[].class, new ByteArrayJsonAdapter(
-				cache, contextPath));
+		builder.registerTypeAdapter(byte[].class, new ByteArrayJsonAdapter(cache, contextPath));
 
-		builder.registerTypeAdapter(LobWrapper.class,
-				new JsonDeserializer<LobWrapper>() {
+		builder.registerTypeAdapter(LobWrapper.class, new JsonDeserializer<LobWrapper>() {
 
 			@Override
-			public LobWrapper deserialize(JsonElement json,
-					Type typeOfT, JsonDeserializationContext context){
+			public LobWrapper deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
 
 				return null;
 			}
@@ -89,7 +73,7 @@ public class AngularBeansUtils implements Serializable {
 	public String getJson(Object object) {
 
 		if (mainSerializer == null || object == null) {
-			return null; 
+			return null;
 		}
 		return mainSerializer.toJson(object);
 	}
@@ -148,8 +132,7 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 	}
 
 	@Override
-	public JsonElement serialize(LobWrapper src, Type typeOfSrc,
-			JsonSerializationContext context) {
+	public JsonElement serialize(LobWrapper src, Type typeOfSrc, JsonSerializationContext context) {
 
 		LobWrapper lobWrapper = src;
 
@@ -158,32 +141,31 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 		Class clazz = container.getClass();
 
 		for (Method m : clazz.getMethods()) {
-			//TODO to many nested statement
-			if ((m.getName().startsWith(GET) || m.getName().startsWith("is"))
+			// TODO to many nested statement
+			if ((m.getName().startsWith(GET.prefix()) || m.getName().startsWith(IS.prefix()))
 					&& m.getReturnType().equals(LobWrapper.class)) {
-					try {
+				try {
 
-						Call lobSource = new Call(container, m);
+					Call lobSource = new Call(container, m);
 
-						if (!cache.getCache().containsValue(lobSource)) {
-							id = String.valueOf(UUID.randomUUID());
-							cache.getCache().put(id, lobSource);
-						} else {
-							for (String idf : cache.getCache().keySet()) {
-								Call ls = cache.getCache().get(idf);
-								if (ls.equals(lobSource)) {
-									id = idf;
-									break;
-								}
+					if (!cache.getCache().containsValue(lobSource)) {
+						id = String.valueOf(UUID.randomUUID());
+						cache.getCache().put(id, lobSource);
+					} else {
+						for (String idf : cache.getCache().keySet()) {
+							Call ls = cache.getCache().get(idf);
+							if (ls.equals(lobSource)) {
+								id = idf;
+								break;
 							}
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+			}
 		}
-		return new JsonPrimitive("lob/" + id + "?"
-				+ Calendar.getInstance().getTimeInMillis());
+		return new JsonPrimitive("lob/" + id + "?" + Calendar.getInstance().getTimeInMillis());
 	}
 }
 
@@ -198,14 +180,12 @@ class ByteArrayJsonAdapter implements JsonSerializer<byte[]> {
 	}
 
 	@Override
-	public JsonElement serialize(byte[] src, Type typeOfSrc,
-			JsonSerializationContext context) {
+	public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
 
 		String id = String.valueOf(UUID.randomUUID());
 		cache.getTempCache().put(id, src);
 
-		String result = contextPath + "lob/" + id + "?"
-				+ Calendar.getInstance().getTimeInMillis();
+		String result = contextPath + "lob/" + id + "?" + Calendar.getInstance().getTimeInMillis();
 
 		return new JsonPrimitive(result);
 	}
