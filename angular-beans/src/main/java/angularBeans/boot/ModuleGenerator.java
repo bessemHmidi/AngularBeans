@@ -46,13 +46,13 @@ import angularBeans.io.Call;
 import angularBeans.io.FileUpload;
 import angularBeans.io.FileUploadHandler;
 import angularBeans.io.LobWrapper;
+import angularBeans.js.cache.StaticJsCache;
 import angularBeans.realtime.RealTime;
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.ClosureCompiler;
 import angularBeans.util.CommonUtils;
 import angularBeans.util.CurrentNGSession;
 import angularBeans.util.NGBean;
-import angularBeans.js.StaticJsCache;
 import angularBeans.validation.BeanValidationProcessor;
 
 /**
