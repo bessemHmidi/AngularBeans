@@ -153,6 +153,9 @@ public class InvocationHandler implements Serializable {
 					throws SecurityException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException,
 					InvocationTargetException, NoSuchMethodException {
 
+		
+		
+		
 		Object mainReturn = null;
 		Method m = null;
 		JsonElement argsElem = params.get("args");
@@ -168,7 +171,7 @@ public class InvocationHandler implements Serializable {
 			for (Method mt : service.getClass().getMethods()) {
 
 				if (mt.getName().equals(methodName)) {
-
+					m=mt;
 					Type[] parameters = mt.getParameterTypes();
 
 					if (parameters.length == args.size()) {
@@ -197,6 +200,10 @@ public class InvocationHandler implements Serializable {
 
 							JsonElement element = args.get(i);
 
+							
+						
+							
+							
 							if (element.isJsonPrimitive()) {
 
 								String val = element.getAsString();
@@ -242,12 +249,12 @@ public class InvocationHandler implements Serializable {
 					
 					if(parameters.length==1){
 							
-						 if(mt.getGenericParameterTypes()[0]==HttpServletRequest.class)	
-						  {
-							 System.out.println("hehe...");
-							 mt.invoke(service, request);
-						
-						  }
+//						 if(mt.getParameters()[0].getType()==HttpServletRequest.class)	
+//						  {
+//							 System.out.println("hehe...");
+//							 mt.invoke(service, request);
+//						
+//						  }
 					
 						
 						

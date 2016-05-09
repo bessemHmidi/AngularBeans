@@ -380,7 +380,7 @@ public class ModuleGenerator implements Serializable {
 
 				
 				
-				/*if ((!m.isAnnotationPresent(FileUpload.class))&&(!(parameters.length==1&&(m.getParameters()[0].getType()==HttpServletRequest.class)))) {
+				if ((!m.isAnnotationPresent(FileUpload.class))) {
 
 					
 					
@@ -396,17 +396,16 @@ public class ModuleGenerator implements Serializable {
                         
 
 					}
-				}*/
+				}
 
 				cachedStaticPart.append(") {")
 
 						.append("var mainReturn={data:{}};").append("var params={};");// sessionUID:$rootScope.sessionUID
 
 				
-				/*if(!(parameters.length==1&&(m.getParameters()[0].getType()==HttpServletRequest.class))){
+				//--
 				cachedStaticPart.append(addParams(bean, setters, m, parameters));
-				}
-				*/
+				
 
 				if (m.isAnnotationPresent(RealTime.class)) {
 
