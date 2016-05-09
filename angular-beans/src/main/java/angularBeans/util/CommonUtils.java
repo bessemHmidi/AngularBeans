@@ -4,18 +4,14 @@
  * GNU Lesser General Public License, as published by the Free Software Foundation. This program is distributed in the
  * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
-
 package angularBeans.util;
 
 import static angularBeans.util.Accessor.GET;
 import static angularBeans.util.Accessor.IS;
 import static angularBeans.util.Accessor.SET;
-import static angularBeans.util.Constants.THREE;
-import static angularBeans.util.Constants.TWO;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,11 +28,12 @@ import angularBeans.api.http.Get;
 import angularBeans.api.http.Post;
 import angularBeans.api.http.Put;
 import angularBeans.realtime.RealTime;
+import static java.beans.Introspector.decapitalize;
+import java.lang.reflect.Array;
 
 /**
  * @author Bessem Hmidi
  */
-
 public abstract class CommonUtils {
 
 	/**
@@ -48,14 +45,12 @@ public abstract class CommonUtils {
 
 		if (targetClass.isAnnotationPresent(Named.class)) {
 			Named named = (Named) targetClass.getAnnotation(Named.class);
-			return named.value();
+			if (!named.value().isEmpty()) {
+				return named.value();
+			}
 		}
 
-		String name = targetClass.getSimpleName();
-
-		String firstCar = name.substring(0, 1).toLowerCase();
-
-		name = firstCar + name.substring(1);
+		String name = decapitalize(targetClass.getSimpleName());
 
 		beanNamesHolder.put(name, targetClass);
 
@@ -63,17 +58,16 @@ public abstract class CommonUtils {
 	}
 
 	public static String obtainGetter(Field field) {
-		String name = field.getName();
-		name = name.substring(0, 1).toUpperCase() + name.substring(1);
-		if (field.getType().equals(Boolean.class) || field.getType().equals(boolean.class))
+		String name = capitalize(field.getName());
+		if (field.getType().equals(Boolean.class) || field.getType().equals(boolean.class)) {
 			return IS.prefix() + name;
-		return GET.prefix() + name;
+		} else {
+			return GET.prefix() + name;
+		}
 	}
 
 	public static String obtainSetter(Field field) {
-		String name = field.getName();
-		name = name.substring(0, 1).toUpperCase() + name.substring(1);
-
+		String name = capitalize(field.getName());
 		return SET.prefix() + name;
 	}
 
@@ -86,6 +80,18 @@ public abstract class CommonUtils {
 		return parser.parse(message);
 	}
 
+	/**
+	 * Create a wrapper object for one of the primitive Java types from a string.
+	 * Basically it calls {@code x.parseX(value)} after checking for
+	 * {@code null} and empty argument.
+	 * <p> For a {@code null} or empty value, {@code null} is returned.
+	 * @param value String to convert
+	 * @param type Type to convert to. 
+	 * @return Instance of the corresponding wrapper class or {@code null}
+	 * @throws ArithmeticException if {@code value} cannot be parsed
+	 * @throws IllegalArgumentException if {@code value} is not one of: primitive type,
+	 * wrapper type, String, collection
+	 */
 	public static Object convertFromString(String value, Class type) {
 
 		if (isNullOrEmpty(value) || type.equals(byte[].class) || type.equals(Byte[].class)) {
@@ -113,38 +119,37 @@ public abstract class CommonUtils {
 			return Short.parseShort(value);
 		}
 
-		return type.cast(value);
+		throw new IllegalArgumentException("unknown primitive type :"+type.getCanonicalName());
 	}
 
 	public static boolean isSetter(Method m) {
 
-		return m.getName().startsWith(SET.prefix()) && m.getReturnType().equals(void.class)
-				&& (m.getParameterTypes().length > 0 && m.getParameterTypes().length < TWO);
-
+		return m.getName().startsWith(SET.prefix()) && returnsVoid(m)
+				&& hasOneParameter(m);
 	}
 
 	public static boolean isGetter(Method m) {
-		return
-		// TODO clean up dirty boolean
-		((m.getParameterTypes().length == 0) && ((m.getName().startsWith(GET.prefix()))
-				|| (((m.getReturnType().equals(boolean.class)) || (m.getReturnType().equals(Boolean.class)))
-						&& (m.getName().startsWith(IS.prefix())))))
-				&& (!(
-
-		m.getReturnType().equals(Void.class) || (m.getReturnType().equals(void.class))
-				|| m.isAnnotationPresent(RealTime.class) || m.isAnnotationPresent(Get.class)
-				|| m.isAnnotationPresent(Post.class) || m.isAnnotationPresent(Put.class)
-				|| m.isAnnotationPresent(Delete.class) || m.isAnnotationPresent(CORS.class)));
+		if (returnsVoid(m)) {
+			return false;
+		}
+		if (isHttpAnnotated(m)
+				|| m.isAnnotationPresent(RealTime.class)
+				|| m.isAnnotationPresent(CORS.class)) {
+			return false;
+		}
+		return hasNoParameters(m)
+				&& m.getName().startsWith(GET.prefix())
+				|| returnsBoolean(m) && m.getName().startsWith(IS.prefix());
 	}
 
-	public static boolean hasSetter(Class clazz, String name) {
+	public static boolean hasSetter(Class clazz, String fieldName) {
 
-		String setterName = SET.prefix() + name.substring(0, 1).toUpperCase() + name.substring(1);
+		String setterName = SET.prefix() + capitalize(fieldName);
 
 		setterName = setterName.trim();
 		for (Method m : clazz.getDeclaredMethods()) {
 
-			if (m.getName().equals(setterName) && (isSetter(m))) {
+			if (m.getName().equals(setterName) && isSetter(m)) {
 				return true;
 			}
 		}
@@ -152,26 +157,55 @@ public abstract class CommonUtils {
 	}
 
 	public static String obtainFieldNameFromAccessor(String getterName) {
-		int index = THREE;
-		if (getterName.startsWith(IS.prefix()))
-			index = TWO;
+		int index;
+		if (getterName.startsWith(GET.prefix())) {
+			index = GET.prefix().length();
+		} else if (getterName.startsWith(IS.prefix())) {
+			index = IS.prefix().length();
+		} else {
+			throw new IllegalArgumentException("method name is not a getter.");
+		}
 
 		String fieldName = getterName.substring(index);
-		fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
+		return decapitalize(fieldName);
+	}
 
-		return fieldName;
+	private static boolean isHttpAnnotated(Method m) {
+		return m.isAnnotationPresent(Get.class)
+				|| m.isAnnotationPresent(Post.class)
+				|| m.isAnnotationPresent(Put.class)
+				|| m.isAnnotationPresent(Delete.class);
+	}
+
+	private static boolean returnsBoolean(Method m) {
+		return m.getReturnType().equals(boolean.class) || m.getReturnType().equals(Boolean.class);
+	}
+
+	private static boolean returnsVoid(Method m) {
+		return m.getReturnType().equals(Void.class) || (m.getReturnType().equals(void.class));
+	}
+
+	private static boolean hasNoParameters(Method m) {
+		return m.getParameterTypes().length == 0;
+	}
+
+	private static boolean hasOneParameter(Method m) {
+		return m.getParameterTypes().length == 1;
+	}
+
+	private static String capitalize(String name) {
+		return name.substring(0, 1).toUpperCase() + name.substring(1);
 	}
 
 	/**
-	 * check is the parameter is null or empty.
-	 * 
-	 * @param <T>
-	 *            class type of tested objects.
-	 * @param o
-	 *            parameter to check.
-	 * @return true is the parameter is null or empty, false otherwise.
+	 * Check if the parameter is null or empty. If {@code o} is neither
+	 * a String, an array or a Collection it is regarded as non-empty.
+	 *
+	 * @param <T> class type of tested object.
+	 * @param o parameter to check.
+	 * @return true if the parameter is {@code null} or empty, false otherwise.
 	 */
-	public static <T> Boolean isNullOrEmpty(final T o) {
+	private static <T> Boolean isNullOrEmpty(final T o) {
 		if (o == null) {
 			return true;
 		}
@@ -179,25 +213,11 @@ public abstract class CommonUtils {
 			return "".equals(((String) o).trim());
 		}
 		if (o.getClass().isArray()) {
-			return Arrays.asList((Object[]) o).isEmpty();
+			return Array.getLength(o) == 0;
 		}
 		if (o instanceof Collection<?>) {
 			return ((Collection<?>) o).isEmpty();
 		}
 		return false;
-	}
-
-	/**
-	 * check is the parameter (byte array) is null or empty.
-	 * 
-	 * @param o
-	 *            byte[] parameter to check.
-	 * @return true is the parameter is null or empty, false otherwise.
-	 */
-	public static Boolean isNullOrEmpty(final byte[] o) {
-		if (o == null) {
-			return true;
-		}
-		return o.length == 0;
 	}
 }
