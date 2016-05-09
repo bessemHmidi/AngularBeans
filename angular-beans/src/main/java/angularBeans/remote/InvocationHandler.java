@@ -242,7 +242,7 @@ public class InvocationHandler implements Serializable {
 					
 					if(parameters.length==1){
 							
-						 if(mt.getParameters()[0].getType()==HttpServletRequest.class)	
+						 if(mt.getGenericParameterTypes()[0]==HttpServletRequest.class)	
 						  {
 							 System.out.println("hehe...");
 							 mt.invoke(service, request);
