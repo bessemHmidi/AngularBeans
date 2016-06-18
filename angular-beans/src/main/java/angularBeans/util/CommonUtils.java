@@ -6,9 +6,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
 package angularBeans.util;
 
-import static angularBeans.util.Accessor.GET;
-import static angularBeans.util.Accessor.IS;
-import static angularBeans.util.Accessor.SET;
+import static angularBeans.util.Accessors.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -28,11 +26,13 @@ import angularBeans.api.http.Get;
 import angularBeans.api.http.Post;
 import angularBeans.api.http.Put;
 import angularBeans.realtime.RealTime;
-import static java.beans.Introspector.decapitalize;
+
+import java.beans.Introspector;
 import java.lang.reflect.Array;
 
 /**
  * @author Bessem Hmidi
+ * @author Aymen Naili
  */
 public abstract class CommonUtils {
 
@@ -50,25 +50,23 @@ public abstract class CommonUtils {
 			}
 		}
 
-		String name = decapitalize(targetClass.getSimpleName());
-
+		String name = Introspector.decapitalize(targetClass.getSimpleName());
 		beanNamesHolder.put(name, targetClass);
-
 		return name;
 	}
 
 	public static String obtainGetter(Field field) {
 		String name = capitalize(field.getName());
 		if (field.getType().equals(Boolean.class) || field.getType().equals(boolean.class)) {
-			return IS.prefix() + name;
+			return BOOLEAN_GETTER_PREFIX + name;
 		} else {
-			return GET.prefix() + name;
+			return GETTER_PREFIX + name;
 		}
 	}
 
 	public static String obtainSetter(Field field) {
 		String name = capitalize(field.getName());
-		return SET.prefix() + name;
+		return SETTER_PREFIX + name;
 	}
 
 	public static JsonElement parse(String message) {
@@ -130,7 +128,7 @@ public abstract class CommonUtils {
 
 	public static boolean isSetter(Method m) {
 
-		return m.getName().startsWith(SET.prefix()) && returnsVoid(m)
+		return m.getName().startsWith(SETTER_PREFIX) && returnsVoid(m)
 				&& hasOneParameter(m);
 	}
 
@@ -144,13 +142,13 @@ public abstract class CommonUtils {
 			return false;
 		}
 		return hasNoParameters(m)
-				&& m.getName().startsWith(GET.prefix())
-				|| returnsBoolean(m) && m.getName().startsWith(IS.prefix());
+				&& m.getName().startsWith(GETTER_PREFIX)
+				|| returnsBoolean(m) && m.getName().startsWith(BOOLEAN_GETTER_PREFIX);
 	}
 
 	public static boolean hasSetter(Class clazz, String fieldName) {
 
-		String setterName = SET.prefix() + capitalize(fieldName);
+		String setterName = SETTER_PREFIX + capitalize(fieldName);
 
 		setterName = setterName.trim();
 		for (Method m : clazz.getDeclaredMethods()) {
@@ -162,18 +160,17 @@ public abstract class CommonUtils {
 		return false;
 	}
 
-	public static String obtainFieldNameFromAccessor(String getterName) {
-		int index;
-		if (getterName.startsWith(GET.prefix())) {
-			index = GET.prefix().length();
-		} else if (getterName.startsWith(IS.prefix())) {
-			index = IS.prefix().length();
+	public static String obtainFieldNameFromAccessor(String methodName) {
+		String fieldName;
+		if (methodName.startsWith(GETTER_PREFIX) || methodName.startsWith(SETTER_PREFIX)) {
+			fieldName = methodName.substring(3);
+		} else if (methodName.startsWith(BOOLEAN_GETTER_PREFIX)) {
+			fieldName = methodName.substring(2);
 		} else {
-			throw new IllegalArgumentException("method name is not a getter.");
+			throw new IllegalArgumentException("Unable to obtain field name from method '"+methodName+"'.");
 		}
 
-		String fieldName = getterName.substring(index);
-		return decapitalize(fieldName);
+		return Introspector.decapitalize(fieldName);
 	}
 
 	private static boolean isHttpAnnotated(Method m) {
