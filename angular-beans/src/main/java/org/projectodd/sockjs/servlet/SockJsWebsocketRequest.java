@@ -1,6 +1,6 @@
 package org.projectodd.sockjs.servlet;
 
-import static angularBeans.util.Accessor.GET;
+import static angularBeans.util.Accessors.*;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class SockJsWebsocketRequest extends SockJsRequest {
 	@Override
 	public String getMethod() {
 		// Let's just pretend they're all GETs
-		return GET.prefix();
+		return GETTER_PREFIX;
 	}
 
 	@Override
