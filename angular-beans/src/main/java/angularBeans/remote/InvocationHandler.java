@@ -10,8 +10,7 @@
  */
 package angularBeans.remote;
 
-import static angularBeans.util.Accessor.GET;
-import static angularBeans.util.Accessor.IS;
+import static angularBeans.util.Accessors.*;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -336,12 +335,12 @@ public class InvocationHandler implements Serializable {
 		if (updates != null) {
 			for (String up : updates) {
 
-				String getterName = GET.prefix() + up.substring(0, 1).toUpperCase() + up.substring(1);
+				String getterName = GETTER_PREFIX + up.substring(0, 1).toUpperCase() + up.substring(1);
 				Method getter;
 				try {
 					getter = service.getClass().getMethod(getterName);
 				} catch (NoSuchMethodException e) {
-					getter = service.getClass().getMethod((getterName.replace(GET.prefix(), IS.prefix())));
+					getter = service.getClass().getMethod((getterName.replace(GETTER_PREFIX, BOOLEAN_GETTER_PREFIX)));
 				}
 
 				Object result = getter.invoke(service);
