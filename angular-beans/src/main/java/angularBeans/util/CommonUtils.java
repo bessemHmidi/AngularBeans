@@ -127,12 +127,18 @@ public abstract class CommonUtils {
 	}
 
 	public static boolean isSetter(Method m) {
+		if (m == null) {
+			return false;
+		}
 
 		return m.getName().startsWith(SETTER_PREFIX) && returnsVoid(m)
 				&& hasOneParameter(m);
 	}
 
 	public static boolean isGetter(Method m) {
+		if (m == null) {
+			return false;
+		}
 		if (returnsVoid(m)) {
 			return false;
 		}
@@ -174,6 +180,10 @@ public abstract class CommonUtils {
 	}
 
 	private static boolean isHttpAnnotated(Method m) {
+		if (m == null) {
+			return false;
+		}
+
 		return m.isAnnotationPresent(Get.class)
 				|| m.isAnnotationPresent(Post.class)
 				|| m.isAnnotationPresent(Put.class)
