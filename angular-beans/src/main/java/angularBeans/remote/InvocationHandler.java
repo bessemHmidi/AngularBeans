@@ -285,7 +285,7 @@ public class InvocationHandler implements Serializable {
 
 		String[] updates = null;
 
-		if (m.isAnnotationPresent(NGReturn.class)) {
+		if (m != null && m.isAnnotationPresent(NGReturn.class)) {
 
 			if (mainReturn == null)
 				mainReturn = "";
@@ -303,7 +303,7 @@ public class InvocationHandler implements Serializable {
 			}
 		}
 
-		if (m.isAnnotationPresent(NGPostConstruct.class)) {
+		if (m != null && m.isAnnotationPresent(NGPostConstruct.class)) {
 			NGPostConstruct ngPostConstruct = m.getAnnotation(NGPostConstruct.class);
 			updates = ngPostConstruct.updates();
 
