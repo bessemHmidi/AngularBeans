@@ -18,7 +18,7 @@ AngularBeans is a framework whose intention is to use JavaEE7 -and more precisel
 - Built in i18n Translation.
 - Event Driven, Real Time, and lightweight.
 
-## How to run the [demo](https://github.com/bessemHmidi/AngularBeans/tree/master/demoApp):
+## How to run the [demo](https://github.com/bessemHmidi/AngularBeans/tree/master/samples/VirtualClassroomSample):
 1. Install [maven](https://maven.apache.org/).
 2. Under the AngularBeans directory run `mvn clean install`.
 3. Navigate to the demoApp directory and run `mvn package`.
