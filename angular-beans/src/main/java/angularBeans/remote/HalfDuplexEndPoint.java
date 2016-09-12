@@ -105,6 +105,8 @@ public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 
 		AsyncContext asyncContext=request.startAsync();
 		
+		resp.setCharacterEncoding("UTF-8");
+
 		if(request.getRequestURL().toString().endsWith("/CORS")){
 			resp.addHeader("Access-Control-Allow-Origin", "*");
 			resp.addHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
