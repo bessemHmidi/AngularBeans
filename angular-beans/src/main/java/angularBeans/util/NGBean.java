@@ -23,6 +23,7 @@ package angularBeans.util;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -70,7 +71,7 @@ public class NGBean implements Serializable {
 		methods = targetClass.getMethods();
 
 		for (Method m : methods) {
-			if (CommonUtils.isGetter(m)) {
+			if (CommonUtils.isGetter(m) && !Modifier.isVolatile(m.getModifiers())) {
 				if (m.isAnnotationPresent(NGModel.class)) {
 					getters.add(m);
 				}

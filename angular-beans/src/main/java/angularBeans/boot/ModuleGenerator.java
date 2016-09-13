@@ -18,6 +18,7 @@ import static angularBeans.events.Callback.BEFORE_SESSION_READY;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
@@ -303,7 +304,7 @@ public class ModuleGenerator implements Serializable {
 			boolean corsEnabled = false;
 			boolean isNative = false;
 			for (Method nativeMethod : nativesMethods) {
-				if (nativeMethod.equals(m))
+				if (nativeMethod.equals(m) && !Modifier.isVolatile(m.getModifiers()))
 					isNative = true;
 			}
 
