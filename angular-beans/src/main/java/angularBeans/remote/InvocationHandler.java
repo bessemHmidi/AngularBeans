@@ -74,8 +74,6 @@ public class InvocationHandler implements Serializable {
 
 	static final Map<String, Class> builtInMap = new HashMap<>();
 
-	static final Map<String, Class> arrayTypesMap = new HashMap<>();
-
 	static {
 
 		builtInMap.put("int", Integer.TYPE);
@@ -85,27 +83,8 @@ public class InvocationHandler implements Serializable {
 		builtInMap.put("boolean", Boolean.TYPE);
 		builtInMap.put("char", Character.TYPE);
 		builtInMap.put("byte", Byte.TYPE);
-
 		builtInMap.put("short", Short.TYPE);
 
-		arrayTypesMap.put("[I", int[].class);
-		arrayTypesMap.put("[F", float[].class);
-		arrayTypesMap.put("[D", double[].class);
-		arrayTypesMap.put("[J", long[].class);
-		arrayTypesMap.put("[S", short[].class);
-		arrayTypesMap.put("[B", byte[].class);
-		arrayTypesMap.put("[C", char[].class);
-		arrayTypesMap.put("[Z", boolean[].class);
-
-		arrayTypesMap.put("[Ljava.lang.Long;", Long[].class);
-		arrayTypesMap.put("[Ljava.lang.Double;", Double[].class);
-		arrayTypesMap.put("[Ljava.lang.Integer;", Integer[].class);
-		arrayTypesMap.put("[Ljava.lang.Float;", Float[].class);
-		arrayTypesMap.put("[Ljava.lang.Short;", Short[].class);
-		arrayTypesMap.put("[Ljava.lang.Byte;", Byte[].class);
-		arrayTypesMap.put("[Ljava.lang.Character;", Character[].class);
-		arrayTypesMap.put("[Ljava.lang.Boolean;", Boolean[].class);
-		arrayTypesMap.put("[Ljava.lang.String;", String[].class);
 	}
 
 	public void realTimeInvoke(Object ServiceToInvoque, String methodName, JsonObject params,
@@ -172,51 +151,45 @@ public class InvocationHandler implements Serializable {
 
 				if (mt.getName().equals(methodName) && !Modifier.isVolatile(mt.getModifiers())) {
 					m=mt;
-					Type[] parameters = mt.getParameterTypes();
+					Type[] parameters = m.getGenericParameterTypes();
 
-					if (parameters.length == args.size()) {
+               if (parameters.length == args.size()) {
 
-						List<Object> argsValues = new ArrayList<>();
+                  List<Object> argsValues = new ArrayList<>();
 
-						for (int i = 0; i < parameters.length; i++) {
+                  for (int i = 0; i < parameters.length; i++) {
 
-							Class typeClass;
+                     JsonElement element = args.get(i);
 
-							String typeString = ((parameters[i]).toString());
+                     if (element.isJsonPrimitive()) {
 
-							if (typeString.startsWith("interface")) {
+                        Class<?> clazz = null;
+                        
+                        String typeString = ((parameters[i]).toString());
+                        if (typeString.startsWith("interface")) {
+                           clazz =  Class.forName(typeString.substring(10));
+                        } else if (typeString.startsWith("class")) {
+                           clazz =  Class.forName(typeString.substring(6));
+                        } else {
+                           clazz = builtInMap.get(typeString);
+                        }
 
-								typeString = typeString.substring(10);
-								typeClass = Class.forName(typeString);
-							} else {
-								if (typeString.startsWith("class")) {
+                        String val = element.getAsString();
 
-									typeString = typeString.substring(6);
-									typeClass = Class.forName(typeString);
-								} else {
-									typeClass = builtInMap.get(typeString);
-								}
-							}
+                        argsValues.add(CommonUtils.convertFromString(val, clazz));
 
-							JsonElement element = args.get(i);
-							
-							if (element.isJsonPrimitive()) {
+                     } else if (element.isJsonArray()) {
 
-								String val = element.getAsString();
+                        JsonArray arr = element.getAsJsonArray();
 
-								argsValues.add(CommonUtils.convertFromString(val, typeClass));
+                        argsValues.add(util.deserialise(parameters[i], arr));
 
-							} else if (element.isJsonArray()) {
+                     } else {
 
-								JsonArray arr = element.getAsJsonArray();
+                        argsValues.add(util.deserialise(parameters[i], element));
 
-								argsValues.add(util.deserialise(arrayTypesMap.get(typeString), arr));
-
-							} else {
-
-								argsValues.add(util.deserialise(typeClass, element));
-							}
-						}
+                     }
+                  }
 						
 						if (!CommonUtils.isGetter(mt)) {
 							update(service, params);

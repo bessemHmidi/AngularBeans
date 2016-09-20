@@ -85,10 +85,10 @@ public class AngularBeansUtils implements Serializable {
 
 	}
 
-	public Object deserialise(Class clazz, JsonElement element) {
+	public Object deserialise(Type type, JsonElement element) {
 
-		return mainSerializer.fromJson(element, clazz);
-	}
+      return mainSerializer.fromJson(element, type);
+   }
 
 	public Object convertEvent(NGEvent event) throws ClassNotFoundException {
 
