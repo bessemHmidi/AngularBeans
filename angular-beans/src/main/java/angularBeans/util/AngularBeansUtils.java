@@ -6,7 +6,8 @@
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
 package angularBeans.util;
 
-import static angularBeans.util.Accessors.*;
+import static angularBeans.util.Accessors.BOOLEAN_GETTER_PREFIX;
+import static angularBeans.util.Accessors.GETTER_PREFIX;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -49,8 +50,9 @@ public class AngularBeansUtils implements Serializable {
 	private String contextPath;
 
 	public void initJsonSerialiser() {
-
 		GsonBuilder builder = new GsonBuilder().serializeNulls();
+		
+		builder.setExclusionStrategies(NGConfiguration.getGsonExclusionStrategy());
 
 		builder.registerTypeAdapter(LobWrapper.class, new LobWrapperJsonAdapter(cache));
 
@@ -70,11 +72,15 @@ public class AngularBeansUtils implements Serializable {
 
 	}
 
-	public String getJson(Object object) {
-
-		if (mainSerializer == null || object == null) {
+	public String getJson(Object object) {		
+		if (object == null) {
 			return null;
 		}
+		
+		if(mainSerializer == null){
+			initJsonSerialiser();
+		}
+
 		return mainSerializer.toJson(object);
 	}
 
@@ -86,8 +92,11 @@ public class AngularBeansUtils implements Serializable {
 	}
 
 	public Object deserialise(Type type, JsonElement element) {
-
-      return mainSerializer.fromJson(element, type);
+		if(mainSerializer == null){
+			initJsonSerialiser();
+		}
+		
+		return mainSerializer.fromJson(element, type);
    }
 
 	public Object convertEvent(NGEvent event) throws ClassNotFoundException {
