@@ -22,9 +22,7 @@ public class NGConfiguration {
 	private static String GSON_EXCLUSION_STRATEGY = "gson.exclusionStrategy";
 	
 	public static String getProperty(String property) {
-		try {
-			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(ANGULAR_BEANS_PROPERTIES);
-			
+		try(InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(ANGULAR_BEANS_PROPERTIES)){			
 			if(is != null){
 				Properties props = new Properties();
 				props.load(is);
