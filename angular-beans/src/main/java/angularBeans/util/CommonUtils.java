@@ -255,7 +255,7 @@ public abstract class CommonUtils {
    public static Method getMethod(Class clazz, String methodName, int paramSize) {
       for (Method mt: clazz.getMethods()) {
 
-         if (mt.getName().equals(methodName) && !Modifier.isVolatile(mt.getModifiers())) {
+         if (mt.getName().equals(methodName) && mt.getGenericParameterTypes().length == paramSize && !Modifier.isVolatile(mt.getModifiers())) {
             return mt;
          }
       }
@@ -263,7 +263,7 @@ public abstract class CommonUtils {
    }
 
    /**
-    * Returns the Map with the names and indices defined in NGParamCast
+    * Returns the Map with the names and indexes defined in NGParamCast
     * 
     * @param m
     *        Method to parse
@@ -341,12 +341,15 @@ public abstract class CommonUtils {
     *        Primitive class of element 
     */
    public static Class getPrimitiveClass(JsonElement element) {
-      if (element.getAsJsonPrimitive().isBoolean()) {
+     if (element.getAsJsonPrimitive().isBoolean()) {
          return Boolean.class;
       }
 
       if (element.getAsJsonPrimitive().isNumber()) {
-         return Double.class;
+         if (element.getAsString().contains(".")) {
+            return Double.class;
+         }
+         return Long.class;
       }
 
       return String.class;
