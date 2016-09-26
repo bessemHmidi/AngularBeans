@@ -252,8 +252,8 @@ public abstract class CommonUtils {
     * @return Method
     *        Class method 
     */
-   public static Method getMethod(Class<?> clazz, String methodName, int paramSize) {
-      for (Method mt: clazz.getMethods()) {
+   public static Method getMethod(Class clazz, String methodName, int paramSize) {
+      for (java.lang.reflect.Method mt: clazz.getMethods()) {
 
          if (mt.getName().equals(methodName) && mt.getParameterCount() == paramSize && !Modifier.isVolatile(mt.getModifiers())) {
             return mt;
