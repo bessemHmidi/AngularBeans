@@ -10,17 +10,22 @@ import static angularBeans.util.Accessors.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Named;
 
+import org.boon.Pair;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import angularBeans.api.CORS;
+import angularBeans.api.NGParamCast;
 import angularBeans.api.http.Delete;
 import angularBeans.api.http.Get;
 import angularBeans.api.http.Post;
@@ -233,5 +238,117 @@ public abstract class CommonUtils {
 		}
 		return false;
 	}
-}
+	
+	
+	 /**
+    * Get class method in accordance with the parameters informed
+    * 
+    * @param clazz
+    *        Source class
+    * @param methodName
+    *        Method name
+    * @param paramSize
+    *        Number of parameters for the method to be caught
+    * @return Method
+    *        Class method 
+    */
+   public static Method getMethod(Class<?> clazz, String methodName, int paramSize) {
+      for (Method mt: clazz.getMethods()) {
 
+         if (mt.getName().equals(methodName) && mt.getParameters().length == paramSize && !Modifier.isVolatile(mt.getModifiers())) {
+            return mt;
+         }
+      }
+      return null;
+   }
+
+   /**
+    * Returns the Map with the names and indices defined in NGParamCast
+    * 
+    * @param m
+    *        Method to parse
+    * @return
+    *        Map with indexes and names of types
+    */
+   public static Pair<Boolean, Map<Integer, String>> getParamCastMap(Method m) {
+      if (m.isAnnotationPresent(NGParamCast.class)) {
+         Map<Integer, String> mParam = new HashMap<>();
+
+         NGParamCast ngCast = m.getAnnotation(NGParamCast.class);
+         boolean required = ngCast.required();
+
+         String[] params = ngCast.param();
+
+         if (params != null && params.length > 0) {
+            for (String param: params) {
+               param = param.trim();
+
+               if (param.contains("{") && param.contains("}")) {
+                  int idxIni = param.indexOf("{");
+                  String paramName = param.substring(0, idxIni).trim();
+                  String[] paramIndex = param.substring(idxIni + 1, param.indexOf("}")).split(",");
+
+                  for (String idx: paramIndex) {
+                     mParam.put(Integer.parseInt(idx.trim()), paramName);
+                  }
+               } else {
+                  if (param.length() > 0) {
+                     mParam.put(0, param);
+                  }
+               }
+            }
+         }
+         return new Pair<>(required, mParam);
+      }
+      return null;
+   }
+
+   /**
+    * 
+    * Returns the type of NGParamType defined in the implemented class
+    * 
+    * @param service
+    *        Class instantiated
+    * @param paramName
+    *        Parameter name 
+    * @param required              
+    *        Parameter required or not
+    * @return
+    *        Parameter type instantiated in NGParamType
+    */
+   public static Type getParamType(Object service, String paramName, boolean required) {
+      if (paramName != null && paramName.length() > 0) {
+         try {
+            Field field = service.getClass().getDeclaredField(paramName);
+            field.setAccessible(true);
+            return ((NGParamType<?>) field.get(service)).getType();
+         }
+         catch (Exception e) {
+            if (required) {
+               e.printStackTrace();
+            }
+         }
+      }
+
+      return null;
+   }
+   
+   /**
+    * Returns the primitive base type of json
+    * @param element
+    *        JSON element 
+    * @return
+    *        Primitive class of element 
+    */
+   public static Class getPrimitiveClass(JsonElement element) {
+      if (element.getAsJsonPrimitive().isBoolean()) {
+         return Boolean.class;
+      }
+
+      if (element.getAsJsonPrimitive().isNumber()) {
+         return Double.class;
+      }
+
+      return String.class;
+   }
+}

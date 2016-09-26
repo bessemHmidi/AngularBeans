@@ -6,9 +6,6 @@
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. */
 package angularBeans.util;
 
-import static angularBeans.util.Accessors.BOOLEAN_GETTER_PREFIX;
-import static angularBeans.util.Accessors.GETTER_PREFIX;
-
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -151,8 +148,7 @@ class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 
 		for (Method m : clazz.getMethods()) {
 			// TODO to many nested statement
-			if ((m.getName().startsWith(GETTER_PREFIX) || m.getName().startsWith(BOOLEAN_GETTER_PREFIX))
-					&& m.getReturnType().equals(LobWrapper.class) && !Modifier.isVolatile(m.getModifiers())) {
+			if (CommonUtils.isGetter(m) && m.getReturnType().equals(LobWrapper.class) && !Modifier.isVolatile(m.getModifiers())) {
 				try {
 
 					Call lobSource = new Call(container, m);
