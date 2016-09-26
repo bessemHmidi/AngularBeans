@@ -51,7 +51,7 @@ import angularBeans.util.CommonUtils;
  *
  */
 @SuppressWarnings("serial")
-@WebServlet(asyncSupported = true, urlPatterns = "/http/invoke/*")
+@WebServlet(asyncSupported = true, urlPatterns = Constants.URL_PATTERNS)
 public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 
 	@Inject
