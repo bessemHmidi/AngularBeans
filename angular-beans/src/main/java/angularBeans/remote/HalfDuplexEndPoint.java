@@ -38,11 +38,9 @@ import com.google.gson.JsonObject;
 import angularBeans.context.BeanLocator;
 import angularBeans.context.NGSessionScopeContext;
 
-
 import angularBeans.util.AngularBeansUtils;
 import angularBeans.util.CommonUtils;
-
-
+import angularBeans.util.Constants;
 
 /**
  * The HalfDuplexEndPoint servlet is a standard HTTP protocol endpoint
@@ -51,7 +49,7 @@ import angularBeans.util.CommonUtils;
  *
  */
 @SuppressWarnings("serial")
-@WebServlet(asyncSupported = true, urlPatterns = "/http/invoke/*")
+@WebServlet(asyncSupported = true, urlPatterns = Constants.URL_PATTERNS)
 public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
 
 	@Inject
