@@ -29,6 +29,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.boon.Pair;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -145,84 +147,86 @@ public class InvocationHandler implements Serializable {
 		if (argsElem != null) {
 
 			JsonArray args = params.get("args").getAsJsonArray();
-
 			
-			for (Method mt : service.getClass().getMethods()) {
+			m = CommonUtils.getMethod(service.getClass(), methodName, args.size());
 
-				if (mt.getName().equals(methodName) && !Modifier.isVolatile(mt.getModifiers())) {
-					m=mt;
-					Type[] parameters = m.getGenericParameterTypes();
+         Pair<Boolean, Map<Integer, String>> ngCast = CommonUtils.getParamCastMap(m);
 
-					if (parameters.length == args.size()) {
+         Type[] parameters = m.getGenericParameterTypes();
 
-						List<Object> argsValues = new ArrayList<>();
+         if (parameters.length == args.size()) {
 
-						for (int i = 0; i < parameters.length; i++) {
+            List<Object> argsValues = new ArrayList<>();
 
-							JsonElement element = args.get(i);
+            for (int i = 0; i < parameters.length; i++) {
 
-							if (element.isJsonPrimitive()) {
+               JsonElement element = args.get(i);
 
-								Class<?> clazz = null;
+               Type type = null;
+               if (ngCast != null) {
+                  type = CommonUtils.getParamType(service, ngCast.getValue().get(i), ngCast.getKey());
+               }
 
-								String typeString = ((parameters[i]).toString());
-								if (typeString.startsWith("interface")) {
-									clazz =  Class.forName(typeString.substring(10));
-								} else if (typeString.startsWith("class")) {
-									clazz =  Class.forName(typeString.substring(6));
-								} else {
-									clazz = builtInMap.get(typeString);
-								}
+               if (element.isJsonPrimitive()) {
 
-								String val = element.getAsString();
+                  Class<?> clazz = null;
 
-								argsValues.add(CommonUtils.convertFromString(val, clazz));
+                  String typeString = ((parameters[i]).toString());
+                  if (typeString.startsWith("class")) {
+                     clazz = Class.forName(typeString.substring(6));
+                     if (clazz.equals(Object.class)) {
+                        clazz = CommonUtils.getPrimitiveClass(element);
+                     }
+                  } else {
+                     clazz = builtInMap.get(typeString);
+                  }
 
-							} else if (element.isJsonArray()) {
+                  String val = element.getAsString();
 
-								JsonArray arr = element.getAsJsonArray();
+                  if (type == null) {
+                     argsValues.add(CommonUtils.convertFromString(val, clazz));
+                  } else {
+                     argsValues.add(util.deserialise(type, element));
+                  }
 
-								argsValues.add(util.deserialise(parameters[i], arr));
+               } else if (element.isJsonArray()) {
 
-							} else {
+                  JsonArray arr = element.getAsJsonArray();
 
-								argsValues.add(util.deserialise(parameters[i], element));
+                  if (type == null) {
+                     argsValues.add(util.deserialise(parameters[i], arr));
+                  } else {
+                     argsValues.add(util.deserialise(type, arr));
+                  }
 
-							}
-						}
+               } else {
+                  if (type == null) {
+                     argsValues.add(util.deserialise(parameters[i], element));
+                  } else {
+                     argsValues.add(util.deserialise(type, element));
+                  }
+               }
+            }
 
-						if (!CommonUtils.isGetter(mt)) {
-							update(service, params);
-						}
+            if (!CommonUtils.isGetter(m)) {
+               update(service, params);
+            }
 
-
-						try {
-							mainReturn = mt.invoke(service, argsValues.toArray());
-						} catch (Exception e) {
-							handleException(mt, e);
-							e.printStackTrace();
-						}
-					}
-				}	
-			}
-		} else {
-			
-			
-			for (Method mt : service.getClass().getMethods()) {
-
-				if (mt.getName().equals(methodName) && !Modifier.isVolatile(mt.getModifiers())) {
-
-					Type[] parameters = mt.getParameterTypes();
-
-					// handling methods that took HttpServletRequest as parameter					
-					if(parameters.length!=1){
-						 if (!CommonUtils.isGetter(m)) {
-								update(service, params);
-							}
-							mainReturn = mt.invoke(service);
-					 }
-			
-				}}
+            try {
+               mainReturn = m.invoke(service, argsValues.toArray());
+            }
+            catch (Exception e) {
+               handleException(m, e);
+               e.printStackTrace();
+            }
+         }
+		} else {			
+		   m = CommonUtils.getMethod(service.getClass(), methodName, 0);
+         // handling methods that took HttpServletRequest as parameter
+         if (!CommonUtils.isGetter(m)) {
+            update(service, params);
+         }
+         mainReturn = m.invoke(service);
 		}
 
 		ModelQueryImpl qImpl = (ModelQueryImpl) modelQueryFactory.get(service.getClass());
