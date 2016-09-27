@@ -49,8 +49,10 @@ import angularBeans.util.Constants;
  *
  */
 @SuppressWarnings("serial")
-@WebServlet(asyncSupported = true, urlPatterns = Constants.URL_PATTERNS)
+@WebServlet(asyncSupported = true, urlPatterns = HalfDuplexEndPoint.URL_PATTERNS)
 public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
+	
+	public static final String URL_PATTERNS = "/http/invoke/*";
 
 	@Inject
 	InvocationHandler remoteInvoker;
