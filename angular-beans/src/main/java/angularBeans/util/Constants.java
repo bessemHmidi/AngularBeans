@@ -21,9 +21,4 @@ public final class Constants {
 	 * Int value of 3.
 	 */
 	public static final int THREE = 3;
-	
-	/**
-	 * Value default to urlPatterns
-	 */
-	public static final String URL_PATTERNS = "/http/invoke/*";
 }
