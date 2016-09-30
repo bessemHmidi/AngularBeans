@@ -68,7 +68,7 @@ public class AngularBeansUtils implements Serializable {
 		});
 		
 		if (NGConfiguration.getProperty("DATE_PATTERN") != null) {
-			SimpleDateFormat dateFormat = new SimpleDateFormat(NGConfiguration.getProperty("DATE_PATTERN"));
+			final SimpleDateFormat dateFormat = new SimpleDateFormat(NGConfiguration.getProperty("DATE_PATTERN"));
 
 			if (dateFormat != null && NGConfiguration.getProperty("TIME_ZONE") != null) {
 				dateFormat.setTimeZone(TimeZone.getTimeZone(NGConfiguration.getProperty("DATE_PATTERN")));
