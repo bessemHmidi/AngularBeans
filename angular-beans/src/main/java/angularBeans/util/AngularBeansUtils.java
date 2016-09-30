@@ -71,7 +71,7 @@ public class AngularBeansUtils implements Serializable {
 			final SimpleDateFormat dateFormat = new SimpleDateFormat(NGConfiguration.getProperty("DATE_PATTERN"));
 
 			if (dateFormat != null && NGConfiguration.getProperty("TIME_ZONE") != null) {
-				dateFormat.setTimeZone(TimeZone.getTimeZone(NGConfiguration.getProperty("DATE_PATTERN")));
+				dateFormat.setTimeZone(TimeZone.getTimeZone(NGConfiguration.getProperty("TIME_ZONE")));
 			}
 
 			builder.registerTypeAdapter(java.sql.Date.class, new JsonSerializer<java.sql.Date>(){
