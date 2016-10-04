@@ -10,7 +10,9 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -64,6 +66,141 @@ public class AngularBeansUtils implements Serializable {
 			}
 
 		});
+		
+		if (NGConfiguration.getProperty("DATE_PATTERN") != null) {
+			final SimpleDateFormat dateFormat = new SimpleDateFormat(NGConfiguration.getProperty("DATE_PATTERN"));
+
+			if (dateFormat != null && NGConfiguration.getProperty("TIME_ZONE") != null) {
+				dateFormat.setTimeZone(TimeZone.getTimeZone(NGConfiguration.getProperty("TIME_ZONE")));
+			}
+
+			builder.registerTypeAdapter(java.sql.Date.class, new JsonSerializer<java.sql.Date>(){
+
+				@Override
+				public JsonElement serialize(java.sql.Date src, Type typeOfSrc, JsonSerializationContext context) {
+
+					if (src != null) {
+					   Calendar cal = Calendar.getInstance();
+					   cal.setTime(src);
+					   cal.set(Calendar.HOUR_OF_DAY, 0);
+					   cal.set(Calendar.MINUTE, 0);
+					   cal.set(Calendar.SECOND, 0);
+					   cal.set(Calendar.MILLISECOND, 0);
+
+					   return new JsonPrimitive(dateFormat.format(cal.getTime()));
+				   }
+				   return null;
+				}
+			});
+
+			builder.registerTypeAdapter(java.sql.Date.class, new JsonDeserializer<java.sql.Date>(){
+
+				@Override
+				public java.sql.Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+
+				    try {
+					   Calendar cal = Calendar.getInstance();
+					   cal.setTime(dateFormat.parse(json.getAsString()));
+					   cal.set(Calendar.HOUR_OF_DAY, 0);
+					   cal.set(Calendar.MINUTE, 0);
+					   cal.set(Calendar.SECOND, 0);
+					   cal.set(Calendar.MILLISECOND, 0);
+
+					   return new java.sql.Date(cal.getTime().getTime());
+				    } catch (Exception e) {}
+
+				    return null;
+				}
+
+			});
+
+			builder.registerTypeAdapter(java.sql.Time.class, new JsonSerializer<java.sql.Time>(){
+
+				@Override
+				public JsonElement serialize(java.sql.Time src, Type typeOfSrc, JsonSerializationContext context) {
+				    if (src != null) {
+					   Calendar cal = Calendar.getInstance();
+					   cal.setTime(src);
+
+					   return new JsonPrimitive(dateFormat.format(cal.getTime()));
+				    }
+				    return null;
+				}
+
+			});
+
+			builder.registerTypeAdapter(java.sql.Time.class, new JsonDeserializer<java.sql.Time>(){
+
+				@Override
+				public java.sql.Time deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+
+				    try {
+					   Calendar cal = Calendar.getInstance();
+					   cal.setTime(dateFormat.parse(json.getAsString()));
+
+					   return new java.sql.Time(cal.getTime().getTime());
+				    } catch (Exception e) {}
+
+				    return null;
+				}
+
+			});
+
+			builder.registerTypeAdapter(java.sql.Timestamp.class, new JsonSerializer<java.sql.Timestamp>(){
+
+				@Override
+				public JsonElement serialize(java.sql.Timestamp src, Type typeOfSrc, JsonSerializationContext context) {
+				    if (src != null) {
+					   Calendar cal = Calendar.getInstance();
+					   cal.setTime(src);
+
+					   return new JsonPrimitive(dateFormat.format(cal.getTime()));
+				    }
+				    return null;
+				}
+
+			});
+
+			builder.registerTypeAdapter(java.sql.Timestamp.class, new JsonDeserializer<java.sql.Timestamp>(){
+
+				@Override
+				public java.sql.Timestamp deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+
+				    try {
+					   Calendar cal = Calendar.getInstance();
+					   cal.setTime(dateFormat.parse(json.getAsString()));
+
+					   return new java.sql.Timestamp(cal.getTime().getTime());
+				    } catch (Exception e) {}
+
+				    return null;
+				}
+
+			});
+
+			builder.registerTypeAdapter(java.util.Date.class, new JsonSerializer<java.util.Date>(){
+
+				@Override
+				public JsonElement serialize(java.util.Date src, Type typeOfSrc, JsonSerializationContext context) {
+				   return src == null ? null : new JsonPrimitive(dateFormat.format(src));
+				}
+
+			 });
+
+			builder.registerTypeAdapter(java.util.Date.class, new JsonDeserializer<java.util.Date>(){
+
+				@Override
+				public java.util.Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+
+				    try {
+					   return dateFormat.parse(json.getAsString());
+				    } catch (Exception e) {}
+
+				    return null;
+				}
+
+			});
+		}
 
 		mainSerializer = builder.create();
 
