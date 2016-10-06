@@ -16,12 +16,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Named;
+import javax.xml.bind.DatatypeConverter;
 
 import org.boon.Pair;
 
@@ -384,7 +384,7 @@ public abstract class CommonUtils {
          }
 
          try {
-            return new JsonPrimitive(DATA_MARK + type + BASE64_MARK + Base64.getEncoder().encodeToString(bytes).trim());
+            return new JsonPrimitive(DATA_MARK + type + BASE64_MARK + DatatypeConverter.printBase64Binary(bytes).trim()); // Base64.getEncoder().encodeToString(bytes).trim());(Java8)
          }
          catch (Exception e) {}
 
@@ -407,7 +407,7 @@ public abstract class CommonUtils {
                value = value.substring(value.indexOf(BASE64_MARK) + BASE64_MARK.length());
             }
             if (value.length() > 0) {
-               return Base64.getDecoder().decode(value);
+               return DatatypeConverter.parseBase64Binary(value); // Base64.getDecoder().decode(value); (Java8)
             }
          }
          catch (Exception e) {}
