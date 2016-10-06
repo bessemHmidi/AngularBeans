@@ -42,294 +42,370 @@ import angularBeans.io.LobWrapper;
 @ApplicationScoped
 public class AngularBeansUtils implements Serializable {
 
-	@Inject
-	ByteArrayCache cache;
+   @Inject
+   ByteArrayCache cache;
 
-	private transient Gson mainSerializer;
-	private String contextPath;
+   private transient Gson mainSerializer;
+   private String contextPath;
 
-	public void initJsonSerialiser() {
-		GsonBuilder builder = new GsonBuilder().serializeNulls();
-		
-		builder.setExclusionStrategies(NGConfiguration.getGsonExclusionStrategy());
+   public void initJsonSerialiser() {
 
-		builder.registerTypeAdapter(LobWrapper.class, new LobWrapperJsonAdapter(cache));
+      GsonBuilder builder = new GsonBuilder();
 
-		builder.registerTypeAdapter(byte[].class, new ByteArrayJsonAdapter(cache, contextPath));
+      builder.serializeNulls();
 
-		builder.registerTypeAdapter(LobWrapper.class, new JsonDeserializer<LobWrapper>() {
+      builder.setExclusionStrategies(NGConfiguration.getGsonExclusionStrategy());
 
-			@Override
-			public LobWrapper deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+      builder.registerTypeAdapter(LobWrapper.class, new LobWrapperJsonAdapter(cache));
 
-				return null;
-			}
+      builder.registerTypeAdapter(LobWrapper.class, new JsonDeserializer<LobWrapper>(){
 
-		});
-		
-		if (NGConfiguration.getProperty("DATE_PATTERN") != null) {
-			final SimpleDateFormat dateFormat = new SimpleDateFormat(NGConfiguration.getProperty("DATE_PATTERN"));
+         @Override
+         public LobWrapper deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) {
 
-			if (dateFormat != null && NGConfiguration.getProperty("TIME_ZONE") != null) {
-				dateFormat.setTimeZone(TimeZone.getTimeZone(NGConfiguration.getProperty("TIME_ZONE")));
-			}
+            return null;
+         }
 
-			builder.registerTypeAdapter(java.sql.Date.class, new JsonSerializer<java.sql.Date>(){
+      });
 
-				@Override
-				public JsonElement serialize(java.sql.Date src, Type typeOfSrc, JsonSerializationContext context) {
+      // --- BYTE[] BLOCK BEGIN ---
+      builder.registerTypeAdapter(NGLob.class, new ByteArrayJsonAdapter(cache, contextPath));
 
-					if (src != null) {
-					   Calendar cal = Calendar.getInstance();
-					   cal.setTime(src);
-					   cal.set(Calendar.HOUR_OF_DAY, 0);
-					   cal.set(Calendar.MINUTE, 0);
-					   cal.set(Calendar.SECOND, 0);
-					   cal.set(Calendar.MILLISECOND, 0);
+      builder.registerTypeAdapter(NGBase64.class, new JsonSerializer<NGBase64>(){
 
-					   return new JsonPrimitive(dateFormat.format(cal.getTime()));
-				   }
-				   return null;
-				}
-			});
+         @Override
+         public JsonElement serialize(NGBase64 src, Type typeOfSrc, JsonSerializationContext context) {
+            if (src != null) {
+               return CommonUtils.getBase64Json(src.getType(), src.getBytes());
+            }
+            return null;
+         }
+      });
 
-			builder.registerTypeAdapter(java.sql.Date.class, new JsonDeserializer<java.sql.Date>(){
+      builder.registerTypeAdapter(NGBase64.class, new JsonDeserializer<NGBase64>(){
 
-				@Override
-				public java.sql.Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+         @Override
+         public NGBase64 deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) {
+            byte[] bytes = CommonUtils.getBytesFromJson(element);
+            if (bytes != null && bytes.length > 0) {
+               return new NGBase64(bytes);
+            }
+            return null;
+         }
+      });
 
-				    try {
-					   Calendar cal = Calendar.getInstance();
-					   cal.setTime(dateFormat.parse(json.getAsString()));
-					   cal.set(Calendar.HOUR_OF_DAY, 0);
-					   cal.set(Calendar.MINUTE, 0);
-					   cal.set(Calendar.SECOND, 0);
-					   cal.set(Calendar.MILLISECOND, 0);
+      if (CommonUtils.getBytesArrayBind().equals(Constants.BASE64_BIND)) {
+         builder.registerTypeAdapter(byte[].class, new JsonSerializer<byte[]>(){
 
-					   return new java.sql.Date(cal.getTime().getTime());
-				    } catch (Exception e) {}
+            @Override
+            public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
+               return CommonUtils.getBase64Json(null, src);
+            }
+         });
 
-				    return null;
-				}
+         builder.registerTypeAdapter(byte[].class, new JsonDeserializer<byte[]>(){
 
-			});
+            @Override
+            public byte[] deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) {
+               return CommonUtils.getBytesFromJson(element);
+            }
+         });
 
-			builder.registerTypeAdapter(java.sql.Time.class, new JsonSerializer<java.sql.Time>(){
+      } else {
+         builder.registerTypeAdapter(byte[].class, new ByteArrayJsonAdapter(cache, contextPath));
+      }
+      // --- BYTE[] BLOCK END ---
 
-				@Override
-				public JsonElement serialize(java.sql.Time src, Type typeOfSrc, JsonSerializationContext context) {
-				    if (src != null) {
-					   Calendar cal = Calendar.getInstance();
-					   cal.setTime(src);
+      // --- DATE FORMAT BLOCK BEGIN ---
+      if (NGConfiguration.getProperty("DATE_PATTERN") != null) {
+         final SimpleDateFormat dateFormat = new SimpleDateFormat(NGConfiguration.getProperty("DATE_PATTERN"));
 
-					   return new JsonPrimitive(dateFormat.format(cal.getTime()));
-				    }
-				    return null;
-				}
+         if (dateFormat != null && NGConfiguration.getProperty("TIME_ZONE") != null) {
+            dateFormat.setTimeZone(TimeZone.getTimeZone(NGConfiguration.getProperty("TIME_ZONE")));
+         }
 
-			});
+         builder.registerTypeAdapter(java.sql.Date.class, new JsonSerializer<java.sql.Date>(){
 
-			builder.registerTypeAdapter(java.sql.Time.class, new JsonDeserializer<java.sql.Time>(){
+            @Override
+            public JsonElement serialize(java.sql.Date src, Type typeOfSrc, JsonSerializationContext context) {
 
-				@Override
-				public java.sql.Time deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+               if (src != null) {
+                  Calendar cal = Calendar.getInstance();
+                  cal.setTime(src);
+                  cal.set(Calendar.HOUR_OF_DAY, 0);
+                  cal.set(Calendar.MINUTE, 0);
+                  cal.set(Calendar.SECOND, 0);
+                  cal.set(Calendar.MILLISECOND, 0);
 
-				    try {
-					   Calendar cal = Calendar.getInstance();
-					   cal.setTime(dateFormat.parse(json.getAsString()));
+                  return new JsonPrimitive(dateFormat.format(cal.getTime()));
+               }
+               return null;
+            }
+         });
 
-					   return new java.sql.Time(cal.getTime().getTime());
-				    } catch (Exception e) {}
+         builder.registerTypeAdapter(java.sql.Date.class, new JsonDeserializer<java.sql.Date>(){
 
-				    return null;
-				}
+            @Override
+            public java.sql.Date deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) {
 
-			});
+               try {
+                  String dateFormated = element.getAsString();
+                  if (dateFormated != null && dateFormated.trim().length() > 0) {
+                     Calendar cal = Calendar.getInstance();
+                     cal.setTime(dateFormat.parse(dateFormated));
+                     cal.set(Calendar.HOUR_OF_DAY, 0);
+                     cal.set(Calendar.MINUTE, 0);
+                     cal.set(Calendar.SECOND, 0);
+                     cal.set(Calendar.MILLISECOND, 0);
+                     return new java.sql.Date(cal.getTime().getTime());
+                  }
+               }
+               catch (Exception e) {}
 
-			builder.registerTypeAdapter(java.sql.Timestamp.class, new JsonSerializer<java.sql.Timestamp>(){
+               return null;
+            }
 
-				@Override
-				public JsonElement serialize(java.sql.Timestamp src, Type typeOfSrc, JsonSerializationContext context) {
-				    if (src != null) {
-					   Calendar cal = Calendar.getInstance();
-					   cal.setTime(src);
+         });
 
-					   return new JsonPrimitive(dateFormat.format(cal.getTime()));
-				    }
-				    return null;
-				}
+         builder.registerTypeAdapter(java.sql.Time.class, new JsonSerializer<java.sql.Time>(){
 
-			});
+            @Override
+            public JsonElement serialize(java.sql.Time src, Type typeOfSrc, JsonSerializationContext context) {
+               if (src != null) {
+                  Calendar cal = Calendar.getInstance();
+                  cal.setTime(src);
 
-			builder.registerTypeAdapter(java.sql.Timestamp.class, new JsonDeserializer<java.sql.Timestamp>(){
+                  return new JsonPrimitive(dateFormat.format(cal.getTime()));
+               }
+               return null;
+            }
 
-				@Override
-				public java.sql.Timestamp deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+         });
 
-				    try {
-					   Calendar cal = Calendar.getInstance();
-					   cal.setTime(dateFormat.parse(json.getAsString()));
+         builder.registerTypeAdapter(java.sql.Time.class, new JsonDeserializer<java.sql.Time>(){
 
-					   return new java.sql.Timestamp(cal.getTime().getTime());
-				    } catch (Exception e) {}
+            @Override
+            public java.sql.Time deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) {
 
-				    return null;
-				}
+               try {
+                  String dateFormated = element.getAsString();
+                  if (dateFormated != null && dateFormated.trim().length() > 0) {
+                     Calendar cal = Calendar.getInstance();
+                     cal.setTime(dateFormat.parse(dateFormated));
 
-			});
+                     return new java.sql.Time(cal.getTime().getTime());
+                  }
+               }
+               catch (Exception e) {}
 
-			builder.registerTypeAdapter(java.util.Date.class, new JsonSerializer<java.util.Date>(){
+               return null;
+            }
 
-				@Override
-				public JsonElement serialize(java.util.Date src, Type typeOfSrc, JsonSerializationContext context) {
-				   return src == null ? null : new JsonPrimitive(dateFormat.format(src));
-				}
+         });
 
-			 });
+         builder.registerTypeAdapter(java.sql.Timestamp.class, new JsonSerializer<java.sql.Timestamp>(){
 
-			builder.registerTypeAdapter(java.util.Date.class, new JsonDeserializer<java.util.Date>(){
+            @Override
+            public JsonElement serialize(java.sql.Timestamp src, Type typeOfSrc, JsonSerializationContext context) {
+               if (src != null) {
+                  Calendar cal = Calendar.getInstance();
+                  cal.setTime(src);
 
-				@Override
-				public java.util.Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+                  return new JsonPrimitive(dateFormat.format(cal.getTime()));
+               }
+               return null;
+            }
 
-				    try {
-					   return dateFormat.parse(json.getAsString());
-				    } catch (Exception e) {}
+         });
 
-				    return null;
-				}
+         builder.registerTypeAdapter(java.sql.Timestamp.class, new JsonDeserializer<java.sql.Timestamp>(){
 
-			});
-		}
+            @Override
+            public java.sql.Timestamp deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) {
 
-		mainSerializer = builder.create();
+               try {
+                  String dateFormated = element.getAsString();
+                  if (dateFormated != null && dateFormated.trim().length() > 0) {
+                     Calendar cal = Calendar.getInstance();
+                     cal.setTime(dateFormat.parse(dateFormated));
 
-	}
+                     return new java.sql.Timestamp(cal.getTime().getTime());
+                  }
+               }
+               catch (Exception e) {}
 
-	public String getJson(Object object) {		
-		if (object == null) {
-			return null;
-		}
-		
-		if(mainSerializer == null){
-			initJsonSerialiser();
-		}
+               return null;
+            }
 
-		return mainSerializer.toJson(object);
-	}
+         });
 
-	public void setContextPath(String contextPath) {
+         builder.registerTypeAdapter(java.util.Date.class, new JsonSerializer<java.util.Date>(){
 
-		this.contextPath = contextPath;
-		initJsonSerialiser();
+            @Override
+            public JsonElement serialize(java.util.Date src, Type typeOfSrc, JsonSerializationContext context) {
+               return src == null ? null : new JsonPrimitive(dateFormat.format(src));
+            }
 
-	}
+         });
 
-	public Object deserialise(Type type, JsonElement element) {
-		if(mainSerializer == null){
-			initJsonSerialiser();
-		}
-		
-		return mainSerializer.fromJson(element, type);
+         builder.registerTypeAdapter(java.util.Date.class, new JsonDeserializer<java.util.Date>(){
+
+            @Override
+            public java.util.Date deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) {
+
+               try {
+                  String dateFormated = element.getAsString();
+                  if (dateFormated != null && dateFormated.trim().length() > 0) {
+                     return dateFormat.parse(dateFormated);
+                  }
+               }
+               catch (Exception e) {}
+
+               return null;
+            }
+
+         });
+      }
+
+      // --- DATE FORMAT BLOCK END ---
+
+      mainSerializer = builder.create();
    }
 
-	public Object convertEvent(NGEvent event) throws ClassNotFoundException {
+   public String getJson(Object object) {
+      if (object == null) {
+         return null;
+      }
 
-		JsonElement element = CommonUtils.parse(event.getData());
+      if (mainSerializer == null) {
+         initJsonSerialiser();
+      }
 
-		JsonElement data;
-		Class javaClass;
+      return mainSerializer.toJson(object);
+   }
 
-		try {
-			data = element.getAsJsonObject();
+   public void setContextPath(String contextPath) {
 
-			javaClass = Class.forName(event.getDataClass());
-		} catch (Exception e) {
-			data = element.getAsJsonPrimitive();
-			if (event.getDataClass() == null) {
-				event.setDataClass("String");
-			}
-			javaClass = Class.forName("java.lang." + event.getDataClass());
+      this.contextPath = contextPath;
+      initJsonSerialiser();
 
-		}
+   }
 
-		Object o;
-		if (javaClass.equals(String.class)) {
-			o = data.toString().substring(1, data.toString().length() - 1);
-		} else {
-			o = deserialise(javaClass, data);
-		}
-		return o;
-	}
+   public Object deserialise(Type type, JsonElement element) {
+      if (mainSerializer == null) {
+         initJsonSerialiser();
+      }
+
+      return mainSerializer.fromJson(element, type);
+   }
+
+   public Object convertEvent(NGEvent event) throws ClassNotFoundException {
+
+      JsonElement element = CommonUtils.parse(event.getData());
+
+      JsonElement data;
+      Class<?> javaClass;
+
+      try {
+         data = element.getAsJsonObject();
+
+         javaClass = Class.forName(event.getDataClass());
+      }
+      catch (Exception e) {
+         data = element.getAsJsonPrimitive();
+         if (event.getDataClass() == null) {
+            event.setDataClass("String");
+         }
+         javaClass = Class.forName("java.lang." + event.getDataClass());
+
+      }
+
+      Object o;
+      if (javaClass.equals(String.class)) {
+         o = data.toString().substring(1, data.toString().length() - 1);
+      } else {
+         o = deserialise(javaClass, data);
+      }
+      return o;
+   }
 
 }
 
 class LobWrapperJsonAdapter implements JsonSerializer<LobWrapper> {
 
-	Object container;
-	ByteArrayCache cache;
+   Object container;
+   ByteArrayCache cache;
 
-	public LobWrapperJsonAdapter(ByteArrayCache cache) {
+   public LobWrapperJsonAdapter(ByteArrayCache cache) {
 
-		this.cache = cache;
-	}
+      this.cache = cache;
+   }
 
-	@Override
-	public JsonElement serialize(LobWrapper src, Type typeOfSrc, JsonSerializationContext context) {
+   @Override
+   public JsonElement serialize(LobWrapper src, Type typeOfSrc, JsonSerializationContext context) {
 
-		LobWrapper lobWrapper = src;
+      LobWrapper lobWrapper = src;
 
-		container = lobWrapper.getOwner();
-		String id = "";
-		Class clazz = container.getClass();
+      container = lobWrapper.getOwner();
+      String id = "";
+      Class<?> clazz = container.getClass();
 
-		for (Method m : clazz.getMethods()) {
-			// TODO to many nested statement
-			if (CommonUtils.isGetter(m) && m.getReturnType().equals(LobWrapper.class) && !Modifier.isVolatile(m.getModifiers())) {
-				try {
+      for (Method m: clazz.getMethods()) {
+         // TODO to many nested statement
+         if (CommonUtils.isGetter(m) && m.getReturnType().equals(LobWrapper.class) && !Modifier.isVolatile(m.getModifiers())) {
+            try {
 
-					Call lobSource = new Call(container, m);
+               Call lobSource = new Call(container, m);
 
-					if (!cache.getCache().containsValue(lobSource)) {
-						id = String.valueOf(UUID.randomUUID());
-						cache.getCache().put(id, lobSource);
-					} else {
-						for (String idf : cache.getCache().keySet()) {
-							Call ls = cache.getCache().get(idf);
-							if (ls.equals(lobSource)) {
-								id = idf;
-								break;
-							}
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return new JsonPrimitive("lob/" + id + "?" + Calendar.getInstance().getTimeInMillis());
-	}
+               if (!cache.getCache().containsValue(lobSource)) {
+                  id = String.valueOf(UUID.randomUUID());
+                  cache.getCache().put(id, lobSource);
+               } else {
+                  for (String idf: cache.getCache().keySet()) {
+                     Call ls = cache.getCache().get(idf);
+                     if (ls.equals(lobSource)) {
+                        id = idf;
+                        break;
+                     }
+                  }
+               }
+            }
+            catch (Exception e) {
+               e.printStackTrace();
+            }
+         }
+      }
+      return new JsonPrimitive("lob/" + id + "?" + Calendar.getInstance().getTimeInMillis());
+   }
 }
 
-class ByteArrayJsonAdapter implements JsonSerializer<byte[]> {
+class ByteArrayJsonAdapter implements JsonSerializer<Object> {
 
-	ByteArrayCache cache;
-	String contextPath;
+   ByteArrayCache cache;
+   String contextPath;
 
-	public ByteArrayJsonAdapter(ByteArrayCache cache, String contextPath) {
-		this.contextPath = contextPath;
-		this.cache = cache;
-	}
+   public ByteArrayJsonAdapter(ByteArrayCache cache, String contextPath) {
+      this.contextPath = contextPath;
+      this.cache = cache;
+   }
 
-	@Override
-	public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
+   @Override
+   public JsonElement serialize(Object src, Type typeOfSrc, JsonSerializationContext context) {
 
-		String id = String.valueOf(UUID.randomUUID());
-		cache.getTempCache().put(id, src);
+      byte[] bytes = null;
+      if (src instanceof NGLob) {
+         bytes = ((NGLob) src).getBytes();
+      } else if (src instanceof byte[]) {
+         bytes = (byte[]) src;
+      } else {
+         return null;
+      }
 
-		String result = contextPath + "lob/" + id + "?" + Calendar.getInstance().getTimeInMillis();
+      String id = String.valueOf(UUID.randomUUID());
+      cache.getTempCache().put(id, bytes);
 
-		return new JsonPrimitive(result);
-	}
+      String result = contextPath + "lob/" + id + "?" + Calendar.getInstance().getTimeInMillis();
 
+      return new JsonPrimitive(result);
+   }
 }

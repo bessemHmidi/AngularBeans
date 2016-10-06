@@ -7,11 +7,7 @@ import com.google.common.reflect.TypeToken;
  * <p>
  * 
  * Ex. 
- * 
  * ...
- * @Inject
- * ModelQuery modelQuery;
- *
  * NGParamType<?> ngEntity = new NGParamType<ImplementedBean>(){};
  * ...
  * 
