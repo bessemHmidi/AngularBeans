@@ -59,7 +59,7 @@ public class BeanValidationProcessor implements Serializable {
 	@Inject
 	AngularBeansUtils util;
 
-	private final StringBuffer buffer = new StringBuffer();
+   private final StringBuilder builder = new StringBuilder();
 
 	public void processBeanValidationParsing(Method method) {
 
@@ -67,7 +67,7 @@ public class BeanValidationProcessor implements Serializable {
 				.getName());
 		Annotation[] scannedAnnotations = method.getAnnotations();
 
-		buffer.append("\nif (modelName === '").append(modelName).append("') {");
+		builder.append("\nif (modelName === '").append(modelName).append("') {");
 		for (Annotation a : scannedAnnotations) {
 
 			if (!validationAnnotations.contains(a.annotationType())) {
@@ -78,21 +78,21 @@ public class BeanValidationProcessor implements Serializable {
 
 			switch (name) {
 				case "javax.validation.constraints.NotNull":
-					buffer.append("\nentries[e].setAttribute('required', 'true');");
+					builder.append("\nentries[e].setAttribute('required', 'true');");
 					break;
 
 				case "org.hibernate.validator.constraints.Email":
-					buffer.append("\nentries[e].setAttribute('type', 'email');");
+					builder.append("\nentries[e].setAttribute('type', 'email');");
 					break;
 
 				case "javax.validation.constraints.Pattern":
 					String regex = ((Pattern) a).regexp();
-					buffer.append("\nentries[e].setAttribute('ng-pattern', '")
+					builder.append("\nentries[e].setAttribute('ng-pattern', '")
 							.append(regex).append("');");
 					break;
 
 				case "javax.validation.constraints.Size":
-					buffer.append("\nentries[e].setAttribute('required', 'true');");
+					builder.append("\nentries[e].setAttribute('required', 'true');");
 					Size sizeConstraint = (Size) a;
 
 					int maxLength = sizeConstraint.max();
@@ -107,12 +107,12 @@ public class BeanValidationProcessor implements Serializable {
 					}
 
 					if (minLength > 0) {
-						buffer.append("\nentries[e].setAttribute('ng-minlength', '")
+						builder.append("\nentries[e].setAttribute('ng-minlength', '")
 								.append(minLength).append("');");
 					}
 
 					if (maxLength < Integer.MAX_VALUE) {
-						buffer.append("\nentries[e].setAttribute('ng-maxlength', '")
+						builder.append("\nentries[e].setAttribute('ng-maxlength', '")
 								.append(maxLength).append("');");
 					}
 
@@ -120,25 +120,25 @@ public class BeanValidationProcessor implements Serializable {
 
 				case "javax.validation.constraints.DecimalMin":
 					String dMin = ((DecimalMin) a).value();
-					buffer.append("\nentries[e].setAttribute('min', '")
+					builder.append("\nentries[e].setAttribute('min', '")
 							.append(dMin).append("');");
 					break;
 
 				case "javax.validation.constraints.DecimalMax":
 					String dMax = ((DecimalMax) a).value();
-					buffer.append("\nentries[e].setAttribute('max', '")
+					builder.append("\nentries[e].setAttribute('max', '")
 							.append(dMax).append("');");
 					break;
 
 				case "javax.validation.constraints.Min":
 					long min = ((Min) a).value();
-					buffer.append("\nentries[e].setAttribute('min', '").append(min)
+					builder.append("\nentries[e].setAttribute('min', '").append(min)
 							.append("');");
 					break;
 
 				case "javax.validation.constraints.Max":
 					long max = ((Max) a).value();
-					buffer.append("\nentries[e].setAttribute('max', '").append(max)
+					builder.append("\nentries[e].setAttribute('max', '").append(max)
 							.append("');");
 					break;
 
@@ -147,7 +147,7 @@ public class BeanValidationProcessor implements Serializable {
 			}
 		}
 
-		buffer.append("\n}");
+		builder.append("\n}");
 	}
 
 	@PostConstruct
@@ -183,7 +183,7 @@ public class BeanValidationProcessor implements Serializable {
 		stringBuilder
 				.append("\nvar modelName = (entries[e].getAttribute('name'));");
 
-		stringBuilder.append(buffer);
+		stringBuilder.append(builder);
 
 		stringBuilder.append("\n};");
 		stringBuilder

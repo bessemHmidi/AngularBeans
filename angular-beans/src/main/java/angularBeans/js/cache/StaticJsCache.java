@@ -24,9 +24,9 @@ import angularBeans.util.ClosureCompiler;
 
 /**
  * <p>
- * A cache for the static (non beans instances dependent) angular-beans.js code
- * The content of this cache can be loaded by an implementation of a {@link StaticJsLoader}.
- * <b>It's mandatory to first load the content of this class before any bean generation. </b>
+ * A cache for the static (non beans instances dependent) angular-beans.js code The content of this
+ * cache can be loaded by an implementation of a {@link StaticJsLoader}. <b>It's mandatory to first
+ * load the content of this class before any bean generation. </b>
  * </p>
  *
  * @author bassem Hmidi
@@ -39,37 +39,35 @@ import angularBeans.util.ClosureCompiler;
  */
 public class StaticJsCache {
 
-	/**
-	 * the angularBeansMainObject is the angularBeans object in the angularBeans
-	 * javascript api
-	 */
-	
-	public static void appendToCore(String str){
-		CORE_SCRIPT.append(str);
-	}
-	
-	public static void appendToExtensions(String str){
-		EXTENTIONS_SCRIPT.append(str);
-	}
-	
-	public static void appendToValidation(String str){
-		VALIDATION_SCRIPT.append(str);
-	}
-	
-	public static void Compress(){
-		String compressedCoreScript = new ClosureCompiler().getCompressedJavaScript(CORE_SCRIPT.toString());
-		String compressedExtensions = new ClosureCompiler().getCompressedJavaScript(EXTENTIONS_SCRIPT.toString());
-		String compressedValidation = new ClosureCompiler().getCompressedJavaScript(VALIDATION_SCRIPT.toString());
-		CORE_SCRIPT = new StringBuilder(compressedCoreScript);
-		EXTENTIONS_SCRIPT = new StringBuilder(compressedExtensions);
-		VALIDATION_SCRIPT = new StringBuilder(compressedValidation);
-	}
+   /**
+    * the angularBeansMainObject is the angularBeans object in the angularBeans javascript api
+    */
 
+   public static void appendToCore(String str) {
+      CORE_SCRIPT.append(str);
+   }
 
-	//TODO clean up dirty naming
-	public static StringBuilder CORE_SCRIPT = new StringBuilder();
-	public static Map<Class, StringBuffer> CACHED_BEAN_STATIC_PART = new HashMap<>();
-	public static StringBuilder EXTENTIONS_SCRIPT = new StringBuilder();
-	public static StringBuilder VALIDATION_SCRIPT = new StringBuilder();
+   public static void appendToExtensions(String str) {
+      EXTENTIONS_SCRIPT.append(str);
+   }
+
+   public static void appendToValidation(String str) {
+      VALIDATION_SCRIPT.append(str);
+   }
+
+   public static void Compress() {
+      String compressedCoreScript = new ClosureCompiler().getCompressedJavaScript(CORE_SCRIPT.toString());
+      String compressedExtensions = new ClosureCompiler().getCompressedJavaScript(EXTENTIONS_SCRIPT.toString());
+      String compressedValidation = new ClosureCompiler().getCompressedJavaScript(VALIDATION_SCRIPT.toString());
+      CORE_SCRIPT = new StringBuilder(compressedCoreScript);
+      EXTENTIONS_SCRIPT = new StringBuilder(compressedExtensions);
+      VALIDATION_SCRIPT = new StringBuilder(compressedValidation);
+   }
+
+   // TODO clean up dirty naming
+   public static StringBuilder CORE_SCRIPT = new StringBuilder();
+   public static Map<Class, StringBuilder> CACHED_BEAN_STATIC_PART = new HashMap<>();
+   public static StringBuilder EXTENTIONS_SCRIPT = new StringBuilder();
+   public static StringBuilder VALIDATION_SCRIPT = new StringBuilder();
 
 }

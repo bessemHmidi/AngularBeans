@@ -27,7 +27,6 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import angularBeans.api.CORS;
@@ -59,8 +58,9 @@ import angularBeans.validation.BeanValidationProcessor;
 
 /**
  * <p>
- * ModuleGenerator is the main component for javascript generation. This class is a session scoped CDI component. This
- * class uses the registered beans in BeanRegistry during application deployment to generate a minified script.
+ * ModuleGenerator is the main component for javascript generation. This class is a session scoped
+ * CDI component. This class uses the registered beans in BeanRegistry during application deployment
+ * to generate a minified script.
  * </p>
  *
  * @see BeanRegistry
@@ -71,452 +71,442 @@ import angularBeans.validation.BeanValidationProcessor;
 @SessionScoped
 public class ModuleGenerator implements Serializable {
 
-	@Inject
-	ByteArrayCache cache;
+   @Inject
+   ByteArrayCache cache;
 
-	@Inject
-	BeanLocator locator;
+   @Inject
+   BeanLocator locator;
 
-	@Inject
-	HttpSession httpSession;
+   @Inject
+   HttpSession httpSession;
 
-	@Inject
-	BeanValidationProcessor validationAdapter;
+   @Inject
+   BeanValidationProcessor validationAdapter;
 
-	@Inject
-	AngularBeansUtils util;
+   @Inject
+   AngularBeansUtils util;
 
-	@Inject
-	transient FileUploadHandler uploadHandler;
+   @Inject
+   transient FileUploadHandler uploadHandler;
 
-	@Inject
-	transient CurrentNGSession ngSession;
+   @Inject
+   transient CurrentNGSession ngSession;
 
-	ClosureCompiler compiler = new ClosureCompiler();
+   ClosureCompiler compiler = new ClosureCompiler();
 
-	private String contextPath;
-	private String sessionID;
+   private String contextPath;
+   private String sessionID;
 
-	public ModuleGenerator() {
+   public ModuleGenerator() {
 
-	}
+   }
 
-	/**
-	 * since the NGSession scope lifecycle is the same as the current HTTP session a unique sessionId by http session,
-	 * we use the same session id
-	 */
-	@PostConstruct
-	public void init() {
-		sessionID = httpSession.getId();// String.valueOf(UUID.randomUUID());
-		NGSessionScopeContext.setCurrentContext(sessionID);
-		ngSession.setSessionId(sessionID);
-	}
+   /**
+    * since the NGSession scope lifecycle is the same as the current HTTP session a unique sessionId
+    * by http session, we use the same session id
+    */
+   @PostConstruct
+   public void init() {
+      sessionID = httpSession.getId();// String.valueOf(UUID.randomUUID());
+      NGSessionScopeContext.setCurrentContext(sessionID);
+      ngSession.setSessionId(sessionID);
+   }
 
-	public synchronized String getUID() {
-		return sessionID;
-	}
+   public synchronized String getUID() {
+      return sessionID;
+   }
 
-	/**
-	 * this method generate the angular-beans.js content and write it to the <br>
-	 * jsBuffer used by BootServlet
-	 * 
-	 * @param jsBuffer
-	 */
-	public StringBuffer generateScript() {
+   /**
+    * this method generate the angular-beans.js content and write it to the <br>
+    * js used by BootServlet
+    * 
+    * @param js
+    */
+   public StringBuilder generateScript() {
 
-		StringBuffer jsBuffer = new StringBuffer();
-		String sessionPart = String.format("var sessionId=\"%s\";", sessionID);
+      StringBuilder js = new StringBuilder();
+      String sessionPart = String.format("var sessionId=\"%s\";", sessionID);
 
-		jsBuffer.append(sessionPart);
-		jsBuffer.append(StaticJsCache.CORE_SCRIPT);
-		StringBuffer beansBuffer = new StringBuffer();
-		for (NGBean mb : BeanRegistry.INSTANCE.getAngularBeans()) {
-			beansBuffer.append(generateBean(mb));
-		}
-		jsBuffer.append(compiler.getCompressedJavaScript(beansBuffer.toString()));
-		if (StaticJsCache.VALIDATION_SCRIPT.length() == 0) {
-			validationAdapter.build();
-		}
-		jsBuffer.append(StaticJsCache.VALIDATION_SCRIPT);
-		jsBuffer.append(StaticJsCache.EXTENTIONS_SCRIPT.toString());
+      js.append(sessionPart);
+      js.append(StaticJsCache.CORE_SCRIPT);
+      StringBuilder beans = new StringBuilder();
+      for (NGBean mb: BeanRegistry.INSTANCE.getAngularBeans()) {
+         beans.append(generateBean(mb));
+      }
+      js.append(compiler.getCompressedJavaScript(beans.toString()));
+      if (StaticJsCache.VALIDATION_SCRIPT.length() == 0) {
+         validationAdapter.build();
+      }
+      js.append(StaticJsCache.VALIDATION_SCRIPT);
+      js.append(StaticJsCache.EXTENTIONS_SCRIPT.toString());
 
-		return jsBuffer;
-	}
+      return js;
+   }
 
-	/**
-	 * this method concern is the generation of the AngularJS service from the @AngularBean CDI bean.
-	 * 
-	 * @param bean
-	 *            the bean wrapper for an @AngularBean CDI bean.
-	 * @return a StringBuffer containing the generated angular service code.
-	 */
-	public StringBuffer generateBean(NGBean bean) {
+   /**
+    * this method concern is the generation of the AngularJS service from the @AngularBean CDI bean.
+    * 
+    * @param bean
+    *           the bean wrapper for an @AngularBean CDI bean.
+    * @return a StringBuilder containing the generated angular service code.
+    */
+   public StringBuilder generateBean(NGBean bean) {
 
-		Object reference = locator.lookup(bean.getName(), sessionID);
+      Object reference = locator.lookup(bean.getName(), sessionID);
 
-		StringBuffer buffer = new StringBuffer();
-		Class<? extends Object> clazz = bean.getTargetClass();
+      StringBuilder builder = new StringBuilder();
+      Class<? extends Object> clazz = bean.getTargetClass();
 
-		Method[] methods = bean.getMethods();
+      Method[] methods = bean.getMethods();
 
-		buffer.append(";app.factory('" + bean.getName() + "',function " + bean.getName() + "(");
+      builder.append(";app.factory('" + bean.getName() + "',function " + bean.getName() + "(");
 
-		// writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','realtimeManager'',function");
+      // writer.write("['$rootScope','$scope','$http','$location','logger','responseHandler','realtimeManager'',function");
 
-		buffer.append("$rootScope, $http, $location,logger,responseHandler,$q");
+      builder.append("$rootScope, $http, $location,logger,responseHandler,$q");
 
-		buffer.append(",realtimeManager");
-		buffer.append("){\n");
+      builder.append(",realtimeManager");
+      builder.append("){\n");
 
-		// writer.write("var deffered = $q.defer();");
-		buffer.append("var " + bean.getName() + "={serviceID:'" + bean.getName() + "'};");// ,scopes:[]};");
+      // writer.write("var deffered = $q.defer();");
+      builder.append("var " + bean.getName() + "={serviceID:'" + bean.getName() + "'};");// ,scopes:[]};");
 
-		buffer.append("\nvar rpath=$rootScope.baseUrl+'" // + contextPath
-				+ "http/invoke/service/';\n");
+      builder.append("\nvar rpath=$rootScope.baseUrl+'" // + contextPath
+               + "http/invoke/service/';\n");
 
-		for (Method m : bean.getMethods()) {
+      for (Method m: bean.getMethods()) {
 
-			if (m.isAnnotationPresent(Eval.class)) {
+         if (m.isAnnotationPresent(Eval.class)) {
 
-				Callback callback = m.getAnnotation(Eval.class).value();
+            Callback callback = m.getAnnotation(Eval.class).value();
 
-				try {
-					String execution = (String) m.invoke(reference);
+            try {
+               String execution = (String) m.invoke(reference);
 
-					String js = "";
-					if (callback.equals(BEFORE_SESSION_READY)) {
-						js = execution;
-					}
-					if (callback.equals(AFTER_SESSION_READY)) {
+               String js = "";
+               if (callback.equals(BEFORE_SESSION_READY)) {
+                  js = execution;
+               }
+               if (callback.equals(AFTER_SESSION_READY)) {
 
-						js = "setTimeout(listen,500);" + "function listen(){" + "   if(realtimeManager.ready){"
+                  js = "setTimeout(listen,500);" + "function listen(){" + "   if(realtimeManager.ready){"
 
-								+ execution
+                           + execution
 
-								+ "   }" + "   else" + "      setTimeout(listen,500);" + "}";
-					}
-					buffer.append(js);
+                           + "   }" + "   else" + "      setTimeout(listen,500);" + "}";
+               }
+               builder.append(js);
 
-				} catch (ClassCastException e) {
+            }
+            catch (ClassCastException e) {
 
-					throw new RuntimeException(
-							"for bean name: " + bean.getName() + " --> an @Eval bloc must return a String");
+               throw new RuntimeException("for bean name: " + bean.getName() + " --> an @Eval bloc must return a String");
 
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            }
+            catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
-					e.printStackTrace();
-				}
-			}
-		}
+               e.printStackTrace();
+            }
+         }
+      }
 
-		for (Method get : bean.getters()) {
-			Object result = null;
+      for (Method get: bean.getters()) {
+         Object result = null;
 
-			String getter = get.getName();
+         String getter = get.getName();
 
-			String modelName = CommonUtils.obtainFieldNameFromAccessor(getter);
+         String modelName = CommonUtils.obtainFieldNameFromAccessor(getter);
 
-			if (get.getReturnType().equals(LobWrapper.class)) {
+         if (get.getReturnType().equals(LobWrapper.class)) {
 
-				String uid = String.valueOf(UUID.randomUUID());
-				cache.getCache().put(uid, new Call(reference, get));
+            String uid = String.valueOf(UUID.randomUUID());
+            cache.getCache().put(uid, new Call(reference, get));
 
-				result = contextPath + "lob/" + uid;
+            result = contextPath + "lob/" + uid;
 
-				buffer.append(bean.getName() + "." + modelName + "='" + result + "';");
-				continue;
+            builder.append(bean.getName() + "." + modelName + "='" + result + "';");
+            continue;
 
-			}
+         }
 
-			validationAdapter.processBeanValidationParsing(get);
+         validationAdapter.processBeanValidationParsing(get);
 
-			Method m;
+         Method m;
 
-			try {
+         try {
 
-				m = bean.getTargetClass().getMethod((getter));
+            m = bean.getTargetClass().getMethod((getter));
 
-				result = m.invoke(reference);
+            result = m.invoke(reference);
 
-				if ((result == null && (m.getReturnType().equals(String.class))))
-					result = "";
+            if ((result == null && (m.getReturnType().equals(String.class)))) result = "";
 
-				if (result == null)
-					continue;
-				Class<? extends Object> resultClazz = result.getClass();
-				if (!resultClazz.isPrimitive()) {
-					result = util.getJson(result);
-				}
+            if (result == null) continue;
+            Class<? extends Object> resultClazz = result.getClass();
+            if (!resultClazz.isPrimitive()) {
+               result = util.getJson(result);
+            }
 
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
-			buffer.append(bean.getName() + "." + modelName + "=" + result + ";");
-		}
+         }
+         catch (NoSuchMethodException e) {
+            e.printStackTrace();
+         }
+         catch (SecurityException e) {
+            e.printStackTrace();
+         }
+         catch (IllegalAccessException e) {
+            e.printStackTrace();
+         }
+         catch (IllegalArgumentException e) {
+            e.printStackTrace();
+         }
+         catch (InvocationTargetException e) {
+            e.printStackTrace();
+         }
+         builder.append(bean.getName() + "." + modelName + "=" + result + ";");
+      }
 
-		for (Method m : bean.getMethods()) {
+      for (Method m: bean.getMethods()) {
 
-			if (m.isAnnotationPresent(FileUpload.class)) {
+         if (m.isAnnotationPresent(FileUpload.class)) {
 
-				String uploadPath = m.getAnnotation(FileUpload.class).path();
+            String uploadPath = m.getAnnotation(FileUpload.class).path();
 
-				Call call = new Call(reference, m);
+            Call call = new Call(reference, m);
 
-				uploadHandler.getUploadsActions().put(uploadPath, call);
-			}
-		}
+            uploadHandler.getUploadsActions().put(uploadPath, call);
+         }
+      }
 
-		buffer.append(generateStaticPart(bean).toString());
+      builder.append(generateStaticPart(bean).toString());
 
-		buffer.append(");\n");
+      builder.append(");\n");
 
-		return buffer;
-	}
+      return builder;
+   }
 
-	/**
-	 * 
-	 * @param bean
-	 *            the CDI bean wrapper
-	 * @return StringBuffer containing the javaScript code of the static (non properties values dependent) code. by
-	 *         static parts we mean the JS code that can be generated from the java class of the bean (to initialize the
-	 *         angularJs service we need to call getters on the CDI bean instance and that is considered as the dynamic
-	 *         part of the angularBean javascript generation)
-	 */
-	private StringBuffer generateStaticPart(NGBean bean) {
+   /**
+    * 
+    * @param bean
+    *           the CDI bean wrapper
+    * @return StringBuilder containing the javaScript code of the static (non properties values
+    *         dependent) code. by static parts we mean the JS code that can be generated from the
+    *         java class of the bean (to initialize the angularJs service we need to call getters on
+    *         the CDI bean instance and that is considered as the dynamic part of the angularBean
+    *         javascript generation)
+    */
+   private StringBuilder generateStaticPart(NGBean bean) {
 
-		StringBuffer cachedStaticPart = new StringBuffer();
-		if (StaticJsCache.CACHED_BEAN_STATIC_PART.containsKey(bean.getTargetClass())) {
-			return StaticJsCache.CACHED_BEAN_STATIC_PART.get(bean.getTargetClass());
-		}
+      StringBuilder cachedStaticPart = new StringBuilder();
+      if (StaticJsCache.CACHED_BEAN_STATIC_PART.containsKey(bean.getTargetClass())) {
+         return StaticJsCache.CACHED_BEAN_STATIC_PART.get(bean.getTargetClass());
+      }
 
-		Method[] nativesMethods = Object.class.getMethods();
+      Method[] nativesMethods = Object.class.getMethods();
 
-		for (Method m : bean.getMethods()) {
+      for (Method m: bean.getMethods()) {
 
-			boolean corsEnabled = false;
-			boolean isNative = false;
-			for (Method nativeMethod : nativesMethods) {
-				if (nativeMethod.equals(m) && !Modifier.isVolatile(m.getModifiers()))
-					isNative = true;
-			}
+         boolean corsEnabled = false;
+         boolean isNative = false;
+         for (Method nativeMethod: nativesMethods) {
+            if (nativeMethod.equals(m) && !Modifier.isVolatile(m.getModifiers())) isNative = true;
+         }
 
-			if (isNative)
-				continue;
+         if (isNative) continue;
 
-			if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))
+         if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))
 
-			) {
+         ) {
 
-				String[] csUpdates = null;
-				Set<Method> setters = new HashSet<>();
+            String[] csUpdates = null;
+            Set<Method> setters = new HashSet<>();
 
-				HttpMethod httpMethod = GET;
+            HttpMethod httpMethod = GET;
 
-				if (m.isAnnotationPresent(Eval.class))
-					continue;
+            if (m.isAnnotationPresent(Eval.class)) continue;
 
-				if (m.isAnnotationPresent(CORS.class)) {
-					corsEnabled = true;
-				}
+            if (m.isAnnotationPresent(CORS.class)) {
+               corsEnabled = true;
+            }
 
-				if (m.isAnnotationPresent(Get.class)) {
-					httpMethod = GET;
-				}
-				if (m.isAnnotationPresent(Post.class)) {
-					httpMethod = POST;
-				}
-				if (m.isAnnotationPresent(Delete.class)) {
-					httpMethod = DELETE_TO_REPLACE;
-				}
-				if (m.isAnnotationPresent(Put.class)) {
-					httpMethod = PUT;
-				}
+            if (m.isAnnotationPresent(Get.class)) {
+               httpMethod = GET;
+            }
+            if (m.isAnnotationPresent(Post.class)) {
+               httpMethod = POST;
+            }
+            if (m.isAnnotationPresent(Delete.class)) {
+               httpMethod = DELETE_TO_REPLACE;
+            }
+            if (m.isAnnotationPresent(Put.class)) {
+               httpMethod = PUT;
+            }
 
-				if (m.isAnnotationPresent(NGReturn.class)) {
-					NGReturn returns = m.getAnnotation(NGReturn.class);
-					csUpdates = returns.updates();
-				}
+            if (m.isAnnotationPresent(NGReturn.class)) {
+               NGReturn returns = m.getAnnotation(NGReturn.class);
+               csUpdates = returns.updates();
+            }
 
-				if (m.isAnnotationPresent(NGSubmit.class)) {
+            if (m.isAnnotationPresent(NGSubmit.class)) {
 
-					String[] models = m.getAnnotation(NGSubmit.class).backEndModels();
+               String[] models = m.getAnnotation(NGSubmit.class).backEndModels();
 
-					if (models.length == 1 && models[0].equals("*")) {
+               if (models.length == 1 && models[0].equals("*")) {
 
-						pushScope(bean.getMethods(), setters);
+                  pushScope(bean.getMethods(), setters);
 
-					} else {
+               } else {
 
-						for (String model : models) {
+                  for (String model: models) {
 
-							for (Method md : bean.getMethods()) {
+                     for (Method md: bean.getMethods()) {
 
-								if (CommonUtils.isSetter(md)) {
-									String methodName = md.getName();
-									String modelName = CommonUtils.obtainFieldNameFromAccessor(methodName);
-									if (modelName.equals(model)) {
-										setters.add(md);
-									}
-								}
-							}
-						}
-					}
-				}
+                        if (CommonUtils.isSetter(md)) {
+                           String methodName = md.getName();
+                           String modelName = CommonUtils.obtainFieldNameFromAccessor(methodName);
+                           if (modelName.equals(model)) {
+                              setters.add(md);
+                           }
+                        }
+                     }
+                  }
+               }
+            }
 
-				cachedStaticPart
-						.append("angularBeans.addMethod(" + bean.getName() + ",'" + m.getName() + "',function(");
+            cachedStaticPart.append("angularBeans.addMethod(" + bean.getName() + ",'" + m.getName() + "',function(");
 
-				// ---------------------------------------------
-				// Handle args
-				// ---------------------------------------------
-				Type[] parameters = m.getParameterTypes();
+            // ---------------------------------------------
+            // Handle args
+            // ---------------------------------------------
+            Type[] parameters = m.getParameterTypes();
 
-				
-				
-				if ((!m.isAnnotationPresent(FileUpload.class))) {
+            if ((!m.isAnnotationPresent(FileUpload.class))) {
 
-					
-					
-					if (parameters.length > 0) {
-						String argsString = "";
-						for (int i = 0; i < parameters.length; i++) {
+               if (parameters.length > 0) {
+                  String argsString = "";
+                  for (int i = 0; i < parameters.length; i++) {
 
-							argsString += ("arg" + i + ",");
+                     argsString += ("arg" + i + ",");
 
-						}
-                       
-						cachedStaticPart.append(argsString.substring(0, argsString.length() - 1));
-                        
+                  }
 
-					}
-				}
+                  cachedStaticPart.append(argsString.substring(0, argsString.length() - 1));
 
-				cachedStaticPart.append(") {")
+               }
+            }
 
-						.append("var mainReturn={data:{}};").append("var params={};");// sessionUID:$rootScope.sessionUID
+            cachedStaticPart.append(") {")
 
-				
-				//--
-				cachedStaticPart.append(addParams(bean, setters, m, parameters));
-				
+                     .append("var mainReturn={data:{}};").append("var params={};");// sessionUID:$rootScope.sessionUID
 
-				if (m.isAnnotationPresent(RealTime.class)) {
+            // --
+            cachedStaticPart.append(addParams(bean, setters, m, parameters));
 
-					cachedStaticPart.append("return realtimeManager.call(" + bean.getName() + ",'" + bean.getName()
-							+ "." + m.getName() + "',params");
+            if (m.isAnnotationPresent(RealTime.class)) {
 
-					cachedStaticPart.append(").then(function(response) {\n");
+               cachedStaticPart.append("return realtimeManager.call(" + bean.getName() + ",'" + bean.getName() + "." + m.getName() + "',params");
 
-					cachedStaticPart.append("var msg=(response);");
+               cachedStaticPart.append(").then(function(response) {\n");
 
-					cachedStaticPart.append(
-							"mainReturn.data= responseHandler.handleResponse(msg," + bean.getName() + ",true);");
+               cachedStaticPart.append("var msg=(response);");
 
-					cachedStaticPart.append("return mainReturn.data;"); // }");
+               cachedStaticPart.append("mainReturn.data= responseHandler.handleResponse(msg," + bean.getName() + ",true);");
 
-					cachedStaticPart.append("} ,function(response){return $q.reject(response.data);});");
+               cachedStaticPart.append("return mainReturn.data;"); // }");
 
-				} else {
+               cachedStaticPart.append("} ,function(response){return $q.reject(response.data);});");
 
-					cachedStaticPart.append("\n  return $http." + httpMethod.method() + "(rpath+'" + bean.getName()
-							+ "/" + m.getName());
+            } else {
 
-					if (corsEnabled) {
-						cachedStaticPart.append("/CORS");
-						corsEnabled = false;
-					} else {
-						cachedStaticPart.append("/JSON");
-					}
+               cachedStaticPart.append("\n  return $http." + httpMethod.method() + "(rpath+'" + bean.getName() + "/" + m.getName());
 
-					if (httpMethod.equals(POST)) {
-						cachedStaticPart.append("',params");
-					} else {
-						// encodeURI
-						String paramsQuery = ("?params='+encodeURIComponent(angular.toJson(params))");
+               if (corsEnabled) {
+                  cachedStaticPart.append("/CORS");
+                  corsEnabled = false;
+               } else {
+                  cachedStaticPart.append("/JSON");
+               }
 
-						cachedStaticPart.append(paramsQuery);
-					}
+               if (httpMethod.equals(POST)) {
+                  cachedStaticPart.append("',params");
+               } else {
+                  // encodeURI
+                  String paramsQuery = ("?params='+encodeURIComponent(angular.toJson(params))");
 
-					cachedStaticPart.append(").then(function(response) {\n");
+                  cachedStaticPart.append(paramsQuery);
+               }
 
-					cachedStaticPart.append("var msg=response.data;");
+               cachedStaticPart.append(").then(function(response) {\n");
 
-					cachedStaticPart.append(
-							"mainReturn.data= responseHandler.handleResponse(msg," + bean.getName() + ",true);");
+               cachedStaticPart.append("var msg=response.data;");
 
-					cachedStaticPart.append("return mainReturn.data;");
+               cachedStaticPart.append("mainReturn.data= responseHandler.handleResponse(msg," + bean.getName() + ",true);");
 
-					cachedStaticPart.append("} ,function(response){return $q.reject(response.data);});");
+               cachedStaticPart.append("return mainReturn.data;");
 
-				}
+               cachedStaticPart.append("} ,function(response){return $q.reject(response.data);});");
 
-				cachedStaticPart.append("});");
+            }
 
-				if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))) {
-					if (m.isAnnotationPresent(NGPostConstruct.class)) {
+            cachedStaticPart.append("});");
 
-						cachedStaticPart.append("realtimeManager.onReadyState(function(){");
+            if ((!CommonUtils.isSetter(m)) && (!CommonUtils.isGetter(m))) {
+               if (m.isAnnotationPresent(NGPostConstruct.class)) {
 
-						cachedStaticPart.append(bean.getName() + "." + m.getName() + "();\n");
+                  cachedStaticPart.append("realtimeManager.onReadyState(function(){");
 
-						cachedStaticPart.append("});");
-					}
-				}
-			}
-		}
+                  cachedStaticPart.append(bean.getName() + "." + m.getName() + "();\n");
 
-		cachedStaticPart.append("return " + bean.getName() + ";} \n");
-		StaticJsCache.CACHED_BEAN_STATIC_PART.put(bean.getClass(), cachedStaticPart);
-		return cachedStaticPart;
+                  cachedStaticPart.append("});");
+               }
+            }
+         }
+      }
 
-	}
+      cachedStaticPart.append("return " + bean.getName() + ";} \n");
+      StaticJsCache.CACHED_BEAN_STATIC_PART.put(bean.getClass(), cachedStaticPart);
+      return cachedStaticPart;
 
-	private void pushScope(Method[] methods, Set<Method> setters) {
-		for (Method md : methods) {
+   }
 
-			if (CommonUtils.isSetter(md)) {
-				setters.add(md);
-			}
-		}
-	}
+   private void pushScope(Method[] methods, Set<Method> setters) {
+      for (Method md: methods) {
 
-	private StringBuffer addParams(NGBean bean, Set<Method> setters, Method m, Type[] args) {
+         if (CommonUtils.isSetter(md)) {
+            setters.add(md);
+         }
+      }
+   }
 
-		StringBuffer sb = new StringBuffer();
+   private StringBuilder addParams(NGBean bean, Set<Method> setters, Method m, Type[] args) {
 
-		for (Method setter : setters) {
+      StringBuilder sb = new StringBuilder();
 
-			String name = CommonUtils.obtainFieldNameFromAccessor(setter.getName());
-			sb.append("params['" + name + "']=" + bean.getName() + "." + name + ";");
-		}
+      for (Method setter: setters) {
 
-		if (args.length > 0) {
-			String argsString = "";
-			for (int i = 0; i < args.length; i++) {
-				argsString += "arg" + i + ",";
-			}
-			argsString = argsString.substring(0, argsString.length() - 1);
-			sb.append("params['args']=[" + argsString + "];\n");
-		}
-		return sb;
-	}
+         String name = CommonUtils.obtainFieldNameFromAccessor(setter.getName());
+         sb.append("params['" + name + "']=" + bean.getName() + "." + name + ";");
+      }
 
-	public void setContextPath(String contextPath) {
+      if (args.length > 0) {
+         String argsString = "";
+         for (int i = 0; i < args.length; i++) {
+            argsString += "arg" + i + ",";
+         }
+         argsString = argsString.substring(0, argsString.length() - 1);
+         sb.append("params['args']=[" + argsString + "];\n");
+      }
+      return sb;
+   }
 
-		util.setContextPath(contextPath);
-		this.contextPath = contextPath;
-	}
+   public void setContextPath(String contextPath) {
 
-	public String getContextPath() {
+      util.setContextPath(contextPath);
+      this.contextPath = contextPath;
+   }
 
-		return contextPath;
-	}
+   public String getContextPath() {
+
+      return contextPath;
+   }
 }

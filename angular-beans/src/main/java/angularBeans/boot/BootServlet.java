@@ -59,10 +59,10 @@ public final class BootServlet extends HttpServlet {
       globalConnectionHolder.removeConnection(sessionId);
 
       generator.setContextPath(CommonUtils.getContextPath(req));
-      StringBuffer scriptBuffer = generator.generateScript();
+      StringBuilder script = generator.generateScript();
 
       resp.setContentType("text/javascript");
-      resp.getWriter().write(scriptBuffer.toString());
+      resp.getWriter().write(script.toString());
       resp.getWriter().flush();
    }
 
