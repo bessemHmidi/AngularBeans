@@ -29,11 +29,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import angularBeans.realtime.GlobalConnectionHolder;
+import angularBeans.util.CommonUtils;
 
 /**
- * Returns a generated script for resource "/angularBeans.js". 
- * the script will be lazily generated based 
- * on the registered beans in the {@link BeanRegistry} class.
+ * Returns a generated script for resource "/angularBeans.js". the script will be lazily generated
+ * based on the registered beans in the {@link BeanRegistry} class.
  * 
  * @author Bessem Hmidi
  * @author Aymen Naili
@@ -42,39 +42,32 @@ import angularBeans.realtime.GlobalConnectionHolder;
 @WebServlet(urlPatterns = "/angular-beans.js")
 public final class BootServlet extends HttpServlet {
 
-	@Inject
-	ModuleGenerator generator;
+   @Inject
+   ModuleGenerator generator;
 
-	@Inject
-	Logger log;
+   @Inject
+   Logger log;
 
-	@Inject
-	GlobalConnectionHolder globalConnectionHolder;
+   @Inject
+   GlobalConnectionHolder globalConnectionHolder;
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+   @Override
+   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		String sessionId = req.getSession().getId();
-		StringBuffer contextPathBuffer = new StringBuffer(req.getScheme());
-		contextPathBuffer.append("://");
-		contextPathBuffer.append(req.getServerName());
-		contextPathBuffer.append(":");
-		contextPathBuffer.append(req.getServerPort());
-		contextPathBuffer.append(req.getServletContext().getContextPath());
-		contextPathBuffer.append("/");
-		
-		globalConnectionHolder.removeConnection(sessionId);
-		
-		generator.setContextPath(contextPathBuffer.toString());
-		StringBuffer scriptBuffer = generator.generateScript();
-		
-		resp.setContentType("text/javascript");
-		resp.getWriter().write(scriptBuffer.toString());
-		resp.getWriter().flush();
-	}
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7758329463070440974L;
+      String sessionId = req.getSession().getId();
+
+      globalConnectionHolder.removeConnection(sessionId);
+
+      generator.setContextPath(CommonUtils.getContextPath(req));
+      StringBuffer scriptBuffer = generator.generateScript();
+
+      resp.setContentType("text/javascript");
+      resp.getWriter().write(scriptBuffer.toString());
+      resp.getWriter().flush();
+   }
+
+   /**
+    * 
+    */
+   private static final long serialVersionUID = 7758329463070440974L;
 }
