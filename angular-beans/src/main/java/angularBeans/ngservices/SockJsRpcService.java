@@ -52,7 +52,7 @@ public class SockJsRpcService implements NGService {
 		result+="self.webSocketEnabled=function(enabled){if(!enabled){WebSocket = undefined;}};";
 		result+="self.$get=function($log,logger,$rootScope,$http,responseHandler,$q,$injector){";
 		
-		result += "var wsuri =sript_origin.replace(/http(s{0,1}):/,'ws$1:') +'rt-service/websocket';";
+		result += "var wsuri =sript_origin.replace(/^http(s?)/,'ws$1') +'rt-service/websocket';";
 
 		result += "var sjsuri = sript_origin +'rt-service/';";
 		result += "var ws={};";
