@@ -1,3 +1,21 @@
+/*
+ * AngularBeans, CDI-AngularJS bridge 
+ *
+ * Copyright (c) 2014, Bessem Hmidi. or third-party contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ */
+
 package angularBeans.remote;
 
 import java.io.BufferedReader;
@@ -32,128 +50,118 @@ import angularBeans.util.Constants;
 @SuppressWarnings("serial")
 @WebServlet(asyncSupported = true, urlPatterns = Constants.URL_PATTERNS)
 public class HalfDuplexEndPoint extends HttpServlet implements Serializable {
-	
-	public static final String URL_PATTERNS = "/http/invoke/*";
 
-	@Inject
-	InvocationHandler remoteInvoker;
+   @Inject
+   InvocationHandler remoteInvoker;
 
-	@Inject
-	BeanLocator locator;
+   @Inject
+   BeanLocator locator;
 
-	@Inject
-	AngularBeansUtils util;
+   @Inject
+   AngularBeansUtils util;
 
-	@Inject
-	HttpSession session;
+   @Inject
+   HttpSession session;
 
-	@Inject
-	@DataReceivedEvent
-	private Event<DataReceived> receiveEvents;
+   @Inject
+   @DataReceivedEvent
+   private Event<DataReceived> receiveEvents;
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		process(req, resp);
-	}
+   @Override
+   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+      process(req, resp);
+   }
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		process(req, resp);
-	}
+   @Override
+   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+      process(req, resp);
+   }
 
-	@Override
-	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		process(req, resp);
-	}
+   @Override
+   protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+      process(req, resp);
+   }
 
-	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		process(req, resp);
-	}
+   @Override
+   protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+      process(req, resp);
+   }
 
-	
-	@Override
-	protected void doOptions(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		process(request, response);
-		
-	}
-	private void process(HttpServletRequest request, HttpServletResponse resp) {
+   @Override
+   protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+      process(request, response);
 
-		AsyncContext asyncContext=request.startAsync();
-		
-		resp.setCharacterEncoding("UTF-8");
+   }
 
-		if(request.getRequestURL().toString().endsWith("/CORS")){
-			resp.addHeader("Access-Control-Allow-Origin", "*");
-			resp.addHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
-			resp.addHeader("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
-		}
-		
-		 // Just ACCEPT and REPLY OK if OPTIONS
-	    if ( request.getMethod().equals("OPTIONS") ) {
-	        resp.setStatus(HttpServletResponse.SC_OK);
+   private void process(HttpServletRequest request, HttpServletResponse resp) {
 
-	    }
-		
-		String fullPath = request.getRequestURI();
-		fullPath = (fullPath.substring(fullPath.indexOf("/service/") + 9));
+      AsyncContext asyncContext = request.startAsync();
 
-		String parts[] = fullPath.split("/");
+      resp.setCharacterEncoding("UTF-8");
 
-		String beanName = parts[0];
-		String method = parts[1];
+      if (request.getRequestURL().toString().endsWith("/CORS")) {
+         resp.addHeader("Access-Control-Allow-Origin", "*");
+         resp.addHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
+         resp.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      }
 
-		String params = request.getParameter("params");
+      // Just ACCEPT and REPLY OK if OPTIONS
+      if (request.getMethod().equals("OPTIONS")) {
+         resp.setStatus(HttpServletResponse.SC_OK);
 
-		if (request.getMethod().equals("POST")) {
-			try {
-				StringBuilder buffer = new StringBuilder();
-				BufferedReader reader;
+      }
 
-				reader = request.getReader();
+      String fullPath = request.getRequestURI();
+      fullPath = (fullPath.substring(fullPath.indexOf("/service/") + 9));
 
-				String line;
+      String parts[] = fullPath.split("/");
 
-				while ((line = reader.readLine()) != null) {
-					buffer.append(line);
-				}
+      String beanName = parts[0];
+      String method = parts[1];
 
-				params = buffer.toString();
-			
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-		}
+      String params = request.getParameter("params");
 
-		JsonObject paramsObj = CommonUtils.parse(params).getAsJsonObject();
+      if (request.getMethod().equals("POST")) {
+         try {
+            StringBuilder buffer = new StringBuilder();
+            BufferedReader reader;
 
-		String UID = session.getId();// (paramsObj.get("sessionUID")).getAsString();
+            reader = request.getReader();
 
-		NGSessionScopeContext.setCurrentContext(UID);
+            String line;
 
-		
-		
-		receiveEvents.fire(new HalfDuplexDataReceivedEvent(paramsObj));
+            while ((line = reader.readLine()) != null) {
+               buffer.append(line);
+            }
 
-		Object result = remoteInvoker.invoke(locator.lookup(beanName, UID),
-				method, paramsObj, UID,request);
+            params = buffer.toString();
 
+         }
+         catch (Exception e) {
+            // TODO: handle exception
+         }
+      }
 
+      JsonObject paramsObj = CommonUtils.parse(params).getAsJsonObject();
 
-		try {
-			PrintWriter writer=asyncContext.getResponse().getWriter();
-			writer.write( util.getJson(result));
-			writer.flush();
-			asyncContext.complete();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+      String UID = session.getId();// (paramsObj.get("sessionUID")).getAsString();
+
+      NGSessionScopeContext.setCurrentContext(UID);
+
+      receiveEvents.fire(new HalfDuplexDataReceivedEvent(paramsObj));
+
+      Object result = remoteInvoker.invoke(locator.lookup(beanName, UID), method, paramsObj, UID, request);
+
+      try {
+         PrintWriter writer = asyncContext.getResponse().getWriter();
+         writer.write(util.getJson(result));
+         writer.flush();
+         asyncContext.complete();
+      }
+      catch (IOException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
+   }
 
 }

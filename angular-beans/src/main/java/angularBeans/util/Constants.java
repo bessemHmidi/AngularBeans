@@ -1,4 +1,3 @@
-
 package angularBeans.util;
 
 /**
@@ -29,4 +28,14 @@ public final class Constants {
     * Value default to urlPatterns
     */
    public static final String URL_PATTERNS = "/http/invoke/*";
+
+   /**
+    * Value LOB to LOB_BIND
+    */
+   public static final String LOB_BIND = "LOB";
+
+   /**
+    * Value BASE64 to BASE64_BIND
+    */
+   public static final String BASE64_BIND = "BASE64";
 }
